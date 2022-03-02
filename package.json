@@ -2,6 +2,11 @@
   "name": "devcon-raffle",
   "private": true,
   "version": "1.0.0",
+  "scripts": {
+    "lint": "wsrun -c lint",
+    "build": "wsrun -te -c build",
+    "test": "wsrun -c test"
+  },
   "workspaces": [
     "packages/*"
   ],
