@@ -1,0 +1,11 @@
+{
+  "name": "devcon-raffle-contracts",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
+    "eslint-plugin-no-only-tests": "^2.6.0",
+    "typescript": "^4.6.2"
+  }
+}
