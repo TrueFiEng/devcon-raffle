@@ -23,7 +23,6 @@ extendConfig(function (config, userConfig) {
 })
 
 task(TASK_COMPILE, async function (args, hre, runSuper) {
-  console.log("something")
   const config = hre.config.abiExporter
 
   await runSuper()
@@ -65,8 +64,6 @@ task(TASK_COMPILE, async function (args, hre, runSuper) {
     if (!fs.existsSync(path.dirname(destination))) {
       fs.mkdirSync(path.dirname(destination), { recursive: true })
     }
-
-    console.log("destination = ", destination)
 
     fs.writeFileSync(destination, `${JSON.stringify({ abi, bytecode, deployedBytecode }, null, config.spacing)}\n`, { flag: 'w' })
   }
