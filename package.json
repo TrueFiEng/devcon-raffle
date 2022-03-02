@@ -1,0 +1,10 @@
+{
+  "name": "devcon-raffle",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "wsrun": "^5.2.4"
+  }
+}
