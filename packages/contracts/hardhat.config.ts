@@ -1,6 +1,5 @@
 import 'hardhat-typechain'
 import '@nomiclabs/hardhat-waffle'
-import 'solidity-coverage'
 import './abi-exporter'
 import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
