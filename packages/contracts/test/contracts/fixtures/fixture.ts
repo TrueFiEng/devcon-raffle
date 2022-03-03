@@ -1,4 +1,4 @@
-import { Example__factory } from 'build/types'
+import { Example__factory } from 'contracts'
 import { Wallet } from 'ethers'
 
 export async function exampleFixture([owner]: Wallet[]) {

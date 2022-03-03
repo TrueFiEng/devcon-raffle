@@ -1,6 +1,6 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { exampleFixture } from './fixture'
+import { exampleFixture } from './fixtures/fixture'
 import { BigNumber } from 'ethers'
 
 describe('Example', () => {
