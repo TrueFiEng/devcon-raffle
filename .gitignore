@@ -1,1 +1,22 @@
-.idea
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# OS X temporary files
+.DS_Store
+
+/.idea/
+
+# TSC cache
+tsconfig.tsbuildinfo
+
+# Eslint cache
+.eslintcache
