@@ -11,7 +11,7 @@ interface FixtureReturns {
 }
 
 let loadFixture: ReturnType<typeof setupOnce> | undefined
-export function setupFixtureLoader () {
+export function setupFixtureLoader() {
   if (!loadFixture) {
     loadFixture = setupOnce()
   }
@@ -20,14 +20,14 @@ export function setupFixtureLoader () {
 
 type CurrentLoader = { loader: FixtureLoader, returns: FixtureReturns, fixture: Fixture<any> }
 
-function setupOnce () {
+function setupOnce() {
   let currentLoader: CurrentLoader = {
     loader: {} as FixtureLoader,
     returns: {} as FixtureReturns,
     fixture: {} as Fixture<any>,
   }
 
-  async function makeLoader (): Promise<{ loader: FixtureLoader, returns: FixtureReturns }> {
+  async function makeLoader(): Promise<{ loader: FixtureLoader, returns: FixtureReturns }> {
     const provider = waffle.provider
     await provider.send('hardhat_reset', [])
     const [wallet, other, another, ...rest] = provider.getWallets()
@@ -36,7 +36,7 @@ function setupOnce () {
     return { loader, returns }
   }
 
-  async function loadFixture<T> (fixture: Fixture<T>): Promise<T & FixtureReturns> {
+  async function loadFixture<T>(fixture: Fixture<T>): Promise<T & FixtureReturns> {
     // This function creates a new provider for each fixture, because of bugs
     // in ganache that clear contract code on evm_revert
     const { loader, returns } = currentLoader.fixture === fixture ? currentLoader : await makeLoader()

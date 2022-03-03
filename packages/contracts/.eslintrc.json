@@ -368,7 +368,7 @@
     ],
     "space-before-function-paren": [
       "error",
-      "always"
+      "never"
     ],
     "space-in-parens": [
       "error",

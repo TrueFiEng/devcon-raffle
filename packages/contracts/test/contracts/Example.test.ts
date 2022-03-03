@@ -6,7 +6,7 @@ import { BigNumber } from 'ethers'
 describe('Example', () => {
   const loadFixture = setupFixtureLoader()
 
-  it('add', async () => {
+  it('add', async() => {
     const { example } = await loadFixture(exampleFixture)
 
     await example.add(BigNumber.from(5))
