@@ -4,7 +4,8 @@ import { devcon6Fixture, devcon6FixtureWithStartTime } from 'fixtures/devcon6Fix
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
-import { MINUTE } from 'utils/consts'
+import { HOUR, MINUTE } from 'utils/consts'
+import { network } from 'hardhat'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -17,11 +18,18 @@ describe('Devcon6', function () {
   })
 
   describe('bid', function () {
-    it('reverts if bidding is not open', async function () {
+    it('reverts if bidding is not open yet', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime + MINUTE)))
 
-      await expect(devcon.bid()).to.be.revertedWith("Devcon6: bidding is not open yet")
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is not open yet')
+    })
+
+    it('reverts if bidding has already finished', async function () {
+      const endTime = await devcon.endTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is already closed')
     })
   })
 })
