@@ -46,11 +46,17 @@ describe('Devcon6', function () {
       expect(bid.bidderID).to.be.equal(0)
     })
 
+    it('saves bidder', async function () {
+      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+      const bidder = await devcon.getBidderAddress(0)
+
+      expect(bidder).to.be.equal(await devcon.signer.getAddress())
+    })
+
     it('increases bidder id', async function () {
       await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
 
       expect(await devcon.bidderID()).to.be.equal(1)
     })
-
   })
 })

@@ -5,8 +5,9 @@ pragma solidity 0.8.10;
 import "./Config.sol";
 
 contract Devcon6 is Config {
-    mapping(address => Bid) _bidders;
-    uint256 public bidderID = 0;
+    mapping(address => Bid) _bids;
+    mapping(uint256 => address) _bidders;
+    uint256 _bidderID = 0;
 
     constructor(
         uint256 startTime,
@@ -36,7 +37,7 @@ contract Devcon6 is Config {
             "Devcon6: bidding is already closed"
         );
 
-        Bid storage bidder = _bidders[msg.sender];
+        Bid storage bidder = _bids[msg.sender];
         if (bidder.amount > 0) {
             return;
         }
@@ -45,11 +46,20 @@ contract Devcon6 is Config {
             "Devcon6: bidding amount is below reserve price"
         );
         bidder.amount = msg.value;
-        bidder.bidderID = bidderID++;
+        bidder.bidderID = _bidderID++;
+        _bidders[bidder.bidderID] = msg.sender;
     }
 
-    function getBid(address bidder) public view returns (Bid memory) {
-        return _bidders[bidder];
+    function getBid(address bidder) external view returns (Bid memory) {
+        return _bids[bidder];
+    }
+
+    function getBidderAddress(uint256 bidderID_) external view returns (address) {
+        return _bidders[bidderID_];
+    }
+
+    function bidderID() external view returns (uint256) {
+        return _bidderID;
     }
 
     struct Bid {
