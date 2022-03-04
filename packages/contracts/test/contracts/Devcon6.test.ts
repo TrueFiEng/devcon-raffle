@@ -1,6 +1,6 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { devcon6Fixture, devcon6FixtureWithStartTime, reservePrice } from 'fixtures/devcon6Fixture'
+import { devcon6Fixture, devcon6FixtureWithStartTime, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
@@ -47,16 +47,21 @@ describe('Devcon6', function () {
     })
 
     it('saves bidder', async function () {
-      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+      await devcon.bid({ value: reservePrice })
       const bidder = await devcon.getBidderAddress(0)
 
       expect(bidder).to.be.equal(await devcon.signer.getAddress())
     })
 
     it('increases bidder id', async function () {
-      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+      await devcon.bid({ value: reservePrice })
 
       expect(await devcon.bidderID()).to.be.equal(1)
+    })
+
+    it('reverts if bid increase is too low', async function () {
+      await devcon.bid({ value: reservePrice })
+      await expect(devcon.bid({ value: minBidIncrement.sub(100) })).to.be.revertedWith('Devcon6: bid increment too low')
     })
   })
 })

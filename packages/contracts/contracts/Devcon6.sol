@@ -39,6 +39,10 @@ contract Devcon6 is Config {
 
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount > 0) {
+            require(
+                msg.value >= _minBidIncrement,
+                "Devcon6: bid increment too low"
+            );
             return;
         }
         require(
@@ -54,7 +58,11 @@ contract Devcon6 is Config {
         return _bids[bidder];
     }
 
-    function getBidderAddress(uint256 bidderID_) external view returns (address) {
+    function getBidderAddress(uint256 bidderID_)
+        external
+        view
+        returns (address)
+    {
         return _bidders[bidderID_];
     }
 
