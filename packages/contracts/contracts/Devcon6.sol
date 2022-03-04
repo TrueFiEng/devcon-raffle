@@ -6,6 +6,7 @@ import "./Config.sol";
 
 contract Devcon6 is Config {
     mapping(address => Bid) _bidders;
+    uint256 public bidderID = 0;
 
     constructor(
         uint256 startTime,
@@ -43,7 +44,8 @@ contract Devcon6 is Config {
             msg.value >= _reservePrice,
             "Devcon6: bidding amount is below reserve price"
         );
-        _bidders[msg.sender] = Bid(msg.value);
+        bidder.amount = msg.value;
+        bidder.bidderID = bidderID++;
     }
 
     function getBid(address bidder) public view returns (Bid memory) {
@@ -52,5 +54,6 @@ contract Devcon6 is Config {
 
     struct Bid {
         uint256 amount;
+        uint256 bidderID;
     }
 }

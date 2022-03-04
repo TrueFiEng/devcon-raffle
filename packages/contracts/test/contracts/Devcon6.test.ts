@@ -18,7 +18,7 @@ describe('Devcon6', function () {
   })
 
   describe('bid', function () {
-    it('reverts if bidding is not open yet', async function () {
+    it('reverts if bidding is not opened yet', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime + MINUTE)))
 
@@ -36,13 +36,20 @@ describe('Devcon6', function () {
       await expect(devcon.bid({ value: reservePrice.sub(100) })).to.be.revertedWith('Devcon6: bidding amount is below reserve price')
     })
 
-    it('saves bid amount', async function () {
+    it('saves bid', async function () {
       await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
 
       const bidder = await devcon.signer.getAddress()
-      const { amount } = await devcon.getBid(bidder)
+      const bid = await devcon.getBid(bidder)
 
-      expect(amount).to.be.equal(reservePrice)
+      expect(bid.amount).to.be.equal(reservePrice)
+      expect(bid.bidderID).to.be.equal(0)
+    })
+
+    it('increases bidder id', async function () {
+      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+
+      expect(await devcon.bidderID()).to.be.equal(1)
     })
 
   })
