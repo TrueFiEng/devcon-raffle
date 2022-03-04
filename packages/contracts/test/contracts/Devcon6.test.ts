@@ -1,6 +1,6 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { devcon6Fixture, devcon6FixtureWithStartTime } from 'fixtures/devcon6Fixture'
+import { devcon6Fixture, devcon6FixtureWithStartTime, reservePrice } from 'fixtures/devcon6Fixture'
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
@@ -30,6 +30,10 @@ describe('Devcon6', function () {
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
       await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is already closed')
+    })
+
+    it('reverts if bidding amount is below reserve price', async function () {
+      await expect(devcon.bid({ value: reservePrice.sub(100) })).to.be.revertedWith('Devcon6: bidding amount is below reserve price')
     })
   })
 })

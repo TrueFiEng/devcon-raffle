@@ -23,7 +23,7 @@ contract Devcon6 is Config {
         )
     {}
 
-    function bid() public {
+    function bid() public payable {
         require(
             block.timestamp >= _startTime,
             "Devcon6: bidding is not open yet"
@@ -31,6 +31,10 @@ contract Devcon6 is Config {
         require(
             block.timestamp < _endTime,
             "Devcon6: bidding is already closed"
+        );
+        require(
+            msg.value >= _reservePrice,
+            "Devcon6: bidding amount is below reserve price"
         );
     }
 }
