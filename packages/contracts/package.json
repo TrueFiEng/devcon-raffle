@@ -8,7 +8,7 @@
     "lint:sol": "solhint 'contracts/**/*.sol' && prettylint 'contracts/**/*.sol'",
     "lint:ts": "eslint '{test,scripts}/**/*.ts' -c .eslintrc.typescript.js --cache",
     "lint": "yarn run lint:sol && yarn run lint:ts",
-    "lint:fix": "prettier 'contracts/**/*.sol' --write --loglevel error && yarn run lint:ts -- --fix",
+    "lint:fix": "prettier 'contracts/**/*.sol' --write --loglevel error && yarn run lint:ts --fix",
     "build:sol": "waffle .waffle.json",
     "build:types": "typechain --target ethers-v5 --outDir build/types 'build/*.json' > /dev/null && echo 'Typechain generated'",
     "build:waffle": "yarn run clean && yarn run build:sol && yarn run build:types && bash ./scripts/indexBuild.sh",
