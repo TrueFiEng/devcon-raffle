@@ -23,5 +23,7 @@ contract Devcon6 is Config {
         )
     {}
 
-    function bid() public {}
+    function bid() public {
+        require(block.timestamp >= _startTime, "Devcon6: bidding is not open yet");
+    }
 }

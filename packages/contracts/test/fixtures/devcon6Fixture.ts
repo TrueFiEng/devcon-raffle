@@ -9,17 +9,23 @@ export const raffleWinnersCount = 80
 export const reservePrice = utils.parseEther('0.5')
 export const minBidIncrement = utils.parseEther('0.005')
 
-export async function devcon6Fixture([owner]: Wallet[], provider: MockProvider) {
+export async function devcon6Fixture(wallets: Wallet[], provider: MockProvider) {
   const startTime = await getLatestBlockTimestamp(provider)
-  const endTime = startTime + WEEK
-  const devcon = await new Devcon6__factory(owner).deploy(
-    startTime,
-    endTime,
-    auctionWinnersCount,
-    raffleWinnersCount,
-    reservePrice,
-    minBidIncrement,
-  )
+  return devcon6FixtureWithStartTime(startTime)(wallets, provider)
+}
 
-  return { devcon }
+export function devcon6FixtureWithStartTime(startTime: number) {
+  return async ([owner]: Wallet[], provider: MockProvider) => {
+    const endTime = startTime + WEEK
+    const devcon = await new Devcon6__factory(owner).deploy(
+      startTime,
+      endTime,
+      auctionWinnersCount,
+      raffleWinnersCount,
+      reservePrice,
+      minBidIncrement,
+    )
+
+    return { provider, devcon }
+  }
 }
