@@ -44,15 +44,16 @@ contract Devcon6 is Config {
                 "Devcon6: bid increment too low"
             );
             bidder.amount += msg.value;
-            return;
+        } else {
+            require(
+                msg.value >= _reservePrice,
+                "Devcon6: bidding amount is below reserve price"
+            );
+            bidder.amount = msg.value;
+            bidder.bidderID = _bidderID++;
+            _bidders[bidder.bidderID] = msg.sender;
         }
-        require(
-            msg.value >= _reservePrice,
-            "Devcon6: bidding amount is below reserve price"
-        );
-        bidder.amount = msg.value;
-        bidder.bidderID = _bidderID++;
-        _bidders[bidder.bidderID] = msg.sender;
+        emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
     function getBid(address bidder) external view returns (Bid memory) {
@@ -75,4 +76,6 @@ contract Devcon6 is Config {
         uint256 amount;
         uint256 bidderID;
     }
+
+    event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 }

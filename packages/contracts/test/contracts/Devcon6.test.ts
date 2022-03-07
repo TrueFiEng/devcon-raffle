@@ -12,9 +12,11 @@ describe('Devcon6', function () {
 
   let provider: Provider
   let devcon: Devcon6
+  let bidderAddress: string
 
   beforeEach(async function () {
     ({ provider, devcon } = await loadFixture(devcon6Fixture))
+    bidderAddress = await devcon.signer.getAddress()
   })
 
   describe('bid', function () {
@@ -39,8 +41,7 @@ describe('Devcon6', function () {
     it('saves bid', async function () {
       await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
 
-      const bidder = await devcon.signer.getAddress()
-      const bid = await devcon.getBid(bidder)
+      const bid = await devcon.getBid(bidderAddress)
 
       expect(bid.amount).to.be.equal(reservePrice)
       expect(bid.bidderID).to.be.equal(0)
@@ -48,15 +49,20 @@ describe('Devcon6', function () {
 
     it('saves bidder', async function () {
       await devcon.bid({ value: reservePrice })
-      const bidder = await devcon.getBidderAddress(0)
 
-      expect(bidder).to.be.equal(await devcon.signer.getAddress())
+      expect(bidderAddress).to.be.equal(await devcon.signer.getAddress())
     })
 
     it('increases bidder id', async function () {
       await devcon.bid({ value: reservePrice })
 
       expect(await devcon.bidderID()).to.be.equal(1)
+    })
+
+    it('bid emits event', async function () {
+      await expect(devcon.bid({ value: reservePrice }))
+        .to.emit(devcon, 'NewBid')
+        .withArgs(bidderAddress, 0, reservePrice)
     })
 
     it('reverts if bid increase is too low', async function () {
@@ -68,10 +74,16 @@ describe('Devcon6', function () {
       await devcon.bid({ value: reservePrice })
       await expect(devcon.bid({ value: minBidIncrement })).to.be.not.reverted
 
-      const bidder = await devcon.signer.getAddress()
-      const bid = await devcon.getBid(bidder)
-
+      const bid = await devcon.getBid(bidderAddress)
       expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
+    })
+
+    it('bid increase emits event', async function () {
+      await devcon.bid({ value: reservePrice })
+
+      await expect(devcon.bid({ value: minBidIncrement }))
+        .to.emit(devcon, 'NewBid')
+        .withArgs(bidderAddress, 0, reservePrice.add(minBidIncrement))
     })
   })
 })
