@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "wsrun -c lint",
     "build": "wsrun -te -c build",
-    "test": "wsrun -c test"
+    "test": "wsrun -c test",
+    "update": "git submodule update --remote"
   },
   "workspaces": [
     "packages/*"
