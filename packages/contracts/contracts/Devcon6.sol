@@ -3,8 +3,9 @@
 pragma solidity 0.8.10;
 
 import "./Config.sol";
+import "./models/BidModel.sol";
 
-contract Devcon6 is Config {
+contract Devcon6 is Config, BidModel {
     mapping(address => Bid) _bids;
     mapping(uint256 => address) _bidders;
     uint256 _bidderID = 0;
@@ -26,6 +27,8 @@ contract Devcon6 is Config {
             minBidIncrement
         )
     {}
+
+    event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
     function bid() public payable {
         require(
@@ -71,11 +74,4 @@ contract Devcon6 is Config {
     function bidderID() external view returns (uint256) {
         return _bidderID;
     }
-
-    struct Bid {
-        uint256 amount;
-        uint256 bidderID;
-    }
-
-    event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 }
