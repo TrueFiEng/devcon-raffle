@@ -1,8 +1,11 @@
+import { Hello } from './pages/Hello'
+import { Providers } from './providers/Providers'
+
 function App() {
   return (
-    <div>
-      <h1>Hello world!</h1>
-    </div>
+    <Providers>
+      <Hello />
+    </Providers>
   )
 }
 
