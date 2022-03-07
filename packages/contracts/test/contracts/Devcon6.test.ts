@@ -6,16 +6,20 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
+import { Wallet } from "ethers";
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
   let devcon: Devcon6
+  let devconAsOwner: Devcon6
   let bidderAddress: string
 
   beforeEach(async function () {
-    ({ provider, devcon } = await loadFixture(devcon6Fixture))
+    let owner: Wallet
+    ({ provider, devcon, other: owner } = await loadFixture(devcon6Fixture))
+    devconAsOwner = devcon.connect(owner)
     bidderAddress = await devcon.signer.getAddress()
   })
 
@@ -88,5 +92,11 @@ describe('Devcon6', function () {
         .to.emit(devcon, 'NewBid')
         .withArgs(bidderAddress, 0, reservePrice)
     })
+  })
+
+  describe('settleAuction', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.settleAuction([])).to.be.revertedWith("Ownable: caller is not the owner")
+    });
   })
 })

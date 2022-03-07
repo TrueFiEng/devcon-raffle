@@ -15,9 +15,10 @@ export async function devcon6Fixture(wallets: Wallet[], provider: MockProvider) 
 }
 
 export function devcon6FixtureWithStartTime(startTime: number) {
-  return async ([owner]: Wallet[], provider: MockProvider) => {
+  return async ([deployer, owner]: Wallet[], provider: MockProvider) => {
     const endTime = startTime + WEEK
-    const devcon = await new Devcon6__factory(owner).deploy(
+    const devcon = await new Devcon6__factory(deployer).deploy(
+      owner.address,
       startTime,
       endTime,
       auctionWinnersCount,
