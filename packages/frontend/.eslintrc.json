@@ -8,6 +8,8 @@
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:testing-library/react",
     "plugin:react-hooks/recommended"
   ],
   "plugins": [
@@ -18,7 +20,6 @@
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
-  "ignorePatterns": ["**/generated/*"],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
