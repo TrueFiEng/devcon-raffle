@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { Wallet } from "ethers";
+import { Wallet } from 'ethers'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -96,7 +96,7 @@ describe('Devcon6', function () {
 
   describe('settleAuction', function () {
     it('reverts if called not by owner', async function () {
-      await expect(devcon.settleAuction([])).to.be.revertedWith("Ownable: caller is not the owner")
-    });
+      await expect(devcon.settleAuction([])).to.be.revertedWith('Ownable: caller is not the owner')
+    })
   })
 })
