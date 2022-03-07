@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { Wallet } from 'ethers'
+import {BigNumber, Wallet} from 'ethers'
 import { Status } from './status'
 
 describe('Devcon6', function () {
@@ -96,8 +96,52 @@ describe('Devcon6', function () {
   })
 
   describe('settleAuction', function () {
+    beforeEach(async () => {
+      const endTime = await devcon.biddingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+      await network.provider.send('evm_mine')
+    })
+
     it('reverts if called not by owner', async function () {
-      await expect(devcon.settleAuction([])).to.be.revertedWith('Ownable: caller is not the owner')
+      await expect(devcon.settleAuction([1]))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if called twice', async function () {
+      await devcon.settleAuction([1])
+      await expect(devcon.settleAuction([1]))
+        .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
+    })
+
+    it('reverts if bidding is in progress', async function () {
+      const endTime = await devcon.biddingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.sub(HOUR).toNumber()])
+      await network.provider.send('evm_mine')
+
+      await expect(devcon.settleAuction([1]))
+        .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
+    })
+
+    it('reverts if passed array of auction winners is empty', async function () {
+      await expect(devcon.settleAuction([]))
+        .to.be.revertedWith('Devcon6: passed array of auction winners is empty')
+    })
+
+    it('saves auction winners correctly', async function () {
+      await devcon.bid({value: reservePrice})
+      await devconAsOwner.bid({value:reservePrice})
+
+      const endTime = await devcon.biddingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+      await network.provider.send('evm_mine')
+
+      expect(await devcon.auctionWinnersCount()).to.be.eq(0)
+
+      const auctionWinners = [BigNumber.from(1)]
+      await devconAsOwner.settleAuction(auctionWinners)
+
+      expect(await devcon.auctionWinnersCount()).to.be.eq(1)
+      expect(await devcon.getAuctionWinners()).to.deep.eq(auctionWinners)
     })
   })
 

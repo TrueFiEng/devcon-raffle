@@ -74,7 +74,18 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function settleAuction(uint256[] memory actionWinners) external onlyOwner {}
+    function settleAuction(uint256[] memory actionWinners) external onlyOwner {
+//        Status status = getStatus();
+//
+//        require(
+//            status == Status.AUCTION_SETTLED,
+//            "Devcon6: cannot call settleAuction twice"
+//        );
+//        require(
+//            status == Status.BIDDING_CLOSED,
+//            "Devcon6: settleAuction can only be called after bidding is closed"
+//        );
+    }
 
     function getStatus() public view returns (Status) {
         if (block.timestamp >= _claimingEndTime) {
@@ -110,5 +121,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
 
     function nextBidderID() external view returns (uint256) {
         return _nextBidderID;
+    }
+
+    function getAuctionWinners() external view returns (uint256[] memory) {
+        return auctionWinners;
     }
 }
