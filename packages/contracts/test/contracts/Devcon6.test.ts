@@ -27,15 +27,30 @@ describe('Devcon6', function () {
       await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is not open yet')
     })
 
-    it('reverts if bidding has already finished', async function () {
+    it('reverts if bidding is already closed', async function () {
       const endTime = await devcon.endTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
       await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is already closed')
     })
 
+    it('reverts if bid increase is too low', async function () {
+      await devcon.bid({ value: reservePrice })
+      await expect(devcon.bid({ value: minBidIncrement.sub(100) }))
+        .to.be.revertedWith('Devcon6: bid increment too low')
+    })
+
+    it('increases bid amount', async function () {
+      await devcon.bid({ value: reservePrice })
+      await expect(devcon.bid({ value: minBidIncrement })).to.be.not.reverted
+
+      const bid = await devcon.getBid(bidderAddress)
+      expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
+    })
+
     it('reverts if bidding amount is below reserve price', async function () {
-      await expect(devcon.bid({ value: reservePrice.sub(100) })).to.be.revertedWith('Devcon6: bidding amount is below reserve price')
+      await expect(devcon.bid({ value: reservePrice.sub(100) }))
+        .to.be.revertedWith('Devcon6: bidding amount is below reserve price')
     })
 
     it('saves bid', async function () {
@@ -47,43 +62,31 @@ describe('Devcon6', function () {
       expect(bid.bidderID).to.be.equal(0)
     })
 
-    it('saves bidder', async function () {
+    it('saves bidder address', async function () {
       await devcon.bid({ value: reservePrice })
 
-      expect(bidderAddress).to.be.equal(await devcon.signer.getAddress())
+      const savedBidderAddress = await devcon.getBidderAddress(0)
+      expect(savedBidderAddress).to.be.equal(bidderAddress)
     })
 
-    it('increases bidder id', async function () {
+    it('increases bidder ID', async function () {
       await devcon.bid({ value: reservePrice })
 
-      expect(await devcon.bidderID()).to.be.equal(1)
+      expect(await devcon.nextBidderID()).to.be.equal(1)
     })
 
-    it('bid emits event', async function () {
-      await expect(devcon.bid({ value: reservePrice }))
-        .to.emit(devcon, 'NewBid')
-        .withArgs(bidderAddress, 0, reservePrice)
-    })
-
-    it('reverts if bid increase is too low', async function () {
-      await devcon.bid({ value: reservePrice })
-      await expect(devcon.bid({ value: minBidIncrement.sub(100) })).to.be.revertedWith('Devcon6: bid increment too low')
-    })
-
-    it('increases bid amount', async function () {
-      await devcon.bid({ value: reservePrice })
-      await expect(devcon.bid({ value: minBidIncrement })).to.be.not.reverted
-
-      const bid = await devcon.getBid(bidderAddress)
-      expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
-    })
-
-    it('bid increase emits event', async function () {
+    it('emits event on bid increase', async function () {
       await devcon.bid({ value: reservePrice })
 
       await expect(devcon.bid({ value: minBidIncrement }))
         .to.emit(devcon, 'NewBid')
         .withArgs(bidderAddress, 0, reservePrice.add(minBidIncrement))
+    })
+
+    it('emits event on bid', async function () {
+      await expect(devcon.bid({ value: reservePrice }))
+        .to.emit(devcon, 'NewBid')
+        .withArgs(bidderAddress, 0, reservePrice)
     })
   })
 })

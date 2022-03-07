@@ -7,8 +7,9 @@ import "./models/BidModel.sol";
 
 contract Devcon6 is Config, BidModel {
     mapping(address => Bid) _bids;
+    // bidderID -> address
     mapping(uint256 => address) _bidders;
-    uint256 _bidderID = 0;
+    uint256 _nextBidderID = 0;
 
     constructor(
         uint256 startTime,
@@ -30,7 +31,7 @@ contract Devcon6 is Config, BidModel {
 
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
-    function bid() public payable {
+    function bid() external payable {
         require(
             block.timestamp >= _startTime,
             "Devcon6: bidding is not open yet"
@@ -53,7 +54,7 @@ contract Devcon6 is Config, BidModel {
                 "Devcon6: bidding amount is below reserve price"
             );
             bidder.amount = msg.value;
-            bidder.bidderID = _bidderID++;
+            bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = msg.sender;
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
@@ -71,7 +72,7 @@ contract Devcon6 is Config, BidModel {
         return _bidders[bidderID_];
     }
 
-    function bidderID() external view returns (uint256) {
-        return _bidderID;
+    function nextBidderID() external view returns (uint256) {
+        return _nextBidderID;
     }
 }
