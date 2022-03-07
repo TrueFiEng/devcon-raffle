@@ -63,5 +63,15 @@ describe('Devcon6', function () {
       await devcon.bid({ value: reservePrice })
       await expect(devcon.bid({ value: minBidIncrement.sub(100) })).to.be.revertedWith('Devcon6: bid increment too low')
     })
+
+    it('increases bid amount', async function () {
+      await devcon.bid({ value: reservePrice })
+      await expect(devcon.bid({ value: minBidIncrement })).to.be.not.reverted
+
+      const bidder = await devcon.signer.getAddress()
+      const bid = await devcon.getBid(bidder)
+
+      expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
+    })
   })
 })

@@ -43,6 +43,7 @@ contract Devcon6 is Config {
                 msg.value >= _minBidIncrement,
                 "Devcon6: bid increment too low"
             );
+            bidder.amount += msg.value;
             return;
         }
         require(
