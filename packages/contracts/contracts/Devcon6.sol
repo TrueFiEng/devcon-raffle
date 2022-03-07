@@ -74,8 +74,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function settleAuction(uint256[] memory actionWinners) external onlyOwner {
-    }
+    function settleAuction(uint256[] memory actionWinners) external onlyOwner {}
 
     function getStatus() public view returns (Status) {
         if (block.timestamp >= _claimingEndTime) {
@@ -87,12 +86,13 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         if (auctionWinners.length > 0) {
             return Status.AUCTION_SETTLED;
         }
-        if (block.timestamp <= _biddingEndTime) {
+        if (block.timestamp >= _biddingEndTime) {
             return Status.BIDDING_CLOSED;
         }
-        if (block.timestamp >= _biddingStartTime) {
+        if (block.timestamp > _biddingStartTime) {
             return Status.BIDDING_OPEN;
         }
+        // TODO: rename
         return Status.PENDING;
     }
 

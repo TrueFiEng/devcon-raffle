@@ -7,6 +7,7 @@ import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
 import { Wallet } from 'ethers'
+import { Status } from './status'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -32,7 +33,7 @@ describe('Devcon6', function () {
     })
 
     it('reverts if bidding is already closed', async function () {
-      const endTime = await devcon.endTime()
+      const endTime = await devcon.biddingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
       await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is already closed')
@@ -97,6 +98,43 @@ describe('Devcon6', function () {
   describe('settleAuction', function () {
     it('reverts if called not by owner', async function () {
       await expect(devcon.settleAuction([])).to.be.revertedWith('Ownable: caller is not the owner')
+    })
+  })
+
+  describe('getStatus', function () {
+    it('pending', async function () {
+      expect(await devcon.getStatus()).to.be.equal(Status.pending)
+    })
+
+    it('bidding open', async function () {
+      const currentTime = await getLatestBlockTimestamp(provider);
+      ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime - MINUTE)))
+
+      expect(await devcon.getStatus()).to.be.equal(Status.biddingOpen)
+    })
+
+    it('bidding closed', async function () {
+      const endTime = await devcon.biddingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+      await network.provider.send('evm_mine')
+
+      expect(await devcon.getStatus()).to.be.equal(Status.biddingClosed)
+    })
+
+    it.skip('auction settled', async function () {
+      expect(await devcon.getStatus()).to.be.equal(Status.auctionSettled)
+    })
+
+    it.skip('raffle settled', async function () {
+      expect(await devcon.getStatus()).to.be.equal(Status.raffleSettled)
+    })
+
+    it('claiming closed', async function () {
+      const endTime = await devcon.claimingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+      await network.provider.send('evm_mine')
+
+      expect(await devcon.getStatus()).to.be.equal(Status.claimingClosed)
     })
   })
 })
