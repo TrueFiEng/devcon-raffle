@@ -81,7 +81,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
             "Devcon6: is not in bidding closed state"
         );
 
-        if (_nextBidderID - 1 <= _raffleWinnersCount) {
+        if (getBiddersCount() <= _raffleWinnersCount) {
             _notEnoughParticipantsForAuction = true;
             return;
         }
@@ -132,8 +132,8 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         return _bidders[bidderID_];
     }
 
-    function nextBidderID() external view returns (uint256) {
-        return _nextBidderID;
+    function getBiddersCount() public view returns (uint256) {
+        return _nextBidderID - 1;
     }
 
     function getAuctionWinners() external view returns (uint256[] memory) {

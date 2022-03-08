@@ -85,10 +85,10 @@ describe('Devcon6', function () {
       expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
     })
 
-    it('increases bidder ID', async function () {
+    it('increases bidders count', async function () {
       await devcon.bid({ value: reservePrice })
 
-      expect(await devcon.nextBidderID()).to.be.equal(2)
+      expect(await devcon.getBiddersCount()).to.be.equal(1)
     })
 
     it('emits event on bid increase', async function () {
