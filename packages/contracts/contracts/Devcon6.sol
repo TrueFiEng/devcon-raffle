@@ -83,9 +83,11 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
 
         for (uint256 i = 0; i < auctionWinners.length; i++) {
             uint256 winner = auctionWinners[i];
-            if (_bidders[winner] != address(0)) {
-                _auctionWinners.push(winner);
-            }
+            require(
+                _bidders[winner] != address(0),
+                "Devcon6: given winner does not exist"
+            );
+            _auctionWinners.push(winner);
         }
     }
 

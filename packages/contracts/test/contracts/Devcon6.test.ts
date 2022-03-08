@@ -106,20 +106,28 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
-    it('reverts if called twice', async function () {
+    it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
-      await devcon.settleAuction([1], customGasLimit)
-      await expect(devcon.settleAuction([1], customGasLimit))
+      await expect(devconAsOwner.settleAuction([1], customGasLimit))
+        .to.be.revertedWith('Devcon6: given winner does not exist')
+    })
+
+    it('reverts if called twice', async function () {
+      await devcon.bid({ value: reservePrice })
+
+      await endBidding(devconAsOwner)
+      await devconAsOwner.settleAuction([0], customGasLimit)
+      await expect(devconAsOwner.settleAuction([0], customGasLimit))
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
     it('reverts if passed array of auction winners is empty', async function () {
       await endBidding(devconAsOwner)
-      await expect(devcon.settleAuction([]))
+      await expect(devconAsOwner.settleAuction([]))
         .to.be.revertedWith('Devcon6: passed array of auction winners is empty')
     })
 
-    it('saves auction winners correctly', async function () {
+    it('saves auction winners', async function () {
       await devcon.bid({ value: reservePrice })
       await devconAsOwner.bid({ value: reservePrice })
 
@@ -138,7 +146,7 @@ describe('Devcon6', function () {
     }
 
     const customGasLimit = {
-      gasLimit: 500_000
+      gasLimit: 500_000,
     }
   })
 
