@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatTimeLeft } from 'src/utils/formatTimeLeft'
+import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 
 describe('formatTimeLeft', () => {
   const minutesToMillis = (n: number) => n * 60 * 1000

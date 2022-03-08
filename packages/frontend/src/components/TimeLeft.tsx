@@ -1,7 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
 import React from 'react'
-import { formatTimeLeft } from 'src/utils/formatTimeLeft'
+import { formatEndDate } from 'src/utils/formatters/formatEndDate'
+import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 import styled from 'styled-components'
 
 export const TimeLeft = () => {
@@ -11,7 +12,7 @@ export const TimeLeft = () => {
       <p>
         Time left <RemainingTime>{formatTimeLeft(endTimestamp)}</RemainingTime>
       </p>
-      <p>Ends on </p>
+      <p>Ends on {formatEndDate(endTimestamp)}</p>
     </div>
   )
 }
