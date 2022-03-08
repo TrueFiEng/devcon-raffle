@@ -141,10 +141,24 @@ describe('Devcon6', function () {
       expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([])
     })
 
+    it('chooses auction winners when there is not enough participants for entire auction', async function () {
+      let owner: Wallet
+      ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
+      devconAsOwner = devcon.connect(owner)
+
+      await devcon.bid({ value: reservePrice })
+      await devconAsOwner.bid({ value: reservePrice })
+
+      await endBidding(devconAsOwner)
+      await settleAuction([1])
+
+      expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([BigNumber.from(1)])
+    })
+
     it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([]))
-        .to.be.revertedWith('Devcon6: passed auction winners length does not match the preset length')
+        .to.be.revertedWith('Devcon6: invalid auction winners length')
     })
 
     it('reverts if winner does not exist', async function () {

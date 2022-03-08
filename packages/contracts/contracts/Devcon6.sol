@@ -83,9 +83,17 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _notEnoughParticipantsForAuction = true;
             return;
         }
+
+        uint256 expectedWinnersLength = _auctionWinnersCount;
+        uint256 auctionParticipantsCount = getBiddersCount() -
+            _raffleWinnersCount;
+        if (auctionParticipantsCount < _auctionWinnersCount) {
+            expectedWinnersLength = auctionParticipantsCount;
+        }
+
         require(
-            auctionWinners.length == _auctionWinnersCount,
-            "Devcon6: passed auction winners length does not match the preset length"
+            auctionWinners.length == expectedWinnersLength,
+            "Devcon6: invalid auction winners length"
         );
 
         for (uint256 i = 0; i < auctionWinners.length; i++) {
