@@ -9,8 +9,8 @@ import "./models/BidModel.sol";
 import "./models/StatusModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StatusModel {
-    uint256[] auctionWinners;
-    uint256[] raffleWinners;
+    uint256[] _auctionWinners;
+    uint256[] _raffleWinners;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -74,27 +74,29 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function settleAuction(uint256[] memory actionWinners) external onlyOwner {
-//        Status status = getStatus();
-//
-//        require(
-//            status == Status.AUCTION_SETTLED,
-//            "Devcon6: cannot call settleAuction twice"
-//        );
-//        require(
-//            status == Status.BIDDING_CLOSED,
-//            "Devcon6: settleAuction can only be called after bidding is closed"
-//        );
+    function settleAuction(uint256[] memory auctionWinners) external onlyOwner {
+        Status status = getStatus();
+        require(
+            status == Status.BIDDING_CLOSED,
+            "Devcon6: settleAuction can only be called after bidding is closed"
+        );
+
+        for (uint256 i = 0; i < auctionWinners.length; i++) {
+            uint256 winner = auctionWinners[i];
+            if (_bidders[winner] != address(0)) {
+                _auctionWinners.push(winner);
+            }
+        }
     }
 
     function getStatus() public view returns (Status) {
         if (block.timestamp >= _claimingEndTime) {
             return Status.CLAIMING_CLOSED;
         }
-        if (raffleWinners.length > 0) {
+        if (_raffleWinners.length > 0) {
             return Status.RAFFLE_SETTLED;
         }
-        if (auctionWinners.length > 0) {
+        if (_auctionWinners.length > 0) {
             return Status.AUCTION_SETTLED;
         }
         if (block.timestamp >= _biddingEndTime) {
@@ -124,6 +126,6 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     }
 
     function getAuctionWinners() external view returns (uint256[] memory) {
-        return auctionWinners;
+        return _auctionWinners;
     }
 }
