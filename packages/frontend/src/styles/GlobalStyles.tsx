@@ -45,6 +45,7 @@ export const GlobalStyles = createGlobalStyle`
 
   h1, h2, h3, h4 {
     color: ${Colors.Black};
+    margin: 0;
   }
 
   h1 {
@@ -77,6 +78,7 @@ export const GlobalStyles = createGlobalStyle`
   p {
     font-size: 16px;
     line-height: 1.5;
+    margin: 0;
   }
   button, a {
     cursor: pointer;
