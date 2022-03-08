@@ -1,10 +1,10 @@
 import { screen, render } from '@testing-library/react'
 import React from 'react'
-import { Hello } from 'src/pages/Hello'
+import { Header } from 'src/components/Header'
 
 it('something', async () => {
   renderHello()
-  expect(await screen.findByText('Hello World!')).toBeDefined()
+  expect(await screen.findByText('Devcon 6 Ticket Sale')).toBeDefined()
 })
 
-const renderHello = () => render(<Hello />)
+const renderHello = () => render(<Header />)

@@ -1,4 +1,5 @@
-import { Hello } from './pages/Hello'
+import { Root } from 'src/Root'
+
 import { Providers } from './providers/Providers'
 import { GlobalStyles } from './styles/GlobalStyles'
 
@@ -6,7 +7,7 @@ function App() {
   return (
     <Providers>
       <GlobalStyles />
-      <Hello />
+      <Root />
     </Providers>
   )
 }
