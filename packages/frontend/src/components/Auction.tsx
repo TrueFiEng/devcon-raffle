@@ -1,8 +1,13 @@
+import { Bid } from 'src/components/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Auction = () => {
-  return <Wrapper>Auction</Wrapper>
+  return (
+    <Wrapper>
+      <Bid />
+    </Wrapper>
+  )
 }
 
 const Wrapper = styled.div`
