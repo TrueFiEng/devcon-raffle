@@ -9,6 +9,17 @@ export const raffleWinnersCount = 1
 export const reservePrice = utils.parseEther('0.5')
 export const minBidIncrement = utils.parseEther('0.005')
 
+export type devcon6Params = {
+  initialOwner?: string,
+  biddingStartTime?: number,
+  biddingEndTime?: number,
+  claimingEndTime?: number,
+  auctionWinnersCount?: number,
+  raffleWinnersCount?: number,
+  reservePrice?: BigNumberish,
+  minBidIncrement?: BigNumberish,
+}
+
 export async function devcon6Fixture(wallets: Wallet[], provider: MockProvider) {
   return configuredDevcon6Fixture({})(wallets, provider)
 }
@@ -16,7 +27,7 @@ export async function devcon6Fixture(wallets: Wallet[], provider: MockProvider) 
 export function configuredDevcon6Fixture(params: devcon6Params) {
   return async ([deployer, owner]: Wallet[], provider: MockProvider) => {
     const currentBlockTimestamp = await getLatestBlockTimestamp(provider)
-    params = setDevcon6ParamsDefaults(owner, currentBlockTimestamp , params)
+    params = setDevcon6ParamsDefaults(owner, currentBlockTimestamp, params)
     const devcon = await new Devcon6__factory(deployer).deploy(
       params.initialOwner,
       params.biddingStartTime,
@@ -30,17 +41,6 @@ export function configuredDevcon6Fixture(params: devcon6Params) {
 
     return { provider, devcon }
   }
-}
-
-export type devcon6Params = {
-  initialOwner?: string,
-  biddingStartTime?: number,
-  biddingEndTime?: number,
-  claimingEndTime?: number,
-  auctionWinnersCount?: BigNumberish,
-  raffleWinnersCount?: BigNumberish,
-  reservePrice?: BigNumberish,
-  minBidIncrement?: BigNumberish,
 }
 
 export function setDevcon6ParamsDefaults(owner: Wallet, blockTimestamp: number, params: devcon6Params): devcon6Params {

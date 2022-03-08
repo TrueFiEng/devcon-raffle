@@ -12,6 +12,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     uint256[] _auctionWinners;
     uint256[] _raffleWinners;
     uint256[] _raffleParticipants;
+    bool _notEnoughParticipantsForAuction;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -84,6 +85,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         );
 
         if (_nextBidderID - 1 <= _raffleWinnersCount) {
+            _notEnoughParticipantsForAuction = true;
             return;
         }
         require(
@@ -109,7 +111,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         if (_raffleWinners.length > 0) {
             return Status.RAFFLE_SETTLED;
         }
-        if (_auctionWinners.length > 0) {
+        if (_auctionWinners.length > 0 || _notEnoughParticipantsForAuction) {
             return Status.AUCTION_SETTLED;
         }
         if (block.timestamp >= _biddingEndTime) {

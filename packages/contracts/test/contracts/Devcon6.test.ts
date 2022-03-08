@@ -4,7 +4,7 @@ import {
   configuredDevcon6Fixture,
   devcon6Fixture,
   minBidIncrement,
-  reservePrice
+  reservePrice,
 } from 'fixtures/devcon6Fixture'
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -122,12 +122,6 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
-    it('reverts if winner does not exist', async function () {
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([5]))
-        .to.be.revertedWith('Devcon6: given winner does not exist')
-    })
-
     it('reverts if called twice', async function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
@@ -135,10 +129,28 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
+    it('changes status if amount of bidders is less than auctionWinnersCount', async function () {
+      let owner: Wallet
+      ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
+      devconAsOwner = devcon.connect(owner)
+
+      await endBidding(devconAsOwner)
+      await settleAuction([])
+
+      expect(await devconAsOwner.getStatus()).to.be.equal(Status.auctionSettled)
+      expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([])
+    })
+
     it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([]))
         .to.be.revertedWith('Devcon6: passed auction winners length does not match preset length')
+    })
+
+    it('reverts if winner does not exist', async function () {
+      await endBidding(devconAsOwner)
+      await expect(settleAuction([5]))
+        .to.be.revertedWith('Devcon6: given winner does not exist')
     })
 
     it('saves auction winners', async function () {
