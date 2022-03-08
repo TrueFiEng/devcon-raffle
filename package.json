@@ -1,11 +1,12 @@
 {
   "name": "devcon-raffle",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "lint": "wsrun -c lint",
     "build": "wsrun -te -c build",
-    "test": "wsrun -c test"
+    "test": "wsrun -c test",
+    "update": "git submodule update --remote"
   },
   "workspaces": [
     "packages/*"
