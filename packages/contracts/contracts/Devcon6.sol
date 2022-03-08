@@ -48,13 +48,10 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
     function bid() external payable {
+        Status status = getStatus();
         require(
-            block.timestamp >= _biddingStartTime,
-            "Devcon6: bidding is not open yet"
-        );
-        require(
-            block.timestamp < _biddingEndTime,
-            "Devcon6: bidding is already closed"
+            status == Status.BIDDING_OPEN,
+            "Devcon6: is not in bidding open state"
         );
 
         Bid storage bidder = _bids[msg.sender];

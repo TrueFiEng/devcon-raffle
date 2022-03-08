@@ -34,14 +34,14 @@ describe('Devcon6', function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
-      await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is not open yet')
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is not in bidding open state')
     })
 
     it('reverts if bidding is already closed', async function () {
       const endTime = await devcon.biddingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
-      await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is already closed')
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is not in bidding open state')
     })
 
     it('reverts if bid increase is too low', async function () {
