@@ -1,4 +1,5 @@
 import { screen, render } from '@testing-library/react'
+import React from 'react'
 import { Header } from 'src/components/Header'
 
 it('something', async () => {
