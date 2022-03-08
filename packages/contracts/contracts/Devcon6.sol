@@ -11,6 +11,7 @@ import "./models/StatusModel.sol";
 contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     uint256[] _auctionWinners;
     uint256[] _raffleWinners;
+    uint256[] _raffleParticipants;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -27,16 +28,16 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-        Config(
-            biddingStartTime,
-            biddingEndTime,
-            claimingEndTime,
-            auctionWinnersCount,
-            raffleWinnersCount,
-            reservePrice,
-            minBidIncrement
-        )
-        Ownable()
+    Config(
+        biddingStartTime,
+        biddingEndTime,
+        claimingEndTime,
+        auctionWinnersCount,
+        raffleWinnersCount,
+        reservePrice,
+        minBidIncrement
+    )
+    Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -70,6 +71,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = msg.sender;
+            _raffleParticipants.push(bidder.bidderID);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
@@ -116,9 +118,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-        external
-        view
-        returns (address)
+    external
+    view
+    returns (address)
     {
         return _bidders[bidderID_];
     }
@@ -129,5 +131,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
 
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
+    }
+
+    function getRaffleParticipants() external view returns (uint256[] memory) {
+        return _raffleParticipants;
     }
 }

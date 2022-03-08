@@ -74,6 +74,13 @@ describe('Devcon6', function () {
       expect(savedBidderAddress).to.be.equal(bidderAddress)
     })
 
+    it('saves bidder as raffle participant', async function () {
+      await devcon.bid({ value: reservePrice })
+
+      const raffleParticipants = await devcon.getRaffleParticipants()
+      expect(raffleParticipants).to.deep.eq([BigNumber.from(1)])
+    })
+
     it('increases bidder ID', async function () {
       await devcon.bid({ value: reservePrice })
 
