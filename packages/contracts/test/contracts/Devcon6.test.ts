@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, Wallet } from 'ethers'
+import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { Status } from './status'
 
 describe('Devcon6', function () {
@@ -77,8 +77,7 @@ describe('Devcon6', function () {
     it('saves bidder as raffle participant', async function () {
       await devcon.bid({ value: reservePrice })
 
-      const raffleParticipants = await devcon.getRaffleParticipants()
-      expect(raffleParticipants).to.deep.eq([BigNumber.from(1)])
+      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
     })
 
     it('increases bidder ID', async function () {
@@ -109,13 +108,13 @@ describe('Devcon6', function () {
     })
 
     it('reverts if bidding is in progress', async function () {
-      await expect(devconAsOwner.settleAuction([1], customGasLimit))
+      await expect(settleAuction([1]))
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
-      await expect(devconAsOwner.settleAuction([1], customGasLimit))
+      await expect(settleAuction([1]))
         .to.be.revertedWith('Devcon6: given winner does not exist')
     })
 
@@ -123,14 +122,14 @@ describe('Devcon6', function () {
       await devcon.bid({ value: reservePrice })
 
       await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction([1], customGasLimit)
-      await expect(devconAsOwner.settleAuction([1], customGasLimit))
+      await settleAuction([1])
+      await expect(settleAuction([1]))
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
     it('reverts if passed array of auction winners is empty', async function () {
       await endBidding(devconAsOwner)
-      await expect(devconAsOwner.settleAuction([]))
+      await expect(settleAuction([]))
         .to.be.revertedWith('Devcon6: passed array of auction winners is empty')
     })
 
@@ -141,9 +140,20 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
 
       const auctionWinners = [BigNumber.from(2)]
-      await devconAsOwner.settleAuction(auctionWinners)
+      await settleAuction(auctionWinners)
 
       expect(await devcon.getAuctionWinners()).to.deep.eq(auctionWinners)
+    })
+
+    it('removes winners from raffle participants', async function () {
+      await devcon.bid({ value: reservePrice })
+      await devconAsOwner.bid({ value: reservePrice })
+      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1), BigNumber.from(2)])
+
+      await endBidding(devconAsOwner)
+      await settleAuction([BigNumber.from(2)])
+
+      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1), BigNumber.from(0)])
     })
 
     async function endBidding(devcon: Devcon6) {
@@ -152,8 +162,8 @@ describe('Devcon6', function () {
       await network.provider.send('evm_mine')
     }
 
-    const customGasLimit = {
-      gasLimit: 500_000,
+    async function settleAuction(auctionWinners: BigNumberish[]) {
+      await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
     }
   })
 

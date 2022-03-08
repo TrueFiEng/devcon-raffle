@@ -28,16 +28,16 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-    Config(
-        biddingStartTime,
-        biddingEndTime,
-        claimingEndTime,
-        auctionWinnersCount,
-        raffleWinnersCount,
-        reservePrice,
-        minBidIncrement
-    )
-    Ownable()
+        Config(
+            biddingStartTime,
+            biddingEndTime,
+            claimingEndTime,
+            auctionWinnersCount,
+            raffleWinnersCount,
+            reservePrice,
+            minBidIncrement
+        )
+        Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -90,6 +90,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
                 "Devcon6: given winner does not exist"
             );
             _auctionWinners.push(winner);
+            delete _raffleParticipants[winner - 1];
         }
     }
 
@@ -118,9 +119,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-    external
-    view
-    returns (address)
+        external
+        view
+        returns (address)
     {
         return _bidders[bidderID_];
     }
