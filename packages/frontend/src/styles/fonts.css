@@ -22,7 +22,7 @@
   font-weight: 600;
 }
 
-font-face {
+@font-face {
   font-family: 'Regola Pro';
   src: url(fonts/RegolaPro/RegolaPro-Bold.woff2) format('woff2'),
       url(fonts/RegolaPro/RegolaPro-Bold.woff) format('woff');
@@ -54,7 +54,7 @@ font-face {
   font-weight: 600;
 }
 
-font-face {
+@font-face {
   font-family: 'Regola Pro';
   src: url(fonts/RegolaPro/RegolaPro-BoldOblique.woff2) format('woff2'),
       url(fonts/RegolaPro/RegolaPro-BoldOblique.woff) format('woff');
