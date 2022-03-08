@@ -1,10 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { TimeLeft } from './TimeLeft'
+
 export const Header = () => {
   return (
     <StyledHeader>
       <h1>Devcon 6 Ticket Sale</h1>
+      <TimeLeft />
     </StyledHeader>
   )
 }

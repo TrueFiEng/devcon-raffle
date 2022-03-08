@@ -11,7 +11,7 @@ export function formatTimeLeft(dateSeconds: BigNumber, now = Date.now()) {
 
   const difference = dateMinutes.gt(nowMinutes) ? dateMinutes.sub(nowMinutes) : BigNumber.from(0)
 
-  const days = difference.div(MinutesInDay).toString()
+  const days = padZero(difference.div(MinutesInDay))
   const hours = padZero(difference.mod(MinutesInDay).div(MinutesInHour))
   const minutes = padZero(difference.mod(MinutesInHour))
 
