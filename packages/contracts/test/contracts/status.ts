@@ -1,5 +1,5 @@
 export enum Status {
-  pending,
+  waitingForBidding,
   biddingOpen,
   biddingClosed,
   auctionSettled,

@@ -120,8 +120,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         if (block.timestamp > _biddingStartTime) {
             return Status.BIDDING_OPEN;
         }
-        // TODO: rename
-        return Status.PENDING;
+        return Status.WAITING_FOR_BIDDING;
     }
 
     function getBid(address bidder) external view returns (Bid memory) {
