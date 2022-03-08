@@ -74,6 +74,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
+    // auctionWinners should be sorted in descending order
     function settleAuction(uint256[] memory auctionWinners)
         external
         onlyOwner
@@ -103,8 +104,20 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
                 "Devcon6: given winner does not exist"
             );
             _auctionWinners.push(winner);
-            delete _raffleParticipants[winner - 1];
+            removeRaffleParticipant(winner - 1);
         }
+    }
+
+    function removeRaffleParticipant(uint256 index) private {
+        uint256 participantsLength = _raffleParticipants.length;
+        require(
+            index < participantsLength,
+            "Devcon6: invalid raffle participant index"
+        );
+        _raffleParticipants[index] = _raffleParticipants[
+            participantsLength - 1
+        ];
+        _raffleParticipants.pop();
     }
 
     function getState() public view returns (State) {

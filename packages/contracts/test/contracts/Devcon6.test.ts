@@ -182,7 +182,23 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([BigNumber.from(2)])
 
-      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1), BigNumber.from(0)])
+      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
+    })
+
+    it('removes multiple winners from raffle participants', async function () {
+      let owner, another: Wallet
+      ({ devcon, other: owner, another } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(owner)
+      const devconAsAnother = devcon.connect(another)
+
+      await devcon.bid({ value: reservePrice })
+      await devconAsOwner.bid({ value: reservePrice })
+      await devconAsAnother.bid({ value: reservePrice })
+
+      await endBidding(devconAsOwner)
+      await settleAuction([3, 2])
+
+      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
     })
 
     async function endBidding(devcon: Devcon6) {
