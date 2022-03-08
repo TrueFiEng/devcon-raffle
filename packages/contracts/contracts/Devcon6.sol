@@ -81,7 +81,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         Status status = getStatus();
         require(
             status == Status.BIDDING_CLOSED,
-            "Devcon6: settleAuction can only be called after bidding is closed"
+            "Devcon6: bidding is not closed yet"
         );
 
         if (_nextBidderID - 1 <= _raffleWinnersCount) {

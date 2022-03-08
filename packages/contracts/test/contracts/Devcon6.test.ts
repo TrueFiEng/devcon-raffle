@@ -119,14 +119,14 @@ describe('Devcon6', function () {
 
     it('reverts if bidding is in progress', async function () {
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
+        .to.be.revertedWith('Devcon6: bidding is not closed yet')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
+        .to.be.revertedWith('Devcon6: bidding is not closed yet')
     })
 
     it('changes status if amount of bidders is less than auctionWinnersCount', async function () {
