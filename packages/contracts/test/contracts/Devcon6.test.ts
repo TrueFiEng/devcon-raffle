@@ -119,17 +119,17 @@ describe('Devcon6', function () {
 
     it('reverts if bidding is in progress', async function () {
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: bidding is not closed yet')
+        .to.be.revertedWith('Devcon6: is not in bidding closed state')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: bidding is not closed yet')
+        .to.be.revertedWith('Devcon6: is not in bidding closed state')
     })
 
-    it('changes status if amount of bidders is less than auctionWinnersCount', async function () {
+    it('changes status if amount of bidders is lower than auctionWinnersCount', async function () {
       let owner: Wallet
       ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
       devconAsOwner = devcon.connect(owner)
@@ -144,7 +144,7 @@ describe('Devcon6', function () {
     it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([]))
-        .to.be.revertedWith('Devcon6: passed auction winners length does not match preset length')
+        .to.be.revertedWith('Devcon6: passed auction winners length does not match the preset length')
     })
 
     it('reverts if winner does not exist', async function () {

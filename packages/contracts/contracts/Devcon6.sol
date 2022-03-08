@@ -81,7 +81,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         Status status = getStatus();
         require(
             status == Status.BIDDING_CLOSED,
-            "Devcon6: bidding is not closed yet"
+            "Devcon6: is not in bidding closed state"
         );
 
         if (_nextBidderID - 1 <= _raffleWinnersCount) {
@@ -90,7 +90,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         }
         require(
             auctionWinners.length == _auctionWinnersCount,
-            "Devcon6: passed auction winners length does not match preset length"
+            "Devcon6: passed auction winners length does not match the preset length"
         );
 
         for (uint256 i = 0; i < auctionWinners.length; i++) {
@@ -117,7 +117,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         if (block.timestamp >= _biddingEndTime) {
             return Status.BIDDING_CLOSED;
         }
-        if (block.timestamp > _biddingStartTime) {
+        if (block.timestamp >= _biddingStartTime) {
             return Status.BIDDING_OPEN;
         }
         return Status.WAITING_FOR_BIDDING;
