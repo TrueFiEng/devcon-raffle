@@ -205,6 +205,18 @@ describe('Devcon6', function () {
     }
   })
 
+  describe('settleRaffle', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.settleRaffle([1]))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if raffle is not settled', async function () {
+      await expect(devconAsOwner.settleRaffle([1]))
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
