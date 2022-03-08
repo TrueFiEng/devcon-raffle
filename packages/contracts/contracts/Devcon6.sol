@@ -15,7 +15,7 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     mapping(address => Bid) _bids;
     // bidderID -> address
     mapping(uint256 => address) _bidders;
-    uint256 _nextBidderID = 0;
+    uint256 _nextBidderID = 1;
 
     constructor(
         address initialOwner,

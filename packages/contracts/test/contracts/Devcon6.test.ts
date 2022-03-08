@@ -64,20 +64,20 @@ describe('Devcon6', function () {
       const bid = await devcon.getBid(bidderAddress)
 
       expect(bid.amount).to.be.equal(reservePrice)
-      expect(bid.bidderID).to.be.equal(0)
+      expect(bid.bidderID).to.be.equal(1)
     })
 
     it('saves bidder address', async function () {
       await devcon.bid({ value: reservePrice })
 
-      const savedBidderAddress = await devcon.getBidderAddress(0)
+      const savedBidderAddress = await devcon.getBidderAddress(1)
       expect(savedBidderAddress).to.be.equal(bidderAddress)
     })
 
     it('increases bidder ID', async function () {
       await devcon.bid({ value: reservePrice })
 
-      expect(await devcon.nextBidderID()).to.be.equal(1)
+      expect(await devcon.nextBidderID()).to.be.equal(2)
     })
 
     it('emits event on bid increase', async function () {
@@ -85,13 +85,13 @@ describe('Devcon6', function () {
 
       await expect(devcon.bid({ value: minBidIncrement }))
         .to.emit(devcon, 'NewBid')
-        .withArgs(bidderAddress, 0, reservePrice.add(minBidIncrement))
+        .withArgs(bidderAddress, 1, reservePrice.add(minBidIncrement))
     })
 
     it('emits event on bid', async function () {
       await expect(devcon.bid({ value: reservePrice }))
         .to.emit(devcon, 'NewBid')
-        .withArgs(bidderAddress, 0, reservePrice)
+        .withArgs(bidderAddress, 1, reservePrice)
     })
   })
 
@@ -116,8 +116,8 @@ describe('Devcon6', function () {
       await devcon.bid({ value: reservePrice })
 
       await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction([0], customGasLimit)
-      await expect(devconAsOwner.settleAuction([0], customGasLimit))
+      await devconAsOwner.settleAuction([1], customGasLimit)
+      await expect(devconAsOwner.settleAuction([1], customGasLimit))
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
@@ -133,7 +133,7 @@ describe('Devcon6', function () {
 
       await endBidding(devconAsOwner)
 
-      const auctionWinners = [BigNumber.from(1)]
+      const auctionWinners = [BigNumber.from(2)]
       await devconAsOwner.settleAuction(auctionWinners)
 
       expect(await devcon.getAuctionWinners()).to.deep.eq(auctionWinners)
