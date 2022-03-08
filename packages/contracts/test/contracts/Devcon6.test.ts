@@ -34,14 +34,14 @@ describe('Devcon6', function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
-      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is not in bidding open state')
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if bidding is already closed', async function () {
       const endTime = await devcon.biddingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
-      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is not in bidding open state')
+      await expect(devcon.bid()).to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if bid increase is too low', async function () {
@@ -119,14 +119,14 @@ describe('Devcon6', function () {
 
     it('reverts if bidding is in progress', async function () {
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: is not in bidding closed state')
+        .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
       await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: is not in bidding closed state')
+        .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('changes state if amount of bidders is lower than auctionWinnersCount', async function () {

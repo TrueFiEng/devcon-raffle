@@ -45,15 +45,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    modifier onlyInState(State requiredState) {
+        require(getState() == requiredState, "Devcon6: is in invalid state");
+
+        _;
+    }
+
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
-    function bid() external payable {
-        State state = getState();
-        require(
-            state == State.BIDDING_OPEN,
-            "Devcon6: is not in bidding open state"
-        );
-
+    function bid() external payable onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount > 0) {
             require(
@@ -74,13 +74,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function settleAuction(uint256[] memory auctionWinners) external onlyOwner {
-        State state = getState();
-        require(
-            state == State.BIDDING_CLOSED,
-            "Devcon6: is not in bidding closed state"
-        );
-
+    function settleAuction(uint256[] memory auctionWinners)
+        external
+        onlyOwner
+        onlyInState(State.BIDDING_CLOSED)
+    {
         if (getBiddersCount() <= _raffleWinnersCount) {
             _notEnoughParticipantsForAuction = true;
             return;
