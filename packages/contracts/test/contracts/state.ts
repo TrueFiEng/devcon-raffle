@@ -1,4 +1,4 @@
-export enum Status {
+export enum State {
   waitingForBidding,
   biddingOpen,
   biddingClosed,

@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Config.sol";
 import "./models/BidModel.sol";
-import "./models/StatusModel.sol";
+import "./models/StateModel.sol";
 
-contract Devcon6 is Ownable, Config, BidModel, StatusModel {
+contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _auctionWinners;
     uint256[] _raffleWinners;
     uint256[] _raffleParticipants;
@@ -48,9 +48,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
     function bid() external payable {
-        Status status = getStatus();
+        State state = getState();
         require(
-            status == Status.BIDDING_OPEN,
+            state == State.BIDDING_OPEN,
             "Devcon6: is not in bidding open state"
         );
 
@@ -75,9 +75,9 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
     }
 
     function settleAuction(uint256[] memory auctionWinners) external onlyOwner {
-        Status status = getStatus();
+        State state = getState();
         require(
-            status == Status.BIDDING_CLOSED,
+            state == State.BIDDING_CLOSED,
             "Devcon6: is not in bidding closed state"
         );
 
@@ -101,23 +101,23 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
         }
     }
 
-    function getStatus() public view returns (Status) {
+    function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
-            return Status.CLAIMING_CLOSED;
+            return State.CLAIMING_CLOSED;
         }
         if (_raffleWinners.length > 0) {
-            return Status.RAFFLE_SETTLED;
+            return State.RAFFLE_SETTLED;
         }
         if (_auctionWinners.length > 0 || _notEnoughParticipantsForAuction) {
-            return Status.AUCTION_SETTLED;
+            return State.AUCTION_SETTLED;
         }
         if (block.timestamp >= _biddingEndTime) {
-            return Status.BIDDING_CLOSED;
+            return State.BIDDING_CLOSED;
         }
         if (block.timestamp >= _biddingStartTime) {
-            return Status.BIDDING_OPEN;
+            return State.BIDDING_OPEN;
         }
-        return Status.WAITING_FOR_BIDDING;
+        return State.WAITING_FOR_BIDDING;
     }
 
     function getBid(address bidder) external view returns (Bid memory) {

@@ -12,7 +12,7 @@ import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
 import { BigNumber, BigNumberish, Wallet } from 'ethers'
-import { Status } from './status'
+import { State } from './state'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -129,7 +129,7 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is not in bidding closed state')
     })
 
-    it('changes status if amount of bidders is lower than auctionWinnersCount', async function () {
+    it('changes state if amount of bidders is lower than auctionWinnersCount', async function () {
       let owner: Wallet
       ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
       devconAsOwner = devcon.connect(owner)
@@ -137,7 +137,7 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([])
 
-      expect(await devconAsOwner.getStatus()).to.be.equal(Status.auctionSettled)
+      expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
       expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([])
     })
 
@@ -182,19 +182,19 @@ describe('Devcon6', function () {
     }
   })
 
-  describe('getStatus', function () {
-    it('pending', async function () {
+  describe('getState', function () {
+    it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
-      expect(await devcon.getStatus()).to.be.equal(Status.waitingForBidding)
+      expect(await devcon.getState()).to.be.equal(State.waitingForBidding)
     })
 
     it('bidding open', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime - MINUTE })))
 
-      expect(await devcon.getStatus()).to.be.equal(Status.biddingOpen)
+      expect(await devcon.getState()).to.be.equal(State.biddingOpen)
     })
 
     it('bidding closed', async function () {
@@ -202,15 +202,15 @@ describe('Devcon6', function () {
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
       await network.provider.send('evm_mine')
 
-      expect(await devcon.getStatus()).to.be.equal(Status.biddingClosed)
+      expect(await devcon.getState()).to.be.equal(State.biddingClosed)
     })
 
     it.skip('auction settled', async function () {
-      expect(await devcon.getStatus()).to.be.equal(Status.auctionSettled)
+      expect(await devcon.getState()).to.be.equal(State.auctionSettled)
     })
 
     it.skip('raffle settled', async function () {
-      expect(await devcon.getStatus()).to.be.equal(Status.raffleSettled)
+      expect(await devcon.getState()).to.be.equal(State.raffleSettled)
     })
 
     it('claiming closed', async function () {
@@ -218,7 +218,7 @@ describe('Devcon6', function () {
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
       await network.provider.send('evm_mine')
 
-      expect(await devcon.getStatus()).to.be.equal(Status.claimingClosed)
+      expect(await devcon.getState()).to.be.equal(State.claimingClosed)
     })
   })
 })
