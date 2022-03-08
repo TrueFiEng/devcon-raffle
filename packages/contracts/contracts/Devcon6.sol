@@ -108,6 +108,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    function settleRaffle(uint256[] memory raffleWinners)
+        external
+        onlyOwner
+        onlyInState(State.AUCTION_SETTLED)
+    {}
+
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
         require(
