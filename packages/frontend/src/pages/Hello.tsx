@@ -1,7 +1,6 @@
 import React from 'react'
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { Colors } from '../styles/colors'
 
 export const Hello = () => <HelloHeader>Hello World!</HelloHeader>
 
