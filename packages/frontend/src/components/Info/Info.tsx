@@ -1,4 +1,4 @@
-import { Header } from 'src/components/Header'
+import { Header } from 'src/components/Info/Header'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
