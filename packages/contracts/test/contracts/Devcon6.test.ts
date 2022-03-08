@@ -1,6 +1,11 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { devcon6Fixture, devcon6FixtureWithStartTime, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
+import {
+  configuredDevcon6Fixture,
+  devcon6Fixture,
+  minBidIncrement,
+  reservePrice
+} from 'fixtures/devcon6Fixture'
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
@@ -27,7 +32,7 @@ describe('Devcon6', function () {
   describe('bid', function () {
     it('reverts if bidding is not opened yet', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
-      ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime + MINUTE)))
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
       await expect(devcon.bid()).to.be.revertedWith('Devcon6: bidding is not open yet')
     })
@@ -168,14 +173,14 @@ describe('Devcon6', function () {
   describe('getStatus', function () {
     it('pending', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
-      ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime + MINUTE)))
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
       expect(await devcon.getStatus()).to.be.equal(Status.pending)
     })
 
     it('bidding open', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
-      ({ devcon } = await loadFixture(devcon6FixtureWithStartTime(currentTime - MINUTE)))
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime - MINUTE })))
 
       expect(await devcon.getStatus()).to.be.equal(Status.biddingOpen)
     })
