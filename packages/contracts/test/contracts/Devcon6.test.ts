@@ -102,6 +102,11 @@ describe('Devcon6', function () {
   })
 
   describe('settleAuction', function () {
+    beforeEach(async function () {
+      await devcon.bid({ value: reservePrice })
+      await devconAsOwner.bid({ value: reservePrice })
+    })
+
     it('reverts if called not by owner', async function () {
       await expect(devcon.settleAuction([1]))
         .to.be.revertedWith('Ownable: caller is not the owner')
@@ -114,29 +119,24 @@ describe('Devcon6', function () {
 
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
-      await expect(settleAuction([1]))
+      await expect(settleAuction([5]))
         .to.be.revertedWith('Devcon6: given winner does not exist')
     })
 
     it('reverts if called twice', async function () {
-      await devcon.bid({ value: reservePrice })
-
       await endBidding(devconAsOwner)
       await settleAuction([1])
       await expect(settleAuction([1]))
         .to.be.revertedWith('Devcon6: settleAuction can only be called after bidding is closed')
     })
 
-    it('reverts if passed array of auction winners is empty', async function () {
+    it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([]))
-        .to.be.revertedWith('Devcon6: passed array of auction winners is empty')
+        .to.be.revertedWith('Devcon6: passed auction winners length does not match preset length')
     })
 
     it('saves auction winners', async function () {
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
-
       await endBidding(devconAsOwner)
 
       const auctionWinners = [BigNumber.from(2)]
@@ -146,8 +146,6 @@ describe('Devcon6', function () {
     })
 
     it('removes winners from raffle participants', async function () {
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
       expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1), BigNumber.from(2)])
 
       await endBidding(devconAsOwner)

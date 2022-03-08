@@ -4,8 +4,8 @@ import { MockProvider } from '@ethereum-waffle/provider/dist/esm/MockProvider'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { WEEK } from 'utils/consts'
 
-export const auctionWinnersCount = 20
-export const raffleWinnersCount = 80
+export const auctionWinnersCount = 1
+export const raffleWinnersCount = 1
 export const reservePrice = utils.parseEther('0.5')
 export const minBidIncrement = utils.parseEther('0.005')
 

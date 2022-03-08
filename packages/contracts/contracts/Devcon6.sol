@@ -83,6 +83,14 @@ contract Devcon6 is Ownable, Config, BidModel, StatusModel {
             "Devcon6: settleAuction can only be called after bidding is closed"
         );
 
+        if (_nextBidderID - 1 <= _raffleWinnersCount) {
+            return;
+        }
+        require(
+            auctionWinners.length == _auctionWinnersCount,
+            "Devcon6: passed auction winners length does not match preset length"
+        );
+
         for (uint256 i = 0; i < auctionWinners.length; i++) {
             uint256 winner = auctionWinners[i];
             require(
