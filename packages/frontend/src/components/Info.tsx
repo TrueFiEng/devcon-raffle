@@ -13,6 +13,6 @@ export const Info = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  flex: 1;
   background: ${Colors.White};
 `
