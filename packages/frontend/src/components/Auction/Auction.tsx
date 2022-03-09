@@ -1,4 +1,4 @@
-import { Bid } from 'src/components/Bid'
+import { Bid } from 'src/components/Auction/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
