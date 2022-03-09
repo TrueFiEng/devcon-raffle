@@ -7,14 +7,16 @@ import styled from 'styled-components'
 
 export const TimeLeft = () => {
   const [endTimestamp] = useState(BigNumber.from(Math.floor(Date.now() / 1000) + 1234))
-  const [heartbeat, beat] = useState(true)
+
+  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(endTimestamp))
   useEffect(() => {
-    setTimeout(() => beat(!heartbeat), 60_000)
-  }, [heartbeat])
+    setTimeout(() => setTimeLeft(formatTimeLeft(endTimestamp)), 60_000)
+  }, [timeLeft, endTimestamp])
+
   return (
     <div>
       <p>
-        Time left <RemainingTime>{formatTimeLeft(endTimestamp)}</RemainingTime>
+        Time left <RemainingTime>{timeLeft}</RemainingTime>
       </p>
       <p>Ends on {formatEndDate(endTimestamp)}</p>
     </div>
