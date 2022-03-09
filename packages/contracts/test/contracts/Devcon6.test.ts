@@ -235,10 +235,12 @@ describe('Devcon6', function () {
       expect(await devcon.getState()).to.be.equal(State.biddingClosed)
     })
 
+    // TODO rethink, after implementing `settleRaffle` whether test this here or in `settleAuction` tests
     it.skip('auction settled', async function () {
       expect(await devcon.getState()).to.be.equal(State.auctionSettled)
     })
 
+    // TODO rethink, after implementing `settleRaffle` whether test this here or in `settleRaffle` tests
     it.skip('raffle settled', async function () {
       expect(await devcon.getState()).to.be.equal(State.raffleSettled)
     })
