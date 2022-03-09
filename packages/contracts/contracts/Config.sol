@@ -21,6 +21,11 @@ contract Config {
         uint256 reservePrice_,
         uint256 minBidIncrement_
     ) {
+        require(
+            raffleWinnersCount_ % 4 == 0,
+            "Devcon6: raffle winners count must be divisible by 4"
+        );
+
         _biddingStartTime = biddingStartTime_;
         _biddingEndTime = biddingEndTime_;
         _claimingEndTime = claimingEndTime_;
