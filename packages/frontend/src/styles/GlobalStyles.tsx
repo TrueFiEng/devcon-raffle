@@ -47,6 +47,7 @@ export const GlobalStyles = createGlobalStyle`
     font-family: 'Space Mono', 'Roboto Mono', monospace;
     font-style: normal;
     color: ${Colors.Black};
+    margin: 0;
   }
 
   h1 {
@@ -81,6 +82,7 @@ export const GlobalStyles = createGlobalStyle`
   p {
     font-size: 16px;
     line-height: 1.5;
+    margin: 0;
   }
   button, a {
     cursor: pointer;
