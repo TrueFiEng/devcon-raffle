@@ -5,9 +5,7 @@ import { waffle } from 'hardhat'
 type FixtureLoader = ReturnType<typeof waffle.createFixtureLoader>
 interface FixtureReturns {
   provider: MockProvider,
-  wallet: Wallet,
-  other: Wallet,
-  another: Wallet,
+  wallets: Wallet[],
 }
 
 let loadFixture: ReturnType<typeof setupOnce> | undefined
@@ -30,9 +28,9 @@ function setupOnce() {
   async function makeLoader(): Promise<{ loader: FixtureLoader, returns: FixtureReturns }> {
     const provider = waffle.provider
     await provider.send('hardhat_reset', [])
-    const [wallet, other, another, ...rest] = provider.getWallets()
-    const loader = waffle.createFixtureLoader([wallet, other, another, ...rest], provider)
-    const returns = { provider, wallet, other, another }
+    const wallets = provider.getWallets()
+    const loader = waffle.createFixtureLoader(wallets, provider)
+    const returns = { provider, wallets }
     return { loader, returns }
   }
 
