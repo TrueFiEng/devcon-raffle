@@ -73,7 +73,7 @@ export const InfoAccordion = () => {
           </StyledContent>
         </StyledItem>
 
-        <StyledItem value="item-3">
+        <StyledItem value="item-4">
           <StyledHeader>
             <StyledTrigger>
               <span>Okay, I got a ticket. What now?</span>
@@ -100,7 +100,6 @@ const StyledHeader = styled(Accordion.Header)`
 const StyledItem = styled(Accordion.Item)`
   margin-bottom: 24px;
 `
-
 const StyledTrigger = styled(Accordion.AccordionTrigger)`
   width: 100%;
   display: flex;
