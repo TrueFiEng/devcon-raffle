@@ -17,11 +17,11 @@ describe('Devcon6', function () {
   let devcon: Devcon6
   let devconAsOwner: Devcon6
   let bidderAddress: string
+  let wallets: Wallet[]
 
   beforeEach(async function () {
-    let owner: Wallet
-    ({ provider, devcon, other: owner } = await loadFixture(devcon6Fixture))
-    devconAsOwner = devcon.connect(owner)
+    ({ provider, devcon, wallets } = await loadFixture(devcon6Fixture))
+    devconAsOwner = devcon.connect(wallets[1])
     bidderAddress = await devcon.signer.getAddress()
   })
 
@@ -127,9 +127,8 @@ describe('Devcon6', function () {
     })
 
     it('changes state if amount of bidders is less than auctionWinnersCount', async function () {
-      let owner: Wallet
-      ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
-      devconAsOwner = devcon.connect(owner)
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
+      devconAsOwner = devcon.connect(wallets[1])
 
       await endBidding(devconAsOwner)
       await settleAuction([])
@@ -138,9 +137,8 @@ describe('Devcon6', function () {
     })
 
     it('chooses auction winners when there are not enough participants for entire auction', async function () {
-      let owner: Wallet
-      ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
-      devconAsOwner = devcon.connect(owner)
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
+      devconAsOwner = devcon.connect(wallets[1])
 
       await devcon.bid({ value: reservePrice })
       await devconAsOwner.bid({ value: reservePrice })
@@ -174,10 +172,9 @@ describe('Devcon6', function () {
     })
 
     it('removes multiple winners from raffle participants', async function () {
-      let owner, another: Wallet
-      ({ devcon, other: owner, another } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-      devconAsOwner = devcon.connect(owner)
-      const devconAsAnother = devcon.connect(another)
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(wallets[1])
+      const devconAsAnother = devcon.connect(wallets[2])
 
       await devcon.bid({ value: reservePrice })
       await devconAsOwner.bid({ value: reservePrice })
@@ -223,7 +220,7 @@ describe('Devcon6', function () {
 
     it('picks all participants as winners if amount of bidders is lower than raffleWinnersCount', function () {
 
-    });
+    })
   })
 
   describe('getState', function () {

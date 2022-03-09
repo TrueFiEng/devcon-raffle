@@ -28,16 +28,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-    Config(
-        biddingStartTime,
-        biddingEndTime,
-        claimingEndTime,
-        auctionWinnersCount,
-        raffleWinnersCount,
-        reservePrice,
-        minBidIncrement
-    )
-    Ownable()
+        Config(
+            biddingStartTime,
+            biddingEndTime,
+            claimingEndTime,
+            auctionWinnersCount,
+            raffleWinnersCount,
+            reservePrice,
+            minBidIncrement
+        )
+        Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -114,7 +114,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
-        uint256 participantsCount = _raffleParticipants.length - _auctionWinners.length;
+        uint256 participantsCount = _raffleParticipants.length -
+            _auctionWinners.length;
         if (participantsCount <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
@@ -125,7 +126,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: passed raffle winners length does not match the preset length"
         );
 
-        for (uint256 i = 0; i < randomNumbers.length; i++){
+        for (uint256 i = 0; i < randomNumbers.length; i++) {
             selectRandomRaffleWinners(randomNumbers[i]);
         }
     }
@@ -141,8 +142,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function selectRandomRaffleWinners(uint256 randomNumber) private {
         uint256 participantsLength = _raffleParticipants.length;
-        for(uint256 i = 0; i < 4; i++) {
-            uint64 smallRandom = randomNumber & _randomMask;
+        for (uint256 i = 0; i < 4; i++) {
+            uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
 
             _raffleWinners.push(_raffleParticipants[winnerIndex]);
@@ -189,9 +190,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-    external
-    view
-    returns (address)
+        external
+        view
+        returns (address)
     {
         return _bidders[bidderID_];
     }
