@@ -10,10 +10,7 @@ export const InfoAccordion = () => {
       <Accordion.Root type="single" defaultValue="item-1" collapsible>
         <Accordion.Item value="item-1">
           <StyledHeader>
-            <StyledTrigger>
-              <span>How to buy a ticket for Devon 6?</span>
-              <AccordionArrow color={Colors.Black} size={22} />
-            </StyledTrigger>
+            <AccordionStyledTrigger heading="How to buy a ticket for Devon 6?" />
           </StyledHeader>
           <StyledContent>
             Join the ruffle by submitting your bid. Bid high, to win an action or take your chance in a raffle pool. The
@@ -23,10 +20,7 @@ export const InfoAccordion = () => {
 
         <Accordion.Item value="item-2">
           <StyledHeader>
-            <StyledTrigger>
-              <span>Raffle rules</span>
-              <AccordionArrow color={Colors.Black} size={22} />
-            </StyledTrigger>
+            <AccordionStyledTrigger heading="Raffle rules" />
           </StyledHeader>
           <StyledContent>
             <RuleText>
@@ -63,10 +57,7 @@ export const InfoAccordion = () => {
 
         <Accordion.Item value="item-3">
           <StyledHeader>
-            <StyledTrigger>
-              <span>In what form will I get the ticket?</span>
-              <AccordionArrow color={Colors.Black} size={22} />
-            </StyledTrigger>
+            <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
           <StyledContent>
             The ticket is an NFT token held in your wallet. A unique token will be minted in the same moment you make a
@@ -76,10 +67,7 @@ export const InfoAccordion = () => {
 
         <Accordion.Item value="item-4">
           <StyledHeader>
-            <StyledTrigger>
-              <span>Okay, I got a ticket. What now?</span>
-              <AccordionArrow color={Colors.Black} size={22} />
-            </StyledTrigger>
+            <AccordionStyledTrigger heading="Okay, I got a ticket. What now?" />
           </StyledHeader>
           <StyledContent>
             You will be asked to sign a message with you wallet at the Devon 6 event. Be sure to bring a device with the
@@ -88,6 +76,19 @@ export const InfoAccordion = () => {
         </Accordion.Item>
       </Accordion.Root>
     </Wrapper>
+  )
+}
+
+interface AccordionTriggerProps {
+  heading: string
+}
+
+const AccordionStyledTrigger = ({ heading }: AccordionTriggerProps) => {
+  return (
+    <StyledTrigger>
+      <span>{heading}</span>
+      <AccordionArrow color={Colors.Black} size={22} />
+    </StyledTrigger>
   )
 }
 
