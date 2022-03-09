@@ -107,7 +107,14 @@ describe('Devcon6', function () {
     beforeEach(async function () {
       await devcon.bid({ value: reservePrice })
       await devconAsOwner.bid({ value: reservePrice })
+      await bidAsWallet(wallets[2])
+      await bidAsWallet(wallets[3])
+      await bidAsWallet(wallets[4])
     })
+
+    async function bidAsWallet(wallet: Wallet) {
+      await devcon.connect(wallet).bid({ value: reservePrice })
+    }
 
     it('reverts if called not by owner', async function () {
       await expect(devcon.settleAuction([1]))
@@ -158,7 +165,7 @@ describe('Devcon6', function () {
 
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
-      await expect(settleAuction([5]))
+      await expect(settleAuction([7]))
         .to.be.revertedWith('Devcon6: given winner does not exist')
     })
 
@@ -171,7 +178,7 @@ describe('Devcon6', function () {
       expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
-    it('removes multiple winners from raffle participants', async function () {
+    it('removes winners from raffle participants', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
       devconAsOwner = devcon.connect(wallets[1])
       const devconAsAnother = devcon.connect(wallets[2])
