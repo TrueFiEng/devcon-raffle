@@ -1,3 +1,4 @@
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Form = styled.form`
@@ -10,6 +11,8 @@ export const Form = styled.form`
 
 export const FormRow = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
+  color: ${Colors.White};
 `

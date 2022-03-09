@@ -1,8 +1,25 @@
 import { Colors } from 'src/styles/colors'
+import { Form, FormRow } from 'src/components/Form/Form'
+import { Input } from 'src/components/Form/Input'
 import styled from 'styled-components'
 
 export const Bid = () => {
-  return <Wrapper>Place bid</Wrapper>
+  return (
+    <Wrapper>
+      <h2>Place bid</h2>
+      <Form>
+        <FormRow>
+          <span>Raffle price (min. bid)</span>
+          <span>0.15 ETH</span>
+        </FormRow>
+        <Input />
+        <FormRow>
+          <span>Your place in the raffle after the bid</span>
+          <span>No. -</span>
+        </FormRow>
+      </Form>
+    </Wrapper>
+  )
 }
 
 const Wrapper = styled.div`
