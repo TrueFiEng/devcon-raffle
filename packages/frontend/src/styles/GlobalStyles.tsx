@@ -7,7 +7,7 @@ export const GlobalStyles = createGlobalStyle`
   ${fonts}
 
   * {
-    font-family: 'Regola Pro', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
   }
 
   *, *:before, *:after {
@@ -24,7 +24,7 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Regola Pro', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
@@ -44,32 +44,36 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   h1, h2, h3, h4 {
+    font-family: 'Space Mono', 'Roboto Mono', monospace;
+    font-style: normal;
     color: ${Colors.Black};
     margin: 0;
   }
 
   h1 {
     font-style: normal;
-    font-size: 38px;
+    font-weight: 700;
+    font-size: 40px;
     line-height: 1.2;
   }
 
   h2 {
     font-style: normal;
+    font-weight: 700;
     font-size: 28px;
     line-height: 40px;
   }
 
   h3 {
     font-style: normal;
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 400;
     line-height: 32px;
-    letter-spacing: 0em;
   }
 
   h4 {
     font-style: normal;
+    font-weight: 700;
     font-size: 18px;
     line-height: 26px;
     letter-spacing: 0em;
