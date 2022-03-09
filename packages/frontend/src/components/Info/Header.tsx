@@ -17,6 +17,7 @@ const StyledHeader = styled.header`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
   row-gap: 10px;
   width: 100%;
   height: 225px;
