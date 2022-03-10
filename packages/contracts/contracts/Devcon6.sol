@@ -8,6 +8,8 @@ import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
+// TODO replace i++ with ++i everywhere
+
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -17,6 +19,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // bidderID -> address
     mapping(uint256 => address) _bidders;
     uint256 _nextBidderID = 1;
+    // TODO use 0xffffffff
+    // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
+
     uint256 constant _randomMask = 0xffffffffffffffff; // 8 bytes (64 bits) to construct new random numbers
 
     constructor(
@@ -74,7 +79,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    // auctionWinners should be sorted in descending order
+    // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
     function settleAuction(uint256[] calldata auctionWinners)
         external
         onlyOwner
@@ -102,15 +107,17 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = auctionWinners[i];
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
+
         }
     }
 
+    // TODO see if it is cheaper to extract _raffleParticipants.length to variable
     function settleRaffle(uint256[] memory randomNumbers)
         external
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
-        uint256 participantsCount = _raffleParticipants.length - _winnersCount;
+        uint256 participantsCount = _raffleParticipants.length - _winnersCount; // TODO don't remove winners count
         if (participantsCount <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
@@ -129,6 +136,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectAllRaffleParticipantsAsWinners() private {
         for (uint256 i = 0; i < _raffleParticipants.length; i++) {
             setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
+
         }
     }
 
@@ -158,7 +166,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
-            randomNumber = randomNumber >> 64;
+            randomNumber = randomNumber >> 64; // TODO change to 32
         }
     }
 
