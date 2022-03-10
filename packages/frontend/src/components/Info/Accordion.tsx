@@ -97,20 +97,24 @@ const Wrapper = styled.div`
 `
 const StyledHeader = styled(Accordion.Header)`
   width: 100%;
-  border-bottom: 1px solid ${Colors.Black};
 `
 const StyledTrigger = styled(Accordion.AccordionTrigger)`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${Colors.GreenLight};
   padding: 4px;
-  margin-bottom: 16px;
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+  font-style: normal;
   border: none;
-  font-weight: 600;
+  background-color: ${Colors.GreenLight};
+  text-align: left;
   font-size: 22px;
   line-height: 32px;
+
+  &[data-state='open'] {
+    font-weight: 700;
+  }
 
   &[data-state='open'] > div {
     transform: translateY(50%) rotate(180deg);

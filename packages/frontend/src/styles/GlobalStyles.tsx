@@ -6,10 +6,6 @@ import { fonts } from './fonts'
 export const GlobalStyles = createGlobalStyle`
   ${fonts}
 
-  * {
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
-  }
-
   *, *:before, *:after {
     box-sizing: border-box;
   }
