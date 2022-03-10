@@ -206,6 +206,11 @@ describe('Devcon6', function () {
   })
 
   describe('settleRaffle', function () {
+    beforeEach(async function () {
+      await devcon.bid({ value: reservePrice })
+      await devconAsOwner.bid({ value: reservePrice })
+    })
+
     it('reverts if called not by owner', async function () {
       await expect(devcon.settleRaffle([1]))
         .to.be.revertedWith('Ownable: caller is not the owner')
@@ -215,6 +220,10 @@ describe('Devcon6', function () {
       await expect(devconAsOwner.settleRaffle([1]))
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
+
+    it('picks all participants as winners if amount of bidders is lower than raffleWinnersCount', function () {
+
+    });
   })
 
   describe('getState', function () {

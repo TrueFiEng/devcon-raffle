@@ -16,6 +16,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // bidderID -> address
     mapping(uint256 => address) _bidders;
     uint256 _nextBidderID = 1;
+    uint256 constant _randomMask = 0xffffffffffffffff; // 8 bytes (64 bits) to construct new random numbers
 
     constructor(
         address initialOwner,
@@ -27,16 +28,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-        Config(
-            biddingStartTime,
-            biddingEndTime,
-            claimingEndTime,
-            auctionWinnersCount,
-            raffleWinnersCount,
-            reservePrice,
-            minBidIncrement
-        )
-        Ownable()
+    Config(
+        biddingStartTime,
+        biddingEndTime,
+        claimingEndTime,
+        auctionWinnersCount,
+        raffleWinnersCount,
+        reservePrice,
+        minBidIncrement
+    )
+    Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -108,11 +109,49 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    function settleRaffle(uint256[] memory raffleWinners)
+    function settleRaffle(uint256[] memory randomNumbers)
         external
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
-    {}
+    {
+        uint256 participantsCount = _raffleParticipants.length - _auctionWinners.length;
+        if (participantsCount <= _raffleWinnersCount) {
+            selectAllRaffleParticipantsAsWinners();
+            return;
+        }
+
+        require(
+            randomNumbers.length == _raffleWinnersCount / 4,
+            "Devcon6: passed raffle winners length does not match the preset length"
+        );
+
+        for (uint256 i = 0; i < randomNumbers.length; i++){
+            selectRandomRaffleWinners(randomNumbers[i]);
+        }
+    }
+
+    function selectAllRaffleParticipantsAsWinners() private {
+        for (uint256 i = 0; i < _raffleParticipants.length; i++) {
+            uint256 winner = _raffleParticipants[i];
+            if (winner != 0) {
+                _raffleWinners.push(winner);
+            }
+        }
+    }
+
+    function selectRandomRaffleWinners(uint256 randomNumber) private {
+        uint256 participantsLength = _raffleParticipants.length;
+        for(uint256 i = 0; i < 4; i++) {
+            uint64 smallRandom = randomNumber & _randomMask;
+            uint256 winnerIndex = smallRandom % participantsLength;
+
+            _raffleWinners.push(_raffleParticipants[winnerIndex]);
+            removeRaffleParticipant(winnerIndex);
+
+            --participantsLength;
+            randomNumber = randomNumber >> 64;
+        }
+    }
 
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
@@ -150,9 +189,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-        external
-        view
-        returns (address)
+    external
+    view
+    returns (address)
     {
         return _bidders[bidderID_];
     }
