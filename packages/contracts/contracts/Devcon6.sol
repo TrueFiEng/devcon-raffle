@@ -12,7 +12,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _auctionWinners;
     uint256[] _raffleWinners;
     uint256[] _raffleParticipants;
-    bool _notEnoughParticipantsForAuction;
+    SettleState _settleState = SettleState.AWAITING_SETTLING;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -80,8 +80,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.BIDDING_CLOSED)
     {
+        _settleState = SettleState.AUCTION_SETTLED;
         if (getBiddersCount() <= _raffleWinnersCount) {
-            _notEnoughParticipantsForAuction = true;
             return;
         }
 
@@ -124,10 +124,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
         }
-        if (_raffleWinners.length > 0) {
+        if (_settleState == SettleState.RAFFLE_SETTLED) {
             return State.RAFFLE_SETTLED;
         }
-        if (_auctionWinners.length > 0 || _notEnoughParticipantsForAuction) {
+        if (_settleState == SettleState.AUCTION_SETTLED) {
             return State.AUCTION_SETTLED;
         }
         if (block.timestamp >= _biddingEndTime) {

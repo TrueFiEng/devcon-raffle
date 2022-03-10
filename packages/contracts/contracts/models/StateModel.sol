@@ -11,4 +11,10 @@ abstract contract StateModel {
         RAFFLE_SETTLED,
         CLAIMING_CLOSED
     }
+
+    enum SettleState {
+        AWAITING_SETTLING,
+        AUCTION_SETTLED,
+        RAFFLE_SETTLED
+    }
 }
