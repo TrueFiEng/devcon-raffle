@@ -16,7 +16,7 @@ export const Input = ({ bid, setBid }: InputProps) => {
 
   return (
     <InputWrapper>
-      <InputLabel>Balance:{etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
+      <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
       <StyledInputWrapper error={error}>
         <TokenIconWrapper>
           <EtherIcon />
@@ -52,7 +52,6 @@ const InputLabel = styled.div`
   width: 100%;
   max-width: 100%;
   margin-bottom: 4px;
-  overflow: hidden;
   color: ${Colors.White};
   font-size: 12px;
   line-height: 18px;
@@ -65,18 +64,16 @@ const StyledInputWrapper = styled.div<{ error?: boolean; disabled?: boolean }>`
   width: 100%;
   height: 50px;
   padding: 13px;
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
   border-color: ${({ error }) => (error ? Colors.Red : Colors.White)};
-  border-radius: 4px;
-  background-color: ${({ disabled }) => (disabled ? Colors.Athens : Colors.White)};
-  background-color: ${Colors.White};
+  background-color: ${({ disabled }) => (disabled ? Colors.GreyLight : Colors.White)};
   transition: all 0.25s ease;
 
   &:hover,
   &:focus-visible,
   &:focus-within {
-    border-color: ${({ error }) => (error ? Colors.Red : Colors.White)};
+    border-color: ${({ error }) => (error ? Colors.Red : Colors.Green)};
   }
 `
 
@@ -131,13 +128,9 @@ const TokenIconWrapper = styled.div`
 `
 
 const InputTokenName = styled.span`
-  max-width: 100%;
   font-size: 16px;
   line-height: 24px;
   color: ${Colors.Black};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   z-index: 2;
 `
 
