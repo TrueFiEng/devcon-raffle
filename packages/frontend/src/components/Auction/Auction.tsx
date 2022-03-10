@@ -6,7 +6,7 @@ import styled from 'styled-components'
 export const Auction = () => {
   return (
     <Wrapper>
-      <BidForm minbid={0.15} bidList={bidList} />
+      <BidForm minimumBid={0.15} bidList={bidList} />
     </Wrapper>
   )
 }

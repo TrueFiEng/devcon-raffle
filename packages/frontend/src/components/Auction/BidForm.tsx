@@ -6,11 +6,11 @@ import { Bid } from 'src/models/Bid'
 import styled from 'styled-components'
 
 interface BidProps {
-  minbid: number
+  minimumBid: number
   bidList: Bid[]
 }
 
-export const BidForm = ({ minbid, bidList }: BidProps) => {
+export const BidForm = ({ minimumBid, bidList }: BidProps) => {
   const { account } = useEthers()
   const [bid, setBid] = useState(0)
 
@@ -25,7 +25,7 @@ export const BidForm = ({ minbid, bidList }: BidProps) => {
       >
         <FormRow>
           <span>Raffle price (min. bid)</span>
-          <span>{minbid} ETH</span>
+          <span>{minimumBid} ETH</span>
         </FormRow>
         <Input bid={bid} setBid={setBid} />
         <FormRow>
