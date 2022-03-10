@@ -1,6 +1,6 @@
 const config = {
   testEnvironment: 'jsdom',
-  testMatch: ['<rootDir>/test/**/*.test.ts(x)'],
+  testMatch: ['<rootDir>/test/**/*.test.{ts,tsx}'],
   setupFilesAfterEnv: [
     '<rootDir>/test/setupTests.ts'
   ],

@@ -1,10 +1,16 @@
-import React from 'react'
+import { BigNumber } from '@ethersproject/bignumber'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { TimeLeft } from './TimeLeft'
+
 export const Header = () => {
+  const [endTimestamp] = useState(BigNumber.from(Math.floor(Date.now() / 1000) + 1234))
+
   return (
     <StyledHeader>
       <h1>Devcon 6 Ticket Sale</h1>
+      <TimeLeft endTimestamp={endTimestamp} />
     </StyledHeader>
   )
 }

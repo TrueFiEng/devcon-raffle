@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.5.0",
     "@radix-ui/react-accordion": "^0.1.6",
     "@types/styled-components": "^5.1.24",
     "@usedapp/core": "^0.11.0",
