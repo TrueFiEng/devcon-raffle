@@ -23,8 +23,8 @@ contract Config {
         uint256 minBidIncrement_
     ) {
         require(
-            raffleWinnersCount_ % 4 == 0, // TODO modulo 8
-            "Devcon6: raffle winners count must be divisible by 4"
+            raffleWinnersCount_ % 8 == 0,
+            "Devcon6: raffle winners count must be divisible by 8"
         );
 
         _biddingStartTime = biddingStartTime_;
