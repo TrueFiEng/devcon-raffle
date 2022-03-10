@@ -231,9 +231,9 @@ describe('Devcon6', function () {
         const winningBid = await getBidByID(winnersBidderIDs[i])
         if (i === 0) {
           expect(winningBid.winType).to.be.eq(WinType.goldenTicket)
-        } else {
-          expect(winningBid.winType).to.be.eq(WinType.raffle)
+          continue
         }
+        expect(winningBid.winType).to.be.eq(WinType.raffle)
       }
     })
   })

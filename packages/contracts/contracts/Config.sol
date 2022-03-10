@@ -12,6 +12,7 @@ contract Config {
     uint256 public _minBidIncrement;
 
     // TODO check if it makes sense to use smaller types to save on calldata cost
+    // TODO think about edge cases with auctionWinnersCount_, raffleWinnersCount_
     constructor(
         uint256 biddingStartTime_,
         uint256 biddingEndTime_,
@@ -22,7 +23,7 @@ contract Config {
         uint256 minBidIncrement_
     ) {
         require(
-            raffleWinnersCount_ % 4 == 0,
+            raffleWinnersCount_ % 4 == 0, // TODO modulo 8
             "Devcon6: raffle winners count must be divisible by 4"
         );
 
