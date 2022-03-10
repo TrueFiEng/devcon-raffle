@@ -1,4 +1,4 @@
-import { IconBase, IconProps } from 'src/assets/IconBase'
+import { IconBase, IconProps } from 'src/components/Icons/IconBase'
 
 export const ArrowDownIcon = ({ color, size, className }: IconProps) => {
   return (
