@@ -19,10 +19,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // bidderID -> address
     mapping(uint256 => address) _bidders;
     uint256 _nextBidderID = 1;
-    // TODO use 0xffffffff
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
-
-    uint256 constant _randomMask = 0xffffffffffffffff; // 8 bytes (64 bits) to construct new random numbers
+    uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
 
     constructor(
         address initialOwner,
@@ -117,14 +115,13 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
-        uint256 participantsCount = _raffleParticipants.length - _winnersCount; // TODO don't remove winners count
-        if (participantsCount <= _raffleWinnersCount) {
+        if (_raffleParticipants.length <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
         }
 
         require(
-            randomNumbers.length == _raffleWinnersCount / 4,
+            randomNumbers.length == _raffleWinnersCount / 8,
             "Devcon6: passed raffle winners length does not match the preset length"
         );
 
@@ -136,7 +133,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectAllRaffleParticipantsAsWinners() private {
         for (uint256 i = 0; i < _raffleParticipants.length; i++) {
             setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
-
         }
     }
 
@@ -151,7 +147,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function selectRandomRaffleWinners(uint256 randomNumber) private {
         uint256 participantsLength = _raffleParticipants.length;
-        for (uint256 i = 0; i < 4; i++) {
+        for (uint256 i = 0; i < 8; i++) {
             uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
 
@@ -166,7 +162,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
-            randomNumber = randomNumber >> 64; // TODO change to 32
+            randomNumber = randomNumber >> 32;
         }
     }
 
