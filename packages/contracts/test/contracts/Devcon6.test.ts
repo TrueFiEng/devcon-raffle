@@ -13,6 +13,7 @@ import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
 import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { State } from './state'
+import { WinType } from './winType'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -68,8 +69,9 @@ describe('Devcon6', function () {
 
       const bid = await devcon.getBid(bidderAddress)
 
-      expect(bid.amount).to.be.equal(reservePrice)
       expect(bid.bidderID).to.be.equal(1)
+      expect(bid.amount).to.be.equal(reservePrice)
+      expect(bid.winType).to.be.equal(WinType.loss)
     })
 
     it('saves bidder address', async function () {
@@ -138,7 +140,6 @@ describe('Devcon6', function () {
       await settleAuction([])
 
       expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
-      expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([])
     })
 
     it('chooses auction winners when there is not enough participants for entire auction', async function () {
@@ -152,7 +153,9 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      expect(await devconAsOwner.getAuctionWinners()).to.deep.equal([BigNumber.from(1)])
+      const bidderAddress = await devconAsOwner.getBidderAddress(1)
+      const bid = await devconAsOwner.getBid(bidderAddress)
+      expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
     it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
@@ -170,19 +173,11 @@ describe('Devcon6', function () {
     it('saves auction winners', async function () {
       await endBidding(devconAsOwner)
 
-      const auctionWinners = [BigNumber.from(2)]
-      await settleAuction(auctionWinners)
+      await settleAuction([2])
 
-      expect(await devcon.getAuctionWinners()).to.deep.eq(auctionWinners)
-    })
-
-    it('removes winners from raffle participants', async function () {
-      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1), BigNumber.from(2)])
-
-      await endBidding(devconAsOwner)
-      await settleAuction([BigNumber.from(2)])
-
-      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
+      const bidderAddress = await devconAsOwner.getBidderAddress(2)
+      const bid = await devconAsOwner.getBid(bidderAddress)
+      expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
     it('removes multiple winners from raffle participants', async function () {

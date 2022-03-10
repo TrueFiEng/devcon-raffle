@@ -9,8 +9,6 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
-    uint256[] _auctionWinners;
-    uint256[] _raffleWinners;
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
 
@@ -98,13 +96,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         for (uint256 i = 0; i < auctionWinners.length; i++) {
-            uint256 winner = auctionWinners[i];
+            uint256 bidderID = auctionWinners[i];
+            address bidderAddress = _bidders[bidderID];
             require(
-                _bidders[winner] != address(0),
+                bidderAddress != address(0),
                 "Devcon6: given winner does not exist"
             );
-            _auctionWinners.push(winner);
-            removeRaffleParticipant(winner - 1);
+
+            _bids[bidderAddress].winType = WinType.AUCTION;
+            removeRaffleParticipant(bidderID - 1);
         }
     }
 
@@ -153,10 +153,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getBiddersCount() public view returns (uint256) {
         return _nextBidderID - 1;
-    }
-
-    function getAuctionWinners() external view returns (uint256[] memory) {
-        return _auctionWinners;
     }
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
