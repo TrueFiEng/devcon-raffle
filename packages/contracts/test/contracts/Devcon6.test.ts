@@ -9,6 +9,7 @@ import { network } from 'hardhat'
 import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
+import { bigNumberArrayFrom } from 'utils/bigNumber'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -105,16 +106,8 @@ describe('Devcon6', function () {
 
   describe('settleAuction', function () {
     beforeEach(async function () {
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
-      await bidAsWallet(wallets[2])
-      await bidAsWallet(wallets[3])
-      await bidAsWallet(wallets[4])
+      await bid(5)
     })
-
-    async function bidAsWallet(wallet: Wallet) {
-      await devcon.connect(wallet).bid({ value: reservePrice })
-    }
 
     it('reverts if called not by owner', async function () {
       await expect(devcon.settleAuction([1]))
@@ -147,14 +140,13 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
+      await bid(5)
 
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      const bid = await getBidByID(1)
-      expect(bid.winType).to.deep.equal(WinType.auction)
+      const auctionWinnerBid = await getBidByID(1)
+      expect(auctionWinnerBid.winType).to.deep.equal(WinType.auction)
     })
 
     it('reverts if passed auction winners array length is less than auctionWinnersCount', async function () {
@@ -181,27 +173,14 @@ describe('Devcon6', function () {
     it('removes winners from raffle participants', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
       devconAsOwner = devcon.connect(wallets[1])
-      const devconAsAnother = devcon.connect(wallets[2])
 
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
-      await devconAsAnother.bid({ value: reservePrice })
+      await bid(6)
 
       await endBidding(devconAsOwner)
       await settleAuction([3, 2])
 
-      expect(await devcon.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
+      expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 5, 6, 4]))
     })
-
-    async function endBidding(devcon: Devcon6) {
-      const endTime = await devcon.biddingEndTime()
-      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
-      await network.provider.send('evm_mine')
-    }
-
-    async function settleAuction(auctionWinners: BigNumberish[]) {
-      await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
-    }
 
     async function getBidByID(bidID: number) {
       const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
@@ -211,8 +190,7 @@ describe('Devcon6', function () {
 
   describe('settleRaffle', function () {
     beforeEach(async function () {
-      await devcon.bid({ value: reservePrice })
-      await devconAsOwner.bid({ value: reservePrice })
+      await bid(5)
     })
 
     it('reverts if called not by owner', async function () {
@@ -225,8 +203,20 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
-    it('picks all participants as winners if amount of bidders is lower than raffleWinnersCount', function () {
+    it('picks all participants as winners if amount of bidders is lower than raffleWinnersCount', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 12 })))
+      devconAsOwner = devcon.connect(wallets[1])
 
+      await bid(3)
+
+      await endBidding(devconAsOwner)
+      await settleAuction([1])
+
+      console.log(await devconAsOwner.getRaffleParticipants())
+
+      await devconAsOwner.settleRaffle([])
+
+      expect(await devconAsOwner.getRaffleWinners()).to.deep.equal(bigNumberArrayFrom([2, 3]))
     })
   })
 
@@ -271,4 +261,24 @@ describe('Devcon6', function () {
       expect(await devcon.getState()).to.be.equal(State.claimingClosed)
     })
   })
+
+  async function endBidding(devcon: Devcon6) {
+    const endTime = await devcon.biddingEndTime()
+    await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+    await network.provider.send('evm_mine')
+  }
+
+  async function settleAuction(auctionWinners: BigNumberish[]) {
+    await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+  }
+
+  async function bid(bidAmount: number) {
+    for (let i = 0; i < bidAmount; i++) {
+      await bidAsWallet(wallets[i])
+    }
+  }
+
+  async function bidAsWallet(wallet: Wallet) {
+    await devcon.connect(wallet).bid({ value: reservePrice })
+  }
 })
