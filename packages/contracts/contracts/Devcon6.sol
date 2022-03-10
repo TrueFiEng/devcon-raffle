@@ -11,6 +11,7 @@ import "./models/StateModel.sol";
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
+    uint256 _winnersCount;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -96,15 +97,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid auction winners length"
         );
 
+        _winnersCount = expectedWinnersLength;
         for (uint256 i = 0; i < auctionWinners.length; i++) {
             uint256 bidderID = auctionWinners[i];
-            address bidderAddress = _bidders[bidderID];
-            require(
-                bidderAddress != address(0),
-                "Devcon6: given winner does not exist"
-            );
-
-            _bids[bidderAddress].winType = WinType.AUCTION;
+            setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
         }
     }
@@ -114,8 +110,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
-        uint256 participantsCount = _raffleParticipants.length -
-            _auctionWinners.length;
+        uint256 participantsCount = _raffleParticipants.length - _winnersCount;
         if (participantsCount <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
@@ -133,11 +128,17 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function selectAllRaffleParticipantsAsWinners() private {
         for (uint256 i = 0; i < _raffleParticipants.length; i++) {
-            uint256 winner = _raffleParticipants[i];
-            if (winner != 0) {
-                _raffleWinners.push(winner);
-            }
+            setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
         }
+    }
+
+    function setBidWinType(uint256 bidID, WinType winType) private {
+        address bidderAddress = _bidders[bidID];
+        require(
+            bidderAddress != address(0),
+            "Devcon6: given winner does not exist"
+        );
+        _bids[bidderAddress].winType = winType;
     }
 
     function selectRandomRaffleWinners(uint256 randomNumber) private {
@@ -146,7 +147,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
 
-            _raffleWinners.push(_raffleParticipants[winnerIndex]);
+            setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
             removeRaffleParticipant(winnerIndex);
 
             --participantsLength;
