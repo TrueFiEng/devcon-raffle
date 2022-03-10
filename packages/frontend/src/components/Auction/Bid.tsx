@@ -1,6 +1,6 @@
-import { Colors } from 'src/styles/colors'
 import { Form, FormRow } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Bid = () => {
