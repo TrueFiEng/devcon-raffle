@@ -221,16 +221,19 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      // Participant indexes generated from this number: [7, 2, 7 , 3]
-      const randomNumber = BigNumber.from("112726022748934390014388827089462711312944969753614146584009694773482609536945")
+      // Participant indexes generated from this number: [7, 2, 7, 3]
+      const randomNumber = BigNumber.from('112726022748934390014388827089462711312944969753614146584009694773482609536945')
 
       await devconAsOwner.settleRaffle([randomNumber])
 
-      const raffleWinnersByBidderID = [8, 3, 11, 4]
-
-      for (const bidderID of raffleWinnersByBidderID) {
-        const winningBid = await getBidByID(bidderID)
-        expect(winningBid.winType).to.be.eq(WinType.raffle)
+      const winnersBidderIDs = [8, 3, 11, 4]
+      for (let i = 0; i < winnersBidderIDs.length; i++) {
+        const winningBid = await getBidByID(winnersBidderIDs[i])
+        if (i === 0) {
+          expect(winningBid.winType).to.be.eq(WinType.goldenTicket)
+        } else {
+          expect(winningBid.winType).to.be.eq(WinType.raffle)
+        }
       }
     })
   })

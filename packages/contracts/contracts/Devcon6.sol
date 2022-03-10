@@ -147,9 +147,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
 
-            setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
-            removeRaffleParticipant(winnerIndex);
+            if (i == 0) {
+                setBidWinType(
+                    _raffleParticipants[winnerIndex],
+                    WinType.GOLDEN_TICKET
+                );
+            } else {
+                setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
+            }
 
+            removeRaffleParticipant(winnerIndex);
             --participantsLength;
             randomNumber = randomNumber >> 64;
         }
