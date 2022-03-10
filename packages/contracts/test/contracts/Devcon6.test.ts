@@ -9,7 +9,7 @@ import { network } from 'hardhat'
 import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
-import { bigNumberArrayFrom } from 'utils/bigNumber'
+import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -181,11 +181,6 @@ describe('Devcon6', function () {
 
       expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 5, 6, 4]))
     })
-
-    async function getBidByID(bidID: number) {
-      const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
-      return devconAsOwner.getBid(bidderAddress)
-    }
   })
 
   describe('settleRaffle', function () {
@@ -203,7 +198,7 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
-    it('picks all participants as winners if amount of bidders is lower than raffleWinnersCount', async function () {
+    it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 12 })))
       devconAsOwner = devcon.connect(wallets[1])
 
@@ -212,11 +207,12 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      console.log(await devconAsOwner.getRaffleParticipants())
+      await devconAsOwner.settleRaffle(randomBigNumbers(2))
 
-      await devconAsOwner.settleRaffle([])
-
-      expect(await devconAsOwner.getRaffleWinners()).to.deep.equal(bigNumberArrayFrom([2, 3]))
+      for (let i = 1; i <= 3; i++) {
+        const bid = await getBidByID(i)
+        expect(bid.winType).to.be.eq(WinType.raffle)
+      }
     })
   })
 
@@ -280,5 +276,10 @@ describe('Devcon6', function () {
 
   async function bidAsWallet(wallet: Wallet) {
     await devcon.connect(wallet).bid({ value: reservePrice })
+  }
+
+  async function getBidByID(bidID: number) {
+    const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
+    return devconAsOwner.getBid(bidderAddress)
   }
 })
