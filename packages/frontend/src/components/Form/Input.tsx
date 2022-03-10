@@ -1,24 +1,32 @@
+import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
-// import { formatEther } from 'ethers/lib/utils'
 import styled from 'styled-components'
 
-export const Input = () => {
+interface InputProps {
+  bid: number
+  setBid: (val: number) => void
+}
+
+export const Input = ({ bid, setBid }: InputProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
-  const [bid, setBid] = useState(0)
   const error = bid > Number(etherBalance)
 
   return (
     <InputWrapper>
-      <InputLabel>Balance:{account ? etherBalance : '-'} ETH</InputLabel>
+      <InputLabel>Balance:{etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
       <StyledInputWrapper error={error}>
         <TokenIconWrapper>
           <EtherIcon />
         </TokenIconWrapper>
-        <StyledInput type="text" value={bid.toString()} onChange={(e) => setBid(Number(e.target.value))} role="input" />
+        <StyledInput
+          type="number"
+          value={bid.toString()}
+          onChange={(e) => setBid(Number(e.target.value))}
+          role="input"
+        />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
       {error && (
@@ -87,6 +95,12 @@ const StyledInput = styled.input`
   cursor: inherit;
   color: ${Colors.Black};
   transition: all 0.25s ease;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
   &,
   &:disabled {
