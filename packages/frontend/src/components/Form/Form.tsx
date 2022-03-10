@@ -16,3 +16,7 @@ export const FormRow = styled.div`
   width: 100%;
   color: ${Colors.White};
 `
+
+export const FormHeading = styled.h2`
+  color: ${Colors.White};
+`

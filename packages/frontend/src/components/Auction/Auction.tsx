@@ -1,11 +1,12 @@
-import { Bid } from 'src/components/Auction/Bid'
+import { BidForm } from 'src/components/Auction/BidForm'
+import { bidList } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Auction = () => {
   return (
     <Wrapper>
-      <Bid />
+      <BidForm minbid={0.15} bidList={bidList} />
     </Wrapper>
   )
 }
