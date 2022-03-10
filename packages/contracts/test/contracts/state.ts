@@ -1,5 +1,5 @@
 export enum State {
-  waitingForBidding,
+  awaitingBidding,
   biddingOpen,
   biddingClosed,
   auctionSettled,

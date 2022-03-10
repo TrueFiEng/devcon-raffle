@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 
 abstract contract StateModel {
     enum State {
-        WAITING_FOR_BIDDING,
+        AWAITING_BIDDING,
         BIDDING_OPEN,
         BIDDING_CLOSED,
         AUCTION_SETTLED,

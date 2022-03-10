@@ -212,7 +212,7 @@ describe('Devcon6', function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ biddingStartTime: currentTime + MINUTE })))
 
-      expect(await devcon.getState()).to.be.equal(State.waitingForBidding)
+      expect(await devcon.getState()).to.be.equal(State.awaitingBidding)
     })
 
     it('bidding open', async function () {
