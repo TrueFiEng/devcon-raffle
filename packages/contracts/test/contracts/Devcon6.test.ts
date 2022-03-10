@@ -131,7 +131,7 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
-    it('changes state if amount of bidders is lower than auctionWinnersCount', async function () {
+    it('changes state if amount of bidders is less than auctionWinnersCount', async function () {
       let owner: Wallet
       ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
       devconAsOwner = devcon.connect(owner)
@@ -158,7 +158,7 @@ describe('Devcon6', function () {
       expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
-    it('reverts if passed auction winners array length is lower than auctionWinnersCount', async function () {
+    it('reverts if passed auction winners array length is less than auctionWinnersCount', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([]))
         .to.be.revertedWith('Devcon6: invalid auction winners length')
