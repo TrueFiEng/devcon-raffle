@@ -34,7 +34,7 @@ const RuleHeading = styled.h4`
 export const RuleText = styled.div`
   font-size: 16px;
   line-height: 24px;
-  color: ${Colors.Shuttle};
+  color: ${Colors.Grey};
 `
 
 const RuleExample = styled.p`
