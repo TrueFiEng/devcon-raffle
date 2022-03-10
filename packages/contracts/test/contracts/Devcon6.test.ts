@@ -1,11 +1,6 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import {
-  configuredDevcon6Fixture,
-  devcon6Fixture,
-  minBidIncrement,
-  reservePrice,
-} from 'fixtures/devcon6Fixture'
+import { configuredDevcon6Fixture, devcon6Fixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
 import { Devcon6 } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
@@ -153,8 +148,7 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      const bidderAddress = await devconAsOwner.getBidderAddress(1)
-      const bid = await devconAsOwner.getBid(bidderAddress)
+      const bid = await getBidByID(1)
       expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
@@ -175,8 +169,7 @@ describe('Devcon6', function () {
 
       await settleAuction([2])
 
-      const bidderAddress = await devconAsOwner.getBidderAddress(2)
-      const bid = await devconAsOwner.getBid(bidderAddress)
+      const bid = await getBidByID(2)
       expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
@@ -204,6 +197,11 @@ describe('Devcon6', function () {
 
     async function settleAuction(auctionWinners: BigNumberish[]) {
       await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+    }
+
+    async function getBidByID(bidID: number) {
+      const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
+      return devconAsOwner.getBid(bidderAddress)
     }
   })
 
