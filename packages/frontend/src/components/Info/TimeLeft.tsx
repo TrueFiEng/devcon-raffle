@@ -5,13 +5,17 @@ import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 import styled from 'styled-components'
 
-export const TimeLeft = () => {
-  const [endTimestamp] = useState(BigNumber.from(Math.floor(Date.now() / 1000) + 1234))
+interface Props {
+  endTimestamp: BigNumber
+}
 
+export const TimeLeft = ({ endTimestamp }: Props) => {
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(endTimestamp))
   useEffect(() => {
-    setTimeout(() => setTimeLeft(formatTimeLeft(endTimestamp)), 60_000)
-  }, [timeLeft, endTimestamp])
+    const interval = setInterval(() => setTimeLeft(formatTimeLeft(endTimestamp)), 1_000)
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div>
