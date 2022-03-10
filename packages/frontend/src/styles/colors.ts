@@ -1,17 +1,12 @@
 export const Colors = {
   White: '#FFFFFF',
   Black: '#000000',
-  Catskill: '#FBFCFD',
-  Athens: '#F8F9FB',
-  Porcelain: '#E7EAF3',
-  Mystic: '#D0D6E6',
-  Casper: '#9FAAC4',
-  Waterloo: '#7A859E',
-  Shuttle: '#60697C',
-  BigStone: '#0B0E14',
-  Shark: '#030303',
-  Cobalt: '#1A5AFF',
-  Green: '#00A368',
+  Blue: '#1144AA',
+  BlueDark: '#103D96',
+  Green: '#AED1CC',
+  GreenLight: '#DDFAF7',
+  Grey: '#60697C',
+  GreyLight: '#F9F9F9',
   Transparent: 'transparent',
 }
 

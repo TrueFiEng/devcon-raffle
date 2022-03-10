@@ -104,8 +104,9 @@ const StyledTrigger = styled(Accordion.AccordionTrigger)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${Colors.Transparent};
-  padding: 0 0 16px 0;
+  background-color: ${Colors.GreenLight};
+  padding: 4px;
+  margin-bottom: 16px;
   border: none;
   font-weight: 600;
   font-size: 22px;
