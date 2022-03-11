@@ -18,7 +18,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     mapping(address => Bid) _bids;
     // bidderID -> address
-    mapping(uint256 => address) _bidders;
+    mapping(uint256 => address payable) _bidders;
     uint256 _nextBidderID = 1;
 
     constructor(
@@ -70,7 +70,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             );
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = msg.sender;
+            _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
