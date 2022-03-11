@@ -1,7 +1,9 @@
 import React from 'react'
+import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import styled from 'styled-components'
 
-import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsList'
+import { BidsColumns } from './BidsColumns'
+import { AddressColumn, BidColumn, PlaceColumn } from './BidsList'
 
 export const BidsListEntry = () => {
   return (
@@ -9,7 +11,7 @@ export const BidsListEntry = () => {
       <BidsEntryRow>
         <PlaceColumn>12.</PlaceColumn>
         <BidColumn>10.121 ETH</BidColumn>
-        <AddressColumn>0xAAAAAA</AddressColumn>
+        <AddressColumn>{shortenEthAddress('0x6Aa2FD441be648A222da6913aa04810212b108A7')}</AddressColumn>
       </BidsEntryRow>
     </BidsEntry>
   )

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Colors } from 'src/styles/colors'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
+import { BidsColumns } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
 
 export const BidsListSection = () => {
@@ -42,12 +43,6 @@ const BidsList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 32px 0;
-`
-
-export const BidsColumns = css`
-  display: grid;
-  grid-template-columns: 20% 40% 40%;
-  grid-template-areas: 'place bid address';
 `
 
 const BidsHeaders = styled.div`
