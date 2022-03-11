@@ -1,5 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion'
-import { ArrowDownIcon } from 'src/assets/ArrowDown'
+import { ArrowDownIcon } from 'src/components/Icons/ArrowDownIcon'
 import { Rule, RuleText } from 'src/components/Info/Rules'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'

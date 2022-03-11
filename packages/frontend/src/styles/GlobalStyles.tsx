@@ -60,8 +60,8 @@ export const GlobalStyles = createGlobalStyle`
   h2 {
     font-style: normal;
     font-weight: 700;
-    font-size: 28px;
-    line-height: 40px;
+    font-size: 40px;
+    line-height: 1.2;
     color: ${Colors.White};
   }
 
