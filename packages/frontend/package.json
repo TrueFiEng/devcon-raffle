@@ -17,6 +17,7 @@
     "@radix-ui/react-accordion": "^0.1.6",
     "@types/styled-components": "^5.1.24",
     "@usedapp/core": "^0.11.0",
+    "ethers": "^5.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "styled-components": "^5.3.3"

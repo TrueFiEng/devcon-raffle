@@ -1,17 +1,24 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { utils } from 'ethers'
 import React from 'react'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import styled from 'styled-components'
 
 import { BidsColumns } from './BidsColumns'
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsList'
+interface Props {
+  place: number
+  bid: BigNumber
+  address: string
+}
 
-export const BidsListEntry = () => {
+export const BidsListEntry = ({ place, bid, address }: Props) => {
   return (
     <BidsEntry>
       <BidsEntryRow>
-        <PlaceColumn>12.</PlaceColumn>
-        <BidColumn>10.121 ETH</BidColumn>
-        <AddressColumn>{shortenEthAddress('0x6Aa2FD441be648A222da6913aa04810212b108A7')}</AddressColumn>
+        <PlaceColumn>{place}.</PlaceColumn>
+        <BidColumn>{utils.formatEther(bid)} ETH</BidColumn>
+        <AddressColumn>{shortenEthAddress(address)}</AddressColumn>
       </BidsEntryRow>
     </BidsEntry>
   )

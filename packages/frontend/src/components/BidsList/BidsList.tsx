@@ -1,3 +1,4 @@
+import { utils } from 'ethers'
 import React from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -17,9 +18,17 @@ export const BidsListSection = () => {
         <AddressColumn>Address</AddressColumn>
       </BidsHeaders>
       <BidsList>
-        <BidsListEntry />
-        <BidsListEntry />
-        <BidsListEntry />
+        <BidsListEntry
+          place={1}
+          bid={utils.parseEther('2.12312331231')}
+          address="0x6Aa2FD441be648A222da6913aa04810212b108A7"
+        />
+        <BidsListEntry place={2} bid={utils.parseEther('1')} address="0x6Aa2FD441be648A222da6913aa04810212b108A7" />
+        <BidsListEntry
+          place={3}
+          bid={utils.parseEther('0.1233312331231')}
+          address="0x6Aa2FD441be648A222da6913aa04810212b108A7"
+        />
       </BidsList>
     </BidsListContainer>
   )
