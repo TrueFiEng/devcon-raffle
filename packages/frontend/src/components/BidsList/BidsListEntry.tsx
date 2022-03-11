@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 
+const blockExplorerBase = 'https://etherscan.io/address/'
+
 interface Props {
   place: number
   bid: BigNumber
@@ -22,7 +24,7 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
           <CellText>{formatEtherAmount(bid)} ETH</CellText>
         </BidColumn>
         <AddressColumn>
-          <AddressLink href={'https://etherscan.io/address/' + address} target="_blank">
+          <AddressLink href={blockExplorerBase + address} target="_blank">
             {shortenEthAddress(address)}
           </AddressLink>
         </AddressColumn>
