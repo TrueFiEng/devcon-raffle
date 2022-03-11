@@ -17,7 +17,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     mapping(address => Bid) _bids;
     // bidderID -> address
-    mapping(uint256 => address) _bidders;
+    mapping(uint256 => address payable) _bidders;
     uint256 _nextBidderID = 1;
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
@@ -71,7 +71,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             );
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = msg.sender;
+            _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
