@@ -4,6 +4,7 @@ import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import styled from 'styled-components'
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { Colors } from '../../styles/colors'
 
 const blockExplorerBase = 'https://etherscan.io/address/'
 
@@ -38,7 +39,7 @@ const BidsEntry = styled.li`
 `
 
 const BidsEntryRow = styled.div`
-  ${BidsColumns}
+  ${BidsColumns};
   font-family: 'Space Mono', 'Roboto Mono', monospace;
 `
 
@@ -49,4 +50,5 @@ const CellText = styled.span`
 
 const AddressLink = styled.a`
   font-family: 'Space Mono', 'Roboto Mono', monospace;
+  color: ${Colors.Blue};
 `

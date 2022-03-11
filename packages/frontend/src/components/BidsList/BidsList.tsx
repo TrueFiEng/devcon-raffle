@@ -49,7 +49,7 @@ const BidsListContainer = styled.div`
 `
 
 const ColoredNumber = styled.span`
-  color: ${Colors.BlueDark};
+  color: ${Colors.Blue};
 `
 
 const BidsList = styled.ul`
@@ -61,6 +61,8 @@ const BidsList = styled.ul`
 const BidsHeaders = styled.div`
   ${BidsColumns};
   padding-top: 50px;
+  font-weight: 600;
+  color: ${Colors.Black};
 `
 
 const ButtonRow = styled.div`
