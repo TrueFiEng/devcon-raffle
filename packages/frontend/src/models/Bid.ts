@@ -1,4 +1,6 @@
-export type Bid = {
-  address: string
-  bid: number
+import { BigNumber } from '@ethersproject/bignumber'
+
+export interface Bid {
+  bidderAddress: string
+  amount: BigNumber
 }

@@ -1,38 +1,55 @@
-import { formatEther } from '@ethersproject/units'
+import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
+import { useState } from 'react'
+import { BigNumber } from '@ethersproject/bignumber'
 
 interface InputProps {
-  bid: number
-  setBid: (val: number) => void
-  error: boolean
+  bid: BigNumber
+  setBid: (val: BigNumber) => void
+  isBadAmount: boolean
 }
 
-export const Input = ({ bid, setBid, error }: InputProps) => {
+const numberInputRegex = /^((\d*)|(\d+[.,])|(\d+[.,]\d+))$/
+
+export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
+
+  const initialInputValue = bid.isZero() ? '' : formatEther(bid)
+  const [inputValue, setInputValue] = useState(initialInputValue)
+
+
+  const setValue = (value: string) => {
+    if (!numberInputRegex.test(value)) {
+      return
+    }
+    setInputValue(value)
+    if (value !== '') {
+      setBid(parseEther(value))
+    }
+  }
 
   return (
     <InputWrapper>
       <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
-      <StyledInputWrapper error={error}>
+      <StyledInputWrapper isBadAmount={isBadAmount}>
         <TokenIconWrapper>
-          <EtherIcon />
+          <EtherIcon/>
         </TokenIconWrapper>
         <StyledInput
-          type="number"
-          value={bid.toString()}
-          onChange={(e) => setBid(Number(e.target.value))}
+          value={inputValue}
+          onChange={(e) => setValue(e.target.value)}
           role="input"
         />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
-      {error && (
+      {isBadAmount && (
         <InputErrors>
-          <CloseCircleIcon size={16} />
+          <CloseCircleIcon size={16}/>
           <InputErrorLabel>Error message text goes here</InputErrorLabel>
         </InputErrors>
       )}
@@ -58,7 +75,7 @@ const InputLabel = styled.div`
   font-size: 12px;
   line-height: 18px;
 `
-const StyledInputWrapper = styled.div<{ error?: boolean; disabled?: boolean }>`
+const StyledInputWrapper = styled.div<{ isBadAmount?: boolean; disabled?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,14 +85,14 @@ const StyledInputWrapper = styled.div<{ error?: boolean; disabled?: boolean }>`
   padding: 13px;
   border-width: 2px;
   border-style: solid;
-  border-color: ${({ error }) => (error ? Colors.Red : Colors.White)};
+  border-color: ${({ isBadAmount }) => (isBadAmount ? Colors.Red : Colors.White)};
   background-color: ${({ disabled }) => (disabled ? Colors.GreyLight : Colors.White)};
   transition: all 0.25s ease;
 
   &:hover,
   &:focus-visible,
   &:focus-within {
-    border-color: ${({ error }) => (error ? Colors.Red : Colors.GreenLight)};
+    border-color: ${({ isBadAmount }) => (isBadAmount ? Colors.Red : Colors.GreenLight)};
   }
 `
 
