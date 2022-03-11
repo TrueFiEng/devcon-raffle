@@ -49,7 +49,7 @@ const BidsListContainer = styled.div`
 `
 
 const ColoredNumber = styled.span`
-  color: ${Colors.Cobalt};
+  color: ${Colors.BlueDark};
 `
 
 const BidsList = styled.ul`
@@ -73,4 +73,5 @@ const ButtonRow = styled.div`
 const ListHeader = styled.h2`
   font-weight: 600;
   letter-spacing: -2px;
+  color: ${Colors.Black};
 `
