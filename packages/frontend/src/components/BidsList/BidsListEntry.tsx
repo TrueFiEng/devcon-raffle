@@ -16,9 +16,17 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
   return (
     <BidsEntry>
       <BidsEntryRow>
-        <PlaceColumn>{place}.</PlaceColumn>
-        <BidColumn>{utils.formatEther(bid)} ETH</BidColumn>
-        <AddressColumn>{shortenEthAddress(address)}</AddressColumn>
+        <PlaceColumn>
+          <CellText>{place}.</CellText>
+        </PlaceColumn>
+        <BidColumn>
+          <CellText>{utils.formatEther(bid)} ETH</CellText>
+        </BidColumn>
+        <AddressColumn>
+          <AddressLink href={'https://etherscan.io/address/' + address} target="_blank">
+            {shortenEthAddress(address)}
+          </AddressLink>
+        </AddressColumn>
       </BidsEntryRow>
     </BidsEntry>
   )
@@ -30,5 +38,13 @@ const BidsEntry = styled.li`
 
 const BidsEntryRow = styled.div`
   ${BidsColumns}
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+`
+
+const CellText = styled.span`
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+`
+
+const AddressLink = styled.a`
   font-family: 'Space Mono', 'Roboto Mono', monospace;
 `
