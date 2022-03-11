@@ -3,15 +3,15 @@ import React from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { BidsColumns } from './BidsColumns'
+import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
 
 export const BidsListSection = () => {
   return (
     <BidsListContainer>
-      <h2>
+      <ListHeader>
         Number of participants: <ColoredNumber>100</ColoredNumber>
-      </h2>
+      </ListHeader>
       <BidsHeaders>
         <PlaceColumn>Place</PlaceColumn>
         <BidColumn>Bid</BidColumn>
@@ -30,6 +30,9 @@ export const BidsListSection = () => {
           address="0x6Aa2FD441be648A222da6913aa04810212b108A7"
         />
       </BidsList>
+      <ButtonRow>
+        <span>Show all</span>
+      </ButtonRow>
     </BidsListContainer>
   )
 }
@@ -38,7 +41,7 @@ const BidsListContainer = styled.div`
   height: 100%;
   width: 100%;
   padding-top: 46px;
-  padding-right: 60px;
+  padding-right: 144px;
   display: flex;
   flex-direction: column;
   justify-content: left;
@@ -59,14 +62,14 @@ const BidsHeaders = styled.div`
   padding-top: 50px;
 `
 
-export const PlaceColumn = styled.span`
-  grid-area: place;
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 `
 
-export const BidColumn = styled.span`
-  grid-area: bid;
-`
-
-export const AddressColumn = styled.span`
-  grid-area: address;
+const ListHeader = styled.h2`
+  font-weight: 600;
+  letter-spacing: -2px;
 `

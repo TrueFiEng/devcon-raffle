@@ -6,7 +6,7 @@ import { truncateDecimals } from 'src/utils/formatters/truncateDecimals'
 import styled from 'styled-components'
 
 import { BidsColumns } from './BidsColumns'
-import { AddressColumn, BidColumn, PlaceColumn } from './BidsList'
+import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 interface Props {
   place: number
   bid: BigNumber
