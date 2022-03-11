@@ -1,12 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { utils } from 'ethers'
 import React from 'react'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
-import { truncateDecimals } from 'src/utils/formatters/truncateDecimals'
 import styled from 'styled-components'
+import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
+import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 
-import { BidsColumns } from './BidsColumns'
-import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 interface Props {
   place: number
   bid: BigNumber
@@ -21,7 +19,7 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
           <CellText>{place}.</CellText>
         </PlaceColumn>
         <BidColumn>
-          <CellText>{truncateDecimals(utils.formatEther(bid))} ETH</CellText>
+          <CellText>{formatEtherAmount(bid)} ETH</CellText>
         </BidColumn>
         <AddressColumn>
           <AddressLink href={'https://etherscan.io/address/' + address} target="_blank">
