@@ -107,7 +107,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    // TODO see if it is cheaper to extract _raffleParticipants.length to variable
     function settleRaffle(uint256[] memory randomNumbers)
         external
         onlyOwner
@@ -115,8 +114,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         _settleState = SettleState.RAFFLE_SETTLED;
 
-        if (_raffleParticipants.length <= _raffleWinnersCount) {
-            selectAllRaffleParticipantsAsWinners();
+        uint256 participantsLength = _raffleParticipants.length;
+
+        if (participantsLength <= _raffleWinnersCount) {
+            selectAllRaffleParticipantsAsWinners(participantsLength);
             return;
         }
 
@@ -126,12 +127,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         for (uint256 i = 0; i < randomNumbers.length; ++i) {
-            selectRandomRaffleWinners(randomNumbers[i]);
+            selectRandomRaffleWinners(participantsLength, randomNumbers[i]);
         }
     }
 
-    function selectAllRaffleParticipantsAsWinners() private {
-        for (uint256 i = 0; i < _raffleParticipants.length; ++i) {
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
+        for (uint256 i = 0; i < participantsLength; ++i) {
             setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
         }
     }
@@ -145,8 +146,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
-    function selectRandomRaffleWinners(uint256 randomNumber) private {
-        uint256 participantsLength = _raffleParticipants.length;
+    function selectRandomRaffleWinners(uint256 participantsLength, uint256 randomNumber) private {
         for (uint256 i = 0; i < 8; ++i) {
             uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
