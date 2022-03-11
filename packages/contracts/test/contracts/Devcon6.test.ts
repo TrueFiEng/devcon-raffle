@@ -11,6 +11,7 @@ import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
 import { describe } from 'mocha'
+import { Bid } from './bid'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -255,13 +256,6 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: given bidder does not exist')
     })
 
-    it('reverts if auction winner wants to claim funds', async function () {
-      await bidAndSettleRaffle(9, [1])
-
-      await expect(devcon.claim(1))
-        .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
-    })
-
     it('reverts if funds have been already claimed', async function () {
       await bidAndSettleRaffle(4, [1])
 
@@ -270,7 +264,14 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: funds have been already claimed')
     })
 
-    it('raffle winner claims remaining funds', async function () {
+    it('reverts if auction winner wants to claim funds', async function () {
+      await bidAndSettleRaffle(9, [1])
+
+      await expect(devcon.claim(1))
+        .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
+    })
+
+    it('transfers remaining funds for raffle winner', async function () {
       const bidder = wallets[5]
       const remainingFunds = utils.parseEther('0.6')
       await bidAsWallet(bidder, reservePrice.add(remainingFunds))
@@ -282,29 +283,35 @@ describe('Devcon6', function () {
       expect(await bidder.getBalance()).to.be.equal(bidderBalanceBeforeClaim.add(remainingFunds))
     })
 
-    it('loser claims bid funds', async function () {
-      await bidAndSettleRaffle(10, [2])
+    it('transfers bid funds for golden ticket winner', async function () {
+      // TODO: implement this test when go
+    })
 
-      let lostBid: {
-        bidderID: BigNumber,
-        amount: BigNumber,
-      };
-      for (let i = 1; i < 11; i++) {
-        const bid = await getBidByID(i)
-        if (bid.winType === WinType.loss) {
-          lostBid = bid;
-        }
-      }
-      expect(lostBid.bidderID).to.not.equal(0)
+    it('transfers bid funds for loser', async function () {
+      await bidAndSettleRaffle(10, [1])
+
+      const lostBid = await getBidByWinType(10, WinType.loss)
 
       const bidderAddress = await devconAsOwner.getBidderAddress(lostBid.bidderID)
-      const bidderBalance = await provider.getBalance(bidderAddress);
+      const bidderBalance = await provider.getBalance(bidderAddress)
       const expectedBidderBalance = bidderBalance.add(reservePrice.mul(98).div(100))
 
       await devconAsOwner.claim(lostBid.bidderID)
 
       expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
     })
+
+    async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
+      let bid: Bid
+      for (let i = 1; i < bidCount + 1; i++) {
+        const currentBid = await getBidByID(i)
+        if (currentBid.winType === winType) {
+          bid = currentBid
+        }
+      }
+      expect(bid.bidderID).to.not.equal(0)
+      return bid
+    }
 
     async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
       await bid(bidCount)
@@ -376,7 +383,7 @@ describe('Devcon6', function () {
     await devcon.connect(wallet).bid({ value })
   }
 
-  async function getBidByID(bidID: number) {
+  async function getBidByID(bidID: number): Promise<Bid> {
     const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
     return devconAsOwner.getBid(bidderAddress)
   }
