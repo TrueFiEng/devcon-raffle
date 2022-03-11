@@ -6,10 +6,11 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet } from 'ethers'
+import { BigNumber, BigNumberish, Wallet, utils } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
+import { describe } from 'mocha'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -238,6 +239,57 @@ describe('Devcon6', function () {
     })
   })
 
+  describe('claim', function () {
+    it('reverts if settling is not finished yet', async function () {
+      await endBidding(devconAsOwner)
+      await devconAsOwner.settleAuction([1])
+
+      await expect(devcon.claim(4))
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+
+    it('reverts if bidder does not exist', async function () {
+      await bidAndSettleRaffle(2, [1])
+
+      await expect(devcon.claim(20))
+        .to.be.revertedWith('Devcon6: given bidder does not exist')
+    })
+
+    it('reverts if auction winner wants to claim funds', async function () {
+      await bidAndSettleRaffle(9, [1])
+
+      await expect(devcon.claim(1))
+        .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
+    })
+
+    it('reverts if funds have been already claimed', async function () {
+      await bidAndSettleRaffle(4, [1])
+
+      await devcon.claim(4)
+      await expect(devcon.claim(4))
+        .to.be.revertedWith('Devcon6: funds have been already claimed')
+    })
+
+    it('raffle winner claims remaining funds', async function () {
+      const bidder = wallets[5]
+      const remainingFunds = utils.parseEther('0.6')
+      await bidAsWallet(bidder, reservePrice.add(remainingFunds))
+      await bidAndSettleRaffle(5, [2])
+
+      const bidderBalanceBeforeClaim = await bidder.getBalance()
+      await devconAsOwner.claim(1)
+
+      expect(await bidder.getBalance()).to.be.equal(bidderBalanceBeforeClaim.add(remainingFunds))
+    })
+
+    async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+      await bid(bidCount)
+      await endBidding(devconAsOwner)
+      await devconAsOwner.settleAuction(auctionWinners)
+      await devconAsOwner.settleRaffle(randomBigNumbers(1))
+    }
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
@@ -292,12 +344,12 @@ describe('Devcon6', function () {
 
   async function bid(bidAmount: number) {
     for (let i = 0; i < bidAmount; i++) {
-      await bidAsWallet(wallets[i])
+      await bidAsWallet(wallets[i], reservePrice)
     }
   }
 
-  async function bidAsWallet(wallet: Wallet) {
-    await devcon.connect(wallet).bid({ value: reservePrice })
+  async function bidAsWallet(wallet: Wallet, value: BigNumberish) {
+    await devcon.connect(wallet).bid({ value })
   }
 
   async function getBidByID(bidID: number) {

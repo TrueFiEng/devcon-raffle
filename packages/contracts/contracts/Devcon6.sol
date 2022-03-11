@@ -178,6 +178,36 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _raffleParticipants.pop();
     }
 
+    function claim(uint256 bidderID)
+        external
+        payable
+        onlyInState(State.RAFFLE_SETTLED)
+    {
+        address payable bidderAddress = _bidders[bidderID];
+        require(
+            bidderAddress != address(0),
+            "Devcon6: given bidder does not exist"
+        );
+        Bid storage bid = _bids[bidderAddress];
+        require(!bid.claimed, "Devcon6: funds have been already claimed");
+        require(
+            bid.winType != WinType.AUCTION,
+            "Devcon6: auction winners cannot claim funds"
+        );
+
+        bid.claimed = true;
+        uint256 claimAmount;
+        if (bid.winType == WinType.RAFFLE) {
+            claimAmount = bid.amount - _reservePrice;
+        } else if (bid.winType == WinType.GOLDEN_TICKET) {
+            claimAmount = bid.amount;
+        } else if (bid.winType == WinType.LOSS) {
+            claimAmount = (bid.amount * 98) / 100;
+        }
+
+        bidderAddress.transfer(claimAmount);
+    }
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
