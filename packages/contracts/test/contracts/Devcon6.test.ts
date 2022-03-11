@@ -398,7 +398,17 @@ describe('Devcon6', function () {
     })
 
     it('transfers bid funds for golden ticket winner', async function () {
-      // TODO: implement this test when go
+      await bidAndSettleRaffle(10, [1])
+
+      const wonBid = await getBidByWinType(10, WinType.goldenTicket)
+
+      const bidderAddress = await devconAsOwner.getBidderAddress(wonBid.bidderID)
+      const bidderBalance = await provider.getBalance(bidderAddress)
+      const expectedBidderBalance = bidderBalance.add(wonBid.amount)
+
+      await devconAsOwner.claim(wonBid.bidderID)
+
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
     })
 
     it('transfers bid funds for loser', async function () {
