@@ -25,7 +25,7 @@ export const GlobalStyles = createGlobalStyle`
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: ${Colors.Grey};
+    color: ${Colors.Black};
     height: 100%;
     margin: 0;
     text-size-adjust: 100%;
