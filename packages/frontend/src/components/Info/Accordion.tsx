@@ -93,7 +93,7 @@ const AccordionStyledTrigger = ({ heading }: AccordionTriggerProps) => {
 }
 
 const Wrapper = styled.div`
-  padding: 60px 100px 60px 82px;
+  padding: 60px 125px 60px 68px;
 `
 const StyledHeader = styled(Accordion.Header)`
   width: 100%;
@@ -109,15 +109,15 @@ const StyledTrigger = styled(Accordion.AccordionTrigger)`
   border: none;
   background-color: ${Colors.GreenLight};
   text-align: left;
-  font-size: 22px;
-  line-height: 32px;
+  font-size: 20px;
+  line-height: 1.5;
 
   &[data-state='open'] {
     font-weight: 700;
   }
 
   &[data-state='open'] > div {
-    transform: translateY(50%) rotate(180deg);
+    transform: translateY(100%) rotate(180deg);
   }
 `
 
@@ -133,7 +133,6 @@ const StyledContent = styled(Accordion.AccordionContent)`
 `
 
 const AccordionArrow = styled(ArrowDownIcon)`
-  transition: transform 100ms;
-  transform: translateY(50%) rotate(0);
+  transform: rotate(0);
   transform-origin: top;
 `
