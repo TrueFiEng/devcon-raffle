@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { utils } from 'ethers'
 import React from 'react'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { truncateDecimals } from 'src/utils/formatters/truncateDecimals'
 import styled from 'styled-components'
 
 import { BidsColumns } from './BidsColumns'
@@ -20,7 +21,7 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
           <CellText>{place}.</CellText>
         </PlaceColumn>
         <BidColumn>
-          <CellText>{utils.formatEther(bid)} ETH</CellText>
+          <CellText>{truncateDecimals(utils.formatEther(bid))} ETH</CellText>
         </BidColumn>
         <AddressColumn>
           <AddressLink href={'https://etherscan.io/address/' + address} target="_blank">
@@ -43,6 +44,7 @@ const BidsEntryRow = styled.div`
 
 const CellText = styled.span`
   font-family: 'Space Mono', 'Roboto Mono', monospace;
+  line-height: 26px;
 `
 
 const AddressLink = styled.a`
