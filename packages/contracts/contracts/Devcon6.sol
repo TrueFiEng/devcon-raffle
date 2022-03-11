@@ -188,6 +188,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             bidderAddress != address(0),
             "Devcon6: given bidder does not exist"
         );
+
         Bid storage bid = _bids[bidderAddress];
         require(!bid.claimed, "Devcon6: funds have been already claimed");
         require(
@@ -205,7 +206,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             claimAmount = (bid.amount * 98) / 100;
         }
 
-        bidderAddress.transfer(claimAmount);
+        if (claimAmount > 0) {
+            bidderAddress.transfer(claimAmount);
+        }
     }
 
     function getState() public view returns (State) {
