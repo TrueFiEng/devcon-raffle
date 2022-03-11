@@ -271,6 +271,15 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
     })
 
+    it('sets bid as claimed', async function () {
+      await bidAndSettleRaffle(5, [2])
+
+      await devconAsOwner.claim(1)
+
+      const bid = await getBidByID(1)
+      expect(bid.claimed).to.be.true
+    })
+
     it('transfers remaining funds for raffle winner', async function () {
       const bidder = wallets[5]
       const remainingFunds = utils.parseEther('0.6')
