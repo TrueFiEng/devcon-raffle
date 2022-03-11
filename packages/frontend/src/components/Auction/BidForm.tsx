@@ -1,12 +1,14 @@
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
-import { Form, FormRow, FormHeading } from 'src/components/Form/Form'
+import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
 import styled from 'styled-components'
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatEther } from '@ethersproject/units'
 
 interface BidProps {
-  minimumBid: number
+  minimumBid: BigNumber
   bidList: Bid[]
 }
 
@@ -27,7 +29,7 @@ export const BidForm = ({ minimumBid, bidList }: BidProps) => {
       >
         <FormRow>
           <span>Raffle price (min. bid)</span>
-          <span>{minimumBid} ETH</span>
+          <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
         <Input bid={bid} setBid={setBid} error={error} />
         <FormRow>
