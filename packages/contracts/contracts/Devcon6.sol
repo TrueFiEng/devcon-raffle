@@ -114,6 +114,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
+        _settleState = SettleState.RAFFLE_SETTLED;
         if (_raffleParticipants.length <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
