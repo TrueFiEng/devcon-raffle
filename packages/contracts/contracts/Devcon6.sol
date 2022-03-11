@@ -8,8 +8,6 @@ import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
-// TODO replace i++ with ++i everywhere
-
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -101,7 +99,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         _winnersCount = expectedWinnersLength;
-        for (uint256 i = 0; i < auctionWinners.length; i++) {
+        for (uint256 i = 0; i < auctionWinners.length; ++i) {
             uint256 bidderID = auctionWinners[i];
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
@@ -115,6 +113,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
+        _settleState = SettleState.RAFFLE_SETTLED;
+
         if (_raffleParticipants.length <= _raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners();
             return;
@@ -125,13 +125,13 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: passed raffle winners length does not match the preset length"
         );
 
-        for (uint256 i = 0; i < randomNumbers.length; i++) {
+        for (uint256 i = 0; i < randomNumbers.length; ++i) {
             selectRandomRaffleWinners(randomNumbers[i]);
         }
     }
 
     function selectAllRaffleParticipantsAsWinners() private {
-        for (uint256 i = 0; i < _raffleParticipants.length; i++) {
+        for (uint256 i = 0; i < _raffleParticipants.length; ++i) {
             setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
         }
     }
@@ -147,7 +147,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function selectRandomRaffleWinners(uint256 randomNumber) private {
         uint256 participantsLength = _raffleParticipants.length;
-        for (uint256 i = 0; i < 8; i++) {
+        for (uint256 i = 0; i < 8; ++i) {
             uint256 smallRandom = randomNumber & _randomMask;
             uint256 winnerIndex = smallRandom % participantsLength;
 
