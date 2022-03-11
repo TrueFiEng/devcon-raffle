@@ -236,6 +236,16 @@ describe('Devcon6', function () {
         expect(winningBid.winType).to.be.eq(WinType.raffle)
       }
     })
+
+    it('changes state', async function () {
+      await endBidding(devconAsOwner)
+
+      await settleAuction([2])
+
+      await devconAsOwner.settleRaffle(randomBigNumbers(1))
+
+      expect(await devconAsOwner.getState()).to.be.eq(State.raffleSettled)
+    });
   })
 
   describe('getState', function () {
