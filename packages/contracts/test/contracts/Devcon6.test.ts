@@ -202,16 +202,23 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await bid(3)
+      await bid(4)
 
       await endBidding(devconAsOwner)
       await settleAuction([])
 
-      await devconAsOwner.settleRaffle(randomBigNumbers(2))
+      // Golden ticket winner index generated from this number: 2
+      const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
+      await devconAsOwner.settleRaffle([randomNumber])
 
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 4; i++) {
         const bid = await getBidByID(i)
-        expect(bid.winType).to.be.eq(WinType.raffle)
+
+        if (bid.bidderID.eq(3)) {
+          expect(bid.winType).to.be.eq(WinType.goldenTicket)
+        } else {
+          expect(bid.winType).to.be.eq(WinType.raffle)
+        }
       }
     })
 

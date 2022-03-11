@@ -103,7 +103,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = auctionWinners[i];
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
-
         }
     }
 
@@ -112,28 +111,28 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.AUCTION_SETTLED)
     {
+        require(
+            randomNumbers.length > 0,
+            "Devcon6: there must be at least one random number passed"
+        );
+
         _settleState = SettleState.RAFFLE_SETTLED;
 
         uint256 participantsLength = _raffleParticipants.length;
 
         if (participantsLength <= _raffleWinnersCount) {
-            selectAllRaffleParticipantsAsWinners(participantsLength);
+            uint256 goldenTicketWinner = winnerIndexFromRandomNumber(participantsLength, randomNumbers[0]);
+            selectAllRaffleParticipantsAsWinners(participantsLength, goldenTicketWinner);
             return;
         }
 
         require(
             randomNumbers.length == _raffleWinnersCount / 8,
-            "Devcon6: passed raffle winners length does not match the preset length"
+            "Devcon6: passed random numbers count does not match the preset length"
         );
 
         for (uint256 i = 0; i < randomNumbers.length; ++i) {
             selectRandomRaffleWinners(participantsLength, randomNumbers[i]);
-        }
-    }
-
-    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
-        for (uint256 i = 0; i < participantsLength; ++i) {
-            setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
         }
     }
 
@@ -146,10 +145,19 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength, uint256 goldenTicketWinner) private {
+        for (uint256 i = 0; i < participantsLength; ++i) {
+            if (i == goldenTicketWinner) {
+                setBidWinType(_raffleParticipants[i], WinType.GOLDEN_TICKET);
+            } else {
+                setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
+            }
+        }
+    }
+
     function selectRandomRaffleWinners(uint256 participantsLength, uint256 randomNumber) private {
-        for (uint256 i = 0; i < 8; ++i) {
-            uint256 smallRandom = randomNumber & _randomMask;
-            uint256 winnerIndex = smallRandom % participantsLength;
+        for (uint256 i = 0; i < 8; ++i) { // TODO this will fail when participants count is less than 8
+            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
             if (i == 0) {
                 setBidWinType(
@@ -164,6 +172,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             --participantsLength;
             randomNumber = randomNumber >> 32;
         }
+    }
+
+    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber) private pure returns (uint256) {
+        uint256 smallRandom = randomNumber & _randomMask;
+        return smallRandom % participantsLength;
     }
 
     function removeRaffleParticipant(uint256 index) private {
