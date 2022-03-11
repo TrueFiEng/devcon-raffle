@@ -282,6 +282,30 @@ describe('Devcon6', function () {
       expect(await bidder.getBalance()).to.be.equal(bidderBalanceBeforeClaim.add(remainingFunds))
     })
 
+    it('loser claims bid funds', async function () {
+      await bidAndSettleRaffle(10, [2])
+
+      let lostBid: {
+        bidderID: BigNumber,
+        amount: BigNumber,
+      };
+      for (let i = 1; i < 11; i++) {
+        const bid = await getBidByID(i)
+        if (bid.winType === WinType.loss) {
+          lostBid = bid;
+        }
+      }
+      expect(lostBid.bidderID).to.not.equal(0)
+
+      const bidderAddress = await devconAsOwner.getBidderAddress(lostBid.bidderID)
+      const bidderBalance = await provider.getBalance(bidderAddress);
+      const expectedBidderBalance = bidderBalance.add(reservePrice.mul(98).div(100))
+
+      await devconAsOwner.claim(lostBid.bidderID)
+
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
+    })
+
     async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
       await bid(bidCount)
       await endBidding(devconAsOwner)
