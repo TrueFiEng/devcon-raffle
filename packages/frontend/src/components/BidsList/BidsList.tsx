@@ -1,12 +1,16 @@
-import { utils } from 'ethers'
 import React from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
+import { Bid } from '../Auction/Auction'
 
-export const BidsListSection = () => {
+interface Props {
+  bids: Bid[]
+}
+
+export const BidsListSection = ({ bids }: Props) => {
   return (
     <BidsListContainer>
       <ListHeader>
@@ -18,17 +22,14 @@ export const BidsListSection = () => {
         <AddressColumn>Address</AddressColumn>
       </BidsHeaders>
       <BidsList>
-        <BidsListEntry
-          place={1}
-          bid={utils.parseEther('2.12312331231')}
-          address="0x6Aa2FD441be648A222da6913aa04810212b108A7"
-        />
-        <BidsListEntry place={2} bid={utils.parseEther('1')} address="0x6Aa2FD441be648A222da6913aa04810212b108A7" />
-        <BidsListEntry
-          place={3}
-          bid={utils.parseEther('0.1233312331231')}
-          address="0x6Aa2FD441be648A222da6913aa04810212b108A7"
-        />
+        {bids.map((bid, index) => (
+          <BidsListEntry
+            key={bid.bidderAddress}
+            place={index + 1}
+            bid={bid.amount}
+            address={bid.bidderAddress}
+          />
+        ))}
       </BidsList>
       <ButtonRow>
         <span>Show all</span>
@@ -58,7 +59,7 @@ const BidsList = styled.ul`
 `
 
 const BidsHeaders = styled.div`
-  ${BidsColumns}
+  ${BidsColumns};
   padding-top: 50px;
 `
 
