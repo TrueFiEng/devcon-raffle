@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import React, { useState } from 'react'
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { TimeLeft } from './TimeLeft'
@@ -24,5 +25,6 @@ const StyledHeader = styled.header`
   row-gap: 10px;
   width: 100%;
   height: 225px;
-  background: #5600e3;
+  color: ${Colors.White};
+  background: linear-gradient(to left, #7ec188 0%, #65c4e8 45.31%, #7779b5 100%);
 `

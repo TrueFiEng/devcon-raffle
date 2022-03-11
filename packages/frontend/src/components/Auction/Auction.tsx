@@ -24,5 +24,5 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 670px;
   padding-left: 82px;
-  background: ${Colors.Catskill};
+  background: ${Colors.GreyLight};
 `
