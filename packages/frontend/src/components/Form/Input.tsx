@@ -1,5 +1,6 @@
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
+import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -7,12 +8,12 @@ import styled from 'styled-components'
 interface InputProps {
   bid: number
   setBid: (val: number) => void
+  error: boolean
 }
 
-export const Input = ({ bid, setBid }: InputProps) => {
+export const Input = ({ bid, setBid, error }: InputProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
-  const error = bid > Number(etherBalance)
 
   return (
     <InputWrapper>
@@ -31,7 +32,8 @@ export const Input = ({ bid, setBid }: InputProps) => {
       </StyledInputWrapper>
       {error && (
         <InputErrors>
-          <InputErrorLabel>{error}</InputErrorLabel>
+          <CloseCircleIcon size={16} />
+          <InputErrorLabel>Error message text goes here</InputErrorLabel>
         </InputErrors>
       )}
     </InputWrapper>
@@ -73,7 +75,7 @@ const StyledInputWrapper = styled.div<{ error?: boolean; disabled?: boolean }>`
   &:hover,
   &:focus-visible,
   &:focus-within {
-    border-color: ${({ error }) => (error ? Colors.Red : Colors.Green)};
+    border-color: ${({ error }) => (error ? Colors.Red : Colors.GreenLight)};
   }
 `
 
@@ -105,17 +107,6 @@ const StyledInput = styled.input`
   }
 `
 
-const InputErrors = styled.div`
-  display: flex;
-  position: absolute;
-  top: calc(100% + 4px);
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-`
-
 const TokenIconWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -134,6 +125,19 @@ const InputTokenName = styled.span`
   z-index: 2;
 `
 
+const InputErrors = styled.div`
+  display: flex;
+  position: absolute;
+  top: 100%;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+`
+
 const InputErrorLabel = styled(InputLabel)`
+  font-weight: 300;
   color: ${Colors.Red};
+  margin-left: 8px;
+  justify-content: flex-start;
 `

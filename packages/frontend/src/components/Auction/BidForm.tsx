@@ -1,4 +1,4 @@
-import { useEthers } from '@usedapp/core'
+import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 import { Form, FormRow, FormHeading } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
@@ -12,7 +12,9 @@ interface BidProps {
 
 export const BidForm = ({ minimumBid, bidList }: BidProps) => {
   const { account } = useEthers()
+  const etherBalance = useEtherBalance(account)
   const [bid, setBid] = useState(0)
+  const error = bid > Number(etherBalance)
 
   return (
     <Wrapper>
@@ -27,12 +29,12 @@ export const BidForm = ({ minimumBid, bidList }: BidProps) => {
           <span>Raffle price (min. bid)</span>
           <span>{minimumBid} ETH</span>
         </FormRow>
-        <Input bid={bid} setBid={setBid} />
+        <Input bid={bid} setBid={setBid} error={error} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
           <span>No. -</span>
         </FormRow>
-        <Button>Place bid</Button>
+        <Button disabled={error}>Place bid</Button>
       </Form>
     </Wrapper>
   )
