@@ -1,5 +1,6 @@
-import { Bid } from './Auction'
 import { parseEther } from '@ethersproject/units'
+
+import { Bid } from './Auction'
 
 export const bids: Bid[] = [
   {

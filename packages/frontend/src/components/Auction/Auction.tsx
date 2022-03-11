@@ -1,8 +1,10 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { Bid } from 'src/components/Auction/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
+
 import { BidsListSection } from '../BidsList/BidsList'
-import { BigNumber } from '@ethersproject/bignumber'
+
 import { bids } from './data'
 
 export interface Bid {
@@ -13,8 +15,8 @@ export interface Bid {
 export const Auction = () => {
   return (
     <Wrapper>
-      <Bid/>
-      <BidsListSection bids={bids}/>
+      <Bid />
+      <BidsListSection bids={bids} />
     </Wrapper>
   )
 }

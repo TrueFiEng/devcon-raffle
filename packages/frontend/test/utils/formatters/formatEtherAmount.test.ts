@@ -1,12 +1,10 @@
-import { formatEtherAmount } from '../../../src/utils/formatters/formatEtherAmount'
 import { parseEther } from '@ethersproject/units'
 
+import { formatEtherAmount } from '../../../src/utils/formatters/formatEtherAmount'
 
 describe('formatEtherAmount', () => {
-  it('Truncates decimals', () => {
-  })
-
   it('Truncates and rounds', () => {
+    expect(formatEtherAmount(parseEther('1.123456111111'))).toBe('1.123456')
     expect(formatEtherAmount(parseEther('1.123456999999'))).toBe('1.123457')
   })
 

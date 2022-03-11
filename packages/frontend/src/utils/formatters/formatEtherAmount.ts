@@ -1,5 +1,5 @@
-import { formatEther } from '@ethersproject/units'
 import { BigNumber } from '@ethersproject/bignumber'
+import { formatEther } from '@ethersproject/units'
 
 const decimalPlaces = 6
 const factor = 10 ** decimalPlaces

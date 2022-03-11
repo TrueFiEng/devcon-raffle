@@ -2,9 +2,10 @@ import React from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
+import { Bid } from '../Auction/Auction'
+
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
-import { Bid } from '../Auction/Auction'
 
 interface Props {
   bids: Bid[]
@@ -23,12 +24,7 @@ export const BidsListSection = ({ bids }: Props) => {
       </BidsHeaders>
       <BidsList>
         {bids.map((bid, index) => (
-          <BidsListEntry
-            key={bid.bidderAddress}
-            place={index + 1}
-            bid={bid.amount}
-            address={bid.bidderAddress}
-          />
+          <BidsListEntry key={bid.bidderAddress} place={index + 1} bid={bid.amount} address={bid.bidderAddress} />
         ))}
       </BidsList>
       <ButtonRow>
