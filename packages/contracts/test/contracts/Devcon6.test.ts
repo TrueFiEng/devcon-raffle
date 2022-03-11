@@ -198,6 +198,27 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
+    it('reverts if called with zero random numbers', async function () {
+      await endBidding(devconAsOwner)
+      await settleAuction([1])
+
+      await expect(devconAsOwner.settleRaffle([]))
+        .to.be.revertedWith('Devcon6: there must be at least one random number passed')
+    })
+
+    it('reverts if called with incorrect amount of random numbers', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(18)
+      await endBidding(devconAsOwner)
+      await settleAuction([1])
+
+      // Reverts because it expects 2 random numbers
+      await expect(devconAsOwner.settleRaffle(randomBigNumbers(1)))
+        .to.be.revertedWith('Devcon6: passed random numbers count does not match the preset length')
+    })
+
     it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
