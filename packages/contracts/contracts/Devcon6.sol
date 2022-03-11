@@ -105,7 +105,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = auctionWinners[i];
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
-
         }
     }
 

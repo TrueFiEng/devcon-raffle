@@ -199,7 +199,7 @@ describe('Devcon6', function () {
     })
 
     it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 12 })))
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
 
       await bid(3)
@@ -224,27 +224,9 @@ describe('Devcon6', function () {
       // Participant indexes generated from this number: [16, 16, 6, 7, 4, 9, 0, 1]
       const randomNumber = BigNumber.from('112726022748934390014388827089462711312944969753614146584009694773482609536945')
 
-      const participants = await devconAsOwner.getRaffleParticipants()
-      console.log(participants)
-
       await devconAsOwner.settleRaffle([randomNumber])
-      console.log("something")
 
-      const participants2 = await devconAsOwner.getRaffleParticipants()
-      console.log(participants2)
-      console.log("something")
-
-      //0 1 2 3 4 5 6 7  8  9 10 11 12 13 14 15 16 17 18
-      //2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-      //
-
-      for (let i = 1; i < 21; i++) {
-        const winningBid = await getBidByID(i)
-        if (winningBid.winType != 0) {
-          console.log(winningBid)
-        }
-      }
-      const winnersBidderIDs = [18, 20, 8, 9, 6, 11, 2, 3]
+      const winnersBidderIDs = [17, 19, 7, 8, 5, 10, 20, 2]
       for (let i = 0; i < winnersBidderIDs.length; i++) {
         const winningBid = await getBidByID(winnersBidderIDs[i])
         if (i === 0) {
@@ -255,29 +237,6 @@ describe('Devcon6', function () {
       }
     })
   })
-
-  it('test', function () {
-    let randomNumber = BigNumber.from("112726022748934390014388827089462711312944969753614146584009694773482609536945")
-    const hexNumber = randomNumber.toHexString()
-    const mask = BigNumber.from("4294967295") // decimal from 0xffffffff
-
-    const numbers = []
-
-    console.log("magic numbers")
-    for (let i = 0; i < 8; i++) {
-      const smallRandom = randomNumber.and(mask)
-      numbers.push(smallRandom)
-      randomNumber = randomNumber.shr(32)
-
-      console.log(smallRandom.mod(BigNumber.from(19 - i)).toNumber())
-    }
-
-    console.log("end of magic numbers")
-
-    console.log(numbers.map(e => e.toString()))
-
-    // randomNumber >> 32 in for 8 times
-  });
 
   describe('getState', function () {
     it('waiting for bidding', async function () {
