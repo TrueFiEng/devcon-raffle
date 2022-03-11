@@ -1,11 +1,11 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
+import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-import { useState } from 'react'
-import { BigNumber } from '@ethersproject/bignumber'
 
 interface InputProps {
   bid: BigNumber
@@ -22,7 +22,6 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const initialInputValue = bid.isZero() ? '' : formatEther(bid)
   const [inputValue, setInputValue] = useState(initialInputValue)
 
-
   const setValue = (value: string) => {
     if (!numberInputRegex.test(value)) {
       return
@@ -38,18 +37,14 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
       <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
       <StyledInputWrapper isBadAmount={isBadAmount}>
         <TokenIconWrapper>
-          <EtherIcon/>
+          <EtherIcon />
         </TokenIconWrapper>
-        <StyledInput
-          value={inputValue}
-          onChange={(e) => setValue(e.target.value)}
-          role="input"
-        />
+        <StyledInput value={inputValue} onChange={(e) => setValue(e.target.value)} role="input" />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
       {isBadAmount && (
         <InputErrors>
-          <CloseCircleIcon size={16}/>
+          <CloseCircleIcon size={16} />
           <InputErrorLabel>Error message text goes here</InputErrorLabel>
         </InputErrors>
       )}

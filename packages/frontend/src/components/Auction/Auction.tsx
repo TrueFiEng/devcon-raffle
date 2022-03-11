@@ -1,8 +1,8 @@
+import { parseEther } from '@ethersproject/units'
 import { BidForm } from 'src/components/Auction/BidForm'
 import { bidList } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-import { parseEther } from '@ethersproject/units'
 
 export const Auction = () => {
   return (

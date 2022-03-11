@@ -1,11 +1,11 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatEther } from '@ethersproject/units'
+import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
 import styled from 'styled-components'
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther } from '@ethersproject/units'
-import { useEtherBalance, useEthers } from '@usedapp/core'
 
 interface BidProps {
   minimumBid: BigNumber
