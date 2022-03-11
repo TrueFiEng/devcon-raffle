@@ -2,7 +2,7 @@ import { Bid } from 'src/components/Auction/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { Button } from '../Button'
+import { Button } from '../Buttons/Button'
 
 export const Auction = () => {
   return (
