@@ -106,7 +106,7 @@ describe('Devcon6', function () {
 
   describe('settleAuction', function () {
     beforeEach(async function () {
-      await bid(5)
+      await bid(9)
     })
 
     it('reverts if called not by owner', async function () {
@@ -140,7 +140,7 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await bid(5)
+      await bid(9)
 
       await endBidding(devconAsOwner)
       await settleAuction([1])
@@ -157,7 +157,7 @@ describe('Devcon6', function () {
 
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
-      await expect(settleAuction([7]))
+      await expect(settleAuction([30]))
         .to.be.revertedWith('Devcon6: given winner does not exist')
     })
 
@@ -174,18 +174,18 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await bid(6)
+      await bid(10)
 
       await endBidding(devconAsOwner)
       await settleAuction([3, 2])
 
-      expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 5, 6, 4]))
+      expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 9, 10, 4, 5, 6, 7, 8]))
     })
   })
 
   describe('settleRaffle', function () {
     beforeEach(async function () {
-      await bid(5)
+      await bid(9)
     })
 
     it('reverts if called not by owner', async function () {
@@ -199,7 +199,7 @@ describe('Devcon6', function () {
     })
 
     it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 12 })))
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
 
       await bid(3)
@@ -216,17 +216,17 @@ describe('Devcon6', function () {
     })
 
     it('selects random winners', async function () {
-      await bid(12)
+      await bid(20)
 
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
-      // Participant indexes generated from this number: [7, 2, 7, 3]
+      // Participant indexes generated from this number: [16, 16, 6, 7, 4, 9, 0, 1]
       const randomNumber = BigNumber.from('112726022748934390014388827089462711312944969753614146584009694773482609536945')
 
       await devconAsOwner.settleRaffle([randomNumber])
 
-      const winnersBidderIDs = [8, 3, 11, 4]
+      const winnersBidderIDs = [17, 19, 7, 8, 5, 10, 20, 2]
       for (let i = 0; i < winnersBidderIDs.length; i++) {
         const winningBid = await getBidByID(winnersBidderIDs[i])
         if (i === 0) {
