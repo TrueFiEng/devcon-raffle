@@ -9,6 +9,7 @@ export const Colors = {
   GreenLight: '#DDFAF7',
   Grey: '#60697C',
   GreyLight: '#F9F9F9',
+  Red: '#FF5A5A',
   Transparent: 'transparent',
 }
 
