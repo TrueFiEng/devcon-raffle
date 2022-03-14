@@ -6,10 +6,6 @@ import { fonts } from './fonts'
 export const GlobalStyles = createGlobalStyle`
   ${fonts}
 
-  * {
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
-  }
-
   *, *:before, *:after {
     box-sizing: border-box;
   }
@@ -29,7 +25,7 @@ export const GlobalStyles = createGlobalStyle`
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: ${Colors.Grey};
+    color: ${Colors.Black};
     height: 100%;
     margin: 0;
     text-size-adjust: 100%;
