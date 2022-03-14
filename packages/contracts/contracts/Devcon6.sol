@@ -239,4 +239,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
     }
+
+    function getWinnersCount() public view returns (uint256) {
+        return _winnersCount;
+    }
 }
