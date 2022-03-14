@@ -1,0 +1,100 @@
+import React, { ReactNode } from 'react'
+import { LoadingIcon } from 'src/components/Icons/LoadingIcon'
+import { Colors } from 'src/styles/colors'
+import styled, { css } from 'styled-components'
+
+interface ButtonProps {
+  children: ReactNode
+  className?: string
+  view?: 'primary' | 'secondary'
+  wide?: boolean
+  disabled?: boolean
+  loading?: boolean
+  onClick?: () => void
+}
+
+export const Button = ({ children, className, view = 'primary', wide, disabled, loading, onClick }: ButtonProps) => {
+  return (
+    <ButtonContainer
+      className={className}
+      view={view}
+      wide={wide}
+      disabled={disabled || loading}
+      loading={loading}
+      onClick={onClick}
+    >
+      {loading ? <LoadingIcon /> : children}
+    </ButtonContainer>
+  )
+}
+
+const commonButtonStyles = css<ButtonProps>`
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  width: ${({ wide }) => (wide ? '100%' : '289px')};
+  height: 40px;
+  margin: 0;
+  padding: 8px;
+  border: none;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  outline: none;
+  overflow: hidden;
+  transition: all 0.25s ease;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+`
+
+const PrimaryButtonStyles = css<ButtonProps>`
+  ${commonButtonStyles}
+
+  background-color: ${Colors.GreenLight};
+  color: ${Colors.Black};
+
+  &:hover,
+  &:focus-visible {
+    background-color: ${Colors.Green};
+  }
+
+  &:active {
+    background-color: ${Colors.GreenDark};
+  }
+`
+
+const SecondaryButtonStyles = css<ButtonProps>`
+  ${commonButtonStyles}
+
+  background-color: ${Colors.White};
+  border-color: ${Colors.Blue};
+  color: ${Colors.Blue};
+  border: 1px solid ${Colors.Blue};
+
+  &:hover,
+  &:focus-visible {
+    background-color: ${Colors.BlueLight};
+  }
+
+  &:active {
+    background-color: ${Colors.BlueLight};
+  }
+`
+
+export const ButtonContainer = styled.button<ButtonProps>`
+  ${({ view }) => {
+    switch (view) {
+      case 'primary':
+      default:
+        return PrimaryButtonStyles
+      case 'secondary':
+        return SecondaryButtonStyles
+    }
+  }};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+`

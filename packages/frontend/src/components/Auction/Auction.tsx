@@ -4,10 +4,13 @@ import { bidList } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
+import { Button } from '../Buttons/Button'
+
 export const Auction = () => {
   return (
     <Wrapper>
       <BidForm minimumBid={parseEther('0.15')} bidList={bidList} />
+      <Button view="secondary">Show all</Button>
     </Wrapper>
   )
 }
