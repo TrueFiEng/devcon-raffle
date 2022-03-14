@@ -48,7 +48,7 @@ export const GlobalStyles = createGlobalStyle`
   h1 {
     font-style: normal;
     font-weight: 700;
-    font-size: 40px;
+    font-size: 55px;
     line-height: 1.2;
     color: ${Colors.White};
   }
@@ -63,9 +63,9 @@ export const GlobalStyles = createGlobalStyle`
 
   h3 {
     font-style: normal;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 32px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
     color: ${Colors.Black};
   }
 
