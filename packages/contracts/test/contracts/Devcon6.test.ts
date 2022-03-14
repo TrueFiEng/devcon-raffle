@@ -293,7 +293,7 @@ describe('Devcon6', function () {
     })
 
     it('transfers bid funds for golden ticket winner', async function () {
-      await bidAndSettleRaffle(10, [1])
+      await bidAndSettleRaffle(10, [2])
 
       const wonBid = await getBidByWinType(10, WinType.goldenTicket)
 
@@ -307,7 +307,7 @@ describe('Devcon6', function () {
     })
 
     it('transfers bid funds for loser', async function () {
-      await bidAndSettleRaffle(10, [1])
+      await bidAndSettleRaffle(10, [2])
 
       const lostBid = await getBidByWinType(10, WinType.loss)
 
