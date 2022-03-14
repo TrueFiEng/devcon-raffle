@@ -16,6 +16,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     SettleState _settleState = SettleState.AWAITING_SETTLING;
     uint256 _winnersCount;
 
+    uint256[] _auctionWinners;
+    bool _claimProceeded;
+
     mapping(address => Bid) _bids;
     // bidderID -> address
     mapping(uint256 => address payable) _bidders;
@@ -265,7 +268,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         payable
         onlyOwner
         onlyInState(State.RAFFLE_SETTLED)
-    {}
+    {
+        require(!_claimProceeded, "Devcon6: claim has been already proceeded");
+        _claimProceeded = true;
+
+        // array[] auctionWinnersBiddersID
+        // if there is no fee from not winning bids
+        // store / pass winners bidID (verify that they are winners)
+        // calculate fee for owner (auction, raffle, golden ticket winner)
+        // sum fees and transfer to owner
+    }
 
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
