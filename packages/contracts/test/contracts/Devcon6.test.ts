@@ -243,6 +243,31 @@ describe('Devcon6', function () {
       }
     })
 
+    it('picks correct numbers of winners', async function () {
+      await bid(10)
+      await endBidding(devconAsOwner)
+      await settleAuction([1])
+
+      const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
+      await devconAsOwner.settleRaffle([randomNumber])
+
+      const winnersCounter = {
+        raffleWinner: 0,
+        goldenTicketWinner: 0,
+      }
+      for (let i = 1; i <= 10; i++) {
+        const bid = await getBidByID(i)
+        if (bid.winType === WinType.raffle) {
+          winnersCounter.raffleWinner++
+        } else if (bid.winType === WinType.goldenTicket) {
+          winnersCounter.goldenTicketWinner++
+        }
+      }
+
+      expect(winnersCounter.raffleWinner).to.be.equal(7)
+      expect(winnersCounter.goldenTicketWinner).to.be.equal(1)
+    })
+
     it('selects random winners', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
