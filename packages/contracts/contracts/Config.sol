@@ -3,8 +3,9 @@
 pragma solidity 0.8.10;
 
 contract Config {
-    uint256 public _startTime;
-    uint256 public _endTime;
+    uint256 public _biddingStartTime;
+    uint256 public _biddingEndTime;
+    uint256 public _claimingEndTime;
     uint256 public _auctionWinnersCount;
     uint256 public _raffleWinnersCount;
     uint256 public _reservePrice;
@@ -12,27 +13,33 @@ contract Config {
 
     // TODO check if it makes sense to use smaller types to save on calldata cost
     constructor(
-        uint256 startTime_,
-        uint256 endTime_,
+        uint256 biddingStartTime_,
+        uint256 biddingEndTime_,
+        uint256 claimingEndTime_,
         uint256 auctionWinnersCount_,
         uint256 raffleWinnersCount_,
         uint256 reservePrice_,
         uint256 minBidIncrement_
     ) {
-        _startTime = startTime_;
-        _endTime = endTime_;
+        _biddingStartTime = biddingStartTime_;
+        _biddingEndTime = biddingEndTime_;
+        _claimingEndTime = claimingEndTime_;
         _auctionWinnersCount = auctionWinnersCount_;
         _raffleWinnersCount = raffleWinnersCount_;
         _reservePrice = reservePrice_;
         _minBidIncrement = minBidIncrement_;
     }
 
-    function startTime() external view returns (uint256) {
-        return _startTime;
+    function biddingStartTime() external view returns (uint256) {
+        return _biddingStartTime;
     }
 
-    function endTime() external view returns (uint256) {
-        return _endTime;
+    function biddingEndTime() external view returns (uint256) {
+        return _biddingEndTime;
+    }
+
+    function claimingEndTime() external view returns (uint256) {
+        return _claimingEndTime;
     }
 
     function auctionWinnersCount() external view returns (uint256) {
