@@ -73,7 +73,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     // auctionWinners should be sorted in descending order
-    function settleAuction(uint256[] memory auctionWinners)
+    function settleAuction(uint256[] calldata auctionWinners)
         external
         onlyOwner
         onlyInState(State.BIDDING_CLOSED)
