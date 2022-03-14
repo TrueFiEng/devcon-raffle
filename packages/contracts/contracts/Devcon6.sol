@@ -30,16 +30,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-    Config(
-        biddingStartTime,
-        biddingEndTime,
-        claimingEndTime,
-        auctionWinnersCount,
-        raffleWinnersCount,
-        reservePrice,
-        minBidIncrement
-    )
-    Ownable()
+        Config(
+            biddingStartTime,
+            biddingEndTime,
+            claimingEndTime,
+            auctionWinnersCount,
+            raffleWinnersCount,
+            reservePrice,
+            minBidIncrement
+        )
+        Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -77,9 +77,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
     function settleAuction(uint256[] calldata auctionWinners)
-    external
-    onlyOwner
-    onlyInState(State.BIDDING_CLOSED)
+        external
+        onlyOwner
+        onlyInState(State.BIDDING_CLOSED)
     {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
@@ -107,15 +107,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function settleRaffle(uint256[] memory randomNumbers)
-    external
-    onlyOwner
-    onlyInState(State.AUCTION_SETTLED)
+        external
+        onlyOwner
+        onlyInState(State.AUCTION_SETTLED)
     {
         require(
             randomNumbers.length > 0,
             "Devcon6: there must be at least one random number passed"
         );
-
 
         _settleState = SettleState.RAFFLE_SETTLED;
 
@@ -145,34 +144,57 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
-    function selectGoldenTicketWinner(uint256 randomNumber) private returns (uint256) {
-        uint256 winnerIndex = winnerIndexFromRandomNumber(_raffleParticipants.length, randomNumber);
-
-        setBidWinType(
-            _raffleParticipants[winnerIndex],
-            WinType.GOLDEN_TICKET
+    function selectGoldenTicketWinner(uint256 randomNumber)
+        private
+        returns (uint256)
+    {
+        uint256 winnerIndex = winnerIndexFromRandomNumber(
+            _raffleParticipants.length,
+            randomNumber
         );
+
+        setBidWinType(_raffleParticipants[winnerIndex], WinType.GOLDEN_TICKET);
 
         removeRaffleParticipant(winnerIndex);
         return randomNumber >> 32;
     }
 
-    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength)
+        private
+    {
         for (uint256 i = 0; i < participantsLength; ++i) {
             setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
         }
     }
 
-    function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
-        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
+    function selectRaffleWinners(
+        uint256 participantsLength,
+        uint256[] memory randomNumbers
+    ) private {
+        participantsLength = selectRandomRaffleWinners(
+            participantsLength,
+            randomNumbers[0],
+            7
+        );
         for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
+            participantsLength = selectRandomRaffleWinners(
+                participantsLength,
+                randomNumbers[i],
+                8
+            );
         }
     }
 
-    function selectRandomRaffleWinners(uint256 participantsLength, uint256 randomNumber, uint256 winnersCount) private returns (uint256) {
+    function selectRandomRaffleWinners(
+        uint256 participantsLength,
+        uint256 randomNumber,
+        uint256 winnersCount
+    ) private returns (uint256) {
         for (uint256 i = 0; i < winnersCount; ++i) {
-            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
+            uint256 winnerIndex = winnerIndexFromRandomNumber(
+                participantsLength,
+                randomNumber
+            );
 
             setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
 
@@ -184,7 +206,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return participantsLength;
     }
 
-    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber) private pure returns (uint256) {
+    function winnerIndexFromRandomNumber(
+        uint256 participantsLength,
+        uint256 randomNumber
+    ) private pure returns (uint256) {
         uint256 smallRandom = randomNumber & _randomMask;
         return smallRandom % participantsLength;
     }
@@ -196,7 +221,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid raffle participant index"
         );
         _raffleParticipants[index] = _raffleParticipants[
-        participantsLength - 1
+            participantsLength - 1
         ];
         _raffleParticipants.pop();
     }
@@ -225,9 +250,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-    external
-    view
-    returns (address)
+        external
+        view
+        returns (address)
     {
         return _bidders[bidderID_];
     }

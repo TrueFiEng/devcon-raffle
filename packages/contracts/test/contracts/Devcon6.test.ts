@@ -256,7 +256,7 @@ describe('Devcon6', function () {
       // [[16, 16, 6, 7, 4, 9, 0, 1], [6, 3, 6, 7, 1, 3, 2, 2]]
       const randomNumbers = [
         BigNumber.from('112726022748934390014388827089462711312944969753614146584009694773482609536945'),
-        BigNumber.from('105047327762739474822912977776629330956455721538092382425528863739595553862604')
+        BigNumber.from('105047327762739474822912977776629330956455721538092382425528863739595553862604'),
       ]
 
       await devconAsOwner.settleRaffle(randomNumbers)
@@ -280,7 +280,7 @@ describe('Devcon6', function () {
       await devconAsOwner.settleRaffle(randomBigNumbers(1))
 
       expect(await devconAsOwner.getState()).to.be.eq(State.raffleSettled)
-    });
+    })
   })
 
   describe('getState', function () {
