@@ -137,7 +137,7 @@ describe('Devcon6', function () {
       expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
     })
 
-    it('chooses auction winners when there is not enough participants for entire auction', async function () {
+    it('chooses auction winners when there are not enough participants for entire auction', async function () {
       let owner: Wallet
       ({ devcon, other: owner } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
       devconAsOwner = devcon.connect(owner)
