@@ -79,13 +79,13 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyInState(State.BIDDING_CLOSED)
     {
         _settleState = SettleState.AUCTION_SETTLED;
-        if (getBiddersCount() <= _raffleWinnersCount) {
+        uint256 biddersCount = getBiddersCount();
+        if (biddersCount <= _raffleWinnersCount) {
             return;
         }
 
         uint256 expectedWinnersLength = _auctionWinnersCount;
-        uint256 auctionParticipantsCount = getBiddersCount() -
-            _raffleWinnersCount;
+        uint256 auctionParticipantsCount = biddersCount - _raffleWinnersCount;
         if (auctionParticipantsCount < _auctionWinnersCount) {
             expectedWinnersLength = auctionParticipantsCount;
         }
