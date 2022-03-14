@@ -1,4 +1,4 @@
-import { MockProvider, Fixture } from 'ethereum-waffle'
+import { Fixture, MockProvider } from 'ethereum-waffle'
 import { Wallet } from 'ethers'
 import { waffle } from 'hardhat'
 
