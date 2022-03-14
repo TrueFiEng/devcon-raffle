@@ -211,6 +211,13 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    function claimProceeds()
+        external
+        payable
+        onlyOwner
+        onlyInState(State.RAFFLE_SETTLED)
+    {}
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
