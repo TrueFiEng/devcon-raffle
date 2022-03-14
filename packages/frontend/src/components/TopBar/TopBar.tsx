@@ -18,8 +18,9 @@ const TopBarContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  min-height: 56px;
-  width: 100%;
-  padding: 0 68px;
-  background: ${Colors.White};
+  padding: 8px 68px;
+  background-color: ${Colors.White};
+  position: sticky;
+  top: 0;
+  z-index: 2000;
 `
