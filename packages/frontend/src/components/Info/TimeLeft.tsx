@@ -18,15 +18,23 @@ export const TimeLeft = ({ endTimestamp }: Props) => {
   }, [])
 
   return (
-    <div>
+    <TimeBox>
       <p>
         Time left <RemainingTime>{timeLeft}</RemainingTime>
       </p>
-      <p>Ends on {formatEndDate(endTimestamp)}</p>
-    </div>
+      <p>
+        Ends on <RemainingTime>{formatEndDate(endTimestamp)}</RemainingTime>
+      </p>
+    </TimeBox>
   )
 }
 
+const TimeBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+`
 const RemainingTime = styled.span`
-  font-weight: 500;
+  font-weight: 700;
 `
