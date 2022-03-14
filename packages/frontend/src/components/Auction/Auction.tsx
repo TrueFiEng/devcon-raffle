@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { BidForm } from 'src/components/Auction/BidForm'
 import { bidList } from 'src/data/bids'
@@ -7,18 +6,11 @@ import styled from 'styled-components'
 
 import { BidsListSection } from '../BidsList/BidsList'
 
-import { bids } from './data'
-
-export interface Bid {
-  bidderAddress: string
-  amount: BigNumber
-}
-
 export const Auction = () => {
   return (
     <Wrapper>
       <BidForm minimumBid={parseEther('0.15')} bidList={bidList} />
-      <BidsListSection bids={bids} />
+      <BidsListSection bids={bidList} />
     </Wrapper>
   )
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { Bid } from '../Auction/Auction'
+import { Bid } from '../../models/Bid'
 import { Button } from '../Buttons/Button'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
