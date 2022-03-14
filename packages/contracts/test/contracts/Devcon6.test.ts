@@ -210,12 +210,12 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await bid(18)
+      await bid(20)
       await endBidding(devconAsOwner)
       await settleAuction([1])
 
       // Reverts because it expects 2 random numbers
-      await expect(devconAsOwner.settleRaffle(randomBigNumbers(1)))
+      await expect(devconAsOwner.settleRaffle(randomBigNumbers(3)))
         .to.be.revertedWith('Devcon6: passed random numbers count does not match the preset length')
     })
 
