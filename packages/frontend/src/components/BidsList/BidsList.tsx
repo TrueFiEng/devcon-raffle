@@ -16,7 +16,8 @@ export const BidsListSection = ({ bids }: Props) => {
   return (
     <BidsListContainer>
       <ListHeader>
-        Number of participants: <ColoredNumber>100</ColoredNumber>
+        <h3>Number of participants:</h3>
+        <ColoredNumber>100</ColoredNumber>
       </ListHeader>
       <BidsHeaders>
         <PlaceColumn>Place</PlaceColumn>
@@ -36,24 +37,19 @@ export const BidsListSection = ({ bids }: Props) => {
 }
 
 const BidsListContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  padding-top: 46px;
-  padding-right: 144px;
-  padding-bottom: 68px;
   display: flex;
   flex-direction: column;
-  justify-content: left;
+  height: 100%;
+  width: 100%;
+  padding: 46px 0;
 `
 
-const ColoredNumber = styled.span`
+const ListHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+const ColoredNumber = styled.h3`
   color: ${Colors.Blue};
-`
-
-const BidsList = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 32px 0;
 `
 
 const BidsHeaders = styled.div`
@@ -62,16 +58,13 @@ const BidsHeaders = styled.div`
   font-weight: 600;
   color: ${Colors.Black};
 `
+const BidsList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 32px 0;
+`
 
 const ButtonRow = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-`
-
-const ListHeader = styled.h2`
-  font-weight: 600;
-  letter-spacing: -2px;
-  color: ${Colors.Black};
+  justify-content: center;
 `
