@@ -441,6 +441,13 @@ describe('Devcon6', function () {
     }
   })
 
+  describe('claimProceeds', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.claimProceeds())
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
