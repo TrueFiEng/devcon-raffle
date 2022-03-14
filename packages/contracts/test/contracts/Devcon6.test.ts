@@ -331,19 +331,20 @@ describe('Devcon6', function () {
       expect(bid.bidderID).to.not.equal(0)
       return bid
     }
-
-    async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
-      await bid(bidCount)
-      await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction(auctionWinners)
-      await devconAsOwner.settleRaffle(randomBigNumbers(1))
-    }
   })
 
   describe('claimProceeds', function () {
     it('reverts if called not by owner', async function () {
       await expect(devcon.claimProceeds())
         .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if has been already proceeded', async function () {
+      await bidAndSettleRaffle(2, [1])
+      await devconAsOwner.claimProceeds()
+
+      await expect(devconAsOwner.claimProceeds())
+        .to.be.revertedWith('Devcon6: claim has been already proceeded')
     })
   })
 
@@ -388,6 +389,13 @@ describe('Devcon6', function () {
       expect(await devcon.getState()).to.be.equal(State.claimingClosed)
     })
   })
+
+  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+    await bid(bidCount)
+    await endBidding(devconAsOwner)
+    await devconAsOwner.settleAuction(auctionWinners)
+    await devconAsOwner.settleRaffle(randomBigNumbers(1))
+  }
 
   async function endBidding(devcon: Devcon6) {
     const endTime = await devcon.biddingEndTime()
