@@ -273,15 +273,19 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         require(!_claimProceeded, "Devcon6: claim has been already proceeded");
         _claimProceeded = true;
 
+        uint256 biddersCount = getBiddersCount();
+        if (biddersCount == 0) {
+            return;
+        }
+
         uint256 totalAmount = 0;
         uint256 winnersCount = _auctionWinners.length;
-        for(uint256 i = 0; i < winnersCount; ++i) {
+        for (uint256 i = 0; i < winnersCount; ++i) {
             address bidderAddress = _bidders[_auctionWinners[i]];
             totalAmount += _bids[bidderAddress].amount;
         }
 
         winnersCount = _raffleWinnersCount - 1;
-        uint256 biddersCount = getBiddersCount();
         if (biddersCount <= winnersCount) {
             winnersCount = biddersCount - 1;
         }

@@ -476,6 +476,16 @@ describe('Devcon6', function () {
       expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.add(claimAmount).sub(txCost))
     })
 
+    it('does not transfer funds if there are no participants', async function () {
+      await bidAndSettleRaffle(0, [])
+
+      const balanceBeforeClaim = await wallets[1].getBalance()
+      const tx = await devconAsOwner.claimProceeds()
+      const txCost = await calculateTxCost(tx)
+
+      expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.sub(txCost))
+    })
+
     async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
       const txReceipt = await tx.wait()
       return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
