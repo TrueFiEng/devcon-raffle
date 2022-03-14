@@ -274,18 +274,20 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _claimProceeded = true;
 
         uint256 totalAmount = 0;
-        for(uint256 i = 0; i < _auctionWinners.length; ++i) {
+        uint256 winnersCount = _auctionWinners.length;
+        for(uint256 i = 0; i < winnersCount; ++i) {
             address bidderAddress = _bidders[_auctionWinners[i]];
             totalAmount += _bids[bidderAddress].amount;
         }
 
-        payable(msg.sender).transfer(totalAmount);
+        winnersCount = _raffleWinnersCount - 1;
+        uint256 biddersCount = getBiddersCount();
+        if (biddersCount <= winnersCount) {
+            winnersCount = biddersCount - 1;
+        }
+        totalAmount += winnersCount * _reservePrice;
 
-        // array[] auctionWinnersBiddersID
-        // if there is no fee from not winning bids
-        // store / pass winners bidID (verify that they are winners)
-        // calculate fee for owner (auction, raffle, golden ticket winner)
-        // sum fees and transfer to owner
+        payable(msg.sender).transfer(totalAmount);
     }
 
     function getState() public view returns (State) {
