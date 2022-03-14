@@ -1,7 +1,7 @@
 import { parseEther } from '@ethersproject/units'
 import { Bid } from 'src/models/Bid'
 
-export const bidList: Bid[] = [
+export const bids: Bid[] = [
   {
     bidderAddress: '0x6308fb2349Ca8Bf5D9Ab896Ea4AAc7B525febb13',
     amount: parseEther('2.12312331231'),
