@@ -104,6 +104,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         _winnersCount = expectedWinnersLength;
+        _auctionWinners = auctionWinners;
         for (uint256 i = 0; i < auctionWinners.length; i++) {
             uint256 bidderID = auctionWinners[i];
             setBidWinType(bidderID, WinType.AUCTION);
@@ -222,6 +223,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         require(!_claimProceeded, "Devcon6: claim has been already proceeded");
         _claimProceeded = true;
+
+        uint256 totalAmount = 0;
+        for(uint256 i = 0; i < _auctionWinners.length; ++i) {
+            address bidderAddress = _bidders[_auctionWinners[i]];
+            totalAmount += _bids[bidderAddress].amount;
+        }
+
+        payable(msg.sender).transfer(totalAmount);
 
         // array[] auctionWinnersBiddersID
         // if there is no fee from not winning bids

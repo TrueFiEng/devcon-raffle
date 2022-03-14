@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet, utils } from 'ethers'
+import { BigNumber, BigNumberish, Wallet, utils, ContractTransaction } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
@@ -346,6 +346,23 @@ describe('Devcon6', function () {
       await expect(devconAsOwner.claimProceeds())
         .to.be.revertedWith('Devcon6: claim has been already proceeded')
     })
+
+    it('transfers auction winners bids amount', async function () {
+      const bidAmount = reservePrice.add(100)
+      await bidAsWallet(wallets[8], bidAmount)
+      await bidAndSettleRaffle(8, [1])
+
+      const balanceBeforeClaim = await wallets[1].getBalance()
+      const tx = await devconAsOwner.claimProceeds()
+      const txCost = await calculateTxCost(tx)
+
+      expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.add(bidAmount).sub(txCost))
+    })
+
+    async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
+      const txReceipt = await tx.wait()
+      return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+    }
   })
 
   describe('getState', function () {
