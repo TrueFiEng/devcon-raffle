@@ -121,14 +121,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         randomNumbers[0] = selectGoldenTicketWinner(randomNumbers[0]);
 
         uint256 participantsLength = _raffleParticipants.length;
-
-        if (participantsLength <= _raffleWinnersCount) {
+        uint256 raffleWinnersCount = _raffleWinnersCount;
+        if (participantsLength < raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners(participantsLength);
             return;
         }
 
         require(
-            randomNumbers.length == _raffleWinnersCount / 8,
+            randomNumbers.length == raffleWinnersCount / 8,
             "Devcon6: passed random numbers count does not match the preset length"
         );
 
