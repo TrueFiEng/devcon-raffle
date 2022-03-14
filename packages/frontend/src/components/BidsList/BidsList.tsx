@@ -3,6 +3,7 @@ import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { Bid } from '../Auction/Auction'
+import { Button } from '../Buttons/Button'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
@@ -28,7 +29,7 @@ export const BidsListSection = ({ bids }: Props) => {
         ))}
       </BidsList>
       <ButtonRow>
-        <span>Show all</span>
+        <Button view="secondary">Show all</Button>
       </ButtonRow>
     </BidsListContainer>
   )
@@ -39,6 +40,7 @@ const BidsListContainer = styled.div`
   width: 100%;
   padding-top: 46px;
   padding-right: 144px;
+  padding-bottom: 68px;
   display: flex;
   flex-direction: column;
   justify-content: left;

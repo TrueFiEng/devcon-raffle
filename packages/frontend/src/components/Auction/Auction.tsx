@@ -6,7 +6,6 @@ import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { BidsListSection } from '../BidsList/BidsList'
-import { Button } from '../Buttons/Button'
 
 import { bids } from './data'
 
@@ -20,7 +19,6 @@ export const Auction = () => {
     <Wrapper>
       <BidForm minimumBid={parseEther('0.15')} bidList={bidList} />
       <BidsListSection bids={bids} />
-      <Button view="secondary">Show all</Button>
     </Wrapper>
   )
 }
