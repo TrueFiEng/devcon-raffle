@@ -84,9 +84,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        uint256 expectedWinnersLength = _auctionWinnersCount;
         uint256 auctionParticipantsCount = biddersCount - _raffleWinnersCount;
-        if (auctionParticipantsCount < _auctionWinnersCount) {
+        uint256 expectedWinnersLength = _auctionWinnersCount;
+        if (auctionParticipantsCount < expectedWinnersLength) {
             expectedWinnersLength = auctionParticipantsCount;
         }
 
