@@ -386,16 +386,16 @@ describe('Devcon6', function () {
     })
   })
 
-  describe('withdrawUnclaimed', function () {
+  describe('withdrawUnclaimedFunds', function () {
     it('reverts if called not by owner', async function () {
-      await expect(devcon.withdrawUnclaimed())
+      await expect(devcon.withdrawUnclaimedFunds())
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if claiming has not been closed yet', async function () {
       await bidAndSettleRaffle(2, [1])
 
-      await expect(devconAsOwner.withdrawUnclaimed())
+      await expect(devconAsOwner.withdrawUnclaimedFunds())
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
@@ -407,7 +407,7 @@ describe('Devcon6', function () {
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
       const balanceBeforeWithdraw = await wallets[1].getBalance()
-      const tx = await devconAsOwner.withdrawUnclaimed()
+      const tx = await devconAsOwner.withdrawUnclaimedFunds()
       const txCost = await calculateTxCost(tx)
 
       const expectedBalance = balanceBeforeWithdraw
