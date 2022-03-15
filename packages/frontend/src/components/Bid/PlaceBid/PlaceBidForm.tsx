@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
 import { Button } from 'src/components/Buttons/Button'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
@@ -9,17 +8,17 @@ import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
 import styled from 'styled-components'
 
-interface BidProps {
+interface PlaceBidFormProps {
+  bid: BigNumber
+  setBid: (val: BigNumber) => void
   minimumBid: BigNumber
   bids: Bid[]
   setView: (state: BidFlow) => void
 }
 
-export const PlaceBidForm = ({ minimumBid, bids, setView }: BidProps) => {
+export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const [bid, setBid] = useState(minimumBid)
-
   const notEnoughBalance = userBalance !== undefined && bid.gt(userBalance)
   const bidTooLow = bid.lt(minimumBid)
 

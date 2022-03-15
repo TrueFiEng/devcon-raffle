@@ -10,7 +10,7 @@ interface AuctionActionProps {
 export const AuctionAction = ({ children }: AuctionActionProps) => {
   const { account } = useEthers()
 
-  return <Wrapper>{account ? <h3>Connect wallet</h3> : <>{children}</>}</Wrapper>
+  return <Wrapper>{account ? <>{children}</> : <h3>Connect wallet</h3>}</Wrapper>
 }
 
 const Wrapper = styled.div`
