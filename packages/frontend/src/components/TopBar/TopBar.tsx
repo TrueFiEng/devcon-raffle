@@ -2,13 +2,13 @@ import { Logo } from 'src/images/Logo'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { AccountButton } from './AccountButton'
+import { AccountButton } from '../Buttons/AccountButton'
 
 export const TopBar = () => {
   return (
     <TopBarContainer>
       <Logo />
-      <AccountButton />
+      <AccountButton view="secondary" />
     </TopBarContainer>
   )
 }

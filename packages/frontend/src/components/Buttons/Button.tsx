@@ -3,7 +3,7 @@ import { LoadingIcon } from 'src/components/Icons/LoadingIcon'
 import { Colors } from 'src/styles/colors'
 import styled, { css } from 'styled-components'
 
-interface ButtonProps {
+export interface ButtonProps {
   children: ReactNode
   className?: string
   view?: 'primary' | 'secondary'
