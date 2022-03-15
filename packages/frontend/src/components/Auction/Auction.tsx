@@ -1,15 +1,15 @@
-import { parseEther } from '@ethersproject/units'
-import { BidForm } from 'src/components/Auction/BidForm'
 import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { BidsListSection } from '../BidsList/BidsList'
 
+import { BidFormSection } from './BidFormSection'
+
 export const Auction = () => {
   return (
     <Wrapper>
-      <BidForm minimumBid={parseEther('0.15')} bids={bids} />
+      <BidFormSection />
       <BidsListSection bids={bids} />
     </Wrapper>
   )

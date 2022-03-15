@@ -20,3 +20,16 @@ export const FormRow = styled.div`
 export const FormHeading = styled.h2`
   color: ${Colors.White};
 `
+
+export const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  margin-left: -170px;
+  padding: 82px 115px;
+  position: relative;
+  z-index: 100;
+  width: 724px;
+  height: 450px;
+  background: #6100ff;
+`

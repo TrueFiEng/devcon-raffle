@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
-import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
+import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
 import styled from 'styled-components'
@@ -19,7 +19,7 @@ export const BidForm = ({ minimumBid, bids }: BidProps) => {
   const isBadAmount = etherBalance !== undefined && bid.lt(etherBalance)
 
   return (
-    <Wrapper>
+    <FormWrapper>
       <FormHeading>Place bid</FormHeading>
       <Form
         onSubmit={(e) => {
@@ -38,22 +38,10 @@ export const BidForm = ({ minimumBid, bids }: BidProps) => {
         </FormRow>
         <Button disabled={isBadAmount}>Place bid</Button>
       </Form>
-    </Wrapper>
+    </FormWrapper>
   )
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-  margin-left: -170px;
-  padding: 82px 115px;
-  position: relative;
-  z-index: 100;
-  width: 724px;
-  height: 450px;
-  background: #6100ff;
-`
 const Button = styled.button`
   width: 250px;
   padding: 8px;
