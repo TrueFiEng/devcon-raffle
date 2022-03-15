@@ -270,7 +270,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.RAFFLE_SETTLED)
     {
-        require(!_claimProceeded, "Devcon6: claim has been already proceeded");
+        require(!_claimProceeded, "Devcon6: proceeds has been already claimed");
         _claimProceeded = true;
 
         uint256 biddersCount = getBiddersCount();
