@@ -72,15 +72,22 @@ describe('Devcon6', function () {
       expect(bid.winType).to.be.equal(WinType.loss)
     })
 
-    it('tree test', async function () {
-      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+    it.only('tree test', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
+      devconAsOwner = devcon.connect(wallets[1])
 
-      // await devconAsOwner.bid({ value: reservePrice })
+      await expect(devcon.bid({ value: reservePrice.add(100) })).to.be.not.reverted
+      await bidAsWallet(wallets[2], reservePrice.add(20))
+      await bidAsWallet(wallets[3], reservePrice.add(10))
+      await bidAsWallet(wallets[4], reservePrice.add(30))
 
-      const smallestValue = await devcon.first()
-      console.log(smallestValue)
-
+      const smallestValue = await devcon.smallestBid()
+      console.log("Smallest bid:")
       treeNodeToBidderInfo(smallestValue)
+
+      const biggestBid = await devcon.biggestBid()
+      console.log("\nBiggest bid:")
+      treeNodeToBidderInfo(biggestBid)
 
       const bid = await devcon.getBid(bidderAddress)
 

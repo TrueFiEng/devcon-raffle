@@ -16,6 +16,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     BokkyPooBahsRedBlackTreeLibrary.Tree tree;
     uint256 constant _bidderMask = 0xffff;
     uint256 _smallestTreeNode = type(uint256).max;
+    uint256 _smallestAuctionBid = type(uint256).max;
 
 
     uint256[] _raffleParticipants;
@@ -90,14 +91,31 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function addToTree(uint256 bidderID, uint256 amount) internal {
+        bool isTreeFull = getBiddersCount() >= _auctionWinnersCount;
+        if (isTreeFull && amount <= _smallestAuctionBid) {
+            return;
+        }
+
         amount = amount << 16;
         amount = amount | (_bidderMask - bidderID);
 
+        if (isTreeFull) {
+            tree.remove(_smallestTreeNode);
+        }
         tree.insert(amount);
+
+        // override smallest tree node
+        uint256 smallestTreeNode = tree.first();
+        _smallestTreeNode = smallestTreeNode;
+        _smallestAuctionBid = smallestTreeNode >> 16;
     }
 
-    function first() public view returns (uint _key) {
+    function smallestBid() public view returns (uint _key) {
         _key = tree.first();
+    }
+
+    function biggestBid() public view returns (uint _key) {
+        _key = tree.last();
     }
 
     // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
