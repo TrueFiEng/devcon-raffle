@@ -546,6 +546,37 @@ describe('Devcon6', function () {
     }
   })
 
+  describe('withdrawUnclaimed', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.withdrawUnclaimed())
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if claiming has not been closed yet', async function () {
+      await bidAndSettleRaffle(2, [1])
+
+      await expect(devconAsOwner.withdrawUnclaimed())
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+
+    it('transfers unclaimed funds', async function () {
+      await bidAndSettleRaffle(10, [1])
+      await devconAsOwner.claimProceeds()
+
+      const endTime = await devcon.claimingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
+
+      const balanceBeforeWithdraw = await wallets[1].getBalance()
+      const tx = await devconAsOwner.withdrawUnclaimed()
+      const txCost = await calculateTxCost(tx)
+
+      const expectedBalance = balanceBeforeWithdraw
+        .sub(txCost)
+        .add(reservePrice.mul(2)) // unclaimed golden ticket and non-winning bid funds
+      expect(await wallets[1].getBalance()).to.be.equal(expectedBalance)
+    })
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
@@ -641,5 +672,10 @@ describe('Devcon6', function () {
   async function getBidByID(bidID: number): Promise<Bid> {
     const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
     return devconAsOwner.getBid(bidderAddress)
+  }
+
+  async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
+    const txReceipt = await tx.wait()
+    return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
   }
 })

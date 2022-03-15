@@ -302,6 +302,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(totalAmount);
     }
 
+    function withdrawUnclaimed()
+        external
+        payable
+        onlyOwner
+        onlyInState(State.CLAIMING_CLOSED)
+    {
+        uint256 balance = address(this).balance;
+        payable(msg.sender).transfer(balance);
+    }
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
