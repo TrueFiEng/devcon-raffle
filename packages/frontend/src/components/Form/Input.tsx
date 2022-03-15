@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
+import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
@@ -13,7 +14,7 @@ interface InputProps {
   isBadAmount: boolean
 }
 
-const numberInputRegex = /^((\d*)|(\d+[.,])|(\d+[.,]\d+))$/
+const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]+\d*)|(\d+[.,]\d+))$/
 
 export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const { account } = useEthers()
@@ -30,13 +31,17 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
       const formattedValue = value.replace(',', '.')
       setInputValue(formattedValue)
       setBid(parseEther(formattedValue))
+    } else {
+      setInputValue('')
+      setBid(parseEther('0'))
     }
   }
 
   const onBlur = (value: string) => {
-    if (value !== '' && Number(value.charAt(0)) === 0 && value.charAt(1) !== '.') {
-      setInputValue(value.substring(1))
-      setBid(parseEther(value.substring(1)))
+    if (value !== '') {
+      const formattedValue = formatInputAmount(value)
+      setInputValue(formattedValue)
+      setBid(parseEther(formattedValue))
     }
   }
 
