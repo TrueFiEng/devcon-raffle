@@ -7,10 +7,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
+import "./RedBlackTree.sol";
 
 // TODO replace i++ with ++i everywhere
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
+    using BokkyPooBahsRedBlackTreeLibrary for BokkyPooBahsRedBlackTreeLibrary.Tree;
+    BokkyPooBahsRedBlackTreeLibrary.Tree tree;
+
+
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
     uint256 _winnersCount;
