@@ -313,7 +313,7 @@ describe('Devcon6', function () {
 
       const bidderAddress = await devconAsOwner.getBidderAddress(lostBid.bidderID)
       const bidderBalance = await provider.getBalance(bidderAddress)
-      const expectedBidderBalance = bidderBalance.add(reservePrice.mul(98).div(100))
+      const expectedBidderBalance = bidderBalance.add(reservePrice)
 
       await devconAsOwner.claim(lostBid.bidderID)
 

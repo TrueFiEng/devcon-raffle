@@ -207,7 +207,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         } else if (bidder.winType == WinType.GOLDEN_TICKET) {
             claimAmount = bidder.amount;
         } else if (bidder.winType == WinType.LOSS) {
-            claimAmount = (bidder.amount * 98) / 100;
+            claimAmount = bidder.amount;
         }
 
         if (claimAmount > 0) {
