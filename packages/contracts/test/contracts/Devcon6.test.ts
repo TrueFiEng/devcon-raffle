@@ -339,12 +339,12 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
-    it('reverts if has been already proceeded', async function () {
+    it('reverts if proceeds have been already claimed', async function () {
       await bidAndSettleRaffle(2, [1])
       await devconAsOwner.claimProceeds()
 
       await expect(devconAsOwner.claimProceeds())
-        .to.be.revertedWith('Devcon6: claim has been already proceeded')
+        .to.be.revertedWith('Devcon6: proceeds has been already claimed')
     })
 
     it('transfers correct amount', async function () {
