@@ -14,6 +14,8 @@ import "./RedBlackTree.sol";
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using BokkyPooBahsRedBlackTreeLibrary for BokkyPooBahsRedBlackTreeLibrary.Tree;
     BokkyPooBahsRedBlackTreeLibrary.Tree tree;
+    uint256 constant _bidderMask = 0xffff;
+    uint256 _smallestTreeNode = type(uint256).max;
 
 
     uint256[] _raffleParticipants;
@@ -81,8 +83,21 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
+
+            addToTree(bidder.bidderID, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
+    }
+
+    function addToTree(uint256 bidderID, uint256 amount) internal {
+        amount = amount << 16;
+        amount = amount | (_bidderMask - bidderID);
+
+        tree.insert(amount);
+    }
+
+    function first() public view returns (uint _key) {
+        _key = tree.first();
     }
 
     // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it

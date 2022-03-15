@@ -72,6 +72,32 @@ describe('Devcon6', function () {
       expect(bid.winType).to.be.equal(WinType.loss)
     })
 
+    it('tree test', async function () {
+      await expect(devcon.bid({ value: reservePrice })).to.be.not.reverted
+
+      // await devconAsOwner.bid({ value: reservePrice })
+
+      const smallestValue = await devcon.first()
+      console.log(smallestValue)
+
+      treeNodeToBidderInfo(smallestValue)
+
+      const bid = await devcon.getBid(bidderAddress)
+
+      expect(bid.bidderID).to.be.equal(1)
+      expect(bid.amount).to.be.equal(reservePrice)
+      expect(bid.winType).to.be.equal(WinType.loss)
+    })
+
+    function treeNodeToBidderInfo(value: BigNumber): [BigNumber, BigNumber] {
+      const mask = BigNumber.from("0xffff") // decimal from 0xffff
+      const bidderID = mask.sub(value.and(mask))
+      console.log("BidderID: ", bidderID.toString())
+      const bidAmount = value.shr(16)
+      console.log("BidAmount: ", bidAmount.toString())
+      return [bidderID, bidAmount]
+    }
+
     it('saves bidder address', async function () {
       await devcon.bid({ value: reservePrice })
 
