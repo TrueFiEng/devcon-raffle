@@ -411,18 +411,17 @@ describe('Devcon6', function () {
       expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
     })
 
-    it('transfers bid funds for loser', async function () {
+    it('transfers bid funds for non-winning bidder', async function () {
       await bidAndSettleRaffle(10, [2])
 
       const lostBid = await getBidByWinType(10, WinType.loss)
 
       const bidderAddress = await devconAsOwner.getBidderAddress(lostBid.bidderID)
       const bidderBalance = await provider.getBalance(bidderAddress)
-      const expectedBidderBalance = bidderBalance.add(reservePrice.mul(98).div(100))
 
       await devconAsOwner.claim(lostBid.bidderID)
 
-      expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalance.add(reservePrice))
     })
 
     async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
