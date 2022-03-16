@@ -10,7 +10,6 @@ import { BigNumber, BigNumberish, Wallet, utils, ContractTransaction } from 'eth
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
-import { describe } from 'mocha'
 import { Bid } from './bid'
 
 describe('Devcon6', function () {
