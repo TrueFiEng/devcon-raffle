@@ -1,16 +1,17 @@
-import { ChainId, useEthers } from '@usedapp/core'
+import { useEthers } from '@usedapp/core'
+import { CONFIG } from 'src/config/config'
 
 type AuctionStatus = 'NotConnected' | 'WrongNetwork' | 'Connected'
 
 export function useAuctionStatus(): AuctionStatus {
   const { account, chainId } = useEthers()
 
-  if (!account) {
-    return 'NotConnected'
+  if (chainId && CONFIG.allowedNetworks.includes(chainId)) {
+    return 'WrongNetwork'
   }
 
-  if (chainId !== ChainId.Arbitrum) {
-    return 'WrongNetwork'
+  if (!account) {
+    return 'NotConnected'
   }
 
   return 'Connected'
