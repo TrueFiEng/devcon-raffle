@@ -3,13 +3,13 @@
 pragma solidity 0.8.10;
 
 contract Config {
-    uint256 public _biddingStartTime;
-    uint256 public _biddingEndTime;
-    uint256 public _claimingEndTime;
-    uint256 public _auctionWinnersCount;
-    uint256 public _raffleWinnersCount;
-    uint256 public _reservePrice;
-    uint256 public _minBidIncrement;
+    uint256 public immutable _biddingStartTime;
+    uint256 public immutable _biddingEndTime;
+    uint256 public immutable _claimingEndTime;
+    uint256 public immutable _auctionWinnersCount;
+    uint256 public immutable _raffleWinnersCount;
+    uint256 public immutable _reservePrice;
+    uint256 public immutable _minBidIncrement;
 
     // TODO check if it makes sense to use smaller types to save on calldata cost
     // TODO think about edge cases with auctionWinnersCount_, raffleWinnersCount_
