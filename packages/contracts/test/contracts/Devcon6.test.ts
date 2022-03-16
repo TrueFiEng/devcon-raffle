@@ -432,7 +432,6 @@ describe('Devcon6', function () {
           bid = currentBid
         }
       }
-      expect(bid.bidderID).to.not.equal(0)
       return bid
     }
 
