@@ -3,10 +3,9 @@ import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
-import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
+import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
-import styled from 'styled-components'
 
 interface PlaceBidFormProps {
   bid: BigNumber
@@ -23,7 +22,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
   const bidTooLow = bid.lt(minimumBid)
 
   return (
-    <Wrapper>
+    <FormWrapper>
       <FormHeading>Place bid</FormHeading>
       <Form
         onSubmit={(e) => {
@@ -42,14 +41,6 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
         </FormRow>
         <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(BidFlow.Review)}>Place bid</Button>
       </Form>
-    </Wrapper>
+    </FormWrapper>
   )
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-  width: 100%;
-  padding: 82px 115px;
-`

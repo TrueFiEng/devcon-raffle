@@ -21,3 +21,11 @@ export const FormRow = styled.div`
 export const FormHeading = styled.h2`
   color: ${Colors.White};
 `
+
+export const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  padding: 82px 115px 82px 170px;
+  width: 100%;
+`
