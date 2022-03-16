@@ -217,7 +217,7 @@ describe('Devcon6', function () {
 
       // Reverts because it expects 2 random numbers
       await expect(devconAsOwner.settleRaffle(randomBigNumbers(3)))
-        .to.be.revertedWith('Devcon6: passed random numbers count does not match the preset length')
+        .to.be.revertedWith('Devcon6: passed incorrect number of random numbers')
     })
 
     it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
