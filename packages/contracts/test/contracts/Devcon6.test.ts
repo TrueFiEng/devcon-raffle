@@ -400,13 +400,13 @@ describe('Devcon6', function () {
     it('transfers bid funds for golden ticket winner', async function () {
       await bidAndSettleRaffle(10, [2])
 
-      const wonBid = await getBidByWinType(10, WinType.goldenTicket)
+      const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
 
-      const bidderAddress = await devconAsOwner.getBidderAddress(wonBid.bidderID)
+      const bidderAddress = await devconAsOwner.getBidderAddress(goldenBid.bidderID)
       const bidderBalance = await provider.getBalance(bidderAddress)
-      const expectedBidderBalance = bidderBalance.add(wonBid.amount)
+      const expectedBidderBalance = bidderBalance.add(goldenBid.amount)
 
-      await devconAsOwner.claim(wonBid.bidderID)
+      await devconAsOwner.claim(goldenBid.bidderID)
 
       expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
     })
