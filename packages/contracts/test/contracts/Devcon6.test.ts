@@ -425,14 +425,12 @@ describe('Devcon6', function () {
     })
 
     async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
-      let bid: Bid
-      for (let i = 1; i < bidCount + 1; i++) {
-        const currentBid = await getBidByID(i)
-        if (currentBid.winType === winType) {
-          bid = currentBid
+      for (let i = 1; i <= bidCount; i++) {
+        const bid = await getBidByID(i)
+        if (bid.winType === winType) {
+          return bid
         }
       }
-      return bid
     }
 
     async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
