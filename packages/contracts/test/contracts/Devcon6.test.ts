@@ -173,7 +173,7 @@ describe('Devcon6', function () {
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([30]))
-        .to.be.revertedWith('Devcon6: given winner does not exist')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('saves auction winners', async function () {
@@ -358,7 +358,7 @@ describe('Devcon6', function () {
       await bidAndSettleRaffle(2, [])
 
       await expect(devcon.claim(20))
-        .to.be.revertedWith('Devcon6: given bidder does not exist')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('reverts if funds have been already claimed', async function () {
@@ -494,13 +494,13 @@ describe('Devcon6', function () {
   describe('getBidderAddress', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(devcon.getBidderAddress(0))
-        .to.be.revertedWith('Devcon6: bidder ID must be greater than 0')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
       await expect(devcon.getBidderAddress(2))
-        .to.be.revertedWith('Devcon6: bidder ID does not exist')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('returns bidder address', async function () {
