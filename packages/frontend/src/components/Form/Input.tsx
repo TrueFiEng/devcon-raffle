@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
+import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
@@ -13,7 +14,7 @@ interface InputProps {
   isBadAmount: boolean
 }
 
-const numberInputRegex = /^((\d*)|(\d+[.,])|(\d+[.,]\d+))$/
+const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]+\d*)|(\d+[.,]\d+))$/
 
 export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const { account } = useEthers()
@@ -22,13 +23,25 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const initialInputValue = bid.isZero() ? '' : formatEther(bid)
   const [inputValue, setInputValue] = useState(initialInputValue)
 
-  const setValue = (value: string) => {
+  const onChange = (value: string) => {
     if (!numberInputRegex.test(value)) {
       return
     }
-    setInputValue(value)
     if (value !== '') {
-      setBid(parseEther(value))
+      const formattedValue = value.replace(',', '.')
+      setInputValue(formattedValue)
+      setBid(parseEther(formattedValue))
+    } else {
+      setInputValue('')
+      setBid(parseEther('0'))
+    }
+  }
+
+  const onBlur = (value: string) => {
+    if (value !== '') {
+      const formattedValue = formatInputAmount(value)
+      setInputValue(formattedValue)
+      setBid(parseEther(formattedValue))
     }
   }
 
@@ -39,13 +52,20 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
         <TokenIconWrapper>
           <EtherIcon />
         </TokenIconWrapper>
-        <StyledInput value={inputValue} onChange={(e) => setValue(e.target.value)} role="input" />
+        <StyledInput
+          value={inputValue}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={(e) => onBlur(e.target.value)}
+          role="input"
+        />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
       {isBadAmount && (
         <InputErrors>
-          <CloseCircleIcon size={16} />
-          <InputErrorLabel>Error message text goes here</InputErrorLabel>
+          <CloseCircleIcon size={16} color={Colors.Red} />
+          <InputErrorLabel>
+            {etherBalance && bid.lt(etherBalance) ? 'Bid amount must be at least Raffle price' : 'Not enough balance'}
+          </InputErrorLabel>
         </InputErrors>
       )}
     </InputWrapper>
@@ -57,6 +77,7 @@ const InputWrapper = styled.div`
   position: relative;
   flex-direction: column;
   width: 100%;
+  margin-bottom: 12px;
 `
 
 const InputLabel = styled.div`
@@ -140,7 +161,7 @@ const InputTokenName = styled.span`
 const InputErrors = styled.div`
   display: flex;
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   align-items: center;
   width: 100%;
   max-width: 100%;
