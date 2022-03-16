@@ -350,8 +350,8 @@ describe('Devcon6', function () {
     await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
   }
 
-  async function bid(bidAmount: number) {
-    for (let i = 0; i < bidAmount; i++) {
+  async function bid(walletCount: number) {
+    for (let i = 0; i < walletCount; i++) {
       await bidAsWallet(wallets[i])
     }
   }
