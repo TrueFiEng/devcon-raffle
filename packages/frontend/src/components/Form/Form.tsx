@@ -22,6 +22,10 @@ export const FormHeading = styled.h2`
   color: ${Colors.White};
 `
 
+export const FormSubHeading = styled.h3`
+  color: ${Colors.White};
+`
+
 export const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
