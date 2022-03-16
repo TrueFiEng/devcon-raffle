@@ -84,7 +84,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
         if (biddersCount <= _raffleWinnersCount) {
-            require(auctionWinners.length == 0, "Devcon6: invalid auction winners length");
+            require(
+                auctionWinners.length == 0,
+                "Devcon6: invalid auction winners length"
+            );
             return;
         }
 
@@ -258,7 +261,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         returns (address)
     {
         require(bidderID_ > 0, "Devcon6: bidder ID must be greater than 0");
-        require(bidderID_ <= getBiddersCount(), "Devcon6: bidder ID does not exist");
+        require(
+            bidderID_ <= getBiddersCount(),
+            "Devcon6: bidder ID does not exist"
+        );
         return _bidders[bidderID_];
     }
 
