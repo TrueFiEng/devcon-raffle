@@ -18,7 +18,7 @@ export const BidForm = ({ minimumBid, bids }: BidProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
   const [bid, setBid] = useState(minimumBid)
-  const insufficientAmount = !!etherBalance && bid.lt(etherBalance)
+  const insufficientAmount = !!etherBalance && bid.gt(etherBalance)
   const insufficientBid = bid.lt(minimumBid)
   const isBadAmount = insufficientAmount || insufficientBid
 
