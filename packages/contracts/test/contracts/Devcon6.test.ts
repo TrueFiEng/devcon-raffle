@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet, utils } from 'ethers'
+import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
@@ -386,15 +386,15 @@ describe('Devcon6', function () {
     })
 
     it('transfers remaining funds for raffle winner', async function () {
-      const bidder = wallets[5]
-      const remainingFunds = utils.parseEther('0.6')
-      await bidAsWallet(bidder, reservePrice.add(remainingFunds))
-      await bidAndSettleRaffle(5, [])
+      await bid(9) // place 9 bids = reservePrice
+      await bidAndSettleRaffle(9, [2]) // bumps all 9 bids and make owner wallet auction winner
+      const raffleBid = await getBidByWinType(9, WinType.raffle) // get any raffle winner
+      const bidderAddress = await devconAsOwner.getBidderAddress(raffleBid.bidderID)
 
-      const bidderBalanceBeforeClaim = await bidder.getBalance()
-      await devconAsOwner.claim(1)
+      const bidderBalanceBeforeClaim = await provider.getBalance(bidderAddress)
+      await devconAsOwner.claim(raffleBid.bidderID)
 
-      expect(await bidder.getBalance()).to.be.equal(bidderBalanceBeforeClaim.add(remainingFunds))
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalanceBeforeClaim.add(reservePrice))
     })
 
     it('transfers bid funds for golden ticket winner', async function () {
