@@ -237,7 +237,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function claim(uint256 bidderID)
         external
-        payable
         onlyInState(State.RAFFLE_SETTLED)
     {
         address payable bidderAddress = getBidderAddress(bidderID);
