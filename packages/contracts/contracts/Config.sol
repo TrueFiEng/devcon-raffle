@@ -22,9 +22,11 @@ contract Config {
         uint256 reservePrice_,
         uint256 minBidIncrement_
     ) {
+        require(auctionWinnersCount_ > 0, "Config: auction winners count must be greater than 0");
+        require(raffleWinnersCount_ > 0, "Config: raffle winners count must be greater than 0");
         require(
             raffleWinnersCount_ % 8 == 0,
-            "Devcon6: raffle winners count must be divisible by 8"
+            "Config: raffle winners count must be divisible by 8"
         );
 
         _biddingStartTime = biddingStartTime_;
