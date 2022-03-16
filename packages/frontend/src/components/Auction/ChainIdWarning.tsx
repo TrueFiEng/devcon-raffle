@@ -1,5 +1,6 @@
 import { useSwitchChain } from 'src/hooks/useSwitchChain'
 import { Colors } from 'src/styles/colors'
+import { detectMetaMask } from 'src/utils/detectMetamask'
 import styled from 'styled-components'
 
 import { Button } from '../Buttons/Button'
@@ -7,6 +8,7 @@ import { FormHeading, FormRow, FormWrapper } from '../Form/Form'
 
 export const ChainIdWarning = () => {
   const switchChain = useSwitchChain()
+  const isProviderMetamask = detectMetaMask()
   return (
     <FormWrapper>
       <FormHeading>Place bid</FormHeading>
@@ -27,7 +29,7 @@ export const ChainIdWarning = () => {
           »
         </span>
       </FormRow>
-      <Button onClick={switchChain}>Change network</Button>
+      {isProviderMetamask && <Button onClick={switchChain}>Change network</Button>}
     </FormWrapper>
   )
 }
