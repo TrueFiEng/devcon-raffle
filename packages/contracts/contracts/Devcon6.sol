@@ -251,7 +251,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         Bid storage bidder = _bids[bidderAddress];
-        require(!bidder.claimed, "Devcon6: funds have been already claimed");
+        require(!bidder.claimed, "Devcon6: funds have already been claimed");
         require(
             bidder.winType != WinType.AUCTION,
             "Devcon6: auction winners cannot claim funds"

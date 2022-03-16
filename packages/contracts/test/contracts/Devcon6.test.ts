@@ -366,7 +366,7 @@ describe('Devcon6', function () {
 
       await devcon.claim(4)
       await expect(devcon.claim(4))
-        .to.be.revertedWith('Devcon6: funds have been already claimed')
+        .to.be.revertedWith('Devcon6: funds have already been claimed')
     })
 
     it('reverts if auction winner wants to claim funds', async function () {
