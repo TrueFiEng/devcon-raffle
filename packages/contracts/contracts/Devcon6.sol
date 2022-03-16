@@ -11,7 +11,6 @@ import "./models/StateModel.sol";
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
-    uint256 constant MAX_UINT256 = 2**256 - 1;
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -106,7 +105,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         _winnersCount = expectedWinnersLength;
 
-        uint256 lastBidderID = MAX_UINT256;
+        uint256 lastBidderID = type(uint256).max;
         for (uint256 i = 0; i < auctionWinners.length; ++i) {
             uint256 bidderID = auctionWinners[i];
             require(
