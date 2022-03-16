@@ -8,16 +8,17 @@ import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./RedBlackTree.sol";
+import "hardhat/console.sol";
 
 // TODO replace i++ with ++i everywhere
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using BokkyPooBahsRedBlackTreeLibrary for BokkyPooBahsRedBlackTreeLibrary.Tree;
     BokkyPooBahsRedBlackTreeLibrary.Tree tree;
+    BokkyPooBahsRedBlackTreeLibrary.Tree biddersTree;
     uint256 constant _bidderMask = 0xffff;
     uint256 _smallestTreeNode = type(uint256).max;
     uint256 _smallestAuctionBid = type(uint256).max;
-
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -43,16 +44,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-    Config(
-        biddingStartTime,
-        biddingEndTime,
-        claimingEndTime,
-        auctionWinnersCount,
-        raffleWinnersCount,
-        reservePrice,
-        minBidIncrement
-    )
-    Ownable()
+        Config(
+            biddingStartTime,
+            biddingEndTime,
+            claimingEndTime,
+            auctionWinnersCount,
+            raffleWinnersCount,
+            reservePrice,
+            minBidIncrement
+        )
+        Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -117,7 +118,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _smallestAuctionBid = smallestTreeNode >> 16;
     }
 
-    function updateTreeBid(uint256 bidderID, uint256 oldAmount, uint256 newAmount) private {
+    function updateTreeBid(
+        uint256 bidderID,
+        uint256 oldAmount,
+        uint256 newAmount
+    ) private {
         uint256 smallestAuctionBid = _smallestAuctionBid;
         bool isTreeFull = getBiddersCount() > _auctionWinnersCount;
         if (isTreeFull && newAmount <= smallestAuctionBid) {
@@ -148,19 +153,19 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         updateSmallestTreeNode();
     }
 
-    function smallestBid() public view returns (uint _key) {
+    function smallestBid() public view returns (uint256 _key) {
         _key = tree.first();
     }
 
-    function biggestBid() public view returns (uint _key) {
+    function biggestBid() public view returns (uint256 _key) {
         _key = tree.last();
     }
 
     // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
-    function settleAuction(uint256[] memory auctionWinners)
-    external
-    onlyOwner
-    onlyInState(State.BIDDING_CLOSED)
+    function settleAuction()
+        external
+        onlyOwner
+        onlyInState(State.BIDDING_CLOSED)
     {
         _settleState = SettleState.AUCTION_SETTLED;
         if (getBiddersCount() <= _raffleWinnersCount) {
@@ -169,30 +174,52 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         uint256 expectedWinnersLength = _auctionWinnersCount;
         uint256 auctionParticipantsCount = getBiddersCount() -
-        _raffleWinnersCount;
+            _raffleWinnersCount;
         if (auctionParticipantsCount < _auctionWinnersCount) {
             expectedWinnersLength = auctionParticipantsCount;
         }
 
-        require(
-            auctionWinners.length == expectedWinnersLength,
-            "Devcon6: invalid auction winners length"
-        );
-
         _winnersCount = expectedWinnersLength;
-        _auctionWinners = auctionWinners;
-        for (uint256 i = 0; i < auctionWinners.length; i++) {
-            uint256 bidderID = auctionWinners[i];
-            setBidWinType(bidderID, WinType.AUCTION);
-            removeRaffleParticipant(bidderID - 1);
+        selectAuctionWinners();
+    }
+
+    function selectAuctionWinners() internal {
+        uint256 current = _smallestTreeNode;
+        uint256 previous = current;
+        uint256 bidderMask = _bidderMask;
+        uint256 bidderID;
+
+        for (uint256 i = 0; current != 0; ++i) {
+            bidderID = bidderMask - (current & bidderMask);
+            console.log("BidderID: ", bidderID);
+            _auctionWinners.push(bidderID);
+            biddersTree.insert(bidderID);
+
+            previous = current;
+            current = tree.next(current);
+//            delete(tree.nodes[previous]);
+        }
+        _smallestTreeNode = 0;
+        _smallestAuctionBid = 0;
+
+        current = biddersTree.last();
+        previous = current;
+        while (current != 0) {
+            setBidWinType(current, WinType.AUCTION);
+            removeRaffleParticipant(current - 1);
+            _auctionWinners.push(current);
+
+            previous = current;
+            current = biddersTree.prev(current);
+            delete(biddersTree.nodes[previous]);
         }
     }
 
     // TODO see if it is cheaper to extract _raffleParticipants.length to variable
     function settleRaffle(uint256[] memory randomNumbers)
-    external
-    onlyOwner
-    onlyInState(State.AUCTION_SETTLED)
+        external
+        onlyOwner
+        onlyInState(State.AUCTION_SETTLED)
     {
         _settleState = SettleState.RAFFLE_SETTLED;
         if (_raffleParticipants.length <= _raffleWinnersCount) {
@@ -253,15 +280,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid raffle participant index"
         );
         _raffleParticipants[index] = _raffleParticipants[
-        participantsLength - 1
+            participantsLength - 1
         ];
         _raffleParticipants.pop();
     }
 
     function claim(uint256 bidderID)
-    external
-    payable
-    onlyInState(State.RAFFLE_SETTLED)
+        external
+        payable
+        onlyInState(State.RAFFLE_SETTLED)
     {
         address payable bidderAddress = _bidders[bidderID];
         require(
@@ -292,10 +319,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function claimProceeds()
-    external
-    payable
-    onlyOwner
-    onlyInState(State.RAFFLE_SETTLED)
+        external
+        payable
+        onlyOwner
+        onlyInState(State.RAFFLE_SETTLED)
     {
         require(!_claimProceeded, "Devcon6: proceeds has been already claimed");
         _claimProceeded = true;
@@ -322,10 +349,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function withdrawUnclaimedFunds()
-    external
-    payable
-    onlyOwner
-    onlyInState(State.CLAIMING_CLOSED)
+        external
+        payable
+        onlyOwner
+        onlyInState(State.CLAIMING_CLOSED)
     {
         uint256 unclaimedFunds = address(this).balance;
         payable(msg.sender).transfer(unclaimedFunds);
@@ -355,9 +382,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-    external
-    view
-    returns (address)
+        external
+        view
+        returns (address)
     {
         return _bidders[bidderID_];
     }
@@ -368,5 +395,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
+    }
+
+    function getAuctionWinners() external view returns (uint256[] memory) {
+        return _auctionWinners;
     }
 }

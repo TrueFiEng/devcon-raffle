@@ -71,7 +71,7 @@ describe('Devcon6', function () {
       expect(bid.winType).to.be.equal(WinType.loss)
     })
 
-    it.only('tree test', async function () {
+    it('tree test', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
       devconAsOwner = devcon.connect(wallets[1])
 
@@ -98,29 +98,6 @@ describe('Devcon6', function () {
       await verifyBiggestValue(reservePrice.add(10).add(reservePrice))
       await verifySmallestValue(reservePrice.add(25))
     })
-
-    async function verifyBiggestValue(expected: BigNumberish) {
-      let biggestValue = await devcon.biggestBid()
-      console.log("\nBiggest bid:")
-      const bidAmount = treeNodeToBidderInfo(biggestValue)
-      expect(bidAmount).to.be.equal(expected)
-    }
-
-    async function verifySmallestValue(expected: BigNumberish) {
-      let smallestValue = await devcon.smallestBid()
-      console.log("\nSmallest bid:")
-      let bidAmount = treeNodeToBidderInfo(smallestValue)
-      expect(bidAmount).to.be.equal(expected)
-    }
-
-    function treeNodeToBidderInfo(value: BigNumber): BigNumber {
-      const mask = BigNumber.from("0xffff") // decimal from 0xffff
-      const bidderID = mask.sub(value.and(mask))
-      console.log("BidderID: ", bidderID.toString())
-      const bidAmount = value.shr(16)
-      console.log("BidAmount: ", bidAmount.toString())
-      return bidAmount
-    }
 
     it('saves bidder address', async function () {
       await devcon.bid({ value: reservePrice })
@@ -162,7 +139,7 @@ describe('Devcon6', function () {
     })
 
     it('reverts if called not by owner', async function () {
-      await expect(devcon.settleAuction([1]))
+      await expect(devcon.settleAuction())
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -233,6 +210,32 @@ describe('Devcon6', function () {
 
       expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 9, 10, 4, 5, 6, 7, 8]))
     })
+
+    it.only('tree test', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 20 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bidAsWallet(wallets[1], reservePrice.add(100))
+      await bidAsWallet(wallets[2], reservePrice.add(20))
+      await bidAsWallet(wallets[3], reservePrice.add(10))
+      await bidAsWallet(wallets[4], reservePrice.add(30))
+      await bidAsWallet(wallets[5], reservePrice.add(130))
+      await bidAsWallet(wallets[6], reservePrice.add(70))
+      await bidAsWallet(wallets[7], reservePrice.add(135))
+      await bidAsWallet(wallets[8], reservePrice.add(111))
+      await bidAsWallet(wallets[9], reservePrice.add(40))
+      await bidAsWallet(wallets[10], reservePrice.add(20))
+
+      // await bidRandom(600)
+      // // from highest bid to lowest: 7,5,8,1
+      // console.log("After bidRandom")
+      //
+      await endBidding(devconAsOwner)
+      await settleAuction([3, 2])
+
+      await verifyBiggestValue(reservePrice.add(135))
+      expect(await devcon.getAuctionWinners()).to.deep.eq(bigNumberArrayFrom([1,8,5,7]))
+    })
   })
 
   describe('settleRaffle', function () {
@@ -293,7 +296,7 @@ describe('Devcon6', function () {
   describe('claim', function () {
     it('reverts if settling is not finished yet', async function () {
       await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction([1])
+      await devconAsOwner.settleAuction()
 
       await expect(devcon.claim(4))
         .to.be.revertedWith('Devcon6: is in invalid state')
@@ -512,7 +515,7 @@ describe('Devcon6', function () {
   async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
     await bid(bidCount)
     await endBidding(devconAsOwner)
-    await devconAsOwner.settleAuction(auctionWinners)
+    await devconAsOwner.settleAuction()
     await devconAsOwner.settleRaffle(randomBigNumbers(1))
   }
 
@@ -523,7 +526,7 @@ describe('Devcon6', function () {
   }
 
   async function settleAuction(auctionWinners: BigNumberish[]) {
-    await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+    await devconAsOwner.settleAuction({ gasLimit: 4_000_000 })
   }
 
   async function bid(bidAmount: number) {
@@ -532,8 +535,18 @@ describe('Devcon6', function () {
     }
   }
 
+  async function bidRandom(bidAmount: number) {
+    for (let i = 0; i < bidAmount; i++) {
+      await bidAsWallet(wallets[i], randomBN())
+    }
+  }
+
+  function randomBN(): BigNumber {
+    return BigNumber.from(utils.randomBytes(4)).add(reservePrice)
+  }
+
   async function bidAsWallet(wallet: Wallet, value: BigNumberish) {
-    await devcon.connect(wallet).bid({ value })
+    await devcon.connect(wallet).bid({ value: value, gasLimit: 600_000 })
   }
 
   async function getBidByID(bidID: number): Promise<Bid> {
@@ -544,5 +557,29 @@ describe('Devcon6', function () {
   async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
     const txReceipt = await tx.wait()
     return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+  }
+
+  // tree function helpers
+  async function verifyBiggestValue(expected: BigNumberish) {
+    const biggestValue = await devcon.biggestBid()
+    console.log('\nBiggest bid:')
+    const bidAmount = treeNodeToBidderInfo(biggestValue)
+    expect(bidAmount).to.be.equal(expected)
+  }
+
+  async function verifySmallestValue(expected: BigNumberish) {
+    const smallestValue = await devcon.smallestBid()
+    console.log('\nSmallest bid:')
+    const bidAmount = treeNodeToBidderInfo(smallestValue)
+    expect(bidAmount).to.be.equal(expected)
+  }
+
+  function treeNodeToBidderInfo(value: BigNumber): BigNumber {
+    const mask = BigNumber.from('0xffff') // decimal from 0xffff
+    const bidderID = mask.sub(value.and(mask))
+    console.log('BidderID: ', bidderID.toString())
+    const bidAmount = value.shr(16)
+    console.log('BidAmount: ', bidAmount.toString())
+    return bidAmount
   }
 })
