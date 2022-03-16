@@ -6,7 +6,7 @@ type AuctionStatus = 'NotConnected' | 'WrongNetwork' | 'Connected'
 export function useAuctionStatus(): AuctionStatus {
   const { account, chainId } = useEthers()
 
-  if (chainId && CONFIG.allowedNetworks.includes(chainId)) {
+  if (chainId && !CONFIG.allowedNetworks.includes(chainId)) {
     return 'WrongNetwork'
   }
 
