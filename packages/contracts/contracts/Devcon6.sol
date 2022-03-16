@@ -84,6 +84,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
         if (biddersCount <= _raffleWinnersCount) {
+            require(auctionWinners.length == 0, "Devcon6: invalid auction winners length");
             return;
         }
 

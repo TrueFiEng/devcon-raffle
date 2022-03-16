@@ -127,14 +127,27 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
-    it('changes state if amount of bidders is less than auctionWinnersCount', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 80 })))
+    it('changes state if number of bidders is less than raffleWinnersCount', async function () {
+      ({ devcon } = await loadFixture(devcon6Fixture))
       devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(1)
 
       await endBidding(devconAsOwner)
       await settleAuction([])
 
       expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
+    })
+
+    it('reverts if number of bidders is less than raffleWinnersCount and auction winners were passed', async function () {
+      ({ devcon } = await loadFixture(devcon6Fixture))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(1)
+
+      await endBidding(devconAsOwner)
+      await expect(settleAuction([1]))
+        .to.be.revertedWith('Devcon6: invalid auction winners length')
     })
 
     it('chooses auction winners when there are not enough participants for entire auction', async function () {
