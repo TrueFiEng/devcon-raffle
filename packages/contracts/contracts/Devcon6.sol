@@ -254,6 +254,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         view
         returns (address)
     {
+        require(bidderID_ > 0, "Devcon6: bidder ID must be greater than 0");
+        require(bidderID_ <= getBiddersCount(), "Devcon6: bidder ID does not exist");
         return _bidders[bidderID_];
     }
 

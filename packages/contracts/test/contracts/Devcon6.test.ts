@@ -340,6 +340,24 @@ describe('Devcon6', function () {
     })
   })
 
+  describe('getBidderAddress', function () {
+    it('reverts for zero bidder ID', async function () {
+      await expect(devcon.getBidderAddress(0))
+        .to.be.revertedWith('Devcon6: bidder ID must be greater than 0')
+    })
+
+    it('reverts for invalid bidder ID', async function () {
+      await bid(1)
+      await expect(devcon.getBidderAddress(2))
+        .to.be.revertedWith('Devcon6: bidder ID does not exist')
+    })
+
+    it('returns bidder address', async function () {
+      await bid(1)
+      expect(await devcon.getBidderAddress(1)).to.eq(wallets[0].address)
+    })
+  })
+
   async function endBidding(devcon: Devcon6) {
     const endTime = await devcon.biddingEndTime()
     await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
