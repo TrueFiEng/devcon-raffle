@@ -11,6 +11,7 @@ import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
 import { randomAddress } from 'utils/randomAddress'
+import { Bid } from './bid'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -172,7 +173,7 @@ describe('Devcon6', function () {
     it('reverts if winner does not exist', async function () {
       await endBidding(devconAsOwner)
       await expect(settleAuction([30]))
-        .to.be.revertedWith('Devcon6: given winner does not exist')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('saves auction winners', async function () {
@@ -344,6 +345,102 @@ describe('Devcon6', function () {
     })
   })
 
+  describe('claim', function () {
+    it('reverts if settling is not finished yet', async function () {
+      await endBidding(devconAsOwner)
+      await devconAsOwner.settleAuction([])
+
+      await expect(devcon.claim(4))
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+
+    it('reverts if bidder does not exist', async function () {
+      await bidAndSettleRaffle(2, [])
+
+      await expect(devcon.claim(20))
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+    })
+
+    it('reverts if funds have been already claimed', async function () {
+      await bidAndSettleRaffle(4, [])
+
+      await devcon.claim(4)
+      await expect(devcon.claim(4))
+        .to.be.revertedWith('Devcon6: funds have already been claimed')
+    })
+
+    it('reverts if auction winner wants to claim funds', async function () {
+      await bidAndSettleRaffle(9, [1])
+
+      await expect(devcon.claim(1))
+        .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
+    })
+
+    it('sets bid as claimed', async function () {
+      await bidAndSettleRaffle(5, [])
+
+      await devconAsOwner.claim(1)
+
+      const bid = await getBidByID(1)
+      expect(bid.claimed).to.be.true
+    })
+
+    it('transfers remaining funds for raffle winner', async function () {
+      await bid(9) // place 9 bids = reservePrice
+      await bidAndSettleRaffle(9, [2]) // bumps all 9 bids and make owner wallet auction winner
+      const raffleBid = await getBidByWinType(9, WinType.raffle) // get any raffle winner
+      const bidderAddress = await devconAsOwner.getBidderAddress(raffleBid.bidderID)
+
+      const bidderBalanceBeforeClaim = await provider.getBalance(bidderAddress)
+      await devconAsOwner.claim(raffleBid.bidderID)
+
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalanceBeforeClaim.add(reservePrice))
+    })
+
+    it('transfers bid funds for golden ticket winner', async function () {
+      await bidAndSettleRaffle(10, [2])
+
+      const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
+
+      const bidderAddress = await devconAsOwner.getBidderAddress(goldenBid.bidderID)
+      const bidderBalance = await provider.getBalance(bidderAddress)
+      const expectedBidderBalance = bidderBalance.add(goldenBid.amount)
+
+      await devconAsOwner.claim(goldenBid.bidderID)
+
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(expectedBidderBalance)
+    })
+
+    it('transfers bid funds for non-winning bidder', async function () {
+      await bidAndSettleRaffle(10, [2])
+
+      const lostBid = await getBidByWinType(10, WinType.loss)
+
+      const bidderAddress = await devconAsOwner.getBidderAddress(lostBid.bidderID)
+      const bidderBalance = await provider.getBalance(bidderAddress)
+
+      await devconAsOwner.claim(lostBid.bidderID)
+
+      expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalance.add(reservePrice))
+    })
+
+    async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
+      for (let i = 1; i <= bidCount; i++) {
+        const bid = await getBidByID(i)
+        if (bid.winType === winType) {
+          return bid
+        }
+      }
+    }
+
+    async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+      await bid(bidCount)
+      await endBidding(devconAsOwner)
+      await devconAsOwner.settleAuction(auctionWinners)
+      await devconAsOwner.settleRaffle(randomBigNumbers(1))
+    }
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
@@ -394,13 +491,13 @@ describe('Devcon6', function () {
   describe('getBidderAddress', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(devcon.getBidderAddress(0))
-        .to.be.revertedWith('Devcon6: bidder ID must be greater than 0')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
       await expect(devcon.getBidderAddress(2))
-        .to.be.revertedWith('Devcon6: bidder ID does not exist')
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('returns bidder address', async function () {
@@ -421,15 +518,15 @@ describe('Devcon6', function () {
 
   async function bid(walletCount: number) {
     for (let i = 0; i < walletCount; i++) {
-      await bidAsWallet(wallets[i])
+      await bidAsWallet(wallets[i], reservePrice)
     }
   }
 
-  async function bidAsWallet(wallet: Wallet) {
-    await devcon.connect(wallet).bid({ value: reservePrice })
+  async function bidAsWallet(wallet: Wallet, value: BigNumberish) {
+    await devcon.connect(wallet).bid({ value })
   }
 
-  async function getBidByID(bidID: number) {
+  async function getBidByID(bidID: number): Promise<Bid> {
     const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
     return devconAsOwner.getBid(bidderAddress)
   }

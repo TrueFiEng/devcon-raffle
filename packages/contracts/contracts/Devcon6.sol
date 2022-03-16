@@ -18,7 +18,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     mapping(address => Bid) _bids;
     // bidderID -> address
-    mapping(uint256 => address) _bidders;
+    mapping(uint256 => address payable) _bidders;
     uint256 _nextBidderID = 1;
 
     constructor(
@@ -70,7 +70,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             );
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = msg.sender;
+            _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
@@ -148,12 +148,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         selectRaffleWinners(participantsLength, randomNumbers);
     }
 
-    function setBidWinType(uint256 bidID, WinType winType) private {
-        address bidderAddress = _bidders[bidID];
-        require(
-            bidderAddress != address(0),
-            "Devcon6: given winner does not exist"
-        );
+    function setBidWinType(uint256 bidderID, WinType winType) private {
+        address bidderAddress = getBidderAddress(bidderID);
         _bids[bidderAddress].winType = winType;
     }
 
@@ -239,6 +235,31 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _raffleParticipants.pop();
     }
 
+    function claim(uint256 bidderID)
+        external
+        onlyInState(State.RAFFLE_SETTLED)
+    {
+        address payable bidderAddress = getBidderAddress(bidderID);
+        Bid storage bidder = _bids[bidderAddress];
+        require(!bidder.claimed, "Devcon6: funds have already been claimed");
+        require(
+            bidder.winType != WinType.AUCTION,
+            "Devcon6: auction winners cannot claim funds"
+        );
+
+        bidder.claimed = true;
+        uint256 claimAmount;
+        if (bidder.winType == WinType.RAFFLE) {
+            claimAmount = bidder.amount - _reservePrice;
+        } else {
+            claimAmount = bidder.amount;
+        }
+
+        if (claimAmount > 0) {
+            bidderAddress.transfer(claimAmount);
+        }
+    }
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
@@ -264,17 +285,17 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return bid_;
     }
 
-    function getBidderAddress(uint256 bidderID_)
-        external
+    function getBidderAddress(uint256 bidderID)
+        public
         view
-        returns (address)
+        returns (address payable)
     {
-        require(bidderID_ > 0, "Devcon6: bidder ID must be greater than 0");
+        address payable bidderAddress = _bidders[bidderID];
         require(
-            bidderID_ <= getBiddersCount(),
-            "Devcon6: bidder ID does not exist"
+            bidderAddress != address(0),
+            "Devcon6: bidder with given ID does not exist"
         );
-        return _bidders[bidderID_];
+        return bidderAddress;
     }
 
     function getBiddersCount() public view returns (uint256) {
