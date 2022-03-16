@@ -81,28 +81,46 @@ describe('Devcon6', function () {
       await bidAsWallet(wallets[3], reservePrice.add(10))
       await bidAsWallet(wallets[4], reservePrice.add(30))
 
-      const smallestValue = await devcon.smallestBid()
-      console.log("Smallest bid:")
-      treeNodeToBidderInfo(smallestValue)
+      await verifySmallestValue(reservePrice.add(10))
+      await verifyBiggestValue(reservePrice.add(100))
 
-      const biggestBid = await devcon.biggestBid()
-      console.log("\nBiggest bid:")
-      treeNodeToBidderInfo(biggestBid)
+      // update values
+      await bidAsWallet(wallets[3], reservePrice)
+      await verifyBiggestValue(reservePrice.add(10).add(reservePrice))
+      await verifySmallestValue(reservePrice.add(20))
 
-      const bid = await devcon.getBid(bidderAddress)
+      // less than minimum
+      await bidAsWallet(wallets[5], reservePrice.add(15))
+      await verifyBiggestValue(reservePrice.add(10).add(reservePrice))
+      await verifySmallestValue(reservePrice.add(20))
 
-      expect(bid.bidderID).to.be.equal(1)
-      expect(bid.amount).to.be.equal(reservePrice)
-      expect(bid.winType).to.be.equal(WinType.loss)
+      // new bid greater than minimum
+      await bidAsWallet(wallets[6], reservePrice.add(25))
+      await verifyBiggestValue(reservePrice.add(10).add(reservePrice))
+      await verifySmallestValue(reservePrice.add(25))
     })
 
-    function treeNodeToBidderInfo(value: BigNumber): [BigNumber, BigNumber] {
+    async function verifyBiggestValue(expected: BigNumberish) {
+      let biggestValue = await devcon.biggestBid()
+      console.log("\nBiggest bid:")
+      const bidAmount = treeNodeToBidderInfo(biggestValue)
+      expect(bidAmount).to.be.equal(expected)
+    }
+
+    async function verifySmallestValue(expected: BigNumberish) {
+      let smallestValue = await devcon.smallestBid()
+      console.log("\nSmallest bid:")
+      let bidAmount = treeNodeToBidderInfo(smallestValue)
+      expect(bidAmount).to.be.equal(expected)
+    }
+
+    function treeNodeToBidderInfo(value: BigNumber): BigNumber {
       const mask = BigNumber.from("0xffff") // decimal from 0xffff
       const bidderID = mask.sub(value.and(mask))
       console.log("BidderID: ", bidderID.toString())
       const bidAmount = value.shr(16)
       console.log("BidAmount: ", bidAmount.toString())
-      return [bidderID, bidAmount]
+      return bidAmount
     }
 
     it('saves bidder address', async function () {

@@ -43,16 +43,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-        Config(
-            biddingStartTime,
-            biddingEndTime,
-            claimingEndTime,
-            auctionWinnersCount,
-            raffleWinnersCount,
-            reservePrice,
-            minBidIncrement
-        )
-        Ownable()
+    Config(
+        biddingStartTime,
+        biddingEndTime,
+        claimingEndTime,
+        auctionWinnersCount,
+        raffleWinnersCount,
+        reservePrice,
+        minBidIncrement
+    )
+    Ownable()
     {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
@@ -74,7 +74,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
                 msg.value >= _minBidIncrement,
                 "Devcon6: bid increment too low"
             );
+            uint256 oldAmount = bidder.amount;
             bidder.amount += msg.value;
+
+            updateTreeBid(bidder.bidderID, oldAmount, bidder.amount);
         } else {
             require(
                 msg.value >= _reservePrice,
@@ -90,8 +93,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function addToTree(uint256 bidderID, uint256 amount) internal {
-        bool isTreeFull = getBiddersCount() >= _auctionWinnersCount;
+    function addToTree(uint256 bidderID, uint256 amount) private {
+        bool isTreeFull = getBiddersCount() > _auctionWinnersCount;
         if (isTreeFull && amount <= _smallestAuctionBid) {
             return;
         }
@@ -104,10 +107,45 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
         tree.insert(amount);
 
+        updateSmallestTreeNode();
+    }
+
+    function updateSmallestTreeNode() private {
         // override smallest tree node
         uint256 smallestTreeNode = tree.first();
         _smallestTreeNode = smallestTreeNode;
         _smallestAuctionBid = smallestTreeNode >> 16;
+    }
+
+    function updateTreeBid(uint256 bidderID, uint256 oldAmount, uint256 newAmount) private {
+        uint256 smallestAuctionBid = _smallestAuctionBid;
+        bool isTreeFull = getBiddersCount() > _auctionWinnersCount;
+        if (isTreeFull && newAmount <= smallestAuctionBid) {
+            return;
+        }
+
+        newAmount = newAmount << 16;
+        newAmount = newAmount | (_bidderMask - bidderID);
+
+        uint256 smallestTreeNode = _smallestTreeNode;
+        if (oldAmount > smallestAuctionBid) {
+            tree.remove(smallestTreeNode);
+            tree.insert(newAmount);
+            return;
+        } else if (oldAmount == smallestAuctionBid) {
+            tree.remove(smallestTreeNode);
+            tree.insert(newAmount);
+
+            updateSmallestTreeNode();
+            return;
+        }
+
+        if (isTreeFull) {
+            tree.remove(smallestTreeNode);
+        }
+        tree.insert(newAmount);
+
+        updateSmallestTreeNode();
     }
 
     function smallestBid() public view returns (uint _key) {
@@ -120,9 +158,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
     function settleAuction(uint256[] memory auctionWinners)
-        external
-        onlyOwner
-        onlyInState(State.BIDDING_CLOSED)
+    external
+    onlyOwner
+    onlyInState(State.BIDDING_CLOSED)
     {
         _settleState = SettleState.AUCTION_SETTLED;
         if (getBiddersCount() <= _raffleWinnersCount) {
@@ -131,7 +169,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         uint256 expectedWinnersLength = _auctionWinnersCount;
         uint256 auctionParticipantsCount = getBiddersCount() -
-            _raffleWinnersCount;
+        _raffleWinnersCount;
         if (auctionParticipantsCount < _auctionWinnersCount) {
             expectedWinnersLength = auctionParticipantsCount;
         }
@@ -152,9 +190,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     // TODO see if it is cheaper to extract _raffleParticipants.length to variable
     function settleRaffle(uint256[] memory randomNumbers)
-        external
-        onlyOwner
-        onlyInState(State.AUCTION_SETTLED)
+    external
+    onlyOwner
+    onlyInState(State.AUCTION_SETTLED)
     {
         _settleState = SettleState.RAFFLE_SETTLED;
         if (_raffleParticipants.length <= _raffleWinnersCount) {
@@ -215,15 +253,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid raffle participant index"
         );
         _raffleParticipants[index] = _raffleParticipants[
-            participantsLength - 1
+        participantsLength - 1
         ];
         _raffleParticipants.pop();
     }
 
     function claim(uint256 bidderID)
-        external
-        payable
-        onlyInState(State.RAFFLE_SETTLED)
+    external
+    payable
+    onlyInState(State.RAFFLE_SETTLED)
     {
         address payable bidderAddress = _bidders[bidderID];
         require(
@@ -254,10 +292,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function claimProceeds()
-        external
-        payable
-        onlyOwner
-        onlyInState(State.RAFFLE_SETTLED)
+    external
+    payable
+    onlyOwner
+    onlyInState(State.RAFFLE_SETTLED)
     {
         require(!_claimProceeded, "Devcon6: proceeds has been already claimed");
         _claimProceeded = true;
@@ -284,10 +322,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function withdrawUnclaimedFunds()
-        external
-        payable
-        onlyOwner
-        onlyInState(State.CLAIMING_CLOSED)
+    external
+    payable
+    onlyOwner
+    onlyInState(State.CLAIMING_CLOSED)
     {
         uint256 unclaimedFunds = address(this).balance;
         payable(msg.sender).transfer(unclaimedFunds);
@@ -317,9 +355,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidderAddress(uint256 bidderID_)
-        external
-        view
-        returns (address)
+    external
+    view
+    returns (address)
     {
         return _bidders[bidderID_];
     }
