@@ -9,8 +9,12 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
+    // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
+    uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
+
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
+    uint256 _winnersCount;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -81,6 +85,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
         if (biddersCount <= _raffleWinnersCount) {
+            require(
+                auctionWinners.length == 0,
+                "Devcon6: invalid auction winners length"
+            );
             return;
         }
 
@@ -95,17 +103,128 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid auction winners length"
         );
 
-        for (uint256 i = 0; i < auctionWinners.length; i++) {
-            uint256 bidderID = auctionWinners[i];
-            address bidderAddress = _bidders[bidderID];
-            require(
-                bidderAddress != address(0),
-                "Devcon6: given winner does not exist"
-            );
+        _winnersCount = expectedWinnersLength;
 
-            _bids[bidderAddress].winType = WinType.AUCTION;
+        uint256 lastBidderID = type(uint256).max;
+        for (uint256 i = 0; i < auctionWinners.length; ++i) {
+            uint256 bidderID = auctionWinners[i];
+            require(
+                bidderID < lastBidderID,
+                "Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order"
+            );
+            lastBidderID = bidderID;
+
+            setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
         }
+    }
+
+    function settleRaffle(uint256[] memory randomNumbers)
+        external
+        onlyOwner
+        onlyInState(State.AUCTION_SETTLED)
+    {
+        require(
+            randomNumbers.length > 0,
+            "Devcon6: there must be at least one random number passed"
+        );
+
+        _settleState = SettleState.RAFFLE_SETTLED;
+
+        randomNumbers[0] = selectGoldenTicketWinner(randomNumbers[0]);
+
+        uint256 participantsLength = _raffleParticipants.length;
+        uint256 raffleWinnersCount = _raffleWinnersCount;
+        if (participantsLength < raffleWinnersCount) {
+            selectAllRaffleParticipantsAsWinners(participantsLength);
+            return;
+        }
+
+        require(
+            randomNumbers.length == raffleWinnersCount / 8,
+            "Devcon6: passed incorrect number of random numbers"
+        );
+
+        selectRaffleWinners(participantsLength, randomNumbers);
+    }
+
+    function setBidWinType(uint256 bidID, WinType winType) private {
+        address bidderAddress = _bidders[bidID];
+        require(
+            bidderAddress != address(0),
+            "Devcon6: given winner does not exist"
+        );
+        _bids[bidderAddress].winType = winType;
+    }
+
+    function selectGoldenTicketWinner(uint256 randomNumber)
+        private
+        returns (uint256)
+    {
+        uint256 winnerIndex = winnerIndexFromRandomNumber(
+            _raffleParticipants.length,
+            randomNumber
+        );
+
+        setBidWinType(_raffleParticipants[winnerIndex], WinType.GOLDEN_TICKET);
+
+        removeRaffleParticipant(winnerIndex);
+        return randomNumber >> 32;
+    }
+
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength)
+        private
+    {
+        for (uint256 i = 0; i < participantsLength; ++i) {
+            setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
+        }
+    }
+
+    function selectRaffleWinners(
+        uint256 participantsLength,
+        uint256[] memory randomNumbers
+    ) private {
+        participantsLength = selectRandomRaffleWinners(
+            participantsLength,
+            randomNumbers[0],
+            7
+        );
+        for (uint256 i = 1; i < randomNumbers.length; ++i) {
+            participantsLength = selectRandomRaffleWinners(
+                participantsLength,
+                randomNumbers[i],
+                8
+            );
+        }
+    }
+
+    function selectRandomRaffleWinners(
+        uint256 participantsLength,
+        uint256 randomNumber,
+        uint256 winnersCount
+    ) private returns (uint256) {
+        for (uint256 i = 0; i < winnersCount; ++i) {
+            uint256 winnerIndex = winnerIndexFromRandomNumber(
+                participantsLength,
+                randomNumber
+            );
+
+            setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
+
+            removeRaffleParticipant(winnerIndex);
+            --participantsLength;
+            randomNumber = randomNumber >> 32;
+        }
+
+        return participantsLength;
+    }
+
+    function winnerIndexFromRandomNumber(
+        uint256 participantsLength,
+        uint256 randomNumber
+    ) private pure returns (uint256) {
+        uint256 smallRandom = randomNumber & _randomMask;
+        return smallRandom % participantsLength;
     }
 
     function removeRaffleParticipant(uint256 index) private {
@@ -140,7 +259,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBid(address bidder) external view returns (Bid memory) {
-        return _bids[bidder];
+        Bid storage bid_ = _bids[bidder];
+        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
+        return bid_;
     }
 
     function getBidderAddress(uint256 bidderID_)
@@ -148,6 +269,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         view
         returns (address)
     {
+        require(bidderID_ > 0, "Devcon6: bidder ID must be greater than 0");
+        require(
+            bidderID_ <= getBiddersCount(),
+            "Devcon6: bidder ID does not exist"
+        );
         return _bidders[bidderID_];
     }
 
@@ -157,5 +283,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
+    }
+
+    function getWinnersCount() public view returns (uint256) {
+        return _winnersCount;
     }
 }

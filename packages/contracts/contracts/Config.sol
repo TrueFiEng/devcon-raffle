@@ -3,15 +3,16 @@
 pragma solidity 0.8.10;
 
 contract Config {
-    uint256 public _biddingStartTime;
-    uint256 public _biddingEndTime;
-    uint256 public _claimingEndTime;
-    uint256 public _auctionWinnersCount;
-    uint256 public _raffleWinnersCount;
-    uint256 public _reservePrice;
-    uint256 public _minBidIncrement;
+    uint256 public immutable _biddingStartTime;
+    uint256 public immutable _biddingEndTime;
+    uint256 public immutable _claimingEndTime;
+    uint256 public immutable _auctionWinnersCount;
+    uint256 public immutable _raffleWinnersCount;
+    uint256 public immutable _reservePrice;
+    uint256 public immutable _minBidIncrement;
 
     // TODO check if it makes sense to use smaller types to save on calldata cost
+    // TODO think about edge cases with auctionWinnersCount_, raffleWinnersCount_
     constructor(
         uint256 biddingStartTime_,
         uint256 biddingEndTime_,
@@ -21,6 +22,11 @@ contract Config {
         uint256 reservePrice_,
         uint256 minBidIncrement_
     ) {
+        require(
+            raffleWinnersCount_ % 8 == 0,
+            "Devcon6: raffle winners count must be divisible by 8"
+        );
+
         _biddingStartTime = biddingStartTime_;
         _biddingEndTime = biddingEndTime_;
         _claimingEndTime = claimingEndTime_;
