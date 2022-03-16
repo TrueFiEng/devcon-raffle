@@ -228,7 +228,7 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
       await settleAuction([])
 
-      // Golden ticket winner index generated from this number: 2
+      // Golden ticket winner participant index generated from this number: 2, bidderID: 3
       const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
       await devconAsOwner.settleRaffle([randomNumber])
 
