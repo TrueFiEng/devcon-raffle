@@ -14,7 +14,7 @@ interface InputProps {
   isBadAmount: boolean
 }
 
-const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]+\d*)|(\d+[.,]\d+))$/
+const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
 export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
   const { account } = useEthers()
