@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 export const BidsColumns = css`
   display: grid;
-  grid-template-columns: auto 40% 36%;
+  grid-template-columns: auto 48% 26%;
   grid-template-areas: 'place bid address';
 `
 
@@ -16,4 +16,5 @@ export const BidColumn = styled.span`
 
 export const AddressColumn = styled.span`
   grid-area: address;
+  text-align: right;
 `

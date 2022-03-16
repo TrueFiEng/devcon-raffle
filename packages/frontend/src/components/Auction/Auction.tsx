@@ -19,6 +19,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 670px;
-  padding-left: 82px;
+  padding: 0 115px;
   background: ${Colors.GreyLight};
 `

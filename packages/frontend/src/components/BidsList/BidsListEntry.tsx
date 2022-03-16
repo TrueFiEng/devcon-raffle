@@ -20,14 +20,10 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
   return (
     <BidsEntry>
       <BidsEntryRow>
-        <PlaceColumn>
-          <CellText>{place}.</CellText>
-        </PlaceColumn>
-        <BidColumn>
-          <CellText>{formatEtherAmount(bid)} ETH</CellText>
-        </BidColumn>
+        <PlaceColumn>{place}.</PlaceColumn>
+        <BidColumn>{formatEtherAmount(bid)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={blockExplorerBase + address} target="_blank">
+          <AddressLink href={blockExplorerBase + address} target="_blank" rel="noopener noreferrer">
             {shortenEthAddress(address)}
           </AddressLink>
         </AddressColumn>
@@ -37,20 +33,14 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
 }
 
 const BidsEntry = styled.li`
-  margin: 0 0 32px 0;
+  &:not(:last-child) {
+    margin-bottom: 32px;
+  }
 `
-
 const BidsEntryRow = styled.div`
   ${BidsColumns};
-  font-family: 'Space Mono', 'Roboto Mono', monospace;
-`
-
-const CellText = styled.span`
-  font-family: 'Space Mono', 'Roboto Mono', monospace;
-  line-height: 26px;
 `
 
 const AddressLink = styled.a`
-  font-family: 'Space Mono', 'Roboto Mono', monospace;
   color: ${Colors.Blue};
 `
