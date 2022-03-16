@@ -9,6 +9,10 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
+    // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
+    uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
+    uint256 constant MAX_UINT256 = 2**256 - 1;
+
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
     uint256 _winnersCount;
@@ -17,8 +21,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // bidderID -> address
     mapping(uint256 => address) _bidders;
     uint256 _nextBidderID = 1;
-    // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
-    uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
 
     constructor(
         address initialOwner,
@@ -75,7 +77,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    // auctionWinners should be sorted in descending order // TODO if we don't sort on chain add a check for it
+    // auctionWinners should be sorted in descending order
     function settleAuction(uint256[] calldata auctionWinners)
         external
         onlyOwner
@@ -103,8 +105,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         );
 
         _winnersCount = expectedWinnersLength;
+
+        uint256 lastBidderID = MAX_UINT256;
         for (uint256 i = 0; i < auctionWinners.length; ++i) {
             uint256 bidderID = auctionWinners[i];
+            require(
+                bidderID < lastBidderID,
+                "Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order"
+            );
+            lastBidderID = bidderID;
+
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
         }

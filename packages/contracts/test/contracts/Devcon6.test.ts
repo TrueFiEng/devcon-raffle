@@ -195,6 +195,28 @@ describe('Devcon6', function () {
 
       expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 9, 10, 4, 5, 6, 7, 8]))
     })
+
+    it('reverts if IDs in winners array are not unique', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(10)
+
+      await endBidding(devconAsOwner)
+      await expect(settleAuction([3, 3]))
+        .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
+    })
+
+    it('reverts if IDs in winners array are not sorted in descending order', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(10)
+
+      await endBidding(devconAsOwner)
+      await expect(settleAuction([2, 3]))
+        .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
+    })
   })
 
   describe('settleRaffle', function () {
