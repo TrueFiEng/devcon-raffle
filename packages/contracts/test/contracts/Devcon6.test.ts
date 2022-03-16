@@ -10,6 +10,7 @@ import { BigNumber, BigNumberish, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
+import { randomAddress } from 'utils/randomAddress'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -337,6 +338,21 @@ describe('Devcon6', function () {
       await network.provider.send('evm_mine')
 
       expect(await devcon.getState()).to.be.equal(State.claimingClosed)
+    })
+  })
+
+  describe('getBid', function () {
+    it('reverts for unknown bidder address', async function () {
+      await expect(devcon.getBid(randomAddress()))
+        .to.be.revertedWith('Devcon6: no bid by given address')
+    })
+
+    it('returns bid details', async function () {
+      await bid(1)
+      const {bidderID, amount, winType} = await devcon.getBid(wallets[0].address);
+      expect(bidderID).to.eq(1)
+      expect(amount).to.eq(reservePrice)
+      expect(winType).to.eq(0)
     })
   })
 

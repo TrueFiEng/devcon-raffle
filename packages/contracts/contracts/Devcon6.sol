@@ -246,7 +246,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBid(address bidder) external view returns (Bid memory) {
-        return _bids[bidder];
+        Bid storage bid_ = _bids[bidder];
+        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
+        return bid_;
     }
 
     function getBidderAddress(uint256 bidderID_)
