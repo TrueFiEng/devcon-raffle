@@ -1,7 +1,7 @@
 import { useEthers } from '@usedapp/core'
 import { ReactNode } from 'react'
-import styled from 'styled-components'
 import { Colors } from 'src/styles/colors'
+import styled from 'styled-components'
 
 interface AuctionActionProps {
   children: ReactNode

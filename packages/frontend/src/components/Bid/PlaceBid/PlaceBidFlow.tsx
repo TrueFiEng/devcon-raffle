@@ -10,7 +10,7 @@ export const PlaceBidFlow = () => {
   const [view, setView] = useState<BidFlow>(BidFlow.Placing)
   const minimumBid = parseEther('0.15')
   const [bid, setBid] = useState(minimumBid)
-  
+
   return (
     <>
       {view === BidFlow.Placing && (

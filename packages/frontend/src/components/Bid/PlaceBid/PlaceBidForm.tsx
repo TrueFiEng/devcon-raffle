@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Button } from 'src/components/Buttons/Button'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
+import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
@@ -51,5 +51,5 @@ const Wrapper = styled.div`
   flex-direction: column;
   row-gap: 16px;
   width: 100%;
-  padding: 82px 115px; 
+  padding: 82px 115px;
 `
