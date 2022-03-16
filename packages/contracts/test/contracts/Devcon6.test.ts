@@ -348,21 +348,21 @@ describe('Devcon6', function () {
   describe('claim', function () {
     it('reverts if settling is not finished yet', async function () {
       await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction([1])
+      await devconAsOwner.settleAuction([])
 
       await expect(devcon.claim(4))
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if bidder does not exist', async function () {
-      await bidAndSettleRaffle(2, [1])
+      await bidAndSettleRaffle(2, [])
 
       await expect(devcon.claim(20))
         .to.be.revertedWith('Devcon6: given bidder does not exist')
     })
 
     it('reverts if funds have been already claimed', async function () {
-      await bidAndSettleRaffle(4, [1])
+      await bidAndSettleRaffle(4, [])
 
       await devcon.claim(4)
       await expect(devcon.claim(4))
@@ -377,7 +377,7 @@ describe('Devcon6', function () {
     })
 
     it('sets bid as claimed', async function () {
-      await bidAndSettleRaffle(5, [2])
+      await bidAndSettleRaffle(5, [])
 
       await devconAsOwner.claim(1)
 
@@ -389,7 +389,7 @@ describe('Devcon6', function () {
       const bidder = wallets[5]
       const remainingFunds = utils.parseEther('0.6')
       await bidAsWallet(bidder, reservePrice.add(remainingFunds))
-      await bidAndSettleRaffle(5, [2])
+      await bidAndSettleRaffle(5, [])
 
       const bidderBalanceBeforeClaim = await bidder.getBalance()
       await devconAsOwner.claim(1)
