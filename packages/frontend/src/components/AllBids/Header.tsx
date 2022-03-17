@@ -62,4 +62,7 @@ const BackButton = styled(Button)`
   top: 36px;
   left: 68px;
   width: 84px;
+  color: ${Colors.BlueLight};
+  background-color: ${Colors.Transparent};
+  border: 1px solid ${Colors.BlueLight};
 `

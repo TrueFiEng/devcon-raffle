@@ -1,3 +1,4 @@
+import { AllBidsList } from 'src/components/AllBids/AllBidsList'
 import { Header } from 'src/components/AllBids/Header'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -6,7 +7,7 @@ export const Bids = () => {
   return (
     <Body>
       <Header />
-      <span>test</span>
+      <AllBidsList />
     </Body>
   )
 }
