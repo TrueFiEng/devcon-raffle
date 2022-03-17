@@ -1,29 +1,28 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
-import { Form, FormHeading, FormRow } from 'src/components/Form/Form'
+import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
-import { Colors } from 'src/styles/colors'
-import styled from 'styled-components'
 
-interface BidProps {
+interface PlaceBidFormProps {
+  bid: BigNumber
+  setBid: (val: BigNumber) => void
   minimumBid: BigNumber
   bids: Bid[]
+  setView: (state: BidFlow) => void
 }
 
-export const BidForm = ({ minimumBid, bids }: BidProps) => {
+export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const [bid, setBid] = useState(minimumBid)
-
   const notEnoughBalance = userBalance !== undefined && bid.gt(userBalance)
   const bidTooLow = bid.lt(minimumBid)
 
   return (
-    <Wrapper>
+    <FormWrapper>
       <FormHeading>Place bid</FormHeading>
       <Form
         onSubmit={(e) => {
@@ -40,21 +39,10 @@ export const BidForm = ({ minimumBid, bids }: BidProps) => {
           <span>Your place in the raffle after the bid</span>
           <span>No. -</span>
         </FormRow>
-        <Button disabled={notEnoughBalance || bidTooLow}>Place bid</Button>
+        <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(BidFlow.Review)}>
+          Place bid
+        </Button>
       </Form>
-    </Wrapper>
+    </FormWrapper>
   )
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-  width: 724px;
-  height: 450px;
-  margin-left: -170px;
-  padding: 82px 115px;
-  position: relative;
-  background-color: ${Colors.Blue};
-  z-index: 100;
-`

@@ -72,7 +72,6 @@ const SecondaryButtonStyles = css<ButtonProps>`
   ${commonButtonStyles}
 
   background-color: ${Colors.White};
-  border-color: ${Colors.Blue};
   color: ${Colors.Blue};
   border: 1px solid ${Colors.Blue};
 

@@ -2,8 +2,9 @@ import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Form = styled.form`
-  display: grid;
-  grid-row-gap: 16px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
   width: 100%;
   max-width: 460px;
   overflow: hidden;
@@ -19,4 +20,16 @@ export const FormRow = styled.div`
 
 export const FormHeading = styled.h2`
   color: ${Colors.White};
+`
+
+export const FormSubHeading = styled.h3`
+  color: ${Colors.White};
+`
+
+export const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  padding: 82px 115px 82px 170px;
+  width: 100%;
 `

@@ -5,10 +5,9 @@ import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
+import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
-
-import { formatEtherAmount } from '../../utils/formatters/formatEtherAmount'
 
 interface InputProps {
   bid: BigNumber
