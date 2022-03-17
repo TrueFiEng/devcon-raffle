@@ -29,7 +29,7 @@ export const ReviewForm = ({ action, amount, impact, view, setView }: ReviewForm
     <Form>
       <FormRow>
         <span>{amountLabel[action]}</span>
-        <span>{formatEtherAmount(amount)}</span>
+        <span>{formatEtherAmount(amount)} ETH</span>
       </FormRow>
       {impact && (
         <FormRow>
