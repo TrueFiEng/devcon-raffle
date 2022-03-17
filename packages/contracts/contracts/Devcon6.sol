@@ -14,7 +14,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
-    uint256 _winnersCount;
 
     uint256[] _auctionWinners;
     bool _claimProceeded;
@@ -106,7 +105,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid auction winners length"
         );
 
-        _winnersCount = expectedWinnersLength;
         _auctionWinners = auctionWinners;
 
         uint256 lastBidderID = type(uint256).max;
@@ -343,9 +341,5 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
-    }
-
-    function getWinnersCount() public view returns (uint256) {
-        return _winnersCount;
     }
 }
