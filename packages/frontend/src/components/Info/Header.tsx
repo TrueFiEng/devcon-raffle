@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
+import { HeaderBar } from '../common/Header'
 import { KeyIcon } from '../Icons/KeyIcon'
 
 import { TimeLeft } from './TimeLeft'
@@ -26,14 +27,11 @@ export const Header = () => {
   )
 }
 
-const StyledHeader = styled.header`
-  display: flex;
-  flex-shrink: 0;
+const StyledHeader = styled(HeaderBar)`
   height: 225px;
-  background: linear-gradient(to left, #7ec188 0%, #65c4e8 45.31%, #7779b5 100%);
   padding: 16px 125px 24px 68px;
-  position: relative;
 `
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

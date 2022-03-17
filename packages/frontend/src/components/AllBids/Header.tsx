@@ -3,6 +3,7 @@ import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { Button } from '../Buttons/Button'
+import { HeaderBar } from '../common/Header'
 import { KeyIcon } from '../Icons/KeyIcon'
 
 export const Header = () => {
@@ -24,14 +25,11 @@ export const Header = () => {
   )
 }
 
-const StyledHeader = styled.header`
-  display: flex;
-  flex-shrink: 0;
+const StyledHeader = styled(HeaderBar)`
   height: 160px;
-  background: linear-gradient(to left, #7ec188 0%, #65c4e8 45.31%, #7779b5 100%);
-  position: relative;
   overflow: hidden;
 `
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
