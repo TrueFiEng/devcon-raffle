@@ -8,7 +8,7 @@ export const TopBar = () => {
   return (
     <TopBarContainer>
       <Logo />
-      <AccountButton view="secondary" />
+      <AccountButton />
     </TopBarContainer>
   )
 }

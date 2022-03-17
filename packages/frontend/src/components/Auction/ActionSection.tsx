@@ -9,8 +9,8 @@ import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
 
 const Actions: Record<AuctionStatus, () => ReactElement> = {
-  WrongNetwork: ChainIdWarning,
   NotConnected: ConnectWalletWarning,
+  WrongNetwork: ChainIdWarning,
   Connected: PlaceBidFlow,
 }
 
