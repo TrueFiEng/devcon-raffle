@@ -8,6 +8,8 @@ import { Colors } from 'src/styles/colors'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
+import { formatEtherAmount } from '../../utils/formatters/formatEtherAmount'
+
 interface InputProps {
   bid: BigNumber
   setBid: (val: BigNumber) => void
@@ -47,7 +49,7 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
 
   return (
     <InputWrapper>
-      <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
+      <InputLabel>Balance: {etherBalance ? formatEtherAmount(etherBalance) : '-'} ETH</InputLabel>
       <StyledInputWrapper isBadAmount={isBadAmount}>
         <TokenIconWrapper>
           <EtherIcon />
