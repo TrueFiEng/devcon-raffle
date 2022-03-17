@@ -35,7 +35,10 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
         )}
         {view === BidFlow.Confirmation && <ConfirmationForm action={action} setView={setView} />}
       </TransactionWrapper>
-      <TransactionStepper />
+      <TransactionStepper
+        action={action}
+        current={view === BidFlow.Confirmation ? 'Finalized' : `${heading[action]}`}
+      />
     </Transaction>
   )
 }
