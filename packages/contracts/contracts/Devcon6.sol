@@ -135,9 +135,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         _settleState = SettleState.RAFFLE_SETTLED;
 
-        randomNumbers[0] = selectGoldenTicketWinner(randomNumbers[0]);
-
         uint256 participantsLength = _raffleParticipants.length;
+        if (participantsLength == 0) {
+            return;
+        }
+
+        randomNumbers[0] = selectGoldenTicketWinner(randomNumbers[0], participantsLength);
+        --participantsLength;
+
         uint256 raffleWinnersCount = _raffleWinnersCount;
         if (participantsLength < raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners(participantsLength);
@@ -157,12 +162,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
-    function selectGoldenTicketWinner(uint256 randomNumber)
+    function selectGoldenTicketWinner(uint256 randomNumber, uint256 participantsLength)
         private
         returns (uint256)
     {
         uint256 winnerIndex = winnerIndexFromRandomNumber(
-            _raffleParticipants.length,
+            participantsLength,
             randomNumber
         );
 

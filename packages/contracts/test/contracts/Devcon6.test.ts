@@ -334,6 +334,13 @@ describe('Devcon6', function () {
       }
     })
 
+    it('works if there are no participants', async function (){
+      ({ devcon } = await loadFixture(devcon6Fixture))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bidAndSettleRaffle(0, [])
+    })
+
     it('changes state', async function () {
       await endBidding(devconAsOwner)
 
@@ -441,7 +448,7 @@ describe('Devcon6', function () {
     })
 
     it('reverts if proceeds have been already claimed', async function () {
-      await bidAndSettleRaffle(2, [1])
+      await bidAndSettleRaffle(2, [])
       await devconAsOwner.claimProceeds()
 
       await expect(devconAsOwner.claimProceeds())
@@ -455,7 +462,7 @@ describe('Devcon6', function () {
       const auctionBidAmount = reservePrice.add(100)
       await bidAsWallet(wallets[8], auctionBidAmount)
       await bidAsWallet(wallets[9], auctionBidAmount)
-      await bidAndSettleRaffle(8, [1, 2])
+      await bidAndSettleRaffle(8, [2, 1])
 
       const balanceBeforeClaim = await wallets[1].getBalance()
       const tx = await devconAsOwner.claimProceeds()
