@@ -1,5 +1,5 @@
 import { ReactElement } from 'react'
-import { AuctionStatus, useAuctionStatus } from 'src/hooks/useAuctionStatus'
+import { AuctionState, useAuctionState } from 'src/hooks/useAuctionState'
 import styled from 'styled-components'
 
 import { Colors } from '../../styles/colors'
@@ -8,14 +8,14 @@ import { PlaceBidFlow } from '../Bid/PlaceBid/PlaceBidFlow'
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
 
-const Actions: Record<AuctionStatus, () => ReactElement> = {
+const Actions: Record<AuctionState, () => ReactElement> = {
   NotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: PlaceBidFlow,
 }
 
 export const ActionSection = () => {
-  const status = useAuctionStatus()
+  const status = useAuctionState()
 
   const Content = Actions[status]
   return (
