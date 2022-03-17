@@ -8,17 +8,20 @@ import { Colors } from 'src/styles/colors'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
+import { formatEtherAmount } from '../../utils/formatters/formatEtherAmount'
+
 interface InputProps {
   bid: BigNumber
   setBid: (val: BigNumber) => void
-  isBadAmount: boolean
+  notEnoughBalance: boolean
+  bidTooLow: boolean
 }
 
-const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]+\d*)|(\d+[.,]\d+))$/
+const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
-export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
+export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
-  const etherBalance = useEtherBalance(account)
+  const userBalance = useEtherBalance(account)
 
   const initialInputValue = bid.isZero() ? '' : formatEther(bid)
   const [inputValue, setInputValue] = useState(initialInputValue)
@@ -47,8 +50,8 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
 
   return (
     <InputWrapper>
-      <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
-      <StyledInputWrapper isBadAmount={isBadAmount}>
+      <InputLabel>Balance: {userBalance ? formatEtherAmount(userBalance) : '-'} ETH</InputLabel>
+      <StyledInputWrapper isBadAmount={notEnoughBalance || bidTooLow}>
         <TokenIconWrapper>
           <EtherIcon />
         </TokenIconWrapper>
@@ -60,15 +63,18 @@ export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
         />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
-      {isBadAmount && (
-        <InputErrors>
-          <CloseCircleIcon size={16} color={Colors.Red} />
-          <InputErrorLabel>
-            {etherBalance && bid.lt(etherBalance) ? 'Bid amount must be at least Raffle price' : 'Not enough balance'}
-          </InputErrorLabel>
-        </InputErrors>
-      )}
+      {notEnoughBalance && <ErrorMessage message="Not enough balance" />}
+      {!notEnoughBalance && bidTooLow && <ErrorMessage message="Bid amount must be at least Raffle price" />}
     </InputWrapper>
+  )
+}
+
+const ErrorMessage = ({ message }: { message: string }) => {
+  return (
+    <InputErrors>
+      <CloseCircleIcon size={16} color={Colors.Red} />
+      <InputErrorLabel>{message}</InputErrorLabel>
+    </InputErrors>
   )
 }
 
