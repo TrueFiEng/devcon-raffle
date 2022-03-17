@@ -5,50 +5,75 @@ import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { Colors } from 'src/styles/colors'
+import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
   bid: BigNumber
   setBid: (val: BigNumber) => void
-  isBadAmount: boolean
+  notEnoughBalance: boolean
+  bidTooLow: boolean
 }
 
-const numberInputRegex = /^((\d*)|(\d+[.,])|(\d+[.,]\d+))$/
+const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
-export const Input = ({ bid, setBid, isBadAmount }: InputProps) => {
+export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
-  const etherBalance = useEtherBalance(account)
+  const userBalance = useEtherBalance(account)
 
   const initialInputValue = bid.isZero() ? '' : formatEther(bid)
   const [inputValue, setInputValue] = useState(initialInputValue)
 
-  const setValue = (value: string) => {
+  const onChange = (value: string) => {
     if (!numberInputRegex.test(value)) {
       return
     }
-    setInputValue(value)
     if (value !== '') {
-      setBid(parseEther(value))
+      const formattedValue = value.replace(',', '.')
+      setInputValue(formattedValue)
+      setBid(parseEther(formattedValue))
+    } else {
+      setInputValue('')
+      setBid(parseEther('0'))
+    }
+  }
+
+  const onBlur = (value: string) => {
+    if (value !== '') {
+      const formattedValue = formatInputAmount(value)
+      setInputValue(formattedValue)
+      setBid(parseEther(formattedValue))
     }
   }
 
   return (
     <InputWrapper>
-      <InputLabel>Balance: {etherBalance ? formatEther(etherBalance) : '-'} ETH</InputLabel>
-      <StyledInputWrapper isBadAmount={isBadAmount}>
+      <InputLabel>Balance: {userBalance ? formatEtherAmount(userBalance) : '-'} ETH</InputLabel>
+      <StyledInputWrapper isBadAmount={notEnoughBalance || bidTooLow}>
         <TokenIconWrapper>
           <EtherIcon />
         </TokenIconWrapper>
-        <StyledInput value={inputValue} onChange={(e) => setValue(e.target.value)} role="input" />
+        <StyledInput
+          value={inputValue}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={(e) => onBlur(e.target.value)}
+          role="input"
+        />
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
-      {isBadAmount && (
-        <InputErrors>
-          <CloseCircleIcon size={16} />
-          <InputErrorLabel>Error message text goes here</InputErrorLabel>
-        </InputErrors>
-      )}
+      {notEnoughBalance && <ErrorMessage message="Not enough balance" />}
+      {!notEnoughBalance && bidTooLow && <ErrorMessage message="Bid amount must be at least Raffle price" />}
     </InputWrapper>
+  )
+}
+
+const ErrorMessage = ({ message }: { message: string }) => {
+  return (
+    <InputErrors>
+      <CloseCircleIcon size={16} color={Colors.Red} />
+      <InputErrorLabel>{message}</InputErrorLabel>
+    </InputErrors>
   )
 }
 
@@ -57,6 +82,7 @@ const InputWrapper = styled.div`
   position: relative;
   flex-direction: column;
   width: 100%;
+  margin-bottom: 12px;
 `
 
 const InputLabel = styled.div`
@@ -140,7 +166,7 @@ const InputTokenName = styled.span`
 const InputErrors = styled.div`
   display: flex;
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   align-items: center;
   width: 100%;
   max-width: 100%;

@@ -1,15 +1,16 @@
+import { AuctionAction } from 'src/components/Auction/AuctionAction'
+import { PlaceBidFlow } from 'src/components/Bid/PlaceBid/PlaceBidFlow'
+import { BidsListSection } from 'src/components/BidsList/BidsList'
 import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { BidsListSection } from '../BidsList/BidsList'
-
-import { BidFormSection } from './BidFormSection'
-
 export const Auction = () => {
   return (
     <Wrapper>
-      <BidFormSection />
+      <AuctionAction>
+        <PlaceBidFlow />
+      </AuctionAction>
       <BidsListSection bids={bids} />
     </Wrapper>
   )

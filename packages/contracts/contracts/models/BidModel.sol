@@ -7,6 +7,7 @@ abstract contract BidModel {
         uint256 bidderID;
         uint256 amount;
         WinType winType;
+        bool claimed;
     }
 
     enum WinType {
