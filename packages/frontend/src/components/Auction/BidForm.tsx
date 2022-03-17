@@ -16,11 +16,11 @@ interface BidProps {
 
 export const BidForm = ({ minimumBid, bids }: BidProps) => {
   const { account } = useEthers()
-  const etherBalance = useEtherBalance(account)
+  const userBalance = useEtherBalance(account)
   const [bid, setBid] = useState(minimumBid)
-  const insufficientAmount = !!etherBalance && bid.gt(etherBalance)
-  const insufficientBid = bid.lt(minimumBid)
-  const isBadAmount = insufficientAmount || insufficientBid
+
+  const notEnoughBalance = userBalance !== undefined && bid.gt(userBalance)
+  const bidTooLow = bid.lt(minimumBid)
 
   return (
     <Wrapper>
@@ -35,12 +35,12 @@ export const BidForm = ({ minimumBid, bids }: BidProps) => {
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
-        <Input bid={bid} setBid={setBid} isBadAmount={isBadAmount} />
+        <Input bid={bid} setBid={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
           <span>No. -</span>
         </FormRow>
-        <Button disabled={isBadAmount}>Place bid</Button>
+        <Button disabled={notEnoughBalance || bidTooLow}>Place bid</Button>
       </Form>
     </Wrapper>
   )
