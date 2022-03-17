@@ -3,12 +3,12 @@ import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { ActionSection } from './ActionSection'
+import { UserActionSection } from './UserActionSection'
 
 export const Auction = () => {
   return (
     <Wrapper>
-      <ActionSection />
+      <UserActionSection />
       <BidsListSection bids={bids} />
     </Wrapper>
   )

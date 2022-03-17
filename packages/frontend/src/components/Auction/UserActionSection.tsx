@@ -8,16 +8,16 @@ import { PlaceBidFlow } from '../Bid/PlaceBid/PlaceBidFlow'
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
 
-const Actions: Record<AuctionState, () => ReactElement> = {
+const UserActions: Record<AuctionState, () => ReactElement> = {
   NotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: PlaceBidFlow,
 }
 
-export const ActionSection = () => {
-  const status = useAuctionState()
+export const UserActionSection = () => {
+  const state = useAuctionState()
 
-  const Content = Actions[status]
+  const Content = UserActions[state]
   return (
     <Wrapper>
       <Content />
