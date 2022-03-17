@@ -39,7 +39,9 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           <span>Your place in the raffle after the bid</span>
           <span>No. -</span>
         </FormRow>
-        <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(BidFlow.Review)}>Place bid</Button>
+        <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(BidFlow.Review)}>
+          Place bid
+        </Button>
       </Form>
     </FormWrapper>
   )
