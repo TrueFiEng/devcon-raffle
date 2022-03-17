@@ -1,17 +1,16 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
 import styled from 'styled-components'
 
-import { Button } from '../Buttons/Button'
+import { Button } from './Button'
+import { ConnectWalletButton } from './ConnectWalletButton'
 
 export const AccountButton = () => {
-  const { account, activateBrowserWallet } = useEthers()
+  const { account } = useEthers()
 
   return account ? (
     <ConnectedButton view="secondary">{shortenAddress(account)}</ConnectedButton>
   ) : (
-    <Button view="secondary" onClick={activateBrowserWallet}>
-      Connect Wallet
-    </Button>
+    <ConnectWalletButton view="secondary" />
   )
 }
 
