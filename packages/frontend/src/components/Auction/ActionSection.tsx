@@ -8,14 +8,14 @@ import { PlaceBidFlow } from '../Bid/PlaceBid/PlaceBidFlow'
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
 
-export const BidFormSection = () => {
+export const ActionSection = () => {
   const status = useAuctionStatus()
   const Content = Actions[status]
 
   return (
-    <ActionSection>
+    <Wrapper>
       <Content />
-    </ActionSection>
+    </Wrapper>
   )
 }
 
@@ -25,7 +25,7 @@ const Actions: Record<AuctionStatus, () => ReactElement> = {
   Connected: PlaceBidFlow,
 }
 
-const ActionSection = styled.div`
+const Wrapper = styled.div`
   display: flex;
   margin-left: -170px;
   width: 724px;

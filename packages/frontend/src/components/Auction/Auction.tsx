@@ -3,12 +3,12 @@ import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { BidFormSection } from './BidFormSection'
+import { ActionSection } from './ActionSection'
 
 export const Auction = () => {
   return (
     <Wrapper>
-      <BidFormSection />
+      <ActionSection />
       <BidsListSection bids={bids} />
     </Wrapper>
   )
