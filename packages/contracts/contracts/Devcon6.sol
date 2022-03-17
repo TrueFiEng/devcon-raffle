@@ -8,6 +8,7 @@ import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./RedBlackTree.sol";
+
 //import "hardhat/console.sol";
 
 // TODO replace i++ with ++i everywhere
@@ -185,37 +186,25 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function selectAuctionWinners(uint256 winnersLength) internal {
         uint256 current = tree.last();
-//        uint256 previous = current;
         uint256 bidderMask = _bidderMask;
         uint256 bidderID;
-
-//        uint256[] memory nodes = new uint256[](winnersLength);
-//        console.log("expected winners length: ", winnersLength);
 
         for (uint256 i = 0; current != 0 && i < winnersLength; ++i) {
             bidderID = bidderMask - (current & bidderMask);
             _auctionWinners.push(bidderID);
             biddersTree.insert(bidderID);
 
-//            console.log("Winners: ", bidderID);
-//            nodes[i] = current;
-//            previous = current;
             current = tree.prev(current);
-//            delete(tree.nodes[previous]);
         }
         _smallestTreeNode = 0;
         _smallestAuctionBid = 0;
 
         current = biddersTree.last();
-//        previous = current;
         for (uint256 i = 0; current != 0 && i < winnersLength; ++i) {
-//            delete(tree.nodes[nodes[i]]);
             setBidWinType(current, WinType.AUCTION);
             removeRaffleParticipant(current - 1);
 
-//            previous = current;
             current = biddersTree.prev(current);
-//            delete(biddersTree.nodes[previous]);
         }
     }
 

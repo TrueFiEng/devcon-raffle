@@ -211,7 +211,7 @@ describe('Devcon6', function () {
       expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 9, 10, 4, 5, 6, 7, 8]))
     })
 
-    it.only('tree test', async function () {
+    it('tree test', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 20 })))
       devconAsOwner = devcon.connect(wallets[1])
 
