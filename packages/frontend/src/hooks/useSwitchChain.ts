@@ -11,7 +11,7 @@ interface AddEthereumChainParameter {
 }
 
 interface SwitchEthereumChainParameter {
-  chainId: string // A 0x-prefixed hexadecimal string
+  chainId: string
 }
 
 const arbitrumChainId = BigNumber.from(ChainId.Arbitrum).toHexString()
