@@ -69,13 +69,11 @@ export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) 
   )
 }
 
-const ErrorMessage = ({message}: {message: string}) => {
+const ErrorMessage = ({ message }: { message: string }) => {
   return (
     <InputErrors>
       <CloseCircleIcon size={16} color={Colors.Red} />
-      <InputErrorLabel>
-        {message}
-      </InputErrorLabel>
+      <InputErrorLabel>{message}</InputErrorLabel>
     </InputErrors>
   )
 }
