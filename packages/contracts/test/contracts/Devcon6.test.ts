@@ -334,7 +334,7 @@ describe('Devcon6', function () {
       }
     })
 
-    it('works if there are no participants', async function (){
+    it('works if there are no participants', async function () {
       ({ devcon } = await loadFixture(devcon6Fixture))
       devconAsOwner = devcon.connect(wallets[1])
 
