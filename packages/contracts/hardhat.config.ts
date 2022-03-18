@@ -6,7 +6,7 @@ import 'hardhat-gas-reporter'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
-import 'scripts/task'
+import 'scripts/tasks'
 
 module.exports = {
     paths: {

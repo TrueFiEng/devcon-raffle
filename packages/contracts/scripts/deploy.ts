@@ -2,6 +2,7 @@ import { Devcon6, Devcon6__factory } from "../build/types";
 import { Signer, utils } from "ethers";
 
 const HOUR = 3600
+export const reservePrice = utils.parseEther('0.5')
 
 export async function deployDevcon(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
@@ -16,7 +17,7 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
     claimingEndTime,
     20,
     80,
-    utils.parseEther('0.5'),
+    reservePrice,
     utils.parseEther('0.005'),
   )
 
