@@ -1,4 +1,4 @@
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import { deployDevcon } from "scripts/deploy";
 import "@nomiclabs/hardhat-waffle";
 
@@ -10,3 +10,13 @@ task("deploy", "Deploys Devcon6 contracts").setAction(async (taskArgs, hre) => {
 
   console.log("Contracts deployed")
 });
+
+task("fast-forward", "Fast forwards a period of node's time")
+  .addParam<number>("value", "time in seconds to fast forward", undefined, types.int, false)
+  .setAction(async ({ value }: { value: number }, hre) => {
+    const provider = hre.network.provider
+
+    console.log('Fast forwarding %d seconds', value)
+    await provider.send('evm_increaseTime', [value])
+    await provider.send('evm_mine')
+  })
