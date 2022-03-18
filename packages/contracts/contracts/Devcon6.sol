@@ -271,7 +271,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function claimProceeds()
         external
-        payable
         onlyOwner
         onlyInState(State.RAFFLE_SETTLED)
     {
