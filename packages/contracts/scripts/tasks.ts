@@ -17,7 +17,7 @@ task('fast-forward', 'Fast forwards block time')
 
 task('bid', 'Bids with given amount')
   .addParam<string>('address', 'The bidder\'s address')
-  .addParam<string>('amount', 'The bid\'s amount', undefined, types.string)
+  .addParam<string>('amount', 'The bid\'s amount in ETH', undefined, types.string)
   .setAction(async (
     { address, amount }: { address: string, amount: string },
     hre,
