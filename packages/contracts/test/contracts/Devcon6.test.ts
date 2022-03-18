@@ -459,7 +459,18 @@ describe('Devcon6', function () {
       })
     })
 
-    describe('when biddersCount == auctionWinnersCount + raffleWinnersCount', function () {
+    describe('when biddersCount > (auctionWinnersCount + raffleWinnersCount)', function () {
+      it('transfers correct amount', async function () {
+        const auctionBidAmount = reservePrice.add(100)
+        await bidAsWallet(wallets[10], auctionBidAmount)
+        await bidAndSettleRaffle(10, [1])
+
+        const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount == (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
         devconAsOwner = devcon.connect(wallets[1])
@@ -474,11 +485,25 @@ describe('Devcon6', function () {
       })
     })
 
-    describe('when biddersCount < raffleWinnersCount', function () {
+    describe('when raffleWinnersCount < biddersCount < (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
-        await bidAndSettleRaffle(5, [])
+        ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
+        devconAsOwner = devcon.connect(wallets[1])
 
-        const claimAmount = reservePrice.mul(4)
+        const auctionBidAmount = reservePrice.add(100)
+        await bidAsWallet(wallets[8], auctionBidAmount)
+        await bidAndSettleRaffle(8, [1])
+
+        const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount <= raffleWinnersCount', function () {
+      it('transfers correct amount', async function () {
+        await bidAndSettleRaffle(8, [])
+
+        const claimAmount = reservePrice.mul(7)
         expect(await claimProceeds()).to.eq(claimAmount)
       })
     })
