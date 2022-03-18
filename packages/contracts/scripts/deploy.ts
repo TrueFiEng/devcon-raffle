@@ -1,5 +1,5 @@
-import { Devcon6, Devcon6__factory } from "../build/types";
-import { Signer, utils } from "ethers";
+import { Devcon6, Devcon6__factory } from 'contracts'
+import { Signer, utils } from 'ethers'
 
 const HOUR = 3600
 export const reservePrice = utils.parseEther('0.5')
