@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { heading } from 'src/components/Auction/AuctionTransaction'
+import { CrossIcon } from 'src/components/Icons/CrossIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -18,7 +19,7 @@ const transactionSteps = (action: Transactions) => {
         description: 'Initiate and confirm bid transaction in your wallet.',
       },
       failed: {
-        name: `${heading[action]}`,
+        name: `Transaction failed`,
         description: 'Transaction failed.',
       },
     },
@@ -28,7 +29,7 @@ const transactionSteps = (action: Transactions) => {
         description: 'The process was successfully completed.',
       },
       failed: {
-        name: 'Finalized',
+        name: 'Failed',
         description: 'The process is incompleted.',
       },
     },
@@ -76,8 +77,7 @@ export const TransactionStepper = <StepName extends string>({ current, action }:
 
 function pickStepVersion<Name extends string>(item: Step<Name>, current: Name, isLast: boolean) {
   const [step, type]: [StepContent<Name>, StepType] =
-    // item.failed?.name === current ? [item.failed, 'failure'] :
-    [item.default, isLast ? 'success' : 'neutral']
+    item.failed?.name === current ? [item.failed, 'failure'] : [item.default, isLast ? 'success' : 'neutral']
   return { step, type }
 }
 
@@ -91,7 +91,9 @@ interface ListItemProps<T extends string> {
 
 const StepperListItem = <StepName extends string>({ step, status, type }: ListItemProps<StepName>) => (
   <StepperListItemContainer type={type} status={status}>
-    <StepperBullet type={type} status={status} />
+    <StepperBullet type={type} status={status}>
+      {type === 'failure' && <CrossIcon size={15} color={Colors.BlueDark} />}
+    </StepperBullet>
     <StepperItemName>{step.name}</StepperItemName>
     <StepperItemDescription current={status === 'current'}>{step.description}</StepperItemDescription>
   </StepperListItemContainer>
@@ -175,6 +177,8 @@ interface DisplayTypeProps {
 
 const StepperBullet = styled.div<DisplayTypeProps>`
   grid-area: icon;
+  display: flex;
+  align-items: center;
   width: 17px;
   height: 17px;
   border: 2px solid currentColor;
