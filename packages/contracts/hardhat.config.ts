@@ -3,10 +3,10 @@ import '@nomiclabs/hardhat-waffle'
 import './abi-exporter'
 import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
+import 'scripts/tasks'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
-import 'scripts/tasks'
 
 module.exports = {
     paths: {
