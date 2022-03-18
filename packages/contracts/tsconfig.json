@@ -23,13 +23,12 @@
     }
   },
   "files": ["./hardhat.config.ts"],
-  "exclude": [
-    "deploy"
-  ],
+  "exclude": [],
   "include": [
     "build",
     "scripts",
     "contracts",
     "test",
+    "deploy"
   ]
 }
