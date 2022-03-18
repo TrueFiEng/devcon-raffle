@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -6,10 +7,15 @@ import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
 
 import { AllBidsColumns } from './AllBidsColumns'
 import { BidsSubList } from './BidsSubList'
+import { FilterHeaders } from './FilterHeaders'
+
+export type DisplayMode = 'All' | 'Auction' | 'Raffle'
 
 export const AllBidsList = () => {
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('All')
   return (
     <PageContainer>
+      <FilterHeaders setDisplayMode={setDisplayMode} />
       <BidsHeaders>
         <PlaceColumn>
           <b>Place</b>
@@ -21,14 +27,22 @@ export const AllBidsList = () => {
           <b>Address</b>
         </AddressColumn>
       </BidsHeaders>
-      <TitleBanner>
-        <h3>AUCTION</h3>
-      </TitleBanner>
-      <BidsSubList bids={bids} />
-      <TitleBanner>
-        <h3>RAFFLE</h3>
-      </TitleBanner>
-      <BidsSubList bids={bids} />
+      {['All', 'Auction'].includes(displayMode) && (
+        <>
+          <TitleBanner>
+            <h3>AUCTION</h3>
+          </TitleBanner>
+          <BidsSubList bids={bids} />
+        </>
+      )}
+      {['All', 'Raffle'].includes(displayMode) && (
+        <>
+          <TitleBanner>
+            <h3>RAFFLE</h3>
+          </TitleBanner>
+          <BidsSubList bids={bids} />
+        </>
+      )}
     </PageContainer>
   )
 }
