@@ -1,15 +1,17 @@
 import { Devcon6__factory } from "../build/types";
-import { utils, Wallet } from "ethers";
+import { Signer, utils } from "ethers";
 
 const HOUR = 3600
 
-export async function deployDevcon(owner: Wallet) {
+export async function deployDevcon(owner: Signer) {
   const biddingStartTime = new Date().valueOf() + HOUR
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
+  const ownerAddress = await owner.getAddress()
+
   const devcon = await new Devcon6__factory(owner).deploy(
-    owner.address,
+    ownerAddress,
     biddingStartTime,
     biddingEndTime,
     claimingEndTime,
@@ -19,6 +21,5 @@ export async function deployDevcon(owner: Wallet) {
     utils.parseEther('0.005'),
   )
 
-  console.log('\nDevcon address: ', devcon.address)
-  console.log('Contracts deployed')
+  console.log('\nDevcon6 address: ', devcon.address)
 }
