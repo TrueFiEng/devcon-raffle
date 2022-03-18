@@ -295,7 +295,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
         totalAmount += winnersCount * _reservePrice;
 
-        payable(msg.sender).transfer(totalAmount);
+        payable(owner()).transfer(totalAmount);
     }
 
     function getState() public view returns (State) {
