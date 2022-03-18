@@ -499,11 +499,20 @@ describe('Devcon6', function () {
       })
     })
 
-    describe('when biddersCount <= raffleWinnersCount', function () {
+    describe('when biddersCount == raffleWinnersCount', function () {
       it('transfers correct amount', async function () {
         await bidAndSettleRaffle(8, [])
 
         const claimAmount = reservePrice.mul(7)
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount < raffleWinnersCount', function () {
+      it('transfers correct amount', async function () {
+        await bidAndSettleRaffle(5, [])
+
+        const claimAmount = reservePrice.mul(4)
         expect(await claimProceeds()).to.eq(claimAmount)
       })
     })
