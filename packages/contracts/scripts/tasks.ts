@@ -15,7 +15,7 @@ task('fast-forward', 'Fast forwards block time')
     await provider.send('evm_mine')
   })
 
-task('bid', 'Bids with given amount')
+task('bid', 'Places bid for given account with provided amount')
   .addParam<string>('address', 'The bidder\'s address')
   .addParam<string>('amount', 'The bid\'s amount in ETH', undefined, types.string)
   .setAction(async (
