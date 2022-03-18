@@ -1,10 +1,9 @@
-import { Devcon6__factory } from "../build/types";
+import { Devcon6, Devcon6__factory } from "../build/types";
 import { Signer, utils } from "ethers";
 
 const HOUR = 3600
 
-export async function deployDevcon(owner: Signer) {
-  const biddingStartTime = new Date().valueOf() + HOUR
+export async function deployDevcon(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
@@ -22,4 +21,5 @@ export async function deployDevcon(owner: Signer) {
   )
 
   console.log('\nDevcon6 address: ', devcon.address)
+  return devcon
 }
