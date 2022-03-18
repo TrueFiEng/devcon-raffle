@@ -452,7 +452,7 @@ describe('Devcon6', function () {
       await devconAsOwner.claimProceeds()
 
       await expect(devconAsOwner.claimProceeds())
-        .to.be.revertedWith('Devcon6: proceeds has been already claimed')
+        .to.be.revertedWith('Devcon6: proceeds have already been claimed')
     })
 
     it('transfers correct amount', async function () {
