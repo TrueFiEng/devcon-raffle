@@ -27,7 +27,7 @@ task('bid', 'Places bid for given account with provided amount')
     const devcon = devconFactory.attach(devconAddress).connect(signer)
 
     const ethAmount = parseEther(amount)
-    await devcon.bid({value: ethAmount})
+    await devcon.bid({ value: ethAmount })
     logBid(address, ethAmount)
   })
 
