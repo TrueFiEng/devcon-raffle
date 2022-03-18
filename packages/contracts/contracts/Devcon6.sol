@@ -283,17 +283,18 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
 
         uint256 totalAmount = 0;
-        uint256 winnersCount = _auctionWinners.length;
-        for (uint256 i = 0; i < winnersCount; ++i) {
+
+        uint256 auctionWinnersCount = _auctionWinners.length;
+        for (uint256 i = 0; i < auctionWinnersCount; ++i) {
             address bidderAddress = _bidders[_auctionWinners[i]];
             totalAmount += _bids[bidderAddress].amount;
         }
 
-        winnersCount = _raffleWinnersCount - 1;
-        if (biddersCount <= winnersCount) {
-            winnersCount = biddersCount - 1;
+        uint256 raffleWinnersCount = _raffleWinnersCount - 1;
+        if (biddersCount <= raffleWinnersCount) {
+            raffleWinnersCount = biddersCount - 1;
         }
-        totalAmount += winnersCount * _reservePrice;
+        totalAmount += raffleWinnersCount * _reservePrice;
 
         payable(owner()).transfer(totalAmount);
     }
