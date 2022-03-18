@@ -138,11 +138,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        randomNumbers[0] = selectGoldenTicketWinner(
+        (participantsLength, randomNumbers[0]) = selectGoldenTicketWinner(
             participantsLength,
             randomNumbers[0]
         );
-        --participantsLength;
 
         uint256 raffleWinnersCount = _raffleWinnersCount;
         if (participantsLength < raffleWinnersCount) {
@@ -166,7 +165,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectGoldenTicketWinner(
         uint256 participantsLength,
         uint256 randomNumber
-    ) private returns (uint256) {
+    ) private returns (uint256, uint256) {
         uint256 winnerIndex = winnerIndexFromRandomNumber(
             participantsLength,
             randomNumber
@@ -175,7 +174,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         setBidWinType(_raffleParticipants[winnerIndex], WinType.GOLDEN_TICKET);
 
         removeRaffleParticipant(winnerIndex);
-        return randomNumber >> 32;
+        return (participantsLength - 1, randomNumber >> 32);
     }
 
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength)
