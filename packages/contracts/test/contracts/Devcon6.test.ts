@@ -483,6 +483,16 @@ describe('Devcon6', function () {
       expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.add(claimAmount).sub(txCost))
     })
 
+    it('does not transfer funds if there is only one participant', async function () {
+      await bidAndSettleRaffle(1, [])
+
+      const balanceBeforeClaim = await wallets[1].getBalance()
+      const tx = await devconAsOwner.claimProceeds()
+      const txCost = await calculateTxCost(tx)
+
+      expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.sub(txCost))
+    })
+
     it('does not transfer funds if there are no participants', async function () {
       await bidAndSettleRaffle(0, [])
 
