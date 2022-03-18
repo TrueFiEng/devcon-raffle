@@ -5,9 +5,7 @@ import { devconAddress } from 'scripts/utils/devcon'
 import { BigNumberish, constants, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 
-import '@nomiclabs/hardhat-waffle'
-
-task('fast-forward', 'Fast forwards a period of node\'s time')
+task('fast-forward', 'Fast forwards block time')
   .addParam<number>('value', 'Time in seconds to fast forward', undefined, types.int, false)
   .setAction(async ({ value }: { value: number }, hre) => {
     const provider = hre.network.provider
