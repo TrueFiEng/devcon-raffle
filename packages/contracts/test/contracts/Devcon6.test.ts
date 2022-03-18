@@ -469,12 +469,8 @@ describe('Devcon6', function () {
         await bidAsWallet(wallets[9], auctionBidAmount)
         await bidAndSettleRaffle(8, [2, 1])
 
-        const balanceBeforeClaim = await wallets[1].getBalance()
-        const tx = await devconAsOwner.claimProceeds()
-        const txCost = await calculateTxCost(tx)
-
         const claimAmount = auctionBidAmount.mul(2).add(reservePrice.mul(7))
-        expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.add(claimAmount).sub(txCost))
+        expect(await claimProceeds()).to.eq(claimAmount)
       })
     })
 
@@ -482,38 +478,33 @@ describe('Devcon6', function () {
       it('transfers correct amount', async function () {
         await bidAndSettleRaffle(5, [])
 
-        const balanceBeforeClaim = await wallets[1].getBalance()
-        const tx = await devconAsOwner.claimProceeds()
-        const txCost = await calculateTxCost(tx)
-
         const claimAmount = reservePrice.mul(4)
-        expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.add(claimAmount).sub(txCost))
+        expect(await claimProceeds()).to.eq(claimAmount)
       })
     })
 
     describe('when biddersCount == 1', function () {
       it('does not transfer funds', async function () {
         await bidAndSettleRaffle(1, [])
-
-        const balanceBeforeClaim = await wallets[1].getBalance()
-        const tx = await devconAsOwner.claimProceeds()
-        const txCost = await calculateTxCost(tx)
-
-        expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.sub(txCost))
+        expect(await claimProceeds()).to.eq(0)
       })
     })
 
     describe('when biddersCount == 0', function () {
       it('does not transfer funds', async function () {
         await bidAndSettleRaffle(0, [])
-
-        const balanceBeforeClaim = await wallets[1].getBalance()
-        const tx = await devconAsOwner.claimProceeds()
-        const txCost = await calculateTxCost(tx)
-
-        expect(await wallets[1].getBalance()).to.be.equal(balanceBeforeClaim.sub(txCost))
+        expect(await claimProceeds()).to.eq(0)
       })
     })
+
+    // Returns amount transferred to owner by claimProceeds method
+    async function claimProceeds(): Promise<BigNumber> {
+      const balanceBeforeClaim = await wallets[1].getBalance()
+      const tx = await devconAsOwner.claimProceeds()
+      const txCost = await calculateTxCost(tx)
+      const balanceAfterClaim = await wallets[1].getBalance()
+      return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+    }
 
     async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
       const txReceipt = await tx.wait()
