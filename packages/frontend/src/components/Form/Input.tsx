@@ -165,17 +165,18 @@ const InputTokenName = styled.span`
 
 const InputErrors = styled.div`
   display: flex;
-  position: absolute;
-  top: calc(100% + 4px);
   align-items: center;
+  column-gap: 8px;
   width: 100%;
   max-width: 100%;
+  position: absolute;
+  top: calc(100% + 4px);
   overflow: hidden;
 `
 
 const InputErrorLabel = styled(InputLabel)`
+  justify-content: flex-start;
+  margin: 0;
   font-weight: 300;
   color: ${Colors.Red};
-  margin-left: 8px;
-  justify-content: flex-start;
 `
