@@ -553,7 +553,7 @@ describe('Devcon6', function () {
     })
 
     it('reverts if claiming has not been closed yet', async function () {
-      await bidAndSettleRaffle(2, [1])
+      await bidAndSettleRaffle(2, [])
 
       await expect(devconAsOwner.withdrawUnclaimedFunds())
         .to.be.revertedWith('Devcon6: is in invalid state')
