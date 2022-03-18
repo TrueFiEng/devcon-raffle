@@ -1,20 +1,29 @@
+import { useDebounce } from '@usedapp/core'
+import { useEffect, useState } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
+import { Button } from '../Buttons/Button'
 import { SearchIcon } from '../Icons/SearchIcon'
 
 import { DisplayMode } from './AllBidsList'
 
 interface Props {
   setDisplayMode: (mode: DisplayMode) => void
+  setSearch: (search: string) => void
 }
 
-export const FilterHeaders = ({ setDisplayMode }: Props) => {
+export const FilterHeaders = ({ setDisplayMode, setSearch }: Props) => {
+  const [inputValue, setInputValue] = useState('')
+  const search = useDebounce(inputValue, 500)
+  useEffect(() => setSearch(search), [search])
+
   return (
     <Wrapper>
       <SearchInputWrapper>
         <SearchIcon />
-        <StyledInput />
+        <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
+        {!!inputValue && <Delete onClick={() => setInputValue('')}>X</Delete>}
       </SearchInputWrapper>
       <select onChange={(e) => setDisplayMode(e.target.value as DisplayMode)}>
         <option value="All">Show All</option>
@@ -80,4 +89,8 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: 0 0 28px;
+`
+
+const Delete = styled(Button)`
+  width: 32px;
 `

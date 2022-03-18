@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { bids } from 'src/data/bids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -13,9 +13,16 @@ export type DisplayMode = 'All' | 'Auction' | 'Raffle'
 
 export const AllBidsList = () => {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('All')
+  const [search, setSearch] = useState('')
+  const auctionBids = useMemo(
+    () => (search ? bids.filter((bid) => bid.bidderAddress.includes(search)) : bids),
+    [search]
+  )
+  const raffleBids = useMemo(() => (search ? bids.filter((bid) => bid.bidderAddress.includes(search)) : bids), [search])
+
   return (
     <PageContainer>
-      <FilterHeaders setDisplayMode={setDisplayMode} />
+      <FilterHeaders {...{ setDisplayMode, setSearch }} />
       <BidsHeaders>
         <PlaceColumn>
           <b>Place</b>
@@ -32,7 +39,7 @@ export const AllBidsList = () => {
           <TitleBanner>
             <h3>AUCTION</h3>
           </TitleBanner>
-          <BidsSubList bids={bids} />
+          <BidsSubList bids={auctionBids} />
         </>
       )}
       {['All', 'Raffle'].includes(displayMode) && (
@@ -40,7 +47,7 @@ export const AllBidsList = () => {
           <TitleBanner>
             <h3>RAFFLE</h3>
           </TitleBanner>
-          <BidsSubList bids={bids} />
+          <BidsSubList bids={raffleBids} />
         </>
       )}
     </PageContainer>
