@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet, ContractTransaction } from 'ethers'
+import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
@@ -430,15 +430,6 @@ describe('Devcon6', function () {
 
       expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalance.add(reservePrice))
     })
-
-    async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
-      for (let i = 1; i <= bidCount; i++) {
-        const bid = await getBidByID(i)
-        if (bid.winType === winType) {
-          return bid
-        }
-      }
-    }
   })
 
   describe('claimProceeds', function () {
@@ -533,16 +524,53 @@ describe('Devcon6', function () {
 
     // Returns amount transferred to owner by claimProceeds method
     async function claimProceeds(): Promise<BigNumber> {
-      const balanceBeforeClaim = await wallets[1].getBalance()
-      const tx = await devconAsOwner.claimProceeds()
-      const txCost = await calculateTxCost(tx)
-      const balanceAfterClaim = await wallets[1].getBalance()
-      return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+      return calculateTransferredAmount(devconAsOwner.claimProceeds)
+    }
+  })
+
+  describe('withdrawUnclaimedFunds', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.withdrawUnclaimedFunds())
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if claiming has not been closed yet', async function () {
+      await bidAndSettleRaffle(2, [])
+
+      await expect(devconAsOwner.withdrawUnclaimedFunds())
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+
+    it('transfers unclaimed funds', async function () {
+      await bidAndSettleRaffle(10, [1])
+      await devconAsOwner.claimProceeds()
+
+      await endClaiming(devconAsOwner)
+
+      const unclaimedFunds = reservePrice.mul(2)
+      expect(await withdrawUnclaimedFunds()).to.be.equal(unclaimedFunds)
+    })
+
+    it('transfers remaining unclaimed funds', async function () {
+      await bidAndSettleRaffle(10, [1])
+      await devconAsOwner.claimProceeds()
+
+      const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
+      await devconAsOwner.claim(goldenBid.bidderID)
+
+      await endClaiming(devconAsOwner)
+
+      expect(await withdrawUnclaimedFunds()).to.be.equal(reservePrice)
+    })
+
+    async function endClaiming(devcon: Devcon6) {
+      const endTime = await devcon.claimingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     }
 
-    async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
-      const txReceipt = await tx.wait()
-      return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+    // Returns amount transferred to owner by withdrawUnclaimedFunds method
+    async function withdrawUnclaimedFunds(): Promise<BigNumber> {
+      return calculateTransferredAmount(devconAsOwner.withdrawUnclaimedFunds)
     }
   })
 
@@ -641,5 +669,27 @@ describe('Devcon6', function () {
   async function getBidByID(bidID: number): Promise<Bid> {
     const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
     return devconAsOwner.getBid(bidderAddress)
+  }
+
+  async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
+    for (let i = 1; i <= bidCount; i++) {
+      const bid = await getBidByID(i)
+      if (bid.winType === winType) {
+        return bid
+      }
+    }
+  }
+
+  async function calculateTransferredAmount(transaction: () => Promise<ContractTransaction>): Promise<BigNumber> {
+    const balanceBeforeClaim = await wallets[1].getBalance()
+    const tx = await transaction()
+    const txCost = await calculateTxCost(tx)
+    const balanceAfterClaim = await wallets[1].getBalance()
+    return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+  }
+
+  async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
+    const txReceipt = await tx.wait()
+    return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
   }
 })
