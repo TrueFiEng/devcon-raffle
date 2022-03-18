@@ -1,4 +1,4 @@
-import { ChainId, Config as UseDAppConfig } from "@usedapp/core"
+import { Arbitrum, ArbitrumRinkeby, ChainId, Config as UseDAppConfig } from '@usedapp/core'
 
 interface Config {
   useDAppConfig: UseDAppConfig
@@ -16,16 +16,26 @@ function getConfig(environment: string): Config {
   }
 }
 
-function getDevConfig() {
+function getDevConfig(): Config {
   return {
-    useDAppConfig: {},
-    allowedNetworks: [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Localhost]
+    useDAppConfig: {
+      readOnlyChainId: ArbitrumRinkeby.chainId,
+      readOnlyUrls: {
+        [ArbitrumRinkeby.chainId]: 'https://rinkeby.arbitrum.io/rpc',
+      },
+    },
+    allowedNetworks: [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Localhost],
   }
 }
 
-function getProdConfig() {
+function getProdConfig(): Config {
   return {
-    useDAppConfig: {},
-    allowedNetworks: [ChainId.Arbitrum]
+    useDAppConfig: {
+      readOnlyChainId: Arbitrum.chainId,
+      readOnlyUrls: {
+        [Arbitrum.chainId]: 'https://arb1.arbitrum.io/rpc',
+      },
+    },
+    allowedNetworks: [ChainId.Arbitrum],
   }
 }
