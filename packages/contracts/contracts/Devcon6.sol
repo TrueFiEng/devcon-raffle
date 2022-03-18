@@ -14,7 +14,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
-    uint256 _winnersCount;
+
+    uint256[] _auctionWinners;
+    bool _proceedsClaimed;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -103,7 +105,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             "Devcon6: invalid auction winners length"
         );
 
-        _winnersCount = expectedWinnersLength;
+        _auctionWinners = auctionWinners;
 
         uint256 lastBidderID = type(uint256).max;
         for (uint256 i = 0; i < auctionWinners.length; ++i) {
@@ -131,9 +133,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         _settleState = SettleState.RAFFLE_SETTLED;
 
-        randomNumbers[0] = selectGoldenTicketWinner(randomNumbers[0]);
-
         uint256 participantsLength = _raffleParticipants.length;
+        if (participantsLength == 0) {
+            return;
+        }
+
+        (participantsLength, randomNumbers[0]) = selectGoldenTicketWinner(
+            participantsLength,
+            randomNumbers[0]
+        );
+
         uint256 raffleWinnersCount = _raffleWinnersCount;
         if (participantsLength < raffleWinnersCount) {
             selectAllRaffleParticipantsAsWinners(participantsLength);
@@ -153,19 +162,19 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
-    function selectGoldenTicketWinner(uint256 randomNumber)
-        private
-        returns (uint256)
-    {
+    function selectGoldenTicketWinner(
+        uint256 participantsLength,
+        uint256 randomNumber
+    ) private returns (uint256, uint256) {
         uint256 winnerIndex = winnerIndexFromRandomNumber(
-            _raffleParticipants.length,
+            participantsLength,
             randomNumber
         );
 
         setBidWinType(_raffleParticipants[winnerIndex], WinType.GOLDEN_TICKET);
 
         removeRaffleParticipant(winnerIndex);
-        return randomNumber >> 32;
+        return (participantsLength - 1, randomNumber >> 32);
     }
 
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength)
@@ -260,6 +269,39 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    function claimProceeds()
+        external
+        onlyOwner
+        onlyInState(State.RAFFLE_SETTLED)
+    {
+        require(
+            !_proceedsClaimed,
+            "Devcon6: proceeds have already been claimed"
+        );
+        _proceedsClaimed = true;
+
+        uint256 biddersCount = getBiddersCount();
+        if (biddersCount == 0) {
+            return;
+        }
+
+        uint256 totalAmount = 0;
+
+        uint256 auctionWinnersCount = _auctionWinners.length;
+        for (uint256 i = 0; i < auctionWinnersCount; ++i) {
+            address bidderAddress = _bidders[_auctionWinners[i]];
+            totalAmount += _bids[bidderAddress].amount;
+        }
+
+        uint256 raffleWinnersCount = _raffleWinnersCount - 1;
+        if (biddersCount <= raffleWinnersCount) {
+            raffleWinnersCount = biddersCount - 1;
+        }
+        totalAmount += raffleWinnersCount * _reservePrice;
+
+        payable(owner()).transfer(totalAmount);
+    }
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
@@ -304,9 +346,5 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
-    }
-
-    function getWinnersCount() public view returns (uint256) {
-        return _winnersCount;
     }
 }

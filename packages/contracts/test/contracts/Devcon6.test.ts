@@ -6,7 +6,7 @@ import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet } from 'ethers'
+import { BigNumber, BigNumberish, Wallet, ContractTransaction } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
@@ -334,6 +334,13 @@ describe('Devcon6', function () {
       }
     })
 
+    it('works if there are no participants', async function () {
+      ({ devcon } = await loadFixture(devcon6Fixture))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bidAndSettleRaffle(0, [])
+    })
+
     it('changes state', async function () {
       await endBidding(devconAsOwner)
 
@@ -432,12 +439,110 @@ describe('Devcon6', function () {
         }
       }
     }
+  })
 
-    async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
-      await bid(bidCount)
-      await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction(auctionWinners)
-      await devconAsOwner.settleRaffle(randomBigNumbers(1))
+  describe('claimProceeds', function () {
+    describe('when called not by owner', function () {
+      it('reverts', async function () {
+        await expect(devcon.claimProceeds())
+          .to.be.revertedWith('Ownable: caller is not the owner')
+      })
+    })
+
+    describe('when proceeds have already been claimed', function () {
+      it('reverts', async function () {
+        await bidAndSettleRaffle(2, [])
+        await devconAsOwner.claimProceeds()
+
+        await expect(devconAsOwner.claimProceeds())
+          .to.be.revertedWith('Devcon6: proceeds have already been claimed')
+      })
+    })
+
+    describe('when biddersCount > (auctionWinnersCount + raffleWinnersCount)', function () {
+      it('transfers correct amount', async function () {
+        const auctionBidAmount = reservePrice.add(100)
+        await bidAsWallet(wallets[10], auctionBidAmount)
+        await bidAndSettleRaffle(10, [1])
+
+        const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount == (auctionWinnersCount + raffleWinnersCount)', function () {
+      it('transfers correct amount', async function () {
+        ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
+        devconAsOwner = devcon.connect(wallets[1])
+
+        const auctionBidAmount = reservePrice.add(100)
+        await bidAsWallet(wallets[8], auctionBidAmount)
+        await bidAsWallet(wallets[9], auctionBidAmount)
+        await bidAndSettleRaffle(8, [2, 1])
+
+        const claimAmount = auctionBidAmount.mul(2).add(reservePrice.mul(7))
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when raffleWinnersCount < biddersCount < (auctionWinnersCount + raffleWinnersCount)', function () {
+      it('transfers correct amount', async function () {
+        ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
+        devconAsOwner = devcon.connect(wallets[1])
+
+        const auctionBidAmount = reservePrice.add(100)
+        await bidAsWallet(wallets[8], auctionBidAmount)
+        await bidAndSettleRaffle(8, [1])
+
+        const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount == raffleWinnersCount', function () {
+      it('transfers correct amount', async function () {
+        await bidAndSettleRaffle(8, [])
+
+        const claimAmount = reservePrice.mul(7)
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount < raffleWinnersCount', function () {
+      it('transfers correct amount', async function () {
+        await bidAndSettleRaffle(5, [])
+
+        const claimAmount = reservePrice.mul(4)
+        expect(await claimProceeds()).to.eq(claimAmount)
+      })
+    })
+
+    describe('when biddersCount == 1', function () {
+      it('does not transfer funds', async function () {
+        await bidAndSettleRaffle(1, [])
+        expect(await claimProceeds()).to.eq(0)
+      })
+    })
+
+    describe('when biddersCount == 0', function () {
+      it('does not transfer funds', async function () {
+        await bidAndSettleRaffle(0, [])
+        expect(await claimProceeds()).to.eq(0)
+      })
+    })
+
+    // Returns amount transferred to owner by claimProceeds method
+    async function claimProceeds(): Promise<BigNumber> {
+      const balanceBeforeClaim = await wallets[1].getBalance()
+      const tx = await devconAsOwner.claimProceeds()
+      const txCost = await calculateTxCost(tx)
+      const balanceAfterClaim = await wallets[1].getBalance()
+      return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+    }
+
+    async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
+      const txReceipt = await tx.wait()
+      return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
     }
   })
 
@@ -505,6 +610,13 @@ describe('Devcon6', function () {
       expect(await devcon.getBidderAddress(1)).to.eq(wallets[0].address)
     })
   })
+
+  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+    await bid(bidCount)
+    await endBidding(devconAsOwner)
+    await devconAsOwner.settleAuction(auctionWinners)
+    await devconAsOwner.settleRaffle(randomBigNumbers(1))
+  }
 
   async function endBidding(devcon: Devcon6) {
     const endTime = await devcon.biddingEndTime()
