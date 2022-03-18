@@ -3,7 +3,7 @@ import { IconContainer, IconWrapper, IconProps } from 'src/components/Icons/Icon
 export const SearchIcon = ({ color, size = 22, className }: IconProps) => {
   return (
     <IconContainer color={color} size={size} className={className}>
-      <IconWrapper width={size} height={size} viewBox={`0 0 ${size} ${size / 2}`} fill="none" color="currentColor">
+      <IconWrapper width={size} height={size} viewBox={`0 0 ${size} ${size}`} fill="none" color="currentColor">
         <path
           fillRule="evenodd"
           clipRule="evenodd"

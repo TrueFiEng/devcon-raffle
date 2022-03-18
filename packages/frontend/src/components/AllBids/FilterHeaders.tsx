@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { Button } from '../Buttons/Button'
+import { CloseButton } from '../Buttons/CloseButton'
 import { SearchIcon } from '../Icons/SearchIcon'
 
 import { DisplayMode } from './AllBidsList'
@@ -22,8 +22,8 @@ export const FilterHeaders = ({ setDisplayMode, setSearch }: Props) => {
     <Wrapper>
       <SearchInputWrapper>
         <SearchIcon />
-        <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
-        {!!inputValue && <Delete onClick={() => setInputValue('')}>X</Delete>}
+        <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
+        {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
       </SearchInputWrapper>
       <select onChange={(e) => setDisplayMode(e.target.value as DisplayMode)}>
         <option value="All">Show All</option>
@@ -60,9 +60,9 @@ const StyledInput = styled.input`
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  width: calc(100% - 45px);
   height: 100%;
-  padding: 0 45px;
+  padding-left: 45px;
   border: none;
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -72,25 +72,18 @@ const StyledInput = styled.input`
   color: ${Colors.Black};
   transition: all 0.25s ease;
 
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
   &,
   &:disabled {
     background-color: transparent;
+  }
+
+  &::placeholder {
+    color: ${Colors.Grey};
   }
 `
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   padding: 0 0 28px;
-`
-
-const Delete = styled(Button)`
-  width: 32px;
 `
