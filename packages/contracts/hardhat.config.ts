@@ -23,6 +23,9 @@ module.exports = {
         hardhat: {
             initialDate: '2022-01-01T00:00:00',
             allowUnlimitedContractSize: true,
+            accounts: {
+              count: 40,
+            }
         },
     },
     typechain: {
