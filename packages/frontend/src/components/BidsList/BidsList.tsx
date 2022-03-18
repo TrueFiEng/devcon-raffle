@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export const BidsListSection = ({ bids }: Props) => {
+  const navigate = useNavigate()
   return (
     <BidsListContainer>
       <ListHeader>
@@ -30,7 +32,9 @@ export const BidsListSection = ({ bids }: Props) => {
         ))}
       </BidsList>
       <ButtonRow>
-        <Button view="secondary">Show all</Button>
+        <Button view="secondary" onClick={() => navigate('/bids')}>
+          Show all
+        </Button>
       </ButtonRow>
     </BidsListContainer>
   )
@@ -39,7 +43,6 @@ export const BidsListSection = ({ bids }: Props) => {
 const BidsListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 100%;
   padding: 46px 0;
 `
