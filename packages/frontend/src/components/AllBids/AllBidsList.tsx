@@ -37,7 +37,7 @@ export const AllBidsList = () => {
       {['All', 'Auction'].includes(displayMode) && (
         <>
           <TitleBanner>
-            <h3>AUCTION</h3>
+            <SubListHeader>AUCTION</SubListHeader>
           </TitleBanner>
           <BidsSubList bids={auctionBids} />
         </>
@@ -45,7 +45,7 @@ export const AllBidsList = () => {
       {['All', 'Raffle'].includes(displayMode) && (
         <>
           <TitleBanner>
-            <h3>RAFFLE</h3>
+            <SubListHeader>RAFFLE</SubListHeader>
           </TitleBanner>
           <BidsSubList bids={raffleBids} />
         </>
@@ -57,21 +57,26 @@ export const AllBidsList = () => {
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 778px;
-  max-width: 778px;
-  padding: 28px 0 100px;
+  width: 780px;
+  max-width: 780px;
+  padding: 28px 0;
 `
 
 const TitleBanner = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 39;
-  background-color: ${Colors.BlueLight};
+  height: 40px;
+  background-color: ${Colors.GreenLight};
 `
 
 const BidsHeaders = styled.div`
   ${AllBidsColumns};
   padding: 0 0 28px;
+`
+
+const SubListHeader = styled.h3`
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 150%;
 `

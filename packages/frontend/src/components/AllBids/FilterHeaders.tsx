@@ -25,11 +25,11 @@ export const FilterHeaders = ({ setDisplayMode, setSearch }: Props) => {
         <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
         {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
       </SearchInputWrapper>
-      <select onChange={(e) => setDisplayMode(e.target.value as DisplayMode)}>
+      <Select onChange={(e) => setDisplayMode(e.target.value as DisplayMode)}>
         <option value="All">Show All</option>
         <option value="Auction">Auction</option>
         <option value="Raffle">Raffle</option>
-      </select>
+      </Select>
     </Wrapper>
   )
 }
@@ -39,20 +39,19 @@ const SearchInputWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
-  width: 379px;
-  max-width: 379px;
+  width: 50%;
   height: 50px;
   padding: 13px;
   border-width: 2px;
   border-style: solid;
-  border-color: ${Colors.BlueLight};
+  border-color: ${Colors.GreenLight};
   background-color: ${Colors.White};
   transition: all 0.25s ease;
 
   &:hover,
   &:focus-visible,
   &:focus-within {
-    border-color: ${Colors.GreenLight};
+    border-color: ${Colors.Green};
   }
 `
 
@@ -85,5 +84,9 @@ const StyledInput = styled.input`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 0 28px;
+  column-gap: 24px;
+  margin-bottom: 24px;
+`
+const Select = styled.select`
+  width: 50%;
 `
