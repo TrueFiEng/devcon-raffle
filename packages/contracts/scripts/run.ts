@@ -6,6 +6,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 const hre = require("hardhat")
 
 async function run() {
+  const nodeProcess = hre.run("node")
+
   const signers = await hre.ethers.getSigners()
 
   console.log("Deploying contracts...")
@@ -16,6 +18,8 @@ async function run() {
   console.log("Contracts deployed\n")
 
   await bid(devcon, signers.slice(0, 20))
+
+  await nodeProcess
 }
 
 async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
