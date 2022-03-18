@@ -139,8 +139,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
 
         randomNumbers[0] = selectGoldenTicketWinner(
-            randomNumbers[0],
-            participantsLength
+            participantsLength,
+            randomNumbers[0]
         );
         --participantsLength;
 
@@ -164,8 +164,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function selectGoldenTicketWinner(
-        uint256 randomNumber,
-        uint256 participantsLength
+        uint256 participantsLength,
+        uint256 randomNumber
     ) private returns (uint256) {
         uint256 winnerIndex = winnerIndexFromRandomNumber(
             participantsLength,
