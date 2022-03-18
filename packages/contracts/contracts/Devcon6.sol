@@ -16,7 +16,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     SettleState _settleState = SettleState.AWAITING_SETTLING;
 
     uint256[] _auctionWinners;
-    bool _claimProceeded;
+    bool _proceedsClaimed;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -275,8 +275,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         onlyOwner
         onlyInState(State.RAFFLE_SETTLED)
     {
-        require(!_claimProceeded, "Devcon6: proceeds has been already claimed");
-        _claimProceeded = true;
+        require(!_proceedsClaimed, "Devcon6: proceeds has been already claimed");
+        _proceedsClaimed = true;
 
         uint256 biddersCount = getBiddersCount();
         if (biddersCount == 0) {
