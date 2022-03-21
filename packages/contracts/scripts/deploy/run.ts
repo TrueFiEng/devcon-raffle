@@ -6,6 +6,7 @@ import * as hre from 'hardhat'
 
 async function run() {
   const nodeProcess = hre.run('node')
+  await delay(500)
 
   const signers = await hre.ethers.getSigners()
 
@@ -25,6 +26,10 @@ async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
   for (let i = 0; i < signers.length; i++) {
     await bidAsSigner(devcon, signers[i], reservePrice)
   }
+}
+
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 run()
