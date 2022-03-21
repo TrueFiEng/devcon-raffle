@@ -23,8 +23,8 @@ async function run() {
 }
 
 async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
-  for (let i = 0; i < signers.length; i++) {
-    await bidAsSigner(devcon, signers[i], reservePrice)
+  for (const signer of signers) {
+    await bidAsSigner(devcon, signer, reservePrice)
   }
 }
 
