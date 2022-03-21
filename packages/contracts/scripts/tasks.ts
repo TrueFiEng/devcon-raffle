@@ -9,7 +9,7 @@ import { randomBigNumbers } from 'utils/bigNumber'
 const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
 
 task('increase-time', 'Increases block time')
-  .addParam<number>('value', 'Time in seconds to increase', undefined, types.int, false)
+  .addParam('value', 'Time in seconds to increase', undefined, types.int, false)
   .setAction(async ({ value }: { value: number }, hre) => {
     const provider = hre.network.provider
 
@@ -19,8 +19,8 @@ task('increase-time', 'Increases block time')
   })
 
 task('bid', 'Places bid for given account with provided amount')
-  .addParam<string>('address', 'The bidder\'s address')
-  .addParam<string>('amount', 'The bid\'s amount in ETH', undefined, types.string)
+  .addParam('address', 'The bidder\'s address')
+  .addParam('amount', 'The bid\'s amount in ETH', undefined, types.string)
   .setAction(async (
     { address, amount }: { address: string, amount: string },
     hre,
