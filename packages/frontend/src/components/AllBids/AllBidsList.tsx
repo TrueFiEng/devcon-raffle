@@ -9,10 +9,7 @@ import { AllBidsColumns } from './AllBidsColumns'
 import { BidsSubList } from './BidsSubList'
 import { FilterHeaders } from './FilterHeaders'
 
-export type DisplayMode = 'All' | 'Auction' | 'Raffle'
-
 export const AllBidsList = () => {
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('All')
   const [search, setSearch] = useState('')
   const auctionBids = useMemo(
     () => (search ? bids.filter((bid) => bid.bidderAddress.includes(search)) : bids),
@@ -22,7 +19,7 @@ export const AllBidsList = () => {
 
   return (
     <PageContainer>
-      <FilterHeaders {...{ setDisplayMode, setSearch }} />
+      <FilterHeaders setSearch={setSearch} />
       <BidsHeaders>
         <PlaceColumn>
           <b>Place</b>
@@ -34,22 +31,14 @@ export const AllBidsList = () => {
           <b>Address</b>
         </AddressColumn>
       </BidsHeaders>
-      {['All', 'Auction'].includes(displayMode) && (
-        <>
-          <TitleBanner>
-            <SubListHeader>AUCTION</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={auctionBids} />
-        </>
-      )}
-      {['All', 'Raffle'].includes(displayMode) && (
-        <>
-          <TitleBanner>
-            <SubListHeader>RAFFLE</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={raffleBids} />
-        </>
-      )}
+      <TitleBanner>
+        <SubListHeader>AUCTION</SubListHeader>
+      </TitleBanner>
+      <BidsSubList bids={auctionBids} />
+      <TitleBanner>
+        <SubListHeader>RAFFLE</SubListHeader>
+      </TitleBanner>
+      <BidsSubList bids={raffleBids} />
     </PageContainer>
   )
 }

@@ -6,14 +6,11 @@ import styled from 'styled-components'
 import { CloseButton } from '../Buttons/CloseButton'
 import { SearchIcon } from '../Icons/SearchIcon'
 
-import { DisplayMode } from './AllBidsList'
-
 interface Props {
-  setDisplayMode: (mode: DisplayMode) => void
   setSearch: (search: string) => void
 }
 
-export const FilterHeaders = ({ setDisplayMode, setSearch }: Props) => {
+export const FilterHeaders = ({ setSearch }: Props) => {
   const [inputValue, setInputValue] = useState('')
   const search = useDebounce(inputValue, 500)
   useEffect(() => setSearch(search), [search])
@@ -25,10 +22,9 @@ export const FilterHeaders = ({ setDisplayMode, setSearch }: Props) => {
         <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
         {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
       </SearchInputWrapper>
-      <Select onChange={(e) => setDisplayMode(e.target.value as DisplayMode)}>
+      <Select>
         <option value="All">Show All</option>
-        <option value="Auction">Auction</option>
-        <option value="Raffle">Raffle</option>
+        <option value="Auction">First 100</option>
       </Select>
     </Wrapper>
   )
