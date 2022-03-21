@@ -3,6 +3,7 @@ import '@nomiclabs/hardhat-waffle'
 import './abi-exporter'
 import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
+import 'scripts/tasks'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
@@ -22,6 +23,9 @@ module.exports = {
         hardhat: {
             initialDate: '2022-01-01T00:00:00',
             allowUnlimitedContractSize: true,
+            accounts: {
+              count: 40,
+            }
         },
     },
     typechain: {
