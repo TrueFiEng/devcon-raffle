@@ -219,14 +219,15 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
     })
 
-    it('emits event', async function () {
+    it('emits events', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
       devconAsOwner = devcon.connect(wallets[1])
 
       await bid(10)
       await endBidding(devconAsOwner)
 
-      await emitsEvents(settleAuction([3, 2]), 'NewAuctionWinner', [3], [2])
+      const tx = await settleAuction([3, 2])
+      await emitsEvents(tx, 'NewAuctionWinner', [3], [2])
     })
   })
 
@@ -359,6 +360,28 @@ describe('Devcon6', function () {
       await devconAsOwner.settleRaffle(randomBigNumbers(1))
 
       expect(await devconAsOwner.getState()).to.be.eq(State.raffleSettled)
+    })
+
+    describe('when golden ticket winner has been selected', function () {
+      it('emits event', async function () {
+        const tx = await bidAndSettleRaffle(0, [1])
+
+        const goldenBid = await getBidByWinType(8, WinType.goldenTicket)
+        await emitsEvents(tx, 'NewGoldenTicketWinner', [goldenBid.bidderID])
+      })
+    })
+
+    describe('when raffle winners have been selected', function () {
+      it('emits events', async function () {
+        const tx = await bidAndSettleRaffle(3, [])
+
+        const goldenBid = await getBidByWinType(3, WinType.goldenTicket)
+
+        for (let i = 1; i <= 3; i++) {
+          if (goldenBid.bidderID.eq(i)) continue
+          await emitsEvents(tx, 'NewRaffleWinner', [i])
+        }
+      })
     })
   })
 
@@ -649,11 +672,11 @@ describe('Devcon6', function () {
     })
   })
 
-  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(devconAsOwner)
     await devconAsOwner.settleAuction(auctionWinners)
-    await devconAsOwner.settleRaffle(randomBigNumbers(1))
+    return devconAsOwner.settleRaffle(randomBigNumbers(1))
   }
 
   async function endBidding(devcon: Devcon6) {
@@ -663,7 +686,7 @@ describe('Devcon6', function () {
   }
 
   async function settleAuction(auctionWinners: BigNumberish[]): Promise<ContractTransaction> {
-    return await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+    return devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
   }
 
   async function bid(walletCount: number) {
@@ -703,8 +726,8 @@ describe('Devcon6', function () {
     return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
   }
 
-  async function emitsEvents(tx: Promise<ContractTransaction>, eventName: string, ...args: any[][]) {
-    const txReceipt = await (await tx).wait()
+  async function emitsEvents(tx: ContractTransaction, eventName: string, ...args: any[][]) {
+    const txReceipt = await tx.wait()
     const events = txReceipt.events
     expect(events.length).to.be.equal(args.length)
 
