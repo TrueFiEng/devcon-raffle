@@ -5,12 +5,12 @@ import { parseEther } from 'ethers/lib/utils'
 
 const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
 
-task('fast-forward', 'Fast forwards block time')
-  .addParam<number>('value', 'Time in seconds to fast forward', undefined, types.int, false)
+task('increase-time', 'Increases block time')
+  .addParam<number>('value', 'Time in seconds to increase', undefined, types.int, false)
   .setAction(async ({ value }: { value: number }, hre) => {
     const provider = hre.network.provider
 
-    console.log('Fast forwarding %d seconds', value)
+    console.log('Increasing time by %d seconds', value)
     await provider.send('evm_increaseTime', [value])
     await provider.send('evm_mine')
   })

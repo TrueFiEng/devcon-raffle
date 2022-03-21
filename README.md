@@ -13,7 +13,7 @@ To interact with contracts change directory to `contracts` and then use for list
 hardhat --network localhost
 ```
 
-Example command:
+Command example:
 ```shell
 hardhat --network localhost bid --address 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc --amount 0.6
 ```
