@@ -3,7 +3,7 @@
 ## Running Hardhat node
 To run the Hardhat node change directory to `contracts` and then execute:
 ```shell
-yarn run
+yarn local-node
 ```
 It runs Hardhat node, deploy contracts and place bid for the first twenty accounts.
 

@@ -17,7 +17,7 @@
     "test": "mocha 'test/**/*.test.ts'",
     "test:hardhat": "hardhat test",
     "test:gas-reporter": "REPORT_GAS=true hardhat test",
-    "run": "hardhat run scripts/deploy/run.ts"
+    "local-node": "hardhat run scripts/deploy/run.ts"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
