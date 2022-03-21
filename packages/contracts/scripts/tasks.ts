@@ -1,9 +1,10 @@
 import { task, types } from 'hardhat/config'
 import { devconAddress } from 'scripts/utils/devcon'
-import { BigNumberish, constants, Contract, utils } from 'ethers'
+import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { randomBigNumbers } from 'utils/bigNumber'
 
 const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
 
@@ -42,7 +43,18 @@ task('settle-auction', 'Settles auction')
     const devcon = await devconAsOwner(hre)
 
     await devcon.settleAuction(winners)
-    console.log("Auction settled!")
+    console.log('Auction settled!')
+  })
+
+task('settle-raffle', 'Settles raffle')
+  .setAction(async (taskArgs, hre) => {
+    const devcon = await devconAsOwner(hre)
+
+    const raffleWinnersCount = await devcon.raffleWinnersCount()
+    const randomNumbersCount = BigNumber.from(raffleWinnersCount).div(8).toNumber()
+
+    await devcon.settleRaffle(randomBigNumbers(randomNumbersCount))
+    console.log('Raffle settled!')
   })
 
 task('accounts', 'Prints available accounts')
@@ -68,7 +80,7 @@ async function devconAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> 
   return devconFactory.attach(devconAddress).connect(owner)
 }
 
-async function getDevconOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress>{
+async function getDevconOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress> {
   const signers = await hre.ethers.getSigners()
   return signers[0]
 }
