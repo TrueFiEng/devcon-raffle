@@ -373,14 +373,17 @@ describe('Devcon6', function () {
 
     describe('when raffle winners have been selected', function () {
       it('emits events', async function () {
-        const tx = await bidAndSettleRaffle(3, [])
+        await endBidding(devconAsOwner)
+        await devconAsOwner.settleAuction([9])
 
-        const goldenBid = await getBidByWinType(3, WinType.goldenTicket)
+        // Golden ticket winner participant index generated from this number: 7, bidderID: 8
+        const tx = await devconAsOwner.settleRaffle([7])
 
-        for (let i = 1; i <= 3; i++) {
-          if (goldenBid.bidderID.eq(i)) continue
-          await emitsEvents(tx, 'NewRaffleWinner', [i])
+        const raffleWinners: number[][] = []
+        for (let i = 1; i < 8; i++) {
+          raffleWinners.push([i])
         }
+        await emitsEvents(tx, 'NewRaffleWinner', ...raffleWinners)
       })
     })
   })
@@ -728,10 +731,10 @@ describe('Devcon6', function () {
 
   async function emitsEvents(tx: ContractTransaction, eventName: string, ...args: any[][]) {
     const txReceipt = await tx.wait()
-    const events = txReceipt.events
-    expect(events.length).to.be.equal(args.length)
+    const filteredEvents = txReceipt.events.filter((event) => event.event === eventName)
+    expect(filteredEvents.length).to.be.equal(args.length)
 
-    events.forEach((event, index) => {
+    filteredEvents.forEach((event, index) => {
       expect(event.event).to.be.equal(eventName)
 
       expect(event.args.length).to.be.equal(args[index].length)
