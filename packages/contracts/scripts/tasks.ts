@@ -1,7 +1,9 @@
 import { task, types } from 'hardhat/config'
 import { devconAddress } from 'scripts/utils/devcon'
-import { BigNumberish, constants, utils } from 'ethers'
+import { BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
 
@@ -31,6 +33,18 @@ task('bid', 'Places bid for given account with provided amount')
     logBid(address, ethAmount)
   })
 
+task('settle-auction', 'Settles auction')
+  .addParam('winners', 'Array of winners IDs', undefined, types.json)
+  .setAction(async (
+    { winners }: { winners: number[] },
+    hre,
+  ) => {
+    const devcon = await devconAsOwner(hre)
+
+    await devcon.settleAuction(winners)
+    console.log("Auction settled!")
+  })
+
 task('accounts', 'Prints available accounts')
   .setAction(async (
     taskArgs,
@@ -46,4 +60,15 @@ function logBid(address: string, bidAmount: BigNumberish) {
 
 function formatEther(amount: BigNumberish): string {
   return `${utils.formatEther(amount).toString()}${constants.EtherSymbol}`
+}
+
+async function devconAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
+  const owner = await getDevconOwner(hre)
+  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName)
+  return devconFactory.attach(devconAddress).connect(owner)
+}
+
+async function getDevconOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress>{
+  const signers = await hre.ethers.getSigners()
+  return signers[0]
 }
