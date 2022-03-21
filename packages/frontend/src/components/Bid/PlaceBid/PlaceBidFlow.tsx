@@ -1,9 +1,9 @@
 import { parseEther } from '@ethersproject/units'
 import { useState } from 'react'
-import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { bids } from 'src/data/bids'
 
 export const PlaceBidFlow = () => {
