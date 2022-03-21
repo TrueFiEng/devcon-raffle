@@ -31,6 +31,18 @@ task('bid', 'Places bid for given account with provided amount')
     logBid(address, ethAmount)
   })
 
+task('accounts', 'Prints available accounts')
+  .setAction(async (
+    taskArgs,
+    hre,
+  ) => {
+    const signers = await hre.ethers.getSigners()
+    for (let i = 0; i < signers.length; i++) {
+      const address = await signers[i].getAddress()
+      console.log(`Account #${i} ${address}`)
+    }
+  })
+
 function logBid(address: string, bidAmount: BigNumberish) {
   console.log(`Account ${address} bid ${formatEther(bidAmount)}`)
 }
