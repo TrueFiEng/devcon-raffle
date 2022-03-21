@@ -37,10 +37,7 @@ task('accounts', 'Prints available accounts')
     hre,
   ) => {
     const signers = await hre.ethers.getSigners()
-    for (let i = 0; i < signers.length; i++) {
-      const address = await signers[i].getAddress()
-      console.log(`Account #${i} ${address}`)
-    }
+    signers.forEach((signer, index) => console.log(`Account #${index} ${signer.address}`))
   })
 
 function logBid(address: string, bidAmount: BigNumberish) {
