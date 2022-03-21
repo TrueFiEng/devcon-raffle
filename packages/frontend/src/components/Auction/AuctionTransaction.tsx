@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidFlow } from 'src/components/Bid/BidFlowEnum'
+import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
@@ -18,8 +18,8 @@ interface AuctionTransactionProps {
   action: Transactions
   amount: BigNumber
   impact?: BigNumber
-  view: BidFlow
-  setView: (state: BidFlow) => void
+  view: BidFlowSteps
+  setView: (state: BidFlowSteps) => void
 }
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
@@ -30,14 +30,14 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           <BackButton view={view} setView={setView} />
           <FormSubHeading>{heading[action]}</FormSubHeading>
         </TransactionHeading>
-        {view === BidFlow.Review && (
+        {view === BidFlowSteps.Review && (
           <ReviewForm action={action} amount={amount} impact={impact} view={view} setView={setView} />
         )}
-        {view === BidFlow.Confirmation && <ConfirmationForm action={action} setView={setView} />}
+        {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} setView={setView} />}
       </TransactionWrapper>
       <TransactionStepper
         action={action}
-        current={view === BidFlow.Confirmation ? 'Finalized' : `${heading[action]}`}
+        current={view === BidFlowSteps.Confirmation ? 'Finalized' : `${heading[action]}`}
       />
     </Transaction>
   )
