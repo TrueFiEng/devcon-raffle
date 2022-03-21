@@ -29,7 +29,7 @@ async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
 }
 
 function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 run()
