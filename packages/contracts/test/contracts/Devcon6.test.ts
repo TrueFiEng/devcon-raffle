@@ -218,6 +218,16 @@ describe('Devcon6', function () {
       await expect(settleAuction([2, 3]))
         .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
     })
+
+    it('emits event', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(10)
+      await endBidding(devconAsOwner)
+
+      await emitsEvents(settleAuction([3, 2]), 'NewAuctionWinner', [3], [2])
+    })
   })
 
   describe('settleRaffle', function () {
@@ -652,8 +662,8 @@ describe('Devcon6', function () {
     await network.provider.send('evm_mine')
   }
 
-  async function settleAuction(auctionWinners: BigNumberish[]) {
-    await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+  async function settleAuction(auctionWinners: BigNumberish[]): Promise<ContractTransaction> {
+    return await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
   }
 
   async function bid(walletCount: number) {
@@ -691,5 +701,20 @@ describe('Devcon6', function () {
   async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
     const txReceipt = await tx.wait()
     return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+  }
+
+  async function emitsEvents(tx: Promise<ContractTransaction>, eventName: string, ...args: any[][]) {
+    const txReceipt = await (await tx).wait()
+    const events = txReceipt.events
+    expect(events.length).to.be.equal(args.length)
+
+    events.forEach((event, index) => {
+      expect(event.event).to.be.equal(eventName)
+
+      expect(event.args.length).to.be.equal(args[index].length)
+      event.args.forEach((value, j) => {
+        expect(value).to.be.equal(args[index][j])
+      })
+    })
   }
 })

@@ -56,9 +56,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
-    event NewAuctionWinner(address bidder);
-    event NewRaffleWinner(address bidder);
-    event NewGoldenTicketWinner(address bidder);
+    event NewAuctionWinner(uint256 bidID);
+    event NewRaffleWinner(uint256 bidID);
+    event NewGoldenTicketWinner(uint256 bidID);
 
     function bid() external payable onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
@@ -121,6 +121,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
+            emit NewAuctionWinner(bidderID);
         }
     }
 
