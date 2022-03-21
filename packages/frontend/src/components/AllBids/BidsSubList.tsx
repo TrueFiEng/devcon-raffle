@@ -1,4 +1,4 @@
-import { Bid } from 'src/models/Bid'
+import type { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -9,15 +9,15 @@ import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
 import { AllBidsColumns } from './AllBidsColumns'
 
 interface Props {
-  bids: Bid[]
+  bids: BidWithPlace[]
 }
 
 export const BidsSubList = ({ bids }: Props) => (
   <BidsList>
-    {bids.map(({ bidderAddress, amount }, index) => (
-      <li key={bidderAddress}>
+    {bids.map(({ bidderAddress, amount, place }) => (
+      <li key={place}>
         <BidsEntryRow>
-          <PlaceColumn>{index}</PlaceColumn>
+          <PlaceColumn>{place}</PlaceColumn>
           <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
           <AddressColumn>
             <AddressLink target="_blank" href={blockExplorerBase + bidderAddress} rel="noopener noreferrer">
