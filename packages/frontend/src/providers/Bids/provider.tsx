@@ -20,10 +20,10 @@ function compareBigNumber(a: BigNumber, b: BigNumber) {
 }
 
 export const BidsProvider = ({ children }: Props) => {
-  const abi = new Interface(DEVCON6_ABI)
   const bidsEvents = useBidEvents()
 
   const bids: BidWithPlace[] = useMemo(() => {
+    const abi = new Interface(DEVCON6_ABI)
     const addressToBidMap = bidsEvents.reduce<Record<string, BigNumber>>((dict, log) => {
       const event = abi.parseLog(log)
       const { bidder, bidAmount } = event.args
@@ -36,7 +36,7 @@ export const BidsProvider = ({ children }: Props) => {
     return Object.entries(addressToBidMap)
       .sort(([, a], [, b]) => compareBigNumber(b, a))
       .map(([bidderAddress, amount], index) => ({ bidderAddress, amount, place: index + 1 }))
-  }, [bidsEvents.length])
+  }, [bidsEvents])
 
   return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
 }
