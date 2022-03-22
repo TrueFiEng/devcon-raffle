@@ -1,5 +1,5 @@
 import { shortenTransactionHash } from '@usedapp/core'
-import { BidFlow } from 'src/components/Bid/BidFlowEnum'
+import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button, CopyButton, RedirectButton } from 'src/components/Buttons'
 import { InputLabel } from 'src/components/Form/Input'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -12,7 +12,7 @@ import styled from 'styled-components'
 interface Props {
   txHash: string
   action: Transactions
-  setView: (state: BidFlow) => void
+  setView: (state: BidFlowSteps) => void
 }
 
 export const TransactionSuccess = ({ txHash, action, setView }: Props) => {

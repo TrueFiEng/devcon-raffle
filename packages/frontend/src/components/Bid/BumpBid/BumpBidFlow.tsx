@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Bid } from 'src/models/Bid'
 
 interface BumpBidFlowProps {
