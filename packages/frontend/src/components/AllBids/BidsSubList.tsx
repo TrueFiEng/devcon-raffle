@@ -31,6 +31,9 @@ export const BidsSubList = ({ bids }: Props) => (
 )
 
 const BidsList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  row-gap: 32px;
   list-style: none;
   margin: 0;
   padding: 0;
