@@ -1,11 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
-import { TransactionStepper } from 'src/components/Form/TransactionStepper'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
+import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
 import styled from 'styled-components'
 
 export const heading = {

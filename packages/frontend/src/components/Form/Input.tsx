@@ -85,7 +85,7 @@ const InputWrapper = styled.div`
   margin-bottom: 12px;
 `
 
-const InputLabel = styled.div`
+export const InputLabel = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;

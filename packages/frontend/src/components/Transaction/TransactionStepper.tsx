@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
