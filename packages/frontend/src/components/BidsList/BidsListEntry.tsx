@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import React from 'react'
+import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import styled from 'styled-components'
@@ -7,8 +8,6 @@ import styled from 'styled-components'
 import { Colors } from '../../styles/colors'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
-
-const blockExplorerBase = 'https://etherscan.io/address/'
 
 interface Props {
   place: number
