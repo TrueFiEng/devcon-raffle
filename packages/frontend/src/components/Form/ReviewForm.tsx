@@ -1,10 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { BidFlow } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { FormRow, Form } from 'src/components/Form/Form'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 
 const amountLabel = {
