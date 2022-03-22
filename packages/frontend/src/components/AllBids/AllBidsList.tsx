@@ -66,6 +66,7 @@ export const AllBidsList = () => {
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
   width: 780px;
   max-width: 780px;
   padding: 28px 0;
@@ -81,7 +82,6 @@ const TitleBanner = styled.div`
 
 const BidsHeaders = styled.div`
   ${AllBidsColumns};
-  padding: 0 0 28px;
 `
 
 const SubListHeader = styled.h3`

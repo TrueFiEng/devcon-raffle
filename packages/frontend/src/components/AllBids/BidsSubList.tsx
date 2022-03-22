@@ -41,7 +41,6 @@ const BidsList = styled.ul`
 
 const BidsEntryRow = styled.div`
   ${AllBidsColumns};
-  padding: 20px 0;
 `
 
 const AddressLink = styled.a`

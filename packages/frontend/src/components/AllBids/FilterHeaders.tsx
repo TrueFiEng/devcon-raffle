@@ -81,7 +81,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   column-gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 `
 const Select = styled.select`
   width: 50%;
