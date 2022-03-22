@@ -6,7 +6,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
 import { useChainId } from 'src/hooks/useChainId'
 import { Colors } from 'src/styles/colors'
-import { getEtherscanTxLink } from 'src/utils/getEtherscanLink'
+import { getArbiscanTxLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
   const chainId = useChainId()
-  const transactionLink = getEtherscanTxLink(chainId, txHash)
+  const transactionLink = getArbiscanTxLink(chainId, txHash)
 
   return (
     <Container>
