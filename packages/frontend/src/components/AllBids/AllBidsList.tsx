@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useBidEvents } from 'src/hooks/useBidEvents'
-import type { BidWithPlace } from 'src/models/Bid'
+import { useMemo, useState } from 'react'
+import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -12,22 +11,16 @@ import { FilterHeaders } from './FilterHeaders'
 import { NothingFound } from './NothingFound'
 
 export const AllBidsList = () => {
-  useBidEvents()
   const [search, setSearch] = useState('')
-  const bids = useBidEvents()
-  const [allBids, setAllBids] = useState<BidWithPlace[]>([])
-  const a = async () => await bids.then((bids) => setAllBids(bids.map((b, i) => ({ ...b, place: i + 1 }))))
-  useEffect(() => {
-    a()
-  }, [])
+  const { bids } = useBids()
   const auctionBids = useMemo(() => {
-    const sectionBids = allBids.length <= 20 ? allBids : allBids.slice(0, 20)
+    const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, allBids])
+  }, [search, bids])
   const raffleBids = useMemo(() => {
-    const sectionBids = allBids.length <= 20 ? [] : allBids.slice(20)
+    const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, allBids])
+  }, [search, bids])
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (

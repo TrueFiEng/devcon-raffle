@@ -22,5 +22,5 @@ export async function useBidEvents() {
       return bid
     })
   }, [provider])
-  return bidsFromEvents.then((b) => b)
+  return bidsFromEvents
 }

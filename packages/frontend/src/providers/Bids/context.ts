@@ -1,10 +1,10 @@
-import { createContext } from "react";
-import { Bid } from "src/models/Bid";
+import { createContext } from 'react'
+import { BidWithPlace } from 'src/models/Bid'
 
 interface BidsContext {
-  bids: Bid[]
+  bids: BidWithPlace[]
 }
 
 export const BidsContext = createContext<BidsContext>({
-  bids: []
+  bids: [],
 })
