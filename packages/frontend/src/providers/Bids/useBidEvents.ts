@@ -11,7 +11,28 @@ export function useBidEvents() {
   const provider = useMemo(() => new JsonRpcProvider(), [])
   const [lastQueriedBlock, setLastQueriedBlock] = useState(FIRST_QUERIED_BLOCK)
 
-  const fetchEvents = async () => {
+  const queryEvents = async () => {
+    await fetchEvents({ provider, lastQueriedBlock, setLastQueriedBlock, events, setEvents })
+    setTimeout(queryEvents, POLL_INTERVAL)
+  }
+
+  useEffect(() => {
+    queryEvents()
+  }, [])
+
+  return events
+}
+
+interface FetchEventsProps {
+  provider: JsonRpcProvider
+  lastQueriedBlock: number
+  setLastQueriedBlock: (n: number) => void
+  events: Log[]
+  setEvents: (events: Log[]) => void
+}
+
+async function fetchEvents({ provider, lastQueriedBlock, setLastQueriedBlock, events, setEvents }: FetchEventsProps) {
+  try {
     const fromBlock = lastQueriedBlock + 1
     const toBlock = (await provider.getBlock('latest')).number
     if (fromBlock < toBlock) {
@@ -24,12 +45,7 @@ export function useBidEvents() {
       setLastQueriedBlock(toBlock)
       setEvents(events.concat(logs))
     }
-    setTimeout(fetchEvents, POLL_INTERVAL)
+  } catch (e) {
+    console.error(e)
   }
-
-  useEffect(() => {
-    fetchEvents()
-  }, [])
-
-  return events
 }
