@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { bids } from 'src/data/bids'
+import { useEffect, useMemo, useState } from 'react'
+import { useBidEvents } from 'src/hooks/useBidEvents'
 import type { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -12,15 +12,14 @@ import { FilterHeaders } from './FilterHeaders'
 import { NothingFound } from './NothingFound'
 
 export const AllBidsList = () => {
+  useBidEvents()
   const [search, setSearch] = useState('')
-  const allBids: BidWithPlace[] = useMemo(
-    () =>
-      new Array(10)
-        .fill(bids)
-        .flat()
-        .map((bid, index) => ({ ...bid, place: index + 1 })),
-    []
-  )
+  const bids = useBidEvents()
+  const [allBids, setAllBids] = useState<BidWithPlace[]>([])
+  const a = async () => await bids.then((bids) => setAllBids(bids.map((b, i) => ({ ...b, place: i + 1 }))))
+  useEffect(() => {
+    a()
+  }, [])
   const auctionBids = useMemo(() => {
     const sectionBids = allBids.length <= 20 ? allBids : allBids.slice(0, 20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
