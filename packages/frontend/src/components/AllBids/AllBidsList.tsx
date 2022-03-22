@@ -9,6 +9,7 @@ import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
 import { AllBidsColumns } from './AllBidsColumns'
 import { BidsSubList } from './BidsSubList'
 import { FilterHeaders } from './FilterHeaders'
+import { NothingFound } from './NothingFound'
 
 export const AllBidsList = () => {
   const [search, setSearch] = useState('')
@@ -28,29 +29,36 @@ export const AllBidsList = () => {
     const sectionBids = allBids.length <= 20 ? [] : allBids.slice(20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
   }, [search, allBids])
+  const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (
     <PageContainer>
       <FilterHeaders setSearch={setSearch} />
-      <BidsHeaders>
-        <PlaceColumn>
-          <b>Place</b>
-        </PlaceColumn>
-        <BidColumn>
-          <b>Bid</b>
-        </BidColumn>
-        <AddressColumn>
-          <b>Address</b>
-        </AddressColumn>
-      </BidsHeaders>
-      <TitleBanner>
-        <SubListHeader>AUCTION</SubListHeader>
-      </TitleBanner>
-      <BidsSubList bids={auctionBids} />
-      <TitleBanner>
-        <SubListHeader>RAFFLE</SubListHeader>
-      </TitleBanner>
-      <BidsSubList bids={raffleBids} />
+      {nothingFound ? (
+        <NothingFound />
+      ) : (
+        <>
+          <BidsHeaders>
+            <PlaceColumn>
+              <b>Place</b>
+            </PlaceColumn>
+            <BidColumn>
+              <b>Bid</b>
+            </BidColumn>
+            <AddressColumn>
+              <b>Address</b>
+            </AddressColumn>
+          </BidsHeaders>
+          <TitleBanner>
+            <SubListHeader>AUCTION</SubListHeader>
+          </TitleBanner>
+          <BidsSubList bids={auctionBids} />
+          <TitleBanner>
+            <SubListHeader>RAFFLE</SubListHeader>
+          </TitleBanner>
+          <BidsSubList bids={raffleBids} />
+        </>
+      )}
     </PageContainer>
   )
 }
