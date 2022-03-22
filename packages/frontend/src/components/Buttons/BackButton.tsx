@@ -1,15 +1,29 @@
+import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ArrowLeftIcon } from 'src/components/Icons/ArrowLeftIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface BackButtonProps {
-  view: number
-  setView: (view: number) => void
+  view?: number
+  setView?: (view: number) => void
+  url?: string
 }
 
-export function BackButton({ view, setView }: BackButtonProps) {
+export function BackButton({ view, setView, url }: BackButtonProps) {
+  const navigate = useNavigate()
+
+  const goBack = useCallback(() => {
+    if (view && setView) {
+      setView(view - 1)
+    }
+    if (url) {
+      navigate(`${url}`)
+    }
+  }, [setView, view, url])
+
   return (
-    <BackBtn onClick={() => setView(view - 1)}>
+    <BackBtn onClick={goBack}>
       <ArrowLeftIcon />
       Back
     </BackBtn>
