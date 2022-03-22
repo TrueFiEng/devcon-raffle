@@ -3,7 +3,6 @@ import { Logo } from 'src/images/Logo'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-
 export const TopBar = () => {
   return (
     <TopBarContainer>
