@@ -20,7 +20,7 @@ export function BackButton({ view, setView, url }: BackButtonProps) {
     if (url) {
       navigate(`${url}`)
     }
-  }, [setView, view, url])
+  }, [setView, view, navigate, url])
 
   return (
     <BackBtn onClick={goBack}>
