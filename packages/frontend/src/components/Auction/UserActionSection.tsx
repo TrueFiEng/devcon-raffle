@@ -3,7 +3,7 @@ import { AuctionState, useAuctionState } from 'src/hooks/useAuctionState'
 import styled from 'styled-components'
 
 import { Colors } from '../../styles/colors'
-import { PlaceBidFlow } from '../Bid/PlaceBid/PlaceBidFlow'
+import { BidFlow } from '../Bid/BidFlow'
 
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
@@ -11,7 +11,7 @@ import { ConnectWalletWarning } from './ConnectWalletWarning'
 const UserActions: Record<AuctionState, () => ReactElement> = {
   NotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
-  BiddingFlow: PlaceBidFlow,
+  BiddingFlow: BidFlow,
 }
 
 export const UserActionSection = () => {

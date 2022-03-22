@@ -1,4 +1,4 @@
-export enum BidFlow {
+export enum BidFlowSteps {
   Placing,
   Review,
   Confirmation,

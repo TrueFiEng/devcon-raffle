@@ -13,7 +13,7 @@ interface Props {
 export const FilterHeaders = ({ setSearch }: Props) => {
   const [inputValue, setInputValue] = useState('')
   const search = useDebounce(inputValue, 500)
-  useEffect(() => setSearch(search), [search])
+  useEffect(() => setSearch(search), [setSearch, search])
 
   return (
     <Wrapper>
