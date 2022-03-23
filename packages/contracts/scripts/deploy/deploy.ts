@@ -1,8 +1,18 @@
-import { Devcon6, Devcon6__factory } from 'contracts'
+import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
 import { Signer, utils } from 'ethers'
 
 const HOUR = 3600
 export const reservePrice = utils.parseEther('0.5')
+
+export async function deploy(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
+  const devcon = await deployDevcon(biddingStartTime, owner)
+  const multicall = await new Multicall2__factory(owner).deploy()
+
+  console.log('\nDevcon6 address: ', devcon.address)
+  console.log('\nMulticall address: ', multicall.address)
+
+  return devcon
+}
 
 export async function deployDevcon(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
@@ -10,7 +20,7 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
 
   const ownerAddress = await owner.getAddress()
 
-  const devcon = await new Devcon6__factory(owner).deploy(
+  return new Devcon6__factory(owner).deploy(
     ownerAddress,
     biddingStartTime,
     biddingEndTime,
@@ -20,7 +30,4 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
     reservePrice,
     utils.parseEther('0.005'),
   )
-
-  console.log('\nDevcon6 address: ', devcon.address)
-  return devcon
 }
