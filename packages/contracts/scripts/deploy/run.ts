@@ -1,4 +1,4 @@
-import { deployDevcon, reservePrice } from './deploy'
+import { deploy, reservePrice } from './deploy'
 import { Devcon6 } from 'contracts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bidAsSigner } from 'scripts/utils/bid'
@@ -14,7 +14,9 @@ async function run() {
 
   const now = (new Date()).valueOf()
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
-  const devcon = await deployDevcon(now, signers[0])
+
+  const owner = signers[0]
+  const devcon = await deploy(now, owner)
   console.log('Contracts deployed\n')
 
   await bid(devcon, signers.slice(0, 20))
