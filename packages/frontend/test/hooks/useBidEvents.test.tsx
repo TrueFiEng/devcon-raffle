@@ -2,7 +2,7 @@ import { Log } from '@ethersproject/providers'
 import { waitFor } from '@testing-library/react'
 import { renderHook } from '@testing-library/react-hooks/pure'
 import { useBidEvents } from 'src/providers/Bids/useBidEvents'
-import { createMockBidLog } from 'test/_utils/createMockBidLog'
+import { createMockBidLog } from 'test/mocks/createMockBidLog'
 
 let mockBlockNumber = 10
 let mockLogs: Log[] = []

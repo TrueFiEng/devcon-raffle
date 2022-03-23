@@ -4,7 +4,7 @@ import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
 import { useBids } from 'src/hooks/useBids'
 import { BidsProvider } from 'src/providers/Bids'
-import { createMockBidLog } from 'test/_utils/createMockBidLog'
+import { createMockBidLog } from 'test/mocks/createMockBidLog'
 
 let mockEvents: Log[] = []
 
