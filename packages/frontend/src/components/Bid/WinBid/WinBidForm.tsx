@@ -24,9 +24,10 @@ interface WinBidFormProps {
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
   setView: (state: BidFlowSteps) => void
+  setShowVoucher: (val: boolean) => void
 }
 
-export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView }: WinBidFormProps) => {
+export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView, setShowVoucher }: WinBidFormProps) => {
   const luck = win !== undefined
 
   return (
@@ -52,7 +53,9 @@ export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView }:
         {luck ? (
           <>
             <span>Get your voucher code</span>
-            <Button view="primary">Get voucher code</Button>
+            <Button view="primary" onClick={() => setShowVoucher(true)}>
+              Get voucher code
+            </Button>
           </>
         ) : (
           !withdrawnBid && <span>You have time until XX.XX.2023 to withdraw your funds.</span>
