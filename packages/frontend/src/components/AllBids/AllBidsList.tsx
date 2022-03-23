@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
-import { bids } from 'src/data/bids'
-import type { BidWithPlace } from 'src/models/Bid'
+import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -13,22 +12,15 @@ import { NothingFound } from './NothingFound'
 
 export const AllBidsList = () => {
   const [search, setSearch] = useState('')
-  const allBids: BidWithPlace[] = useMemo(
-    () =>
-      new Array(10)
-        .fill(bids)
-        .flat()
-        .map((bid, index) => ({ ...bid, place: index + 1 })),
-    []
-  )
+  const { bids } = useBids()
   const auctionBids = useMemo(() => {
-    const sectionBids = allBids.length <= 20 ? allBids : allBids.slice(0, 20)
+    const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, allBids])
+  }, [search, bids])
   const raffleBids = useMemo(() => {
-    const sectionBids = allBids.length <= 20 ? [] : allBids.slice(20)
+    const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, allBids])
+  }, [search, bids])
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (
