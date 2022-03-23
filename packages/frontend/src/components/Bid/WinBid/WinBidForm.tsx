@@ -19,27 +19,36 @@ const withdrawText = {
 }
 
 interface WinBidFormProps {
-  win: WinOptions
+  win?: WinOptions
   bid: BigNumber
   setView: (state: BidFlowSteps) => void
 }
 
 export const WinBidForm = ({ win, bid, setView }: WinBidFormProps) => {
+  const luck = win !== undefined
+
   return (
     <WinFormWrapper>
-      <FormHeading>Congratulations 🎉</FormHeading>
-      <WinText>{winText[win]}</WinText>
+      <FormHeading>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</FormHeading>
+      <WinText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</WinText>
       {win !== WinOptions.Auction && (
         <WinOption>
-          <span>{withdrawText[win]}</span>
+          <span>{luck ? withdrawText[win] : 'You can withdraw your bid amount minus 2% fee.'}</span>
           <Button view="primary" onClick={() => setView(BidFlowSteps.Review)}>
             <span>Withdraw {formatEtherAmount(bid)} ETH</span>
           </Button>
         </WinOption>
       )}
+
       <WinOption>
-        <span>Get your voucher code</span>
-        <Button view="primary">Get voucher code</Button>
+        {luck ? (
+          <>
+            <span>Get your voucher code</span>
+            <Button view="primary">Get voucher code</Button>
+          </>
+        ) : (
+          <span>You have time until XX.XX.2023 to withdraw your funds.</span>
+        )}
       </WinOption>
     </WinFormWrapper>
   )
@@ -50,7 +59,6 @@ const WinFormWrapper = styled(FormWrapper)`
 `
 const WinText = styled.p`
   color: ${Colors.White};
-  max-width: 365px;
 `
 
 const WinOption = styled.div`
@@ -58,6 +66,5 @@ const WinOption = styled.div`
   flex-direction: column;
   row-gap: 8px;
   width: 100%;
-  max-width: 365px;
   color: ${Colors.White};
 `
