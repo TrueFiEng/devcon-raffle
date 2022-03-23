@@ -93,7 +93,10 @@ const AccordionStyledTrigger = ({ heading }: AccordionTriggerProps) => {
 }
 
 const Wrapper = styled.div`
-  padding: 60px 125px 60px 68px;
+  width: 100%;
+  max-width: 1252px;
+  margin: 0 auto;
+  padding: 68px 125px 68px 68px;
 `
 const StyledHeader = styled(Accordion.Header)`
   width: 100%;
@@ -103,7 +106,7 @@ const StyledTrigger = styled(Accordion.AccordionTrigger)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px;
+  padding: 4px 8px 4px 4px;
   font-family: 'Space Mono', 'Roboto Mono', monospace;
   font-style: normal;
   border: none;
