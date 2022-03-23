@@ -1,13 +1,14 @@
+import { AccountButton } from 'src/components/Buttons/AccountButton'
 import { Logo } from 'src/images/Logo'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { AccountButton } from '../Buttons/AccountButton'
-
 export const TopBar = () => {
   return (
     <TopBarContainer>
-      <Logo />
+      <HomeLink href="/">
+        <Logo />
+      </HomeLink>
       <AccountButton />
     </TopBarContainer>
   )
@@ -23,4 +24,7 @@ const TopBarContainer = styled.div`
   position: sticky;
   top: 0;
   z-index: 2000;
+`
+const HomeLink = styled.a`
+  line-height: 1;
 `

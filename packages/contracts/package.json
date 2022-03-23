@@ -17,10 +17,12 @@
     "test": "mocha 'test/**/*.test.ts'",
     "test:hardhat": "hardhat test",
     "test:gas-reporter": "REPORT_GAS=true hardhat test",
-    "local-node": "hardhat run scripts/deploy/run.ts",
-    "increase-time": "hardhat --network localhost increase-time",
-    "bid": "hardhat --network localhost bid",
-    "accounts": "hardhat --network localhost accounts"
+    "node:run": "hardhat run scripts/deploy/run.ts",
+    "node:increase-time": "hardhat --network localhost increase-time",
+    "node:accounts": "hardhat --network localhost accounts",
+    "devcon:bid": "hardhat --network localhost bid",
+    "devcon:settle-auction": "hardhat --network localhost settle-auction",
+    "devcon:settle-raffle": "hardhat --network localhost settle-raffle"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
