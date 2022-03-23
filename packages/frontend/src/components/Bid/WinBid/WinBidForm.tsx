@@ -21,20 +21,28 @@ const withdrawText = {
 interface WinBidFormProps {
   win?: WinOptions
   bid: BigNumber
+  withdrawnBid: boolean
+  setWithdrawnBid: (val: boolean) => void
   setView: (state: BidFlowSteps) => void
 }
 
-export const WinBidForm = ({ win, bid, setView }: WinBidFormProps) => {
+export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView }: WinBidFormProps) => {
   const luck = win !== undefined
 
   return (
     <WinFormWrapper>
       <FormHeading>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</FormHeading>
       <WinText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</WinText>
-      {win !== WinOptions.Auction && (
+      {!withdrawnBid && win !== WinOptions.Auction && (
         <WinOption>
           <span>{luck ? withdrawText[win] : 'You can withdraw your bid amount minus 2% fee.'}</span>
-          <Button view="primary" onClick={() => setView(BidFlowSteps.Review)}>
+          <Button
+            view="primary"
+            onClick={() => {
+              setView(BidFlowSteps.Review)
+              setWithdrawnBid(true)
+            }}
+          >
             <span>Withdraw {formatEtherAmount(bid)} ETH</span>
           </Button>
         </WinOption>
@@ -47,7 +55,7 @@ export const WinBidForm = ({ win, bid, setView }: WinBidFormProps) => {
             <Button view="primary">Get voucher code</Button>
           </>
         ) : (
-          <span>You have time until XX.XX.2023 to withdraw your funds.</span>
+          !withdrawnBid && <span>You have time until XX.XX.2023 to withdraw your funds.</span>
         )}
       </WinOption>
     </WinFormWrapper>

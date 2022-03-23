@@ -13,11 +13,18 @@ interface WinBidFlowProps {
 export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
   const WinBidAction = Transactions.Withdraw
+  const [withdrawnBid, setWithdrawnBid] = useState(false)
 
   return (
     <>
       {view === BidFlowSteps.Placing ? (
-        <WinBidForm bid={userBid.amount} setView={setView} win={WinOptions.Ticket} />
+        <WinBidForm
+          bid={userBid.amount}
+          setView={setView}
+          win={WinOptions.Ticket}
+          withdrawnBid={withdrawnBid}
+          setWithdrawnBid={setWithdrawnBid}
+        />
       ) : (
         <AuctionTransaction action={WinBidAction} amount={userBid.amount} view={view} setView={setView} />
       )}
