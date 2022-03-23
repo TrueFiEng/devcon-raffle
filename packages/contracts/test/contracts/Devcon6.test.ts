@@ -366,7 +366,7 @@ describe('Devcon6', function () {
       it('emits event', async function () {
         const tx = await bidAndSettleRaffle(0, [1])
 
-        const goldenBid = await getBidByWinType(8, WinType.goldenTicket)
+        const goldenBid = await getBidByWinType(9, WinType.goldenTicket)
         await emitsEvents(tx, 'NewGoldenTicketWinner', [goldenBid.bidderID])
       })
     })
