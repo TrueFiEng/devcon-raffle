@@ -7,6 +7,6 @@ export const CONFIG = {
   },
   allowedNetworks:
     import.meta.env.MODE === 'development'
-      ? [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Localhost]
+      ? [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Hardhat]
       : [ChainId.Arbitrum],
 }
