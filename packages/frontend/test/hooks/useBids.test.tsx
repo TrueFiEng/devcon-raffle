@@ -49,6 +49,34 @@ describe('useBids', () => {
     })
   })
 
+  it('Sorts bids by amount, highest to lowest', () => {
+    mockEvents = [
+      createMockBidLog(5, '0xcd3B766CCDd6AE721141F452C550Ca635964ce71', 1, '1.0'),
+      createMockBidLog(5, '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E', 2, '4.0'),
+      createMockBidLog(5, '0x2546BcD3c84621e976D8185a91A922aE77ECEc30', 3, '1.5'),
+    ]
+    const { result } = render()
+    expect(result.current).toEqual({
+      bids: [
+        {
+          bidderAddress: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+          amount: parseEther('4.0'),
+          place: 1,
+        },
+        {
+          bidderAddress: '0x2546BcD3c84621e976D8185a91A922aE77ECEc30',
+          amount: parseEther('1.5'),
+          place: 2,
+        },
+        {
+          bidderAddress: '0xcd3B766CCDd6AE721141F452C550Ca635964ce71',
+          amount: parseEther('1.0'),
+          place: 3,
+        },
+      ],
+    })
+  })
+
   it('Sorts same-amount bids oldest to newest', () => {
     mockEvents = [
       createMockBidLog(5, '0xcd3B766CCDd6AE721141F452C550Ca635964ce71', 2, '1.0'),
