@@ -1,17 +1,19 @@
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { HeaderBar } from 'src/components/common/Header'
 import { KeyIcon } from 'src/components/Icons/KeyIcon'
+import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Header = () => {
+  const { bids } = useBids()
   return (
     <StyledHeader>
       <BackButton url="/" />
       <Wrapper>
         <Title>
           <h2>Number of participants:</h2>
-          <Number>234</Number>
+          <Number>{bids.length}</Number>
         </Title>
       </Wrapper>
       <Key>

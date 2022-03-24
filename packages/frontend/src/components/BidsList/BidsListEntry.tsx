@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import React from 'react'
 import { BidWithPlace } from 'src/models/Bid'
 import { blockExplorerBase } from 'src/utils/blockExplorerBase'
@@ -36,9 +35,9 @@ const BidsEntry = styled.li`
     margin-bottom: 32px;
   }
 `
-const BidsEntryRow = styled.div<{isUser?: boolean}>`
+const BidsEntryRow = styled.div<{ isUser?: boolean }>`
   ${BidsColumns};
-  border: ${({ isUser }) => isUser ? `2px solid ${Colors.Green}` : 'none'};
+  border: ${({ isUser }) => (isUser ? `2px solid ${Colors.Green}` : 'none')};
 `
 
 const AddressLink = styled.a`

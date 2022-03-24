@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AUCTION_PARTICIPANTS } from 'src/constants/auctionParticipantsNumber'
 import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -14,11 +15,11 @@ export const AllBidsList = () => {
   const [search, setSearch] = useState('')
   const { bids } = useBids()
   const auctionBids = useMemo(() => {
-    const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
+    const sectionBids = bids.length <= AUCTION_PARTICIPANTS ? bids : bids.slice(0, AUCTION_PARTICIPANTS)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
   }, [search, bids])
   const raffleBids = useMemo(() => {
-    const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
+    const sectionBids = bids.length <= AUCTION_PARTICIPANTS ? [] : bids.slice(AUCTION_PARTICIPANTS)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
   }, [search, bids])
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0

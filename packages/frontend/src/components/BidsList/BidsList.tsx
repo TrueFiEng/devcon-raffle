@@ -24,16 +24,17 @@ export const BidsListSection = () => {
   const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
     if (bids.length <= 4) {
       return {
-        auctionBidsSlice: bids
+        auctionBidsSlice: bids,
       }
     }
     const topAuctionBids = bids.slice(0, 3)
     const lastAuctionBid = bids[bids.length > AUCTION_PARTICIPANTS ? AUCTION_PARTICIPANTS - 1 : bids.length - 1]
     return {
-      auctionBidsSlice: userBid && within(4, AUCTION_PARTICIPANTS - 1, userBid.place)
-        ? topAuctionBids.concat([userBid, lastAuctionBid])
-        : topAuctionBids.concat([lastAuctionBid]),
-      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS ? userBid : undefined
+      auctionBidsSlice:
+        userBid && within(4, AUCTION_PARTICIPANTS - 1, userBid.place)
+          ? topAuctionBids.concat([userBid, lastAuctionBid])
+          : topAuctionBids.concat([lastAuctionBid]),
+      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS ? userBid : undefined,
     }
   }, [bids, userBid])
 
@@ -50,7 +51,11 @@ export const BidsListSection = () => {
       </BidsHeaders>
       <BidsList>
         {auctionBidsSlice.map((bid) => (
-          <BidsListEntry key={bid.bidderAddress} bid={bid} isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)} />
+          <BidsListEntry
+            key={bid.bidderAddress}
+            bid={bid}
+            isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
+          />
         ))}
         {userRaffleBid && <BidsListEntry bid={userRaffleBid} isUser />}
       </BidsList>
