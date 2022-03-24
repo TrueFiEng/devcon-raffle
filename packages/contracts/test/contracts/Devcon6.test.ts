@@ -1,7 +1,7 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
 import { configuredDevcon6Fixture, devcon6Fixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
-import { Devcon6 } from 'contracts'
+import { Devcon6, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
@@ -12,6 +12,7 @@ import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
 import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
+import { exampleTokenFixture } from "fixtures/exampleTokenFixture";
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -608,6 +609,31 @@ describe('Devcon6', function () {
     async function withdrawUnclaimedFunds(): Promise<BigNumber> {
       return calculateTransferredAmount(devconAsOwner.withdrawUnclaimedFunds)
     }
+  })
+
+  describe('rescueTokens', function () {
+
+    // beforeEach(async function () {
+    //   ({ exampleToken } = await loadFixture(exampleTokenFixture))
+    // })
+
+    it('reverts if called not by owner', async function () {
+      let exampleToken: ExampleToken
+      ({ exampleToken, provider } = await loadFixture(exampleTokenFixture))
+      // await expect(devcon.rescueTokens(token.address))
+      //   .to.be.revertedWith('Ownable: caller is not the owner')
+      // const balance = await exampleToken.balanceOf(wallets[0].address)
+      // console.log(balance.toString())
+      console.log(exampleToken.address)
+
+      await bid(1)
+
+      await devconAsOwner.rescueTokens("0x1")
+      console.log(devconAsOwner.address)
+
+      // await expect(devconAsOwner.rescueTokens(exampleToken.address))
+      //   .to.be.revertedWith('Ownable: caller is not the owner')
+    })
   })
 
   describe('getState', function () {
