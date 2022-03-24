@@ -27,6 +27,7 @@ export const UserActionSection = () => {
 
 const Wrapper = styled.div`
   display: flex;
+  flex-shrink: 0;
   margin-left: -170px;
   width: 724px;
   height: 450px;
