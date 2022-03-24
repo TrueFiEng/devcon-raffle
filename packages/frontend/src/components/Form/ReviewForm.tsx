@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useEtherBalance, useEthers } from '@usedapp/core'
+import { TransactionStatus, useEtherBalance, useEthers } from '@usedapp/core'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
@@ -7,6 +7,7 @@ import { FormRow, Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { useEffect } from 'react'
 
 const amountLabel = {
   [Transactions.Place]: 'Your Bid',
@@ -18,14 +19,27 @@ interface ReviewFormProps {
   action: Transactions
   amount: BigNumber
   impact?: BigNumber
+  setTxHash: (hash: string) => void
   view: BidFlowSteps
   setView: (state: BidFlowSteps) => void
 }
 
-export const ReviewForm = ({ action, amount, impact, view, setView }: ReviewFormProps) => {
+export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }: ReviewFormProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
-  const { placeBid } = useBid()
+  const { placeBid, state } = useBid()
+  const isPending = isTransactionPending(state)
+
+  useEffect(() => {
+    if (state.status === 'Success') {
+      if (!state.transaction) {
+        return
+      }
+      setTxHash(state.transaction.hash)
+      setView(view+1)
+    }
+
+  }, [view, setView, setTxHash, state])
 
   return (
     <Form>
@@ -43,12 +57,13 @@ export const ReviewForm = ({ action, amount, impact, view, setView }: ReviewForm
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view='primary' onClick={async () => {
-        await placeBid(amount)
-        setView(view + 1)
-      }}>
+      <Button view='primary' disabled={state.status !== 'None'} loading={isPending} onClick={()=>placeBid(amount)}>
         {heading[action]}
       </Button>
     </Form>
   )
+}
+
+function isTransactionPending(state: TransactionStatus): boolean {
+  return state.status === 'Mining' || state.status === 'PendingSignature'
 }

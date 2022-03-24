@@ -7,6 +7,7 @@ import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
 import styled from 'styled-components'
+import { useState } from 'react'
 
 export const heading = {
   [Transactions.Place]: 'Place bid',
@@ -23,6 +24,8 @@ interface AuctionTransactionProps {
 }
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
+  const [txHash, setTxHash] = useState('')
+
   return (
     <Transaction>
       <TransactionWrapper>
@@ -31,9 +34,9 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           <FormSubHeading>{heading[action]}</FormSubHeading>
         </TransactionHeading>
         {view === BidFlowSteps.Review && (
-          <ReviewForm action={action} amount={amount} impact={impact} view={view} setView={setView} />
+          <ReviewForm action={action} amount={amount} impact={impact} setTxHash={setTxHash} view={view} setView={setView} />
         )}
-        {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} setView={setView} />}
+        {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} txHash={txHash} setView={setView} />}
       </TransactionWrapper>
       <TransactionStepper
         action={action}
