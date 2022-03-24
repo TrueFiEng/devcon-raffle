@@ -10,17 +10,40 @@ import styled from 'styled-components'
 interface WinFormProps {
   win?: WinOptions
   bid: BigNumber
+  setView: (state: BidFlowSteps) => void
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
-  setView: (state: BidFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
 
-export const WinForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView, voucher, setVoucher }: WinFormProps) => {
+export const WinForm = ({ win, bid, setView, withdrawnBid, setWithdrawnBid, voucher, setVoucher }: WinFormProps) => {
   return (
     <>
-      {((!withdrawnBid && !voucher) || (withdrawnBid && !voucher)) && (
+      {voucher ? (
+        withdrawnBid ? (
+          <Wrapper>
+            <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />{' '}
+          </Wrapper>
+        ) : (
+          <WrapperRow>
+            <WinFormWrapper>
+              <WinBidForm
+                bid={bid}
+                setView={setView}
+                win={win}
+                withdrawnBid={withdrawnBid}
+                setWithdrawnBid={setWithdrawnBid}
+                voucher={voucher}
+                setVoucher={setVoucher}
+              />
+            </WinFormWrapper>
+            <VoucherFormWrapper>
+              <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />
+            </VoucherFormWrapper>
+          </WrapperRow>
+        )
+      ) : (
         <Wrapper>
           <WinBidForm
             bid={bid}
@@ -32,30 +55,6 @@ export const WinForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView, vouc
             setVoucher={setVoucher}
           />
         </Wrapper>
-      )}
-      {withdrawnBid && voucher && (
-        <Wrapper>
-          <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />{' '}
-        </Wrapper>
-      )}
-
-      {!withdrawnBid && voucher && (
-        <WrapperRow>
-          <WinFormWrapper>
-            <WinBidForm
-              bid={bid}
-              setView={setView}
-              win={win}
-              withdrawnBid={withdrawnBid}
-              setWithdrawnBid={setWithdrawnBid}
-              voucher={voucher}
-              setVoucher={setVoucher}
-            />
-          </WinFormWrapper>
-          <VoucherFormWrapper>
-            <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />
-          </VoucherFormWrapper>
-        </WrapperRow>
       )}
     </>
   )
