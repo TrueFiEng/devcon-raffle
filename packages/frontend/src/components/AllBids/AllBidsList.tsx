@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useBids } from 'src/hooks/useBids'
+import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -13,21 +14,31 @@ import { NothingFound } from './NothingFound'
 export const AllBidsList = () => {
   const [search, setSearch] = useState('')
   const { bids } = useBids()
-  const auctionBids = useMemo(() => {
+
+  const searchBid = (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search))
+
+  const auctionBidsList = useMemo(() => {
     const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
-    return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
+    return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids])
-  const raffleBids = useMemo(() => {
+
+  const raffleBidsList = useMemo(() => {
     const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
-    return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
+    return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids])
-  const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
+
+  const auctionBids = auctionBidsList.length !== 0
+  const raffleBids = raffleBidsList.length !== 0
+  const noBids = !auctionBids && !raffleBids
+  const nothingFound = search && noBids
 
   return (
     <PageContainer>
       <FilterHeaders setSearch={setSearch} />
-      {nothingFound ? (
+      {noBids ? (
         <NothingFound />
+      ) : nothingFound ? (
+        <NothingFound search={search} />
       ) : (
         <>
           <BidsHeaders>
@@ -41,14 +52,22 @@ export const AllBidsList = () => {
               <b>Address</b>
             </AddressColumn>
           </BidsHeaders>
-          <TitleBanner>
-            <SubListHeader>AUCTION</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={auctionBids} />
-          <TitleBanner>
-            <SubListHeader>RAFFLE</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={raffleBids} />
+          {auctionBids && (
+            <>
+              <TitleBanner>
+                <SubListHeader>AUCTION</SubListHeader>
+              </TitleBanner>
+              <BidsSubList bids={auctionBidsList} />
+            </>
+          )}
+          {raffleBids && (
+            <>
+              <TitleBanner>
+                <SubListHeader>RAFFLE</SubListHeader>
+              </TitleBanner>
+              <BidsSubList bids={raffleBidsList} />
+            </>
+          )}
         </>
       )}
     </PageContainer>
@@ -58,6 +77,7 @@ export const AllBidsList = () => {
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
   row-gap: 20px;
   width: 780px;
   max-width: 780px;
@@ -66,7 +86,7 @@ const PageContainer = styled.div`
 
 const TitleBanner = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   height: 40px;
   background-color: ${Colors.GreenLight};
