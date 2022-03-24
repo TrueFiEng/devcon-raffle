@@ -58,7 +58,7 @@ export const WinBidForm = ({
         </WinOption>
       )}
 
-      {!voucher && (
+      {!voucher && luck && (
         <WinOption>
           <span>Get your voucher code</span>
           <Button view="primary" onClick={() => setVoucher(true)}>
