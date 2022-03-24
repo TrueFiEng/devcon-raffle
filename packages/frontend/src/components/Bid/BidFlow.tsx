@@ -14,7 +14,7 @@ export const BidFlow = () => {
   const userBid = bids[1]
 
   // Test time
-  const timeIsOver = false
+  const timeIsOver = true
 
   return timeIsOver ? (
     <>{userBid ? <WinBidFlow userBid={userBid} /> : <BidStart />}</>
