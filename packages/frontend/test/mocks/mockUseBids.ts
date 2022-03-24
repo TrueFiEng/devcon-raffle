@@ -1,5 +1,4 @@
 import { parseEther } from '@ethersproject/units'
-import type { BidWithPlace } from 'src/models/Bid'
 
 export const mockBids = [
   {
@@ -23,9 +22,3 @@ export const mockBids = [
     amount: parseEther('0.5'),
   },
 ]
-
-export const mockUseBids: { useBids: () => { bids: BidWithPlace[] } } = {
-  useBids: () => ({
-    bids: mockBids,
-  }),
-}
