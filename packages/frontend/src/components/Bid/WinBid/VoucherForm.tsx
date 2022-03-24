@@ -23,7 +23,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
 
       <VoucherButtonWrapper>
         <VoucherIdLabel>Enter this code in the sales system</VoucherIdLabel>
-        <Button view="primary" onClick={() => window.open('https://devcon.org/en/#road-to-devcon', '_blank')}>
+        <Button view="primary" onClick={() => window.open('https://ticketh.xyz/devconnect/', '_blank')}>
           Go to sales system
         </Button>
       </VoucherButtonWrapper>
