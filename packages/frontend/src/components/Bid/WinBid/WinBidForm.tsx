@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
-import { FormWrapper, FormHeading } from 'src/components/Form/Form'
+import { Form, FormHeading } from 'src/components/Form/Form'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
@@ -24,15 +24,24 @@ interface WinBidFormProps {
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
   setView: (state: BidFlowSteps) => void
-  setShowVoucher: (val: boolean) => void
+  voucher: boolean
+  setVoucher: (val: boolean) => void
 }
 
-export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView, setShowVoucher }: WinBidFormProps) => {
+export const WinBidForm = ({
+  win,
+  bid,
+  withdrawnBid,
+  setWithdrawnBid,
+  setView,
+  voucher,
+  setVoucher,
+}: WinBidFormProps) => {
   const luck = win !== undefined
 
   return (
-    <WinFormWrapper>
-      <FormHeading>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</FormHeading>
+    <Form>
+      <WinFormHeading voucher={voucher}>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
       <WinText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</WinText>
       {!withdrawnBid && win !== WinOptions.Auction && (
         <WinOption>
@@ -49,25 +58,24 @@ export const WinBidForm = ({ win, bid, withdrawnBid, setWithdrawnBid, setView, s
         </WinOption>
       )}
 
-      <WinOption>
-        {luck ? (
-          <>
-            <span>Get your voucher code</span>
-            <Button view="primary" onClick={() => setShowVoucher(true)}>
-              Get voucher code
-            </Button>
-          </>
-        ) : (
-          !withdrawnBid && <span>You have time until XX.XX.2023 to withdraw your funds.</span>
-        )}
-      </WinOption>
-    </WinFormWrapper>
+      {!voucher && (
+        <WinOption>
+          <span>Get your voucher code</span>
+          <Button view="primary" onClick={() => setVoucher(true)}>
+            Get voucher code
+          </Button>
+        </WinOption>
+      )}
+
+      {!luck && !withdrawnBid && (
+        <WinOption>
+          <span>You have time until XX.XX.2023 to withdraw your funds.</span>
+        </WinOption>
+      )}
+    </Form>
   )
 }
 
-const WinFormWrapper = styled(FormWrapper)`
-  justify-content: center;
-`
 const WinText = styled.p`
   color: ${Colors.White};
 `
@@ -78,4 +86,7 @@ const WinOption = styled.div`
   row-gap: 8px;
   width: 100%;
   color: ${Colors.White};
+`
+const WinFormHeading = styled(FormHeading)<{ voucher: boolean }>`
+  font-size: ${({ voucher }) => (voucher ? '24px' : '40px')};
 `
