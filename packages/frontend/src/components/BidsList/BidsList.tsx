@@ -1,5 +1,7 @@
-import React from 'react'
+import { addressEqual, useEthers } from '@usedapp/core'
+import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AUCTION_PARTICIPANTS } from 'src/constants/auctionParticipantsNumber'
 import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -12,11 +14,34 @@ import { BidsListEntry } from './BidsListEntry'
 export const BidsListSection = () => {
   const { bids } = useBids()
   const navigate = useNavigate()
+  const { account } = useEthers()
+
+  const userBid = useMemo(
+    () => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)),
+    [account, bids]
+  )
+
+  const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
+    if (bids.length <= 4) {
+      return {
+        auctionBidsSlice: bids
+      }
+    }
+    const topAuctionBids = bids.slice(0, 3)
+    const lastAuctionBid = bids[bids.length > AUCTION_PARTICIPANTS ? AUCTION_PARTICIPANTS - 1 : bids.length - 1]
+    return {
+      auctionBidsSlice: userBid && within(4, AUCTION_PARTICIPANTS - 1, userBid.place)
+        ? topAuctionBids.concat([userBid, lastAuctionBid])
+        : topAuctionBids.concat([lastAuctionBid]),
+      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS ? userBid : undefined
+    }
+  }, [bids, userBid])
+
   return (
     <BidsListContainer>
       <ListHeader>
         <h3>Number of participants:</h3>
-        <ColoredNumber>100</ColoredNumber>
+        <ColoredNumber>{bids.length}</ColoredNumber>
       </ListHeader>
       <BidsHeaders>
         <PlaceColumn>Place</PlaceColumn>
@@ -24,9 +49,10 @@ export const BidsListSection = () => {
         <AddressColumn>Address</AddressColumn>
       </BidsHeaders>
       <BidsList>
-        {bids.map((bid, index) => (
-          <BidsListEntry key={bid.bidderAddress} place={index + 1} bid={bid.amount} address={bid.bidderAddress} />
+        {auctionBidsSlice.map((bid) => (
+          <BidsListEntry key={bid.bidderAddress} bid={bid} isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)} />
         ))}
+        {userRaffleBid && <BidsListEntry bid={userRaffleBid} isUser />}
       </BidsList>
       <ButtonRow>
         <Button view="secondary" onClick={() => navigate('/bids')}>
@@ -36,6 +62,8 @@ export const BidsListSection = () => {
     </BidsListContainer>
   )
 }
+
+const within = (...[lower, higher, value]: number[]) => value >= lower && value <= higher
 
 const BidsListContainer = styled.div`
   display: flex;

@@ -15,7 +15,7 @@ interface Props {
 export const BidsSubList = ({ bids }: Props) => (
   <BidsList>
     {bids.map(({ bidderAddress, amount, place }) => (
-      <li key={place}>
+      <li key={bidderAddress}>
         <BidsEntryRow>
           <PlaceColumn>{place}</PlaceColumn>
           <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>

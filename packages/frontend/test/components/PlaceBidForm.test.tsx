@@ -11,7 +11,7 @@ jest.mock('@usedapp/core', () => ({
   useEthers: () => ({
     account: '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
   }),
-  useEtherBalance: () => mockBalance
+  useEtherBalance: () => mockBalance,
 }))
 
 describe('UI: PlaceBidForm', () => {
@@ -35,7 +35,7 @@ describe('UI: PlaceBidForm', () => {
       expect(await screen.findByText('No. 3')).toBeDefined()
     })
 
-    it("When placing at the end", async () => {
+    it('When placing last', async () => {
       renderComponent(parseEther('0.2'))
       expect(await screen.findByText('No. 5')).toBeDefined()
     })
@@ -53,13 +53,14 @@ describe('UI: PlaceBidForm', () => {
     })
   })
 
-  const renderComponent = (bid: BigNumber) => render(
-    <PlaceBidForm
-      bid={bid}
-      setBid={() => undefined}
-      minimumBid={parseEther('0.15')}
-      bids={mockBids}
-      setView={() => undefined}
-    />
-  )
+  const renderComponent = (bid: BigNumber) =>
+    render(
+      <PlaceBidForm
+        bid={bid}
+        setBid={() => undefined}
+        minimumBid={parseEther('0.15')}
+        bids={mockBids}
+        setView={() => undefined}
+      />
+    )
 })

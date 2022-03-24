@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import React from 'react'
+import { BidWithPlace } from 'src/models/Bid'
 import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
@@ -10,20 +11,19 @@ import { Colors } from '../../styles/colors'
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 
 interface Props {
-  place: number
-  bid: BigNumber
-  address: string
+  bid: BidWithPlace
+  isUser?: boolean
 }
 
-export const BidsListEntry = ({ place, bid, address }: Props) => {
+export const BidsListEntry = ({ bid: { place, amount, bidderAddress }, isUser }: Props) => {
   return (
     <BidsEntry>
-      <BidsEntryRow>
+      <BidsEntryRow isUser={isUser}>
         <PlaceColumn>{place}.</PlaceColumn>
-        <BidColumn>{formatEtherAmount(bid)} ETH</BidColumn>
+        <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={blockExplorerBase + address} target="_blank" rel="noopener noreferrer">
-            {shortenEthAddress(address)}
+          <AddressLink href={blockExplorerBase + bidderAddress} target="_blank" rel="noopener noreferrer">
+            {shortenEthAddress(bidderAddress)}
           </AddressLink>
         </AddressColumn>
       </BidsEntryRow>
@@ -36,8 +36,9 @@ const BidsEntry = styled.li`
     margin-bottom: 32px;
   }
 `
-const BidsEntryRow = styled.div`
+const BidsEntryRow = styled.div<{isUser?: boolean}>`
   ${BidsColumns};
+  border: ${({ isUser }) => isUser ? `2px solid ${Colors.Green}` : 'none'};
 `
 
 const AddressLink = styled.a`
