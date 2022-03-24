@@ -1,19 +1,16 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { Bid } from '../../models/Bid'
 import { Button } from '../Buttons/Button'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
 
-interface Props {
-  bids: Bid[]
-}
-
-export const BidsListSection = ({ bids }: Props) => {
+export const BidsListSection = () => {
+  const { bids } = useBids()
   const navigate = useNavigate()
   return (
     <BidsListContainer>

@@ -1,4 +1,5 @@
 import { IconBase, IconProps } from 'src/components/Icons/IconBase'
+import React from 'react'
 
 export const CloseCircleIcon = ({ color, size, className }: IconProps) => {
   return (
