@@ -12,11 +12,9 @@ interface Props {
   children: ReactNode
 }
 
-function compareBigNumber(a: BigNumber, b: BigNumber) {
-  if (a.lt(b)) {
-    return -1
-  }
-  return a.gt(b) ? 1 : 0
+interface BidEventDetails {
+  bidAmount: BigNumber
+  bidID: BigNumber
 }
 
 export const BidsProvider = ({ children }: Props) => {
@@ -24,19 +22,29 @@ export const BidsProvider = ({ children }: Props) => {
 
   const bids: BidWithPlace[] = useMemo(() => {
     const abi = new Interface(DEVCON6_ABI)
-    const addressToBidMap = bidsEvents.reduce<Record<string, BigNumber>>((dict, log) => {
+    const addressToBidMap = bidsEvents.reduce<Record<string, BidEventDetails>>((dict, log) => {
       const event = abi.parseLog(log)
-      const { bidder, bidAmount } = event.args
-      if (!(bidder in dict) || dict[bidder].lt(bidAmount)) {
-        dict[bidder] = bidAmount
+      const { bidder, bidAmount, bidID } = event.args
+      if (!(bidder in dict) || dict[bidder].bidAmount.lt(bidAmount)) {
+        dict[bidder] = { bidAmount, bidID }
       }
       return dict
     }, {})
 
     return Object.entries(addressToBidMap)
-      .sort(([, a], [, b]) => compareBigNumber(b, a))
-      .map(([bidderAddress, amount], index) => ({ bidderAddress, amount, place: index + 1 }))
+      .sort(([, a], [, b]) => compareBidEvent(a, b))
+      .map(([bidderAddress, { bidAmount }], index) => ({ bidderAddress, amount: bidAmount, place: index + 1 }))
   }, [bidsEvents])
 
   return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
+}
+
+const compareBidEvent = (a: BidEventDetails, b: BidEventDetails) =>
+  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidID, b.bidID)
+
+function compareBigNumber(a: BigNumber, b: BigNumber) {
+  if (a.lt(b)) {
+    return -1
+  }
+  return a.gt(b) ? 1 : 0
 }
