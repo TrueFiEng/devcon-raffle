@@ -5,6 +5,7 @@ import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { FormRow, Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
+import { useBid } from 'src/hooks/transactions/useBid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 
 const amountLabel = {
@@ -24,6 +25,7 @@ interface ReviewFormProps {
 export const ReviewForm = ({ action, amount, impact, view, setView }: ReviewFormProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
+  const { placeBid } = useBid()
 
   return (
     <Form>
@@ -38,10 +40,13 @@ export const ReviewForm = ({ action, amount, impact, view, setView }: ReviewForm
         </FormRow>
       )}
       <FormRow>
-        <span>Wallet Balace</span>
+        <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view="primary" onClick={() => setView(view + 1)}>
+      <Button view='primary' onClick={async () => {
+        await placeBid(amount)
+        setView(view + 1)
+      }}>
         {heading[action]}
       </Button>
     </Form>
