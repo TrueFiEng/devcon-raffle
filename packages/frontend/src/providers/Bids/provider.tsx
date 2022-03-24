@@ -17,16 +17,6 @@ interface BidEventDetails {
   bidID: BigNumber
 }
 
-function compareBigNumber(a: BigNumber, b: BigNumber) {
-  if (a.lt(b)) {
-    return -1
-  }
-  return a.gt(b) ? 1 : 0
-}
-
-const compareBidEvent = (a: BidEventDetails, b: BidEventDetails) =>
-  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidID, b.bidID)
-
 export const BidsProvider = ({ children }: Props) => {
   const bidsEvents = useBidEvents()
 
@@ -47,4 +37,14 @@ export const BidsProvider = ({ children }: Props) => {
   }, [bidsEvents])
 
   return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
+}
+
+const compareBidEvent = (a: BidEventDetails, b: BidEventDetails) =>
+  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidID, b.bidID)
+
+function compareBigNumber(a: BigNumber, b: BigNumber) {
+  if (a.lt(b)) {
+    return -1
+  }
+  return a.gt(b) ? 1 : 0
 }
