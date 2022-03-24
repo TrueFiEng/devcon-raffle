@@ -1,5 +1,5 @@
 import { shortenTransactionHash } from '@usedapp/core'
-import { Button, CopyButton, RedirectButton } from 'src/components/Buttons'
+import { Button, CopyButton } from 'src/components/Buttons'
 import { Form, FormWrapper, FormHeading } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
 import { Colors } from 'src/styles/colors'
@@ -17,7 +17,6 @@ export const VoucherForm = ({ voucher }: Props) => {
         <VoucherIdBox>
           <VoucherIdText>{shortenTransactionHash(voucher)}</VoucherIdText>
           <CopyButton value={voucher} side="top" text="Copy transaction ID" />
-          <RedirectButton link="https://devcon.org/en/#road-to-devcon" side="top" tooltip="Go to sales system" />
         </VoucherIdBox>
 
         <VoucherButtonWrapper>
