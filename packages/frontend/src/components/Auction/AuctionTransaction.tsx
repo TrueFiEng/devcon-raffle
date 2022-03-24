@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
@@ -7,7 +8,6 @@ import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
 import styled from 'styled-components'
-import { useState } from 'react'
 
 export const heading = {
   [Transactions.Place]: 'Place bid',
@@ -34,7 +34,14 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           <FormSubHeading>{heading[action]}</FormSubHeading>
         </TransactionHeading>
         {view === BidFlowSteps.Review && (
-          <ReviewForm action={action} amount={amount} impact={impact} setTxHash={setTxHash} view={view} setView={setView} />
+          <ReviewForm
+            action={action}
+            amount={amount}
+            impact={impact}
+            setTxHash={setTxHash}
+            view={view}
+            setView={setView}
+          />
         )}
         {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} txHash={txHash} setView={setView} />}
       </TransactionWrapper>

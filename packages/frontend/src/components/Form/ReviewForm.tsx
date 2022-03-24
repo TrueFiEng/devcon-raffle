@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { TransactionStatus, useEtherBalance, useEthers } from '@usedapp/core'
+import { useEtherBalance, useEthers } from '@usedapp/core'
+import { useEffect } from 'react'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
@@ -7,7 +8,7 @@ import { FormRow, Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
-import { useEffect } from 'react'
+import { isTxPending } from 'src/utils/transactions/isTxPending'
 
 const amountLabel = {
   [Transactions.Place]: 'Your Bid',
@@ -28,7 +29,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
   const { placeBid, state } = useBid()
-  const isPending = isTransactionPending(state)
+  const isPending = isTxPending(state)
 
   useEffect(() => {
     if (state.status === 'Success') {
@@ -36,9 +37,8 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         return
       }
       setTxHash(state.transaction.hash)
-      setView(view+1)
+      setView(view + 1)
     }
-
   }, [view, setView, setTxHash, state])
 
   return (
@@ -57,13 +57,9 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view='primary' disabled={state.status !== 'None'} loading={isPending} onClick={()=>placeBid(amount)}>
+      <Button view="primary" disabled={state.status !== 'None'} loading={isPending} onClick={() => placeBid(amount)}>
         {heading[action]}
       </Button>
     </Form>
   )
-}
-
-function isTransactionPending(state: TransactionStatus): boolean {
-  return state.status === 'Mining' || state.status === 'PendingSignature'
 }
