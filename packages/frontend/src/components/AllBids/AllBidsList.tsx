@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -8,11 +8,13 @@ import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
 
 import { AllBidsColumns } from './AllBidsColumns'
 import { BidsSubList } from './BidsSubList'
-import { FilterHeaders } from './FilterHeaders'
 import { NothingFound } from './NothingFound'
 
-export const AllBidsList = () => {
-  const [search, setSearch] = useState('')
+interface AllBidsListProps {
+  search: string
+}
+
+export const AllBidsList = ({ search }: AllBidsListProps) => {
   const { bids } = useBids()
 
   const searchBid = (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search))
@@ -29,16 +31,12 @@ export const AllBidsList = () => {
 
   const auctionBids = auctionBidsList.length !== 0
   const raffleBids = raffleBidsList.length !== 0
-  const noBids = !auctionBids && !raffleBids
-  const nothingFound = search && noBids
+  const nothingFound = search && !auctionBids && !raffleBids
 
   return (
-    <PageContainer>
-      <FilterHeaders setSearch={setSearch} />
+    <>
       {nothingFound ? (
         <NothingFound search={search} />
-      ) : noBids ? (
-        <NothingFound />
       ) : (
         <>
           <BidsHeaders>
@@ -70,19 +68,9 @@ export const AllBidsList = () => {
           )}
         </>
       )}
-    </PageContainer>
+    </>
   )
 }
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  row-gap: 20px;
-  width: 780px;
-  max-width: 780px;
-  padding: 28px 0;
-`
 
 const TitleBanner = styled.div`
   display: flex;
