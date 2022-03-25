@@ -10,8 +10,8 @@ export function getArbiscanLink(chainId: ChainId, type: LinkType, id: string | u
   return `https://${getChainPrefix(chainId)}arbiscan.io/${type}/${id}`
 }
 
-export function getArbiscanAddressLink(chainId: ChainId, address: string | undefined) {
-  return getArbiscanLink(chainId, 'address', address)
+export function getArbiscanAddressLink(address: string | undefined) {
+  return `https://arbiscan.io/${address}`
 }
 
 export function getArbiscanTxLink(chainId: ChainId, txHash: string | undefined) {
