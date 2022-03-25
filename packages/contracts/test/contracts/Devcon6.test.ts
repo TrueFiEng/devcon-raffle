@@ -628,6 +628,24 @@ describe('Devcon6', function () {
       await expect(devcon.rescueTokens(exampleToken.address))
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
+
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.rescueTokens(exampleToken.address))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if there are no funds for given token', async function () {
+      await expect(devconAsOwner.rescueTokens(exampleToken.address))
+        .to.be.revertedWith('Devcon6: no tokens for given address')
+    })
+
+    it('transfers tokens', async function () {
+      await exampleToken.transfer(devcon.address, 100)
+      const balanceBeforeRescue = await exampleToken.balanceOf(wallets[1].address)
+
+      await devconAsOwner.rescueTokens(exampleToken.address)
+      expect(await exampleToken.balanceOf(wallets[1].address)).to.be.equal(balanceBeforeRescue.add(100))
+    })
   })
 
   describe('getState', function () {

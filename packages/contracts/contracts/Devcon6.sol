@@ -330,7 +330,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         IERC20 token = IERC20(tokenAddress);
         uint256 balance = token.balanceOf(address(this));
 
-        require(balance > 0, "Devcon6: no funds for given token");
+        require(balance > 0, "Devcon6: no tokens for given address");
         token.transfer(owner(), balance);
     }
 
