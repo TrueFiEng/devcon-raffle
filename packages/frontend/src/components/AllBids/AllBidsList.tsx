@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -17,17 +17,20 @@ interface AllBidsListProps {
 export const AllBidsList = ({ search }: AllBidsListProps) => {
   const { bids } = useBids()
 
-  const searchBid = (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search))
+  const searchBid = useCallback(
+    (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
+    [search]
+  )
 
   const auctionBidsList = useMemo(() => {
     const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids])
+  }, [search, bids, searchBid])
 
   const raffleBidsList = useMemo(() => {
     const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids])
+  }, [search, bids, searchBid])
 
   const auctionBids = auctionBidsList.length !== 0
   const raffleBids = raffleBidsList.length !== 0
