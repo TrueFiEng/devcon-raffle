@@ -21,6 +21,7 @@ export const PlaceBidFlow = () => {
     },
     state: state,
   }
+
   return (
     <>
       {view === BidFlowSteps.Placing ? (
