@@ -5,8 +5,8 @@ import { heading } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { FormRow, Form } from 'src/components/Form/Form'
+import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
-import { useBid } from 'src/hooks/transactions/useBid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { isTxPending } from 'src/utils/transactions/isTxPending'
 
@@ -17,7 +17,7 @@ const amountLabel = {
 }
 
 interface ReviewFormProps {
-  action: Transactions
+  action: TransactionAction
   amount: BigNumber
   impact?: BigNumber
   setTxHash: (hash: string) => void
@@ -28,23 +28,22 @@ interface ReviewFormProps {
 export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }: ReviewFormProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
-  const { placeBid, state } = useBid()
-  const isPending = isTxPending(state)
+  const isPending = isTxPending(action.state)
 
   useEffect(() => {
-    if (state.status === 'Success') {
-      if (!state.transaction) {
+    if (action.state.status === 'Success') {
+      if (!action.state.transaction) {
         return
       }
-      setTxHash(state.transaction.hash)
+      setTxHash(action.state.transaction.hash)
       setView(view + 1)
     }
-  }, [view, setView, setTxHash, state])
+  }, [view, setView, setTxHash, action.state])
 
   return (
     <Form>
       <FormRow>
-        <span>{amountLabel[action]}</span>
+        <span>{amountLabel[action.type]}</span>
         <span>{formatEtherAmount(amount)} ETH</span>
       </FormRow>
       {impact && (
@@ -57,8 +56,13 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view="primary" disabled={state.status !== 'None'} isLoading={isPending} onClick={() => placeBid(amount)}>
-        {heading[action]}
+      <Button
+        view="primary"
+        disabled={action.state.status !== 'None'}
+        isLoading={isPending}
+        onClick={() => action.send()}
+      >
+        {heading[action.type]}
       </Button>
     </Form>
   )
