@@ -23,7 +23,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   flex: 1;
   row-gap: 20px;
-  width: 780px;
+  width: 100%;
   max-width: 780px;
   padding: 28px 0;
 `

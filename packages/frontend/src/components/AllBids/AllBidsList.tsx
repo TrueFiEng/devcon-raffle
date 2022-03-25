@@ -79,7 +79,8 @@ const TitleBanner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
+  width: 100%;
+  padding: 4px 0;
   background-color: ${Colors.GreenLight};
 `
 
@@ -88,7 +89,6 @@ const BidsHeaders = styled.div`
 `
 
 const SubListHeader = styled.h3`
-  font-weight: 700;
   font-size: 20px;
   line-height: 150%;
 `
