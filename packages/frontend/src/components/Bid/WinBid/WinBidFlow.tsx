@@ -6,8 +6,8 @@ import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
 import { WinForm } from 'src/components/Bid/WinBid/WinForm'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
-import { TransactionAction } from 'src/models/TransactionAction'
 import { Bid } from 'src/models/Bid'
+import { TransactionAction } from 'src/models/TransactionAction'
 
 interface WinBidFlowProps {
   userBid: Bid
