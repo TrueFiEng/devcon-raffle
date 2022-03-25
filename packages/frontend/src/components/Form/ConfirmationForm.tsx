@@ -5,11 +5,11 @@ import { TransactionSuccess } from 'src/components/Transaction/TransactionSucces
 
 interface ConfirmationFormProps {
   action: Transactions
+  txHash: string
   setView: (state: BidFlowSteps) => void
 }
 
-export const ConfirmationForm = ({ action, setView }: ConfirmationFormProps) => {
-  const txHash = '0xD69bcE4E8D0929E16'
+export const ConfirmationForm = ({ action, txHash, setView }: ConfirmationFormProps) => {
   return (
     <Form>
       <TransactionSuccess action={action} txHash={txHash} setView={setView} />
