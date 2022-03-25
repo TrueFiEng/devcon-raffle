@@ -35,10 +35,10 @@ export const AllBidsList = () => {
   return (
     <PageContainer>
       <FilterHeaders setSearch={setSearch} />
-      {noBids ? (
-        <NothingFound />
-      ) : nothingFound ? (
+      {nothingFound ? (
         <NothingFound search={search} />
+      ) : noBids ? (
+        <NothingFound />
       ) : (
         <>
           <BidsHeaders>
