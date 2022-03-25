@@ -3,9 +3,9 @@ import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
-import { mockBids } from 'test/mocks/mockUseBids'
+import { generateMockBids } from 'test/mocks/generateMockBids'
 
-let mockBalance: BigNumber
+const mockBalance = parseEther('100')
 
 jest.mock('@usedapp/core', () => ({
   useEthers: () => ({
@@ -15,30 +15,11 @@ jest.mock('@usedapp/core', () => ({
 }))
 
 describe('UI: PlaceBidForm', () => {
-  beforeEach(() => {
-    mockBalance = parseEther('100')
-  })
+  const mockBids = generateMockBids(5)
 
-  describe('Displays estimated place after bid', () => {
-    it('When outbidding everyone', async () => {
-      renderComponent(parseEther('10'))
-      expect(await screen.findByText('No. 1')).toBeDefined()
-    })
-
-    it('When placing in the midle of the list', async () => {
-      renderComponent(parseEther('1.5'))
-      expect(await screen.findByText('No. 2')).toBeDefined()
-    })
-
-    it("When meeting other user's bid", async () => {
-      renderComponent(parseEther('1.0'))
-      expect(await screen.findByText('No. 3')).toBeDefined()
-    })
-
-    it('When placing last', async () => {
-      renderComponent(parseEther('0.2'))
-      expect(await screen.findByText('No. 5')).toBeDefined()
-    })
+  it('Displays estimated place after bid', async () => {
+    renderComponent(parseEther('4.5'))
+    expect(await screen.findByText('No. 2')).toBeDefined()
   })
 
   describe('Input validation', () => {

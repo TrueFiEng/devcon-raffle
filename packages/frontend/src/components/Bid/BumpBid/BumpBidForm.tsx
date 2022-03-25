@@ -2,23 +2,25 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import { Bid } from 'src/models/Bid'
+import type { BidWithPlace } from 'src/models/Bid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 import styled from 'styled-components'
 
 interface BumpBidProps {
-  userBid: Bid
+  userBid: BidWithPlace
   newBid: BigNumber
   setBid: (val: BigNumber) => void
   setView: (state: BidFlowSteps) => void
+  bids: BidWithPlace[]
 }
 
-export const BumpBidForm = ({ userBid, newBid, setBid, setView }: BumpBidProps) => {
+export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
   const minimumIncrement = parseEther('0.01')
@@ -41,7 +43,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView }: BumpBidProps) 
         </FormRow>
         <FormRow>
           <span>Current place in the raffle</span>
-          <span>No. -</span>
+          <span>No. {userBid.place}</span>
         </FormRow>
         <Input bid={bumpAmount} setBid={setBumpAmount} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
@@ -54,7 +56,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView }: BumpBidProps) 
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. -</span>
+          <span>No. {getPositionAfterBid(newBid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}

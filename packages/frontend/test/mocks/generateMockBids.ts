@@ -1,3 +1,6 @@
+import { parseEther } from '@ethersproject/units'
+import type { BidWithPlace } from 'src/models/Bid'
+
 export const mockBidsAddresses = [
   '0x0537a5C46D9719b8548d72c7175ad1fE30bD84EE',
   '0xF1443D0355cb50F2D8066Ae0475D63d031821345',
@@ -20,3 +23,11 @@ export const mockBidsAddresses = [
   '0x904d19ab8BFDB7B1b8AD025Ae72b034E1ad8AA49',
   '0x795AF44BDBa6e7078A7ee103F572bECB509Ebdff',
 ]
+
+export function generateMockBids(howMany: number): BidWithPlace[] {
+  return Array.from({ length: howMany }).map((_, index) => ({
+    bidderAddress: mockBidsAddresses[index],
+    place: index + 1,
+    amount: parseEther(String(howMany - index)),
+  }))
+}

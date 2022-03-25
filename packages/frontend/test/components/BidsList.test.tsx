@@ -1,7 +1,6 @@
 /* eslint-disable jest/expect-expect */
 // Some tests run assertions in external functions
 
-import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
@@ -10,7 +9,7 @@ import { BidWithPlace } from 'src/models/Bid'
 import { BidsContext } from 'src/providers/Bids'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
-import { mockBidsAddresses } from 'test/mocks/mockBidsAddresses'
+import { generateMockBids } from 'test/mocks/generateMockBids'
 
 const mockUserAddress = '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
 
@@ -114,11 +113,3 @@ describe('UI: BidsListSection', () => {
       </BidsContext.Provider>
     )
 })
-
-function generateMockBids(howMany: number): BidWithPlace[] {
-  return Array.from({ length: howMany }).map((_, index) => ({
-    bidderAddress: mockBidsAddresses[index],
-    place: index + 1,
-    amount: parseEther(String(howMany - index)),
-  }))
-}
