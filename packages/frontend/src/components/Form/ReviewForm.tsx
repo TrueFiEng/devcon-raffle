@@ -57,7 +57,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view="primary" disabled={state.status !== 'None'} loading={isPending} onClick={() => placeBid(amount)}>
+      <Button view="primary" disabled={state.status !== 'None'} isLoading={isPending} onClick={() => placeBid(amount)}>
         {heading[action]}
       </Button>
     </Form>

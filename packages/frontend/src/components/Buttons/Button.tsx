@@ -9,21 +9,21 @@ export interface ButtonProps {
   view?: 'primary' | 'secondary'
   wide?: boolean
   disabled?: boolean
-  loading?: boolean
+  isLoading?: boolean
   onClick?: () => void
 }
 
-export const Button = ({ children, className, view = 'primary', wide, disabled, loading, onClick }: ButtonProps) => {
+export const Button = ({ children, className, view = 'primary', wide, disabled, isLoading, onClick }: ButtonProps) => {
   return (
     <ButtonContainer
       className={className}
       view={view}
       wide={wide}
-      disabled={disabled || loading}
-      loading={loading}
+      disabled={disabled || isLoading}
+      isLoading={isLoading}
       onClick={onClick}
     >
-      {loading ? <LoadingIcon /> : children}
+      {isLoading ? <LoadingIcon /> : children}
     </ButtonContainer>
   )
 }
