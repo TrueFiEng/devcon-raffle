@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
@@ -23,6 +24,8 @@ interface AuctionTransactionProps {
 }
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
+  const [txHash, setTxHash] = useState('')
+
   return (
     <Transaction>
       <TransactionWrapper>
@@ -31,9 +34,16 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           <FormSubHeading>{heading[action]}</FormSubHeading>
         </TransactionHeading>
         {view === BidFlowSteps.Review && (
-          <ReviewForm action={action} amount={amount} impact={impact} view={view} setView={setView} />
+          <ReviewForm
+            action={action}
+            amount={amount}
+            impact={impact}
+            setTxHash={setTxHash}
+            view={view}
+            setView={setView}
+          />
         )}
-        {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} setView={setView} />}
+        {view === BidFlowSteps.Confirmation && <ConfirmationForm action={action} txHash={txHash} setView={setView} />}
       </TransactionWrapper>
       <TransactionStepper
         action={action}

@@ -1,7 +1,7 @@
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-export const Form = styled.form`
+export const Form = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 16px;
