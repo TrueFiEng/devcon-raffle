@@ -14,7 +14,7 @@ export const PlaceBidFlow = () => {
   const [bid, setBid] = useState(minimumBid)
   const { placeBid, state } = useBid()
 
-  const BidAction: TransactionAction = {
+  const bidAction: TransactionAction = {
     type: Transactions.Place,
     send: async () => {
       await placeBid(bid)
@@ -27,7 +27,7 @@ export const PlaceBidFlow = () => {
       {view === BidFlowSteps.Placing ? (
         <PlaceBidForm bid={bid} setBid={setBid} setView={setView} minimumBid={minimumBid} bids={bids} />
       ) : (
-        <AuctionTransaction action={BidAction} amount={bid} view={view} setView={setView} />
+        <AuctionTransaction action={bidAction} amount={bid} view={view} setView={setView} />
       )}
     </>
   )

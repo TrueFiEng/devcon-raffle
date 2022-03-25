@@ -20,7 +20,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const bidderId = BigNumber.from(1)
   const { claimFunds, state } = useClaimFunds()
 
-  const WinAction: TransactionAction = {
+  const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
     send: async () => {
       await claimFunds(bidderId)
@@ -41,7 +41,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
           setVoucher={setVoucher}
         />
       ) : (
-        <AuctionTransaction action={WinAction} amount={userBid.amount} view={view} setView={setView} />
+        <AuctionTransaction action={claimAction} amount={userBid.amount} view={view} setView={setView} />
       )}
     </>
   )
