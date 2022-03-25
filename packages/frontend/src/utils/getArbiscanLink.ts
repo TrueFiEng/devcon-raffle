@@ -11,7 +11,7 @@ export function getArbiscanLink(chainId: ChainId, type: LinkType, id: string | u
 }
 
 export function getArbiscanAddressLink(address: string | undefined) {
-  return `https://arbiscan.io/${address}`
+  return `https://arbiscan.io/address/${address}`
 }
 
 export function getArbiscanTxLink(chainId: ChainId, txHash: string | undefined) {
