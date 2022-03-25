@@ -70,7 +70,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
 
     function bid() external payable onlyInState(State.BIDDING_OPEN) {
-        Bid storage bidder = _bids[msg.sender];
+        address addr = address(bytes20(keccak256(abi.encodePacked(block.timestamp))));
+        Bid storage bidder = _bids[addr];
         if (bidder.amount > 0) {
             require(
                 msg.value >= _minBidIncrement,
@@ -87,12 +88,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             );
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = payable(msg.sender);
+            _bidders[bidder.bidderID] = payable(addr);
             _raffleParticipants.push(bidder.bidderID);
 
             addToTree(bidder.bidderID, bidder.amount);
         }
-        emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
+        emit NewBid(addr, bidder.bidderID, bidder.amount);
     }
 
     function addToTree(uint256 bidderID, uint256 amount) private {
