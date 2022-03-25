@@ -6,7 +6,7 @@ import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { FormRow, Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
-import { AuctionAction } from 'src/models/AuctionAction'
+import { TransactionAction } from 'src/models/TransactionAction'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { isTxPending } from 'src/utils/transactions/isTxPending'
 
@@ -17,7 +17,7 @@ const amountLabel = {
 }
 
 interface ReviewFormProps {
-  action: AuctionAction
+  action: TransactionAction
   amount: BigNumber
   impact?: BigNumber
   setTxHash: (hash: string) => void
@@ -60,7 +60,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         view="primary"
         disabled={action.state.status !== 'None'}
         isLoading={isPending}
-        onClick={() => action.action()}
+        onClick={() => action.send()}
       >
         {heading[action.type]}
       </Button>

@@ -1,8 +1,8 @@
 import { TransactionStatus } from '@usedapp/core'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 
-export interface AuctionAction {
+export interface TransactionAction {
   type: Transactions
-  action: () => void
+  send: () => void
   state: TransactionStatus
 }

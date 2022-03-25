@@ -6,7 +6,7 @@ import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { bids } from 'src/data/bids'
 import { useBid } from 'src/hooks/transactions/useBid'
-import { AuctionAction } from 'src/models/AuctionAction'
+import { TransactionAction } from 'src/models/TransactionAction'
 
 export const PlaceBidFlow = () => {
   const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
@@ -14,9 +14,9 @@ export const PlaceBidFlow = () => {
   const [bid, setBid] = useState(minimumBid)
   const { placeBid, state } = useBid()
 
-  const BidAction: AuctionAction = {
+  const BidAction: TransactionAction = {
     type: Transactions.Place,
-    action: async () => {
+    send: async () => {
       await placeBid(bid)
     },
     state: state,

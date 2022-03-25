@@ -7,7 +7,7 @@ import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
-import { AuctionAction } from 'src/models/AuctionAction'
+import { TransactionAction } from 'src/models/TransactionAction'
 import styled from 'styled-components'
 
 export const heading = {
@@ -17,7 +17,7 @@ export const heading = {
 }
 
 interface AuctionTransactionProps {
-  action: AuctionAction
+  action: TransactionAction
   amount: BigNumber
   impact?: BigNumber
   view: BidFlowSteps
