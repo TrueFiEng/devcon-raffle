@@ -4,10 +4,10 @@ import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
 import { WinForm } from 'src/components/Bid/WinBid/WinForm'
+import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
 import { Bid } from 'src/models/Bid'
-import { TransactionAction } from 'src/models/TransactionAction'
 
 interface WinBidFlowProps {
   userBid: Bid

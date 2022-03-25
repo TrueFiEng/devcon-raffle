@@ -5,9 +5,9 @@ import { BackButton } from 'src/components/Buttons/BackButton'
 import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
+import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
-import { TransactionAction } from 'src/models/TransactionAction'
 import styled from 'styled-components'
 
 export const heading = {
