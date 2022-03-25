@@ -1,14 +1,12 @@
 import { useCallback, useMemo } from 'react'
+import { AllBidsColumns } from 'src/components/AllBids/AllBidsColumns'
+import { BidsSubList } from 'src/components/AllBids/BidsSubList'
+import { NothingFound } from 'src/components/AllBids/NothingFound'
+import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
-
-import { AllBidsColumns } from './AllBidsColumns'
-import { BidsSubList } from './BidsSubList'
-import { NothingFound } from './NothingFound'
 
 interface AllBidsListProps {
   search: string
