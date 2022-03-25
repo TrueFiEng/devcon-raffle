@@ -5,7 +5,7 @@ import { useDevconContract } from '../contract'
 
 export function useClaimFunds() {
   const devconContract = useDevconContract()
-  const { sendTransaction, state } = useSendTransaction({ transactionName: 'Bid' })
+  const { sendTransaction, state } = useSendTransaction({ transactionName: 'Claim' })
 
   async function claimFunds(bidderId: BigNumber) {
     if (!devconContract) {
