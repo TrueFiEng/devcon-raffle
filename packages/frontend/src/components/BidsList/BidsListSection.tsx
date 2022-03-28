@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BidListEntry } from 'src/components/BidsList/BidListEntry'
-import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from 'src/components/BidsList/BidsColumns'
 import { BidsList } from 'src/components/BidsList/BidsList'
+import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { Button } from 'src/components/Buttons/Button'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
@@ -42,11 +42,7 @@ export const BidsListSection = () => {
         <h3>Number of participants:</h3>
         <ColoredNumber>{bids.length}</ColoredNumber>
       </ListHeader>
-      <BidsColumns>
-        <PlaceColumn>Place</PlaceColumn>
-        <BidColumn>Bid</BidColumn>
-        <AddressColumn>Address</AddressColumn>
-      </BidsColumns>
+      <BidsListHeaders />
       <BidsList bids={auctionBidsSlice} view="short" />
       {userRaffleBid && <BidListEntry bid={userRaffleBid} isUser />}
       <Button view="secondary" onClick={() => navigate('/bids')}>

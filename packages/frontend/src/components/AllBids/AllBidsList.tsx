@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
-import { AddressColumn, BidColumn, PlaceColumn, BidsColumns } from 'src/components/BidsList/BidsColumns'
 import { BidsList } from 'src/components/BidsList/BidsList'
+import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
@@ -36,17 +36,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
         <NothingFound search={search} />
       ) : (
         <>
-          <BidsColumns>
-            <PlaceColumn>
-              <b>Place</b>
-            </PlaceColumn>
-            <BidColumn>
-              <b>Bid</b>
-            </BidColumn>
-            <AddressColumn>
-              <b>Address</b>
-            </AddressColumn>
-          </BidsColumns>
+          <BidsListHeaders />
           {auctionBids && (
             <>
               <TitleBanner>
