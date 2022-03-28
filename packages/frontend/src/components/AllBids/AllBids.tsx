@@ -25,5 +25,5 @@ const PageContainer = styled.div`
   row-gap: 20px;
   width: 100%;
   max-width: 780px;
-  padding: 28px 0;
+  padding: 28px 0 56px;
 `

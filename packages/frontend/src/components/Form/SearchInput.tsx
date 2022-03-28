@@ -5,7 +5,6 @@ import { SearchIcon } from 'src/components/Icons/SearchIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-
 interface Props {
   setSearch: (search: string) => void
 }
