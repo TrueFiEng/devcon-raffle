@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 export interface IconProps {
@@ -8,7 +8,7 @@ export interface IconProps {
 }
 
 interface IconBaseProps extends IconProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function IconBase({ children, color, size = 32, className }: IconBaseProps) {
