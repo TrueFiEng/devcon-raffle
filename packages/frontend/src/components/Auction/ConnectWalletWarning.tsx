@@ -1,4 +1,4 @@
-import { ConnectWalletButton } from '../Buttons/ConnectWalletButton'
+import { ConnectWalletButton } from '../Buttons'
 import { FormHeading, FormRow, FormWrapper } from '../Form/Form'
 
 export const ConnectWalletWarning = () => {

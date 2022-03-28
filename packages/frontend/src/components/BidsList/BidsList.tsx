@@ -1,5 +1,5 @@
 import { addressEqual, useEthers } from '@usedapp/core'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'src/components/Buttons'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'

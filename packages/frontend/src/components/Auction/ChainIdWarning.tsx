@@ -3,7 +3,7 @@ import { Colors } from 'src/styles/colors'
 import { detectMetaMask } from 'src/utils/detectMetamask'
 import styled from 'styled-components'
 
-import { Button } from '../Buttons/Button'
+import { Button } from '../Buttons'
 import { FormHeading, FormRow, FormWrapper } from '../Form/Form'
 
 export const ChainIdWarning = () => {
