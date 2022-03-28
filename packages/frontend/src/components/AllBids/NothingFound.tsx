@@ -1,15 +1,19 @@
 import styled from 'styled-components'
 
-export const NothingFound = () => (
+interface NothingFoundProps {
+  search?: string
+}
+
+export const NothingFound = ({ search }: NothingFoundProps) => (
   <Wrapper>
-    <h3>Sorry, we didn't find this address 😔</h3>
+    <h3>{search ? `Sorry, we didn't find this address 😔` : 'There are no bids right now 👀'}</h3>
   </Wrapper>
 )
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  min-height: 100%;
+  flex: 1;
 `

@@ -18,7 +18,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
       </VoucherFormHeading>
       <VoucherIdBox>
         <VoucherIdText>{shortenTransactionHash(voucher)}</VoucherIdText>
-        <CopyButton value={voucher} side="top" text="Copy transaction ID" />
+        <CopyButton value={voucher} side="top" text="Copy voucher code" />
       </VoucherIdBox>
 
       <VoucherButtonWrapper>
