@@ -1,9 +1,10 @@
-import { addressEqual, useEthers } from '@usedapp/core'
+import { addressEqual } from '@usedapp/core'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'src/components/Buttons'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
+import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -13,12 +14,7 @@ import { BidsListEntry } from './BidsListEntry'
 export const BidsListSection = () => {
   const { bids } = useBids()
   const navigate = useNavigate()
-  const { account } = useEthers()
-
-  const userBid = useMemo(
-    () => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)),
-    [account, bids]
-  )
+  const userBid = useUserBid()
 
   const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
     if (bids.length <= 4) {
