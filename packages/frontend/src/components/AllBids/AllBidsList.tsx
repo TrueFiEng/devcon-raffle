@@ -1,19 +1,26 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
+import { AllBidsColumns } from 'src/components/AllBids/AllBidsColumns'
+import { BidsSubList } from 'src/components/AllBids/BidsSubList'
+import { NothingFound } from 'src/components/AllBids/NothingFound'
+import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
 import { AUCTION_PARTICIPANTS } from 'src/constants/auctionParticipantsNumber'
 import { useBids } from 'src/hooks/useBids'
+import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
+interface AllBidsListProps {
+  search: string
+}
 
-import { AllBidsColumns } from './AllBidsColumns'
-import { BidsSubList } from './BidsSubList'
-import { FilterHeaders } from './FilterHeaders'
-import { NothingFound } from './NothingFound'
-
-export const AllBidsList = () => {
-  const [search, setSearch] = useState('')
+export const AllBidsList = ({ search }: AllBidsListProps) => {
   const { bids } = useBids()
+
+  const searchBid = useCallback(
+    (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
+    [search]
+  )
+
   const auctionBids = useMemo(() => {
     const sectionBids = bids.length <= AUCTION_PARTICIPANTS ? bids : bids.slice(0, AUCTION_PARTICIPANTS)
     return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
@@ -25,10 +32,9 @@ export const AllBidsList = () => {
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (
-    <PageContainer>
-      <FilterHeaders setSearch={setSearch} />
+    <>
       {nothingFound ? (
-        <NothingFound />
+        <NothingFound search={search} />
       ) : (
         <>
           <BidsHeaders>
@@ -42,34 +48,34 @@ export const AllBidsList = () => {
               <b>Address</b>
             </AddressColumn>
           </BidsHeaders>
-          <TitleBanner>
-            <SubListHeader>AUCTION</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={auctionBids} />
-          <TitleBanner>
-            <SubListHeader>RAFFLE</SubListHeader>
-          </TitleBanner>
-          <BidsSubList bids={raffleBids} />
+          {auctionBids && (
+            <>
+              <TitleBanner>
+                <SubListHeader>AUCTION</SubListHeader>
+              </TitleBanner>
+              <BidsSubList bids={auctionBids} />
+            </>
+          )}
+          {raffleBids && (
+            <>
+              <TitleBanner>
+                <SubListHeader>RAFFLE</SubListHeader>
+              </TitleBanner>
+              <BidsSubList bids={raffleBids} />
+            </>
+          )}
         </>
       )}
-    </PageContainer>
+    </>
   )
 }
 
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 20px;
-  width: 780px;
-  max-width: 780px;
-  padding: 28px 0;
-`
-
 const TitleBanner = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  height: 40px;
+  width: 100%;
+  padding: 4px 0;
   background-color: ${Colors.GreenLight};
 `
 
@@ -78,7 +84,6 @@ const BidsHeaders = styled.div`
 `
 
 const SubListHeader = styled.h3`
-  font-weight: 700;
   font-size: 20px;
   line-height: 150%;
 `

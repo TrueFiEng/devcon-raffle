@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
+import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
+import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import type { BidWithPlace } from 'src/models/Bid'
 
@@ -13,21 +15,23 @@ interface BumpBidFlowProps {
 export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
   const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
   const [newBid, setNewBid] = useState(userBid.amount)
+  const { placeBid, state } = useBid()
   const { bids } = useBids()
-  const BumpBidAction = Transactions.Bump
+
+  const bumpAction: TransactionAction = {
+    type: Transactions.Bump,
+    send: async () => {
+      await placeBid(userBid.amount)
+    },
+    state: state,
+  }
 
   return (
     <>
       {view === BidFlowSteps.Placing ? (
         <BumpBidForm userBid={userBid} newBid={newBid} setBid={setNewBid} setView={setView} bids={bids} />
       ) : (
-        <AuctionTransaction
-          action={BumpBidAction}
-          amount={userBid.amount}
-          impact={newBid}
-          view={view}
-          setView={setView}
-        />
+        <AuctionTransaction action={bumpAction} amount={userBid.amount} impact={newBid} view={view} setView={setView} />
       )}
     </>
   )

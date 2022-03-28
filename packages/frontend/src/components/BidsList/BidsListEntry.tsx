@@ -1,8 +1,8 @@
 import React from 'react'
 import { BidWithPlace } from 'src/models/Bid'
-import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
 
 import { Colors } from '../../styles/colors'
@@ -21,7 +21,7 @@ export const BidsListEntry = ({ bid: { place, amount, bidderAddress }, isUser }:
         <PlaceColumn>{place}.</PlaceColumn>
         <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={blockExplorerBase + bidderAddress} target="_blank" rel="noopener noreferrer">
+          <AddressLink href={getArbiscanAddressLink(bidderAddress)} target="_blank" rel="noopener noreferrer">
             {shortenEthAddress(bidderAddress)}
           </AddressLink>
         </AddressColumn>

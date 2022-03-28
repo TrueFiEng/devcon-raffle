@@ -5,6 +5,7 @@ import { useEtherBalance, useEthers } from '@usedapp/core'
 import React, { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
+import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import type { BidWithPlace } from 'src/models/Bid'
@@ -50,6 +51,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
           <span>Min. increment of the bid</span>
           <span>{formatEther(minimumIncrement)} ETH</span>
         </FormRow>
+        <Separator />
         <FormRow>
           <span>Your bid after the bump</span>
           <span>{formatEtherAmount(userBid.amount.add(bumpAmount))} ETH</span>
