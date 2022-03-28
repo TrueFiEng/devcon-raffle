@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from 'react'
-import { AllBidsColumns } from 'src/components/AllBids/AllBidsColumns'
-import { BidsSubList } from 'src/components/AllBids/BidsSubList'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
-import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
+import { AddressColumn, BidColumn, PlaceColumn, BidsColumns } from 'src/components/BidsList/BidsColumns'
+import { BidsList } from 'src/components/BidsList/BidsList'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
@@ -37,7 +36,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
         <NothingFound search={search} />
       ) : (
         <>
-          <BidsHeaders>
+          <BidsColumns>
             <PlaceColumn>
               <b>Place</b>
             </PlaceColumn>
@@ -47,13 +46,13 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
             <AddressColumn>
               <b>Address</b>
             </AddressColumn>
-          </BidsHeaders>
+          </BidsColumns>
           {auctionBids && (
             <>
               <TitleBanner>
                 <SubListHeader>AUCTION</SubListHeader>
               </TitleBanner>
-              <BidsSubList bids={auctionBids} />
+              <BidsList bids={auctionBids} />
             </>
           )}
           {raffleBids && (
@@ -61,7 +60,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
               <TitleBanner>
                 <SubListHeader>RAFFLE</SubListHeader>
               </TitleBanner>
-              <BidsSubList bids={raffleBids} />
+              <BidsList bids={raffleBids} />
             </>
           )}
         </>
@@ -77,10 +76,6 @@ const TitleBanner = styled.div`
   width: 100%;
   padding: 4px 0;
   background-color: ${Colors.GreenLight};
-`
-
-const BidsHeaders = styled.div`
-  ${AllBidsColumns};
 `
 
 const SubListHeader = styled.h3`
