@@ -18,7 +18,7 @@ jest.mock('@usedapp/core', () => ({
   addressEqual: jest.requireActual('@usedapp/core').addressEqual,
 }))
 
-jest.mock('src/constants/auctionParticipantsNumber', () => ({
+jest.mock('src/constants/auctionParticipantsCount', () => ({
   AUCTION_PARTICIPANTS: 10,
 }))
 

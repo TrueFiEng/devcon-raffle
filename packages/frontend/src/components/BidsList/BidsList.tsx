@@ -2,7 +2,7 @@ import { addressEqual, useEthers } from '@usedapp/core'
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'src/components/Buttons'
-import { AUCTION_PARTICIPANTS } from 'src/constants/auctionParticipantsNumber'
+import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -27,13 +27,14 @@ export const BidsListSection = () => {
       }
     }
     const topAuctionBids = bids.slice(0, 3)
-    const lastAuctionBid = bids[bids.length > AUCTION_PARTICIPANTS ? AUCTION_PARTICIPANTS - 1 : bids.length - 1]
+    const lastAuctionBid =
+      bids[bids.length > AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT - 1 : bids.length - 1]
     return {
       auctionBidsSlice:
-        userBid && within(4, AUCTION_PARTICIPANTS - 1, userBid.place)
+        userBid && within(4, AUCTION_PARTICIPANTS_COUNT - 1, userBid.place)
           ? topAuctionBids.concat([userBid, lastAuctionBid])
           : topAuctionBids.concat([lastAuctionBid]),
-      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS ? userBid : undefined,
+      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined,
     }
   }, [bids, userBid])
 
