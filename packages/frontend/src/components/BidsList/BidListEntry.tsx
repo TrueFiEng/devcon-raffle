@@ -3,7 +3,7 @@ import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 
@@ -15,7 +15,7 @@ interface Props {
 
 export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
-    <BidsEntryRow isUser={isUser}>
+    <BidsEntryRow isUser={isUser} view={view}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
       <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
       <AddressColumn>
@@ -27,11 +27,29 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   )
 }
 
-const BidsEntryRow = styled.div<{ isUser?: boolean }>`
+const BidsEntryRow = styled.div<{ isUser?: boolean; view?: 'short' | 'full' }>`
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
   grid-template-areas: 'place bid address';
-  border: ${({ isUser }) => (isUser ? `2px solid ${Colors.Green}` : 'none')};
+  position: relative;
+
+  ${({ isUser, view }) =>
+    isUser &&
+    view === 'short' &&
+    css`
+      &::before {
+        content: '';
+        width: calc(100% + 48px);
+        height: calc(100% + 20px);
+        border-width: 2px;
+        border-style: solid;
+        border-image: linear-gradient(90deg, rgba(126, 193, 136, 1), rgba(101, 196, 232, 1), rgba(119, 121, 181, 1)) 1;
+        position: absolute;
+        top: -10px;
+        left: -24px;
+        z-index: 1;
+      }
+    `};
 `
 
 const AddressLink = styled.a`
