@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AllBidsList } from 'src/components/AllBids/AllBidsList'
-import { FilterHeaders } from 'src/components/AllBids/FilterHeaders'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
+import { SearchInput } from 'src/components/Form/SearchInput'
 import { useBids } from 'src/hooks/useBids'
 import styled from 'styled-components'
 
@@ -12,7 +12,7 @@ export const AllBids = () => {
 
   return (
     <PageContainer>
-      <FilterHeaders setSearch={setSearch} />
+      <SearchInput setSearch={setSearch} />
       {noBids ? <NothingFound /> : <AllBidsList search={search} />}
     </PageContainer>
   )
