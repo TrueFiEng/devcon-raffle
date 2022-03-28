@@ -19,7 +19,7 @@ jest.mock('@usedapp/core', () => ({
 }))
 
 jest.mock('src/constants/auctionParticipantsCount', () => ({
-  AUCTION_PARTICIPANTS: 10,
+  AUCTION_PARTICIPANTS_COUNT: 10,
 }))
 
 describe('UI: BidsListSection', () => {
