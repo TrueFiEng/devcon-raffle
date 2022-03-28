@@ -17,11 +17,12 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
   const [newBid, setNewBid] = useState(userBid.amount)
   const { placeBid, state } = useBid()
   const { bids } = useBids()
+  const bumpBidAmount = newBid.sub(userBid.amount)
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
     send: async () => {
-      await placeBid(userBid.amount)
+      await placeBid(bumpBidAmount)
     },
     state: state,
   }
@@ -31,7 +32,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
       {view === BidFlowSteps.Placing ? (
         <BumpBidForm userBid={userBid} newBid={newBid} setBid={setNewBid} setView={setView} bids={bids} />
       ) : (
-        <AuctionTransaction action={bumpAction} amount={userBid.amount} impact={newBid} view={view} setView={setView} />
+        <AuctionTransaction action={bumpAction} amount={bumpBidAmount} impact={newBid} view={view} setView={setView} />
       )}
     </>
   )

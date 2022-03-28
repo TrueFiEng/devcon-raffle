@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
+import React from 'react'
 import { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
@@ -28,11 +29,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
   const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
-
-  const updateBid = () => {
-    setBid(userBid.amount.add(bumpAmount))
-    userBid.amount = newBid
-  }
+  const newBidAmount = newBid.add(bumpAmount)
 
   return (
     <BumpFormWrapper>
@@ -54,17 +51,17 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
         <Separator />
         <FormRow>
           <span>Your bid after the bump</span>
-          <span>{formatEtherAmount(userBid.amount.add(bumpAmount))} ETH</span>
+          <span>{formatEtherAmount(newBidAmount)} ETH</span>
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {getPositionAfterBid(newBid, bids)}</span>
+          <span>No. {getPositionAfterBid(newBidAmount, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
             setView(BidFlowSteps.Review)
-            updateBid()
+            setBid(newBidAmount)
           }}
         >
           Bump your bid
