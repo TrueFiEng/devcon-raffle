@@ -35,8 +35,8 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
       ) : (
         <>
           <BidsListHeaders />
-          {auctionBids && <BidsSubList bids={auctionBids} title="AUCTION" />}
-          {raffleBids && <BidsSubList bids={raffleBids} title="RAFFLE" />}
+          {auctionBids.length !== 0 && <BidsSubList bids={auctionBids} title="AUCTION" />}
+          {raffleBids.length !== 0 && <BidsSubList bids={raffleBids} title="RAFFLE" />}
         </>
       )}
     </>
