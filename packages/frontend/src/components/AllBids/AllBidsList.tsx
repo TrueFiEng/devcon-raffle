@@ -23,12 +23,12 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
 
   const auctionBids = useMemo(() => {
     const sectionBids = bids.length <= AUCTION_PARTICIPANTS ? bids : bids.slice(0, AUCTION_PARTICIPANTS)
-    return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, bids])
+    return search ? searchBid(sectionBids) : sectionBids
+  }, [search, bids, searchBid])
   const raffleBids = useMemo(() => {
     const sectionBids = bids.length <= AUCTION_PARTICIPANTS ? [] : bids.slice(AUCTION_PARTICIPANTS)
-    return search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids
-  }, [search, bids])
+    return search ? searchBid(sectionBids) : sectionBids
+  }, [search, bids, searchBid])
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (

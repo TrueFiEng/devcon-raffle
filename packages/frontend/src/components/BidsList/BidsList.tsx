@@ -1,12 +1,11 @@
 import { addressEqual, useEthers } from '@usedapp/core'
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from 'src/components/Buttons'
 import { AUCTION_PARTICIPANTS } from 'src/constants/auctionParticipantsNumber'
 import { useBids } from 'src/hooks/useBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { Button } from '../Buttons/Button'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'

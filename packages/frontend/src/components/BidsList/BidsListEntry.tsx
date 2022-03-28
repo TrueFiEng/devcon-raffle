@@ -1,11 +1,10 @@
 import React from 'react'
 import { BidWithPlace } from 'src/models/Bid'
+import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
-
-import { Colors } from '../../styles/colors'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 
@@ -14,15 +13,15 @@ interface Props {
   isUser?: boolean
 }
 
-export const BidsListEntry = ({ bid: { place, amount, bidderAddress }, isUser }: Props) => {
+export const BidsListEntry = ({ bid, isUser }: Props) => {
   return (
     <BidsEntry>
       <BidsEntryRow isUser={isUser}>
-        <PlaceColumn>{place}.</PlaceColumn>
-        <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
+        <PlaceColumn>{bid.place}.</PlaceColumn>
+        <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={getArbiscanAddressLink(bidderAddress)} target="_blank" rel="noopener noreferrer">
-            {shortenEthAddress(bidderAddress)}
+          <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+            {shortenEthAddress(bid.bidderAddress)}
           </AddressLink>
         </AddressColumn>
       </BidsEntryRow>
