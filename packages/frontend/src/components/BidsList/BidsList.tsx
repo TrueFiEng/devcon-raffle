@@ -1,7 +1,11 @@
 import { addressEqual } from '@usedapp/core'
+import { useMemo } from 'react'
 import { BidListEntry } from 'src/components/BidsList/BidListEntry'
+import { Separator } from 'src/components/common/Separator'
+import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { BidWithPlace } from 'src/models/Bid'
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface Props {
@@ -11,6 +15,9 @@ interface Props {
 
 export const BidsList = ({ bids, view = 'full' }: Props) => {
   const userBid = useUserBid()
+  const userRaffleBid = useMemo(() => {
+    return userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined
+  }, [userBid])
 
   return (
     <BidList>
@@ -22,6 +29,12 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
           view={view}
         />
       ))}
+      {userRaffleBid && view === 'short' && (
+        <>
+          <Separator color={Colors.Grey} />
+          <BidListEntry bid={userRaffleBid} isUser view={view} />
+        </>
+      )}
     </BidList>
   )
 }

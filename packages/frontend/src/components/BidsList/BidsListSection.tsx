@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BidListEntry } from 'src/components/BidsList/BidListEntry'
 import { BidsList } from 'src/components/BidsList/BidsList'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { Button } from 'src/components/Buttons/Button'
@@ -18,7 +17,7 @@ export const BidsListSection = () => {
   const navigate = useNavigate()
   const userBid = useUserBid()
 
-  const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
+  const { auctionBidsSlice } = useMemo(() => {
     if (bids.length <= bidsMaxCount) {
       return {
         auctionBidsSlice: bids,
@@ -44,7 +43,6 @@ export const BidsListSection = () => {
       </ListHeader>
       <BidsListHeaders />
       <BidsList bids={auctionBidsSlice} view="short" />
-      {userRaffleBid && <BidListEntry bid={userRaffleBid} isUser />}
       <Button view="secondary" onClick={() => navigate('/bids')}>
         Show all
       </Button>
