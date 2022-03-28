@@ -3,12 +3,16 @@
 pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
+    using SafeERC20 for IERC20;
+
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
 
@@ -320,6 +324,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         uint256 unclaimedFunds = address(this).balance;
         payable(owner()).transfer(unclaimedFunds);
+    }
+
+    function rescueTokens(address tokenAddress) external onlyOwner {
+        IERC20 token = IERC20(tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+
+        require(balance > 0, "Devcon6: no tokens for given address");
+        token.transfer(owner(), balance);
     }
 
     function getState() public view returns (State) {

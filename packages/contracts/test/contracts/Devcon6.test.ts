@@ -1,7 +1,13 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { configuredDevcon6Fixture, devcon6Fixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
-import { Devcon6 } from 'contracts'
+import {
+  configuredDevcon6Fixture,
+  devcon6Fixture,
+  devcon6FixtureWithToken,
+  minBidIncrement,
+  reservePrice,
+} from 'fixtures/devcon6Fixture'
+import { Devcon6, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
@@ -608,6 +614,37 @@ describe('Devcon6', function () {
     async function withdrawUnclaimedFunds(): Promise<BigNumber> {
       return calculateTransferredAmount(devconAsOwner.withdrawUnclaimedFunds)
     }
+  })
+
+  describe('rescueTokens', function () {
+    let exampleToken: ExampleToken
+
+    beforeEach(async function () {
+      ({ exampleToken, devcon, provider } = await loadFixture(devcon6FixtureWithToken))
+      devconAsOwner = devcon.connect(wallets[1])
+    })
+
+    describe('when called not by owner', function () {
+      it('reverts', async function () {
+        await expect(devcon.rescueTokens(exampleToken.address))
+          .to.be.revertedWith('Ownable: caller is not the owner')
+      })
+    })
+
+    describe('when balance for given token equals zero', function () {
+      it('reverts', async function () {
+        await expect(devconAsOwner.rescueTokens(exampleToken.address))
+          .to.be.revertedWith('Devcon6: no tokens for given address')
+      })
+    })
+
+    it('transfers tokens', async function () {
+      await exampleToken.transfer(devcon.address, 100)
+      const balanceBeforeRescue = await exampleToken.balanceOf(wallets[1].address)
+
+      await devconAsOwner.rescueTokens(exampleToken.address)
+      expect(await exampleToken.balanceOf(wallets[1].address)).to.be.equal(balanceBeforeRescue.add(100))
+    })
   })
 
   describe('getState', function () {
