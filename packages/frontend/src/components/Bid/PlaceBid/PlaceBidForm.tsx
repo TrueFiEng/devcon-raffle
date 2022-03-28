@@ -6,6 +6,7 @@ import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
+import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 
 interface PlaceBidFormProps {
   bid: BigNumber
@@ -32,7 +33,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
         <Input bid={bid} setBid={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
-          <span>No. -</span>
+          <span>No. {getPositionAfterBid(bid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}

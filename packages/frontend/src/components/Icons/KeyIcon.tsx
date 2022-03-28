@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const KeyIcon = () => {
   return (
     <svg width="249" height="225" viewBox="0 0 249 225" fill="none" xmlns="http://www.w3.org/2000/svg">

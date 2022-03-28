@@ -14,7 +14,7 @@ export const BidsSubList = ({ bids }: Props) => {
   return (
     <BidsList>
       {bids.map(({ bidderAddress, amount, place }) => (
-        <li key={place}>
+        <li key={bidderAddress}>
           <BidsEntryRow>
             <PlaceColumn>{place}.</PlaceColumn>
             <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>

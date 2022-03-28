@@ -3,6 +3,7 @@ import { AllBidsColumns } from 'src/components/AllBids/AllBidsColumns'
 import { BidsSubList } from 'src/components/AllBids/BidsSubList'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
+import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -20,19 +21,15 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
     [search]
   )
 
-  const auctionBidsList = useMemo(() => {
-    const sectionBids = bids.length <= 20 ? bids : bids.slice(0, 20)
+  const auctionBids = useMemo(() => {
+    const sectionBids = bids.length <= AUCTION_PARTICIPANTS_COUNT ? bids : bids.slice(0, AUCTION_PARTICIPANTS_COUNT)
     return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids, searchBid])
-
-  const raffleBidsList = useMemo(() => {
-    const sectionBids = bids.length <= 20 ? [] : bids.slice(20)
+  const raffleBids = useMemo(() => {
+    const sectionBids = bids.length <= AUCTION_PARTICIPANTS_COUNT ? [] : bids.slice(AUCTION_PARTICIPANTS_COUNT)
     return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids, searchBid])
-
-  const auctionBids = auctionBidsList.length !== 0
-  const raffleBids = raffleBidsList.length !== 0
-  const nothingFound = search && !auctionBids && !raffleBids
+  const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (
     <>
@@ -56,7 +53,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
               <TitleBanner>
                 <SubListHeader>AUCTION</SubListHeader>
               </TitleBanner>
-              <BidsSubList bids={auctionBidsList} />
+              <BidsSubList bids={auctionBids} />
             </>
           )}
           {raffleBids && (
@@ -64,7 +61,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
               <TitleBanner>
                 <SubListHeader>RAFFLE</SubListHeader>
               </TitleBanner>
-              <BidsSubList bids={raffleBidsList} />
+              <BidsSubList bids={raffleBids} />
             </>
           )}
         </>
