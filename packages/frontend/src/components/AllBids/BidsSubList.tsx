@@ -1,34 +1,34 @@
+import { AllBidsColumns } from 'src/components/AllBids/AllBidsColumns'
+import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
 import type { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
-import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
-
-import { AddressColumn, BidColumn, PlaceColumn } from '../BidsList/BidsColumns'
-
-import { AllBidsColumns } from './AllBidsColumns'
 
 interface Props {
   bids: BidWithPlace[]
 }
 
-export const BidsSubList = ({ bids }: Props) => (
-  <BidsList>
-    {bids.map(({ bidderAddress, amount, place }) => (
-      <li key={place}>
-        <BidsEntryRow>
-          <PlaceColumn>{place}</PlaceColumn>
-          <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
-          <AddressColumn>
-            <AddressLink target="_blank" href={blockExplorerBase + bidderAddress} rel="noopener noreferrer">
-              {bidderAddress}
-            </AddressLink>
-          </AddressColumn>
-        </BidsEntryRow>
-      </li>
-    ))}
-  </BidsList>
-)
+export const BidsSubList = ({ bids }: Props) => {
+  return (
+    <BidsList>
+      {bids.map(({ bidderAddress, amount, place }) => (
+        <li key={place}>
+          <BidsEntryRow>
+            <PlaceColumn>{place}.</PlaceColumn>
+            <BidColumn>{formatEtherAmount(amount)} ETH</BidColumn>
+            <AddressColumn>
+              <AddressLink target="_blank" href={getArbiscanAddressLink(bidderAddress)} rel="noopener noreferrer">
+                {bidderAddress}
+              </AddressLink>
+            </AddressColumn>
+          </BidsEntryRow>
+        </li>
+      ))}
+    </BidsList>
+  )
+}
 
 const BidsList = styled.ul`
   display: flex;
@@ -44,5 +44,6 @@ const BidsEntryRow = styled.div`
 `
 
 const AddressLink = styled.a`
-  color: ${Colors.BlueDark};
+  color: ${Colors.Blue};
+  text-decoration: none;
 `

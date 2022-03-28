@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import React from 'react'
-import { blockExplorerBase } from 'src/utils/blockExplorerBase'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
 
 import { Colors } from '../../styles/colors'
@@ -22,7 +22,7 @@ export const BidsListEntry = ({ place, bid, address }: Props) => {
         <PlaceColumn>{place}.</PlaceColumn>
         <BidColumn>{formatEtherAmount(bid)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={blockExplorerBase + address} target="_blank" rel="noopener noreferrer">
+          <AddressLink href={getArbiscanAddressLink(address)} target="_blank" rel="noopener noreferrer">
             {shortenEthAddress(address)}
           </AddressLink>
         </AddressColumn>

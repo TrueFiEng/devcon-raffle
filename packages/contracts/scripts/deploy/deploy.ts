@@ -2,7 +2,8 @@ import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
 import { Signer, utils } from 'ethers'
 
 const HOUR = 3600
-export const reservePrice = utils.parseEther('0.5')
+export const reservePrice = utils.parseEther('0.15')
+const minBidIncrement = utils.parseEther('0.01')
 
 export async function deploy(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const devcon = await deployDevcon(biddingStartTime, owner)
@@ -28,6 +29,6 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
     20,
     80,
     reservePrice,
-    utils.parseEther('0.005'),
+    minBidIncrement,
   )
 }
