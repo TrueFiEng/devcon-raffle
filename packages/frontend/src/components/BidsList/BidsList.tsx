@@ -11,23 +11,26 @@ import styled from 'styled-components'
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
 
+const topAuctionBidsCount = 3
+const bidsMaxCount = topAuctionBidsCount + 1
+
 export const BidsListSection = () => {
   const { bids } = useBids()
   const navigate = useNavigate()
   const userBid = useUserBid()
 
   const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
-    if (bids.length <= 4) {
+    if (bids.length <= bidsMaxCount) {
       return {
         auctionBidsSlice: bids,
       }
     }
-    const topAuctionBids = bids.slice(0, 3)
+    const topAuctionBids = bids.slice(0, topAuctionBidsCount)
     const lastAuctionBid =
       bids[bids.length > AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT - 1 : bids.length - 1]
     return {
       auctionBidsSlice:
-        userBid && within(4, AUCTION_PARTICIPANTS_COUNT - 1, userBid.place)
+        userBid && within(bidsMaxCount, AUCTION_PARTICIPANTS_COUNT - 1, userBid.place)
           ? topAuctionBids.concat([userBid, lastAuctionBid])
           : topAuctionBids.concat([lastAuctionBid]),
       userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined,
