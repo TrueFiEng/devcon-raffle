@@ -22,7 +22,7 @@
     "@radix-ui/react-separator": "^0.1.4",
     "@radix-ui/react-tooltip": "^0.1.7",
     "@types/styled-components": "^5.1.24",
-    "@usedapp/core": "^0.11.0",
+    "@usedapp/core": "^0.12.1",
     "copy-to-clipboard": "^3.3.1",
     "react": "^17.0.2",
     "react-async-hook": "^4.0.0",

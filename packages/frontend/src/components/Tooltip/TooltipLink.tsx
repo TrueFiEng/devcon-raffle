@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 

@@ -2,9 +2,8 @@
 // Some tests run assertions in external functions
 
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { BidsListSection } from 'src/components/BidsList/BidsList'
+import { BidsListSection } from 'src/components/BidsList/BidsListSection'
 import { BidWithPlace } from 'src/models/Bid'
 import { BidsContext } from 'src/providers/Bids'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'

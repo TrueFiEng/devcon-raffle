@@ -1,9 +1,11 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
-export const BidsColumns = css`
+export const BidsColumns = styled.div`
   display: grid;
-  grid-template-columns: auto 48% 26%;
+  grid-template-columns: 1fr 1fr 2fr;
   grid-template-areas: 'place bid address';
+  width: 100%;
+  font-weight: 600;
 `
 
 export const PlaceColumn = styled.span`
