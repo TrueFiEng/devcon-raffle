@@ -1,4 +1,3 @@
-import { shortenTransactionHash } from '@usedapp/core'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button, CopyButton, RedirectButton } from 'src/components/Buttons'
 import { InputLabel } from 'src/components/Form/Input'
@@ -6,6 +5,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
 import { useChainId } from 'src/hooks/useChainId'
 import { Colors } from 'src/styles/colors'
+import { shortenTxHash } from 'src/utils/formatters/shortenTxHash'
 import { getArbiscanTxLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
 
@@ -25,7 +25,7 @@ export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
       <TransactionIdWrapper>
         <TransactionIdLabel>Your transaction ID</TransactionIdLabel>
         <TransactionIdBox>
-          <TransactionIdText>{shortenTransactionHash(txHash)}</TransactionIdText>
+          <TransactionIdText>{shortenTxHash(txHash)}</TransactionIdText>
           <CopyButton value={txHash} side="top" text="Copy transaction ID" />
           <RedirectButton link={transactionLink} side="top" tooltip="View on Arbiscan" />
         </TransactionIdBox>
