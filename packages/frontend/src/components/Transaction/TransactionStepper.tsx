@@ -113,7 +113,7 @@ const StepperContainer = styled.div`
   background-color: ${Colors.BlueDark};
 `
 const StepperHeader = styled.h3`
-  margin: 0 0 24px;
+  margin: 0 0 24px 24px;
   color: ${Colors.White};
 `
 
