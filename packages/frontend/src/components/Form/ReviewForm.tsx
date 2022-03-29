@@ -37,8 +37,9 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
       }
       setTxHash(action.state.transaction.hash)
       setView(view + 1)
+      action.resetState()
     }
-  }, [view, setView, setTxHash, action.state])
+  }, [view, setView, setTxHash, action])
 
   return (
     <Form>

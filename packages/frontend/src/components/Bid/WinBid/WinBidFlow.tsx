@@ -18,7 +18,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const [withdrawnBid, setWithdrawnBid] = useState(false)
   const [voucher, setVoucher] = useState(false)
   const bidderId = BigNumber.from(1)
-  const { claimFunds, state } = useClaimFunds()
+  const { claimFunds, state, resetState } = useClaimFunds()
 
   const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
@@ -26,6 +26,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
       await claimFunds(bidderId)
     },
     state: state,
+    resetState: resetState,
   }
 
   return (

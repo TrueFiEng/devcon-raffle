@@ -15,7 +15,7 @@ interface BumpBidFlowProps {
 export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
   const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
   const [newBid, setNewBid] = useState(userBid.amount)
-  const { placeBid, state } = useBid()
+  const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
   const bumpBidAmount = newBid.sub(userBid.amount)
 
@@ -25,6 +25,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
       await placeBid(bumpBidAmount)
     },
     state: state,
+    resetState: resetState,
   }
 
   return (

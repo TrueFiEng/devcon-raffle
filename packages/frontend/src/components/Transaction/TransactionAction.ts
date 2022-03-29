@@ -5,4 +5,5 @@ export interface TransactionAction {
   type: Transactions
   send: () => void
   state: TransactionStatus
+  resetState: () => void
 }

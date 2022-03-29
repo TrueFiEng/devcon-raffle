@@ -1,14 +1,15 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useSendTransaction } from '@usedapp/core'
+import { useEthers, useSendTransaction } from '@usedapp/core'
 
 import { useDevconContract } from '../contract'
 
 export function useClaimFunds() {
   const devconContract = useDevconContract()
-  const { sendTransaction, state } = useSendTransaction({ transactionName: 'Claim' })
+  const { account, chainId } = useEthers()
+  const { sendTransaction, state, resetState } = useSendTransaction({ transactionName: 'Claim' })
 
   async function claimFunds(bidderId: BigNumber) {
-    if (!devconContract) {
+    if (!devconContract || !account || !chainId) {
       return
     }
 
@@ -16,5 +17,5 @@ export function useClaimFunds() {
     await sendTransaction(tx)
   }
 
-  return { claimFunds, state }
+  return { claimFunds, state, resetState }
 }
