@@ -43,9 +43,11 @@ export const BidsListSection = () => {
       </ListHeader>
       <BidsListHeaders />
       <BidsList bids={auctionBidsSlice} view="short" />
-      <Button view="secondary" onClick={() => navigate('/bids')}>
-        Show all
-      </Button>
+      {bids.length !== 0 && (
+        <Button view="secondary" onClick={() => navigate('/bids')}>
+          Show all
+        </Button>
+      )}
     </BidsListContainer>
   )
 }

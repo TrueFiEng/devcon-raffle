@@ -17,11 +17,15 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
     <BidsEntryRow isUser={isUser} view={view}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
+      <BidColumn>{bid.amount ? formatEtherAmount(bid.amount) + ' ETH' : '-'} </BidColumn>
       <AddressColumn>
-        <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
-          {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
-        </AddressLink>
+        {bid.bidderAddress === '-' ? (
+          bid.bidderAddress
+        ) : (
+          <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+            {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
+          </AddressLink>
+        )}
       </AddressColumn>
     </BidsEntryRow>
   )
