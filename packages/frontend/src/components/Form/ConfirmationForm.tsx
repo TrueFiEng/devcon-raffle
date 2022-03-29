@@ -1,26 +1,18 @@
-import { Transactions } from 'src/components/Auction/AuctionEnum'
-import { BidFlow } from 'src/components/Bid/BidFlowEnum'
-import { Button } from 'src/components/Buttons/Button'
+import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Form } from 'src/components/Form/Form'
-
-const text = {
-  [Transactions.Place]: 'placed bid',
-  [Transactions.Bump]: 'bumped bid',
-  [Transactions.Withdraw]: 'withdrawn',
-}
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
+import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
 
 interface ConfirmationFormProps {
   action: Transactions
-  setView: (state: BidFlow) => void
+  txHash: string
+  setView: (state: BidFlowSteps) => void
 }
 
-export const ConfirmationForm = ({ action, setView }: ConfirmationFormProps) => {
+export const ConfirmationForm = ({ action, txHash, setView }: ConfirmationFormProps) => {
   return (
     <Form>
-      <p>You've successfully {text[action]}!</p>
-      <Button view="primary" onClick={() => setView(0)}>
-        Back to home
-      </Button>
+      <TransactionSuccess action={action} txHash={txHash} setView={setView} />
     </Form>
   )
 }

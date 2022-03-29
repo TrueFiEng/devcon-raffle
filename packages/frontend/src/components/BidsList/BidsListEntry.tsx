@@ -1,30 +1,27 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import React from 'react'
+import { BidWithPlace } from 'src/models/Bid'
+import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
 import styled from 'styled-components'
-
-import { Colors } from '../../styles/colors'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 
-const blockExplorerBase = 'https://etherscan.io/address/'
-
 interface Props {
-  place: number
-  bid: BigNumber
-  address: string
+  bid: BidWithPlace
+  isUser?: boolean
 }
 
-export const BidsListEntry = ({ place, bid, address }: Props) => {
+export const BidsListEntry = ({ bid, isUser }: Props) => {
   return (
     <BidsEntry>
-      <BidsEntryRow>
-        <PlaceColumn>{place}.</PlaceColumn>
-        <BidColumn>{formatEtherAmount(bid)} ETH</BidColumn>
+      <BidsEntryRow isUser={isUser}>
+        <PlaceColumn>{bid.place}.</PlaceColumn>
+        <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
         <AddressColumn>
-          <AddressLink href={blockExplorerBase + address} target="_blank" rel="noopener noreferrer">
-            {shortenEthAddress(address)}
+          <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+            {shortenEthAddress(bid.bidderAddress)}
           </AddressLink>
         </AddressColumn>
       </BidsEntryRow>
@@ -37,8 +34,9 @@ const BidsEntry = styled.li`
     margin-bottom: 32px;
   }
 `
-const BidsEntryRow = styled.div`
+const BidsEntryRow = styled.div<{ isUser?: boolean }>`
   ${BidsColumns};
+  border: ${({ isUser }) => (isUser ? `2px solid ${Colors.Green}` : 'none')};
 `
 
 const AddressLink = styled.a`

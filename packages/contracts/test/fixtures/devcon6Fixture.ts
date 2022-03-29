@@ -1,4 +1,4 @@
-import { Devcon6__factory } from 'contracts'
+import { Devcon6__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from '@ethereum-waffle/provider/dist/esm/MockProvider'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -20,8 +20,16 @@ export type devcon6Params = {
   minBidIncrement?: BigNumberish,
 }
 
-export async function devcon6Fixture(wallets: Wallet[], provider: MockProvider) {
+export function devcon6Fixture(wallets: Wallet[], provider: MockProvider) {
   return configuredDevcon6Fixture({})(wallets, provider)
+}
+
+export async function devcon6FixtureWithToken(wallets: Wallet[], provider: MockProvider) {
+  // deploy devcon6 and exampleToken contracts, because loadFixture creates new provider on each call
+  const { devcon } = await configuredDevcon6Fixture({})(wallets, provider)
+  const exampleToken = await new ExampleToken__factory(wallets[1]).deploy(1000)
+
+  return { provider, devcon, exampleToken }
 }
 
 export function configuredDevcon6Fixture(params: devcon6Params) {

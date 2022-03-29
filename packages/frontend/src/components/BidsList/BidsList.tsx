@@ -1,25 +1,47 @@
-import React from 'react'
+import { addressEqual } from '@usedapp/core'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from 'src/components/Buttons'
+import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
+import { useBids } from 'src/hooks/useBids'
+import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { Bid } from '../../models/Bid'
-import { Button } from '../Buttons/Button'
 
 import { AddressColumn, BidColumn, BidsColumns, PlaceColumn } from './BidsColumns'
 import { BidsListEntry } from './BidsListEntry'
 
-interface Props {
-  bids: Bid[]
-}
+const topAuctionBidsCount = 3
+const bidsMaxCount = topAuctionBidsCount + 1
 
-export const BidsListSection = ({ bids }: Props) => {
+export const BidsListSection = () => {
+  const { bids } = useBids()
   const navigate = useNavigate()
+  const userBid = useUserBid()
+
+  const { auctionBidsSlice, userRaffleBid } = useMemo(() => {
+    if (bids.length <= bidsMaxCount) {
+      return {
+        auctionBidsSlice: bids,
+      }
+    }
+    const topAuctionBids = bids.slice(0, topAuctionBidsCount)
+    const lastAuctionBid =
+      bids[bids.length > AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT - 1 : bids.length - 1]
+    return {
+      auctionBidsSlice:
+        userBid && within(bidsMaxCount, AUCTION_PARTICIPANTS_COUNT - 1, userBid.place)
+          ? topAuctionBids.concat([userBid, lastAuctionBid])
+          : topAuctionBids.concat([lastAuctionBid]),
+      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined,
+    }
+  }, [bids, userBid])
+
   return (
     <BidsListContainer>
       <ListHeader>
         <h3>Number of participants:</h3>
-        <ColoredNumber>100</ColoredNumber>
+        <ColoredNumber>{bids.length}</ColoredNumber>
       </ListHeader>
       <BidsHeaders>
         <PlaceColumn>Place</PlaceColumn>
@@ -27,9 +49,14 @@ export const BidsListSection = ({ bids }: Props) => {
         <AddressColumn>Address</AddressColumn>
       </BidsHeaders>
       <BidsList>
-        {bids.map((bid, index) => (
-          <BidsListEntry key={bid.bidderAddress} place={index + 1} bid={bid.amount} address={bid.bidderAddress} />
+        {auctionBidsSlice.map((bid) => (
+          <BidsListEntry
+            key={bid.bidderAddress}
+            bid={bid}
+            isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
+          />
         ))}
+        {userRaffleBid && <BidsListEntry bid={userRaffleBid} isUser />}
       </BidsList>
       <ButtonRow>
         <Button view="secondary" onClick={() => navigate('/bids')}>
@@ -39,6 +66,8 @@ export const BidsListSection = ({ bids }: Props) => {
     </BidsListContainer>
   )
 }
+
+const within = (...[lower, higher, value]: number[]) => value >= lower && value <= higher
 
 const BidsListContainer = styled.div`
   display: flex;

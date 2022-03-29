@@ -1,18 +1,19 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { BidFlow } from 'src/components/Bid/BidFlowEnum'
+import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
+import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 
 interface PlaceBidFormProps {
   bid: BigNumber
   setBid: (val: BigNumber) => void
   minimumBid: BigNumber
   bids: Bid[]
-  setView: (state: BidFlow) => void
+  setView: (state: BidFlowSteps) => void
 }
 
 export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
@@ -24,12 +25,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
   return (
     <FormWrapper>
       <FormHeading>Place bid</FormHeading>
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault()
-          account && bids.push({ bidderAddress: account, amount: bid })
-        }}
-      >
+      <Form>
         <FormRow>
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
@@ -37,9 +33,15 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
         <Input bid={bid} setBid={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
-          <span>No. -</span>
+          <span>No. {getPositionAfterBid(bid, bids)}</span>
         </FormRow>
-        <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(BidFlow.Review)}>
+        <Button
+          disabled={notEnoughBalance || bidTooLow}
+          onClick={() => {
+            setView(BidFlowSteps.Review)
+            account && bids.push({ bidderAddress: account, amount: bid })
+          }}
+        >
           Place bid
         </Button>
       </Form>

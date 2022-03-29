@@ -1,12 +1,18 @@
 import { setupFixtureLoader } from '../setup'
 import { expect } from 'chai'
-import { configuredDevcon6Fixture, devcon6Fixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
-import { Devcon6 } from 'contracts'
+import {
+  configuredDevcon6Fixture,
+  devcon6Fixture,
+  devcon6FixtureWithToken,
+  minBidIncrement,
+  reservePrice,
+} from 'fixtures/devcon6Fixture'
+import { Devcon6, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, Wallet, ContractTransaction } from 'ethers'
+import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
@@ -218,6 +224,17 @@ describe('Devcon6', function () {
       await expect(settleAuction([2, 3]))
         .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
     })
+
+    it('emits events', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(10)
+      await endBidding(devconAsOwner)
+
+      const tx = await settleAuction([3, 2])
+      await emitsEvents(tx, 'NewAuctionWinner', [3], [2])
+    })
   })
 
   describe('settleRaffle', function () {
@@ -350,6 +367,31 @@ describe('Devcon6', function () {
 
       expect(await devconAsOwner.getState()).to.be.eq(State.raffleSettled)
     })
+
+    describe('when golden ticket winner has been selected', function () {
+      it('emits event', async function () {
+        const tx = await bidAndSettleRaffle(0, [1])
+
+        const goldenBid = await getBidByWinType(9, WinType.goldenTicket)
+        await emitsEvents(tx, 'NewGoldenTicketWinner', [goldenBid.bidderID])
+      })
+    })
+
+    describe('when raffle winners have been selected', function () {
+      it('emits events', async function () {
+        await endBidding(devconAsOwner)
+        await devconAsOwner.settleAuction([9])
+
+        // Golden ticket winner participant index generated from this number: 7, bidderID: 8
+        const tx = await devconAsOwner.settleRaffle([7])
+
+        const raffleWinners: number[][] = []
+        for (let i = 1; i < 8; i++) {
+          raffleWinners.push([i])
+        }
+        await emitsEvents(tx, 'NewRaffleWinner', ...raffleWinners)
+      })
+    })
   })
 
   describe('claim', function () {
@@ -430,15 +472,6 @@ describe('Devcon6', function () {
 
       expect(await provider.getBalance(bidderAddress)).to.be.equal(bidderBalance.add(reservePrice))
     })
-
-    async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
-      for (let i = 1; i <= bidCount; i++) {
-        const bid = await getBidByID(i)
-        if (bid.winType === winType) {
-          return bid
-        }
-      }
-    }
   })
 
   describe('claimProceeds', function () {
@@ -533,17 +566,85 @@ describe('Devcon6', function () {
 
     // Returns amount transferred to owner by claimProceeds method
     async function claimProceeds(): Promise<BigNumber> {
-      const balanceBeforeClaim = await wallets[1].getBalance()
-      const tx = await devconAsOwner.claimProceeds()
-      const txCost = await calculateTxCost(tx)
-      const balanceAfterClaim = await wallets[1].getBalance()
-      return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+      return calculateTransferredAmount(devconAsOwner.claimProceeds)
+    }
+  })
+
+  describe('withdrawUnclaimedFunds', function () {
+    it('reverts if called not by owner', async function () {
+      await expect(devcon.withdrawUnclaimedFunds())
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if claiming has not been closed yet', async function () {
+      await bidAndSettleRaffle(2, [])
+
+      await expect(devconAsOwner.withdrawUnclaimedFunds())
+        .to.be.revertedWith('Devcon6: is in invalid state')
+    })
+
+    it('transfers unclaimed funds', async function () {
+      await bidAndSettleRaffle(10, [1])
+      await devconAsOwner.claimProceeds()
+
+      await endClaiming(devconAsOwner)
+
+      const unclaimedFunds = reservePrice.mul(2)
+      expect(await withdrawUnclaimedFunds()).to.be.equal(unclaimedFunds)
+    })
+
+    it('transfers remaining unclaimed funds', async function () {
+      await bidAndSettleRaffle(10, [1])
+      await devconAsOwner.claimProceeds()
+
+      const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
+      await devconAsOwner.claim(goldenBid.bidderID)
+
+      await endClaiming(devconAsOwner)
+
+      expect(await withdrawUnclaimedFunds()).to.be.equal(reservePrice)
+    })
+
+    async function endClaiming(devcon: Devcon6) {
+      const endTime = await devcon.claimingEndTime()
+      await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     }
 
-    async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
-      const txReceipt = await tx.wait()
-      return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+    // Returns amount transferred to owner by withdrawUnclaimedFunds method
+    async function withdrawUnclaimedFunds(): Promise<BigNumber> {
+      return calculateTransferredAmount(devconAsOwner.withdrawUnclaimedFunds)
     }
+  })
+
+  describe('rescueTokens', function () {
+    let exampleToken: ExampleToken
+
+    beforeEach(async function () {
+      ({ exampleToken, devcon, provider } = await loadFixture(devcon6FixtureWithToken))
+      devconAsOwner = devcon.connect(wallets[1])
+    })
+
+    describe('when called not by owner', function () {
+      it('reverts', async function () {
+        await expect(devcon.rescueTokens(exampleToken.address))
+          .to.be.revertedWith('Ownable: caller is not the owner')
+      })
+    })
+
+    describe('when balance for given token equals zero', function () {
+      it('reverts', async function () {
+        await expect(devconAsOwner.rescueTokens(exampleToken.address))
+          .to.be.revertedWith('Devcon6: no tokens for given address')
+      })
+    })
+
+    it('transfers tokens', async function () {
+      await exampleToken.transfer(devcon.address, 100)
+      const balanceBeforeRescue = await exampleToken.balanceOf(wallets[1].address)
+
+      await devconAsOwner.rescueTokens(exampleToken.address)
+      expect(await exampleToken.balanceOf(wallets[1].address)).to.be.equal(balanceBeforeRescue.add(100))
+    })
   })
 
   describe('getState', function () {
@@ -611,11 +712,11 @@ describe('Devcon6', function () {
     })
   })
 
-  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]) {
+  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(devconAsOwner)
     await devconAsOwner.settleAuction(auctionWinners)
-    await devconAsOwner.settleRaffle(randomBigNumbers(1))
+    return devconAsOwner.settleRaffle(randomBigNumbers(1))
   }
 
   async function endBidding(devcon: Devcon6) {
@@ -624,8 +725,8 @@ describe('Devcon6', function () {
     await network.provider.send('evm_mine')
   }
 
-  async function settleAuction(auctionWinners: BigNumberish[]) {
-    await devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+  async function settleAuction(auctionWinners: BigNumberish[]): Promise<ContractTransaction> {
+    return devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
   }
 
   async function bid(walletCount: number) {
@@ -641,5 +742,42 @@ describe('Devcon6', function () {
   async function getBidByID(bidID: number): Promise<Bid> {
     const bidderAddress = await devconAsOwner.getBidderAddress(bidID)
     return devconAsOwner.getBid(bidderAddress)
+  }
+
+  async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
+    for (let i = 1; i <= bidCount; i++) {
+      const bid = await getBidByID(i)
+      if (bid.winType === winType) {
+        return bid
+      }
+    }
+  }
+
+  async function calculateTransferredAmount(transaction: () => Promise<ContractTransaction>): Promise<BigNumber> {
+    const balanceBeforeClaim = await wallets[1].getBalance()
+    const tx = await transaction()
+    const txCost = await calculateTxCost(tx)
+    const balanceAfterClaim = await wallets[1].getBalance()
+    return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
+  }
+
+  async function calculateTxCost(tx: ContractTransaction): Promise<BigNumber> {
+    const txReceipt = await tx.wait()
+    return txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice)
+  }
+
+  async function emitsEvents(tx: ContractTransaction, eventName: string, ...args: any[][]) {
+    const txReceipt = await tx.wait()
+    const filteredEvents = txReceipt.events.filter((event) => event.event === eventName)
+    expect(filteredEvents.length).to.be.equal(args.length)
+
+    filteredEvents.forEach((event, index) => {
+      expect(event.event).to.be.equal(eventName)
+
+      expect(event.args.length).to.be.equal(args[index].length)
+      event.args.forEach((value, j) => {
+        expect(value).to.be.equal(args[index][j])
+      })
+    })
   }
 })

@@ -3,12 +3,16 @@
 pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
+    using SafeERC20 for IERC20;
+
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
 
@@ -55,7 +59,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _;
     }
 
-    event NewBid(address bidder, uint256 bidID, uint256 bidAmount);
+    event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
+    event NewAuctionWinner(uint256 bidderID);
+    event NewRaffleWinner(uint256 bidderID);
+    event NewGoldenTicketWinner(uint256 bidderID);
 
     function bid() external payable onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
@@ -117,6 +124,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             lastBidderID = bidderID;
 
             setBidWinType(bidderID, WinType.AUCTION);
+            emit NewAuctionWinner(bidderID);
+
             removeRaffleParticipant(bidderID - 1);
         }
     }
@@ -171,7 +180,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             randomNumber
         );
 
-        setBidWinType(_raffleParticipants[winnerIndex], WinType.GOLDEN_TICKET);
+        uint256 bidderID = _raffleParticipants[winnerIndex];
+        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
+        emit NewGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
         return (participantsLength - 1, randomNumber >> 32);
@@ -181,7 +192,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         private
     {
         for (uint256 i = 0; i < participantsLength; ++i) {
-            setBidWinType(_raffleParticipants[i], WinType.RAFFLE);
+            uint256 bidderID = _raffleParticipants[i];
+            setBidWinType(bidderID, WinType.RAFFLE);
+            emit NewRaffleWinner(bidderID);
         }
     }
 
@@ -214,7 +227,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
                 randomNumber
             );
 
-            setBidWinType(_raffleParticipants[winnerIndex], WinType.RAFFLE);
+            uint256 bidderID = _raffleParticipants[winnerIndex];
+            setBidWinType(bidderID, WinType.RAFFLE);
+            emit NewRaffleWinner(bidderID);
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
@@ -300,6 +315,23 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         totalAmount += raffleWinnersCount * _reservePrice;
 
         payable(owner()).transfer(totalAmount);
+    }
+
+    function withdrawUnclaimedFunds()
+        external
+        onlyOwner
+        onlyInState(State.CLAIMING_CLOSED)
+    {
+        uint256 unclaimedFunds = address(this).balance;
+        payable(owner()).transfer(unclaimedFunds);
+    }
+
+    function rescueTokens(address tokenAddress) external onlyOwner {
+        IERC20 token = IERC20(tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+
+        require(balance > 0, "Devcon6: no tokens for given address");
+        token.transfer(owner(), balance);
     }
 
     function getState() public view returns (State) {

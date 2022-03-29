@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Transactions } from 'src/components/Auction/AuctionEnum'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
+import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -11,12 +11,18 @@ const header = {
   [Transactions.Withdraw]: 'Withdraw',
 }
 
+const description = {
+  [Transactions.Place]: 'Initiate and confirm bid transaction in your wallet.',
+  [Transactions.Bump]: 'Bump bid and confirm transaction in your wallet.',
+  [Transactions.Withdraw]: 'Initiate and confirm withdrawn transaction in your wallet.',
+}
+
 const transactionSteps = (action: Transactions) => {
   return [
     {
       default: {
         name: `${heading[action]}`,
-        description: 'Initiate and confirm bid transaction in your wallet.',
+        description: `${description[action]}`,
       },
       failed: {
         name: `Transaction failed`,
