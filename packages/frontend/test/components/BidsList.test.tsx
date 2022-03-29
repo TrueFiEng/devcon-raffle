@@ -2,7 +2,6 @@
 // Some tests run assertions in external functions
 
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { BidsListSection } from 'src/components/BidsList/BidsList'
 import { BidWithPlace } from 'src/models/Bid'

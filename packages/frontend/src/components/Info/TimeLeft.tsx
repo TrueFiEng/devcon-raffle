@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useState } from 'react'
-import React from 'react'
 import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 import styled from 'styled-components'

@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 

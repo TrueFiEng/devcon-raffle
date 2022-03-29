@@ -1,12 +1,12 @@
-import React, { ReactNode } from 'react'
+import { ReactNode, MouseEvent } from 'react'
 import { Button } from 'src/components/Buttons/Button'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface TooltipButtonProps {
   color?: string
-  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void
-  onMouseDown?: (event?: React.MouseEvent<HTMLButtonElement>) => void
+  onClick?: (event?: MouseEvent<HTMLButtonElement>) => void
+  onMouseDown?: (event?: MouseEvent<HTMLButtonElement>) => void
   children?: ReactNode
 }
 
