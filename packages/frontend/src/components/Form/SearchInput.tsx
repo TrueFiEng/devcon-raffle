@@ -1,32 +1,25 @@
 import { useDebounce } from '@usedapp/core'
 import { useEffect, useState } from 'react'
+import { CloseButton } from 'src/components/Buttons/CloseButton'
+import { SearchIcon } from 'src/components/Icons/SearchIcon'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { CloseButton } from '../Buttons/CloseButton'
-import { SearchIcon } from '../Icons/SearchIcon'
 
 interface Props {
   setSearch: (search: string) => void
 }
 
-export const FilterHeaders = ({ setSearch }: Props) => {
+export const SearchInput = ({ setSearch }: Props) => {
   const [inputValue, setInputValue] = useState('')
   const search = useDebounce(inputValue, 500)
   useEffect(() => setSearch(search), [setSearch, search])
 
   return (
-    <Wrapper>
-      <SearchInputWrapper>
-        <SearchIcon />
-        <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
-        {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
-      </SearchInputWrapper>
-      <Select>
-        <option value="All">Show All</option>
-        <option value="Auction">First 100</option>
-      </Select>
-    </Wrapper>
+    <SearchInputWrapper>
+      <SearchIcon />
+      <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
+      {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
+    </SearchInputWrapper>
   )
 }
 
@@ -35,9 +28,10 @@ const SearchInputWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
-  width: 50%;
+  width: 100%;
   height: 50px;
   padding: 13px;
+  margin-bottom: 8px;
   border-width: 2px;
   border-style: solid;
   border-color: ${Colors.GreenLight};
@@ -75,14 +69,4 @@ const StyledInput = styled.input`
   &::placeholder {
     color: ${Colors.Grey};
   }
-`
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  column-gap: 24px;
-  margin-bottom: 8px;
-`
-const Select = styled.select`
-  width: 50%;
 `

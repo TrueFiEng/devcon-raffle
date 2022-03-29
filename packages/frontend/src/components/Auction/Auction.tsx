@@ -1,8 +1,7 @@
-import { BidsListSection } from 'src/components/BidsList/BidsList'
+import { UserActionSection } from 'src/components/Auction/UserActionSection'
+import { BidsListSection } from 'src/components/BidsList/BidsListSection'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { UserActionSection } from './UserActionSection'
 
 export const Auction = () => {
   return (

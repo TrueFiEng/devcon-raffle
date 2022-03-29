@@ -42,6 +42,7 @@ const BackBtn = styled.button`
   background-color: ${Colors.Transparent};
   color: ${Colors.GreenLight};
   border: 1px solid ${Colors.GreenLight};
+  padding: 0;
 
   &:hover,
   &:focus-visible,
