@@ -19,4 +19,5 @@ export const BidColumn = styled.span`
 export const AddressColumn = styled.span`
   grid-area: address;
   text-align: right;
+  z-index: 2;
 `
