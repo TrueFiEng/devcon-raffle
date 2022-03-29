@@ -27,6 +27,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     uint256[] _auctionWinners; // TODO pass by param to claimProceeds to save gas
     bool _proceedsClaimed;
+    uint256 _claimedFeesIndex;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -414,6 +415,34 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         totalAmount += raffleWinnersCount * _reservePrice;
 
         payable(owner()).transfer(totalAmount);
+    }
+
+    function claimFees(uint256 bidsNumber)
+        external
+        onlyOwner
+        onlyInState(State.RAFFLE_SETTLED)
+    {
+        uint256 claimedFeesIndex = _claimedFeesIndex;
+        uint256 feesNumber = _raffleParticipants.length;
+        require(
+            claimedFeesIndex < feesNumber,
+            "Devcon6: fees have already been claimed"
+        );
+
+        uint256 endIndex = claimedFeesIndex + bidsNumber;
+        if (endIndex > feesNumber) {
+            endIndex = feesNumber;
+        }
+
+        uint256 fee = 0;
+        for (uint256 i = claimedFeesIndex; i < endIndex; ++i) {
+            address bidderAddress = getBidderAddress(_raffleParticipants[i]);
+            uint256 bidAmount = _bids[bidderAddress].amount;
+            fee += (bidAmount * 2) / 100;
+        }
+
+        _claimedFeesIndex = endIndex;
+        payable(owner()).transfer(fee);
     }
 
     function withdrawUnclaimedFunds()
