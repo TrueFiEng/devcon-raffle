@@ -1,5 +1,6 @@
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button, CopyButton, RedirectButton } from 'src/components/Buttons'
+import { FormNarrow } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
@@ -37,12 +38,8 @@ export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
   )
 }
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
+const Container = styled(FormNarrow)`
   row-gap: 24px;
-  width: 100%;
-  max-width: 289px;
 `
 
 const TransactionIdWrapper = styled.div`
