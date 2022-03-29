@@ -372,8 +372,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 claimAmount;
         if (bidder.winType == WinType.RAFFLE) {
             claimAmount = bidder.amount - _reservePrice;
-        } else {
+        } else if (bidder.winType == WinType.GOLDEN_TICKET) {
             claimAmount = bidder.amount;
+        } else if (bidder.winType == WinType.LOSS) {
+            claimAmount = (bidder.amount * 98) / 100;
         }
 
         if (claimAmount > 0) {
