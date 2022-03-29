@@ -3,7 +3,7 @@ import { Signer, utils } from 'ethers'
 
 const HOUR = 3600
 export const reservePrice = utils.parseEther('0.15')
-const minBidIncrement = utils.parseEther('0.01')
+export const minBidIncrement = utils.parseEther('0.01')
 
 export async function deploy(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const devcon = await deployDevcon(biddingStartTime, owner)
