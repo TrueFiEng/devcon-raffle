@@ -1,8 +1,9 @@
-import { deploy, reservePrice } from './deploy'
+import { deploy, minBidIncrement } from './deploy'
 import { Devcon6 } from 'contracts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bidAsSigner } from 'scripts/utils/bid'
 import * as hre from 'hardhat'
+import { parseEther } from 'ethers/lib/utils'
 
 async function run() {
   const nodeProcess = hre.run('node')
@@ -25,8 +26,9 @@ async function run() {
 }
 
 async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
-  for (const signer of signers) {
-    await bidAsSigner(devcon, signer, reservePrice)
+  const initialBidAmount = parseEther('0.20')
+  for (let i = 0; i < signers.length; i++) {
+    await bidAsSigner(devcon, signers[i], initialBidAmount.add(minBidIncrement.mul(i)))
   }
 }
 
