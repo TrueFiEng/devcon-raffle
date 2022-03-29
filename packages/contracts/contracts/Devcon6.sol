@@ -294,6 +294,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             setBidWinType(bidderID, WinType.RAFFLE);
             emit NewRaffleWinner(bidderID);
         }
+        delete _raffleParticipants;
     }
 
     function selectRaffleWinners(

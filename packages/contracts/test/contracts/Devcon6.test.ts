@@ -230,28 +230,39 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: passed incorrect number of random numbers')
     })
 
-    it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
-      devconAsOwner = devcon.connect(owner())
+    describe('when amount of bidders is less than raffleWinnersCount', function () {
+      it('picks all participants as winners', async function () {
+        ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
+        devconAsOwner = devcon.connect(owner())
 
-      await bid(4)
+        await bid(4)
 
       await endBidding(devconAsOwner)
       await settleAuction()
 
-      // Golden ticket winner participant index generated from this number: 2, bidderID: 3
-      const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
-      await devconAsOwner.settleRaffle([randomNumber])
+        // Golden ticket winner participant index generated from this number: 2, bidderID: 3
+        const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
+        await devconAsOwner.settleRaffle([randomNumber])
 
-      for (let i = 1; i <= 4; i++) {
-        const bid = await getBidByID(i)
+        for (let i = 1; i <= 4; i++) {
+          const bid = await getBidByID(i)
 
-        if (bid.bidderID.eq(3)) {
-          expect(bid.winType).to.be.eq(WinType.goldenTicket)
-        } else {
-          expect(bid.winType).to.be.eq(WinType.raffle)
+          if (bid.bidderID.eq(3)) {
+            expect(bid.winType).to.be.eq(WinType.goldenTicket)
+          } else {
+            expect(bid.winType).to.be.eq(WinType.raffle)
+          }
         }
-      }
+      })
+
+      it('removes raffle participants', async function () {
+        ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
+        devconAsOwner = devcon.connect(wallets[1])
+
+        await bidAndSettleRaffle(4, [])
+        const raffleParticipants = await devconAsOwner.getRaffleParticipants()
+        expect(raffleParticipants.length).to.be.equal(0)
+      })
     })
 
     it('picks correct numbers of winners', async function () {
