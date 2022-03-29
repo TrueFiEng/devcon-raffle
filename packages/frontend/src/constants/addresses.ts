@@ -1,5 +1,6 @@
 import { ChainId } from '@usedapp/core'
-import { SupportedChainId } from 'src/config/config'
+
+import { SupportedChainId } from './chainIDs'
 
 export const ADDRESSES: Record<string, Record<SupportedChainId, string>> = {
   multicall: {

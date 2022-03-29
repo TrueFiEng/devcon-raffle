@@ -1,4 +1,7 @@
-import { Arbitrum, ArbitrumRinkeby, Config as UseDAppConfig, Localhost } from '@usedapp/core'
+import { Arbitrum, ArbitrumRinkeby, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
+
+import { ADDRESSES } from '../constants/addresses'
+import { NODE_URLS } from '../constants/nodeUrls'
 
 interface Config {
   useDAppConfig: UseDAppConfig
@@ -18,11 +21,9 @@ function getConfig(environment: string): Config {
 function getDevConfig(): Config {
   return {
     useDAppConfig: {
+      ...commonUseDAppConfig,
       readOnlyChainId: ArbitrumRinkeby.chainId,
-      readOnlyUrls: {
-        [ArbitrumRinkeby.chainId]: 'https://rinkeby.arbitrum.io/rpc',
-      },
-      networks: [Localhost, ArbitrumRinkeby, Arbitrum],
+      networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
     },
   }
 }
@@ -30,28 +31,14 @@ function getDevConfig(): Config {
 function getProdConfig(): Config {
   return {
     useDAppConfig: {
+      ...commonUseDAppConfig,
       readOnlyChainId: Arbitrum.chainId,
-      readOnlyUrls: {
-        [Arbitrum.chainId]: 'https://arb1.arbitrum.io/rpc',
-      },
       networks: [Arbitrum],
     },
   }
 }
 
-
-
-// export type SupportedChainId = ChainId.Hardhat | ChainId.Arbitrum | ChainId.ArbitrumRinkeby
-// const supportedChains = [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Hardhat]
-//
-// export const CONFIG = {
-//   useDAppConfig: {
-//     multicallAddresses: ADDRESSES.multicall,
-//     networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
-//   },
-//   allowedNetworks: import.meta.env.MODE === 'development' ? supportedChains : [ChainId.Arbitrum],
-// }
-//
-// export function isSupportedChain(chainId: ChainId): chainId is SupportedChainId {
-//   return supportedChains.includes(chainId)
-// }
+const commonUseDAppConfig = {
+  multicallAddresses: ADDRESSES.multicall,
+  readOnlyUrls: NODE_URLS,
+}
