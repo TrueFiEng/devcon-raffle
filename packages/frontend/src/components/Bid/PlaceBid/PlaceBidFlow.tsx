@@ -12,7 +12,7 @@ export const PlaceBidFlow = () => {
   const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
   const minimumBid = parseEther('0.15')
   const [bid, setBid] = useState(minimumBid)
-  const { placeBid, state } = useBid()
+  const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
 
   const bidAction: TransactionAction = {
@@ -21,6 +21,7 @@ export const PlaceBidFlow = () => {
       await placeBid(bid)
     },
     state: state,
+    resetState: resetState,
   }
 
   return (
