@@ -425,6 +425,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         uint256 claimedFeesIndex = _claimedFeesIndex;
         uint256 feesNumber = _raffleParticipants.length;
+        require(feesNumber > 0, "Devcon6: there are no fees to claim");
         require(
             claimedFeesIndex < feesNumber,
             "Devcon6: fees have already been claimed"

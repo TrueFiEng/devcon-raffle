@@ -667,11 +667,11 @@ describe('Devcon6', function () {
     })
 
     describe('when there are no non-winning bids', function () {
-      it('does not transfer fees', async function () {
+      it('reverts', async function () {
         await bidAndSettleRaffle(6, [])
 
         await expect(devconAsOwner.claimFees(6))
-          .to.be.revertedWith('Devcon6: fees have already been claimed')
+          .to.be.revertedWith('Devcon6: there are no fees to claim')
       })
     })
 
