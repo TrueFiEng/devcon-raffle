@@ -82,11 +82,26 @@ export const GlobalStyles = createGlobalStyle`
     line-height: 1.5;
     margin: 0;
   }
+
   button, a {
     cursor: pointer;
   }
 
   button:disabled {
     cursor: not-allowed;
+  }
+
+  body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    width: 6px;
+    border-radius: 0;
+    background-color: ${Colors.GreenDark};
+  }
+
+  body::-webkit-scrollbar-track {
+    background: ${Colors.Transparent};
   }
 `
