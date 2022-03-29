@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { ADDRESSES } from 'src/constants/addresses'
 
-import { isSupportedChain } from '../config/config'
+import { isSupportedChain } from '../constants/chainIDs'
 
 import { useChainId } from './useChainId'
 

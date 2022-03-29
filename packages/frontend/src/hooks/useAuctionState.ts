@@ -1,6 +1,5 @@
-import { ChainId, useEthers } from '@usedapp/core'
+import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
 import { useState } from 'react'
-import { CONFIG } from 'src/config/config'
 
 export type AuctionState = 'NotConnected' | 'WrongNetwork' | 'BiddingFlow'
 
@@ -14,21 +13,29 @@ enum ContractState {
 }
 
 export function useAuctionState(): AuctionState {
-  const { chainId } = useEthers()
+  const { account, chainId } = useEthers()
+  const { networks } = useConfig()
   const [contractState] = useState(ContractState.BIDDING_OPEN)
 
   if (contractState === ContractState.BIDDING_OPEN) {
-    return getStateUsingWallet(chainId, 'BiddingFlow')
+    return getStateUsingWallet(account, chainId, networks, 'BiddingFlow')
   }
 
   throw new Error('unknown state')
 }
 
-function getStateUsingWallet(chainId: ChainId | undefined, state: AuctionState) {
-  if (!chainId) {
+function getStateUsingWallet(
+  account: string | null | undefined,
+  chainId: ChainId | undefined,
+  networks: Chain[] | undefined,
+  state: AuctionState
+) {
+  if (!account) {
     return 'NotConnected'
   }
-  if (!CONFIG.allowedNetworks.includes(chainId)) {
+
+  const allowedChainIDs = networks?.map((n) => n.chainId)
+  if (!chainId || !allowedChainIDs || !allowedChainIDs.includes(chainId)) {
     return 'WrongNetwork'
   }
 
