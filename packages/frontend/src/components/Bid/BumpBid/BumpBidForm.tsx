@@ -71,7 +71,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
 }
 
 const BumpFormWrapper = styled(FormWrapper)`
-  padding: 0 115px;
+  padding: 0 115px 0 170px;
   justify-content: center;
 `
 
