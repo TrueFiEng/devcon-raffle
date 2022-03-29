@@ -1,4 +1,3 @@
-import React from 'react'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'

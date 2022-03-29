@@ -1,12 +1,12 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import React from 'react'
+import { ReactNode } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface TooltipProps {
   side?: 'top' | 'right' | 'bottom' | 'left'
-  tooltip: React.ReactNode
-  children: React.ReactNode
+  tooltip: ReactNode
+  children: ReactNode
   onOpenChange?: (open: boolean) => void
 }
 

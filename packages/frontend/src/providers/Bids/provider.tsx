@@ -1,7 +1,6 @@
 import { Interface } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { ReactNode, useMemo } from 'react'
-import React from 'react'
 import { DEVCON6_ABI } from 'src/constants/abis'
 import { BidWithPlace } from 'src/models/Bid'
 import { useBidEvents } from 'src/providers/Bids/useBidEvents'

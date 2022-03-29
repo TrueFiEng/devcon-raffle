@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
-import React from 'react'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
 import { generateMockBids } from 'test/mocks/generateMockBids'
 

@@ -1,7 +1,6 @@
 import { Log } from '@ethersproject/providers'
 import { parseEther } from '@ethersproject/units'
 import { renderHook } from '@testing-library/react-hooks'
-import React from 'react'
 import { useBids } from 'src/hooks/useBids'
 import { BidsProvider } from 'src/providers/Bids'
 import { createMockBidLog } from 'test/mocks/createMockBidLog'
