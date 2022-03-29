@@ -418,22 +418,22 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(totalAmount);
     }
 
-    function claimFees(uint256 bidsNumber)
+    function claimFees(uint256 bidsCount)
         external
         onlyOwner
         onlyInState(State.RAFFLE_SETTLED)
     {
         uint256 claimedFeesIndex = _claimedFeesIndex;
-        uint256 feesNumber = _raffleParticipants.length;
-        require(feesNumber > 0, "Devcon6: there are no fees to claim");
+        uint256 feesCount = _raffleParticipants.length;
+        require(feesCount > 0, "Devcon6: there are no fees to claim");
         require(
-            claimedFeesIndex < feesNumber,
+            claimedFeesIndex < feesCount,
             "Devcon6: fees have already been claimed"
         );
 
-        uint256 endIndex = claimedFeesIndex + bidsNumber;
-        if (endIndex > feesNumber) {
-            endIndex = feesNumber;
+        uint256 endIndex = claimedFeesIndex + bidsCount;
+        if (endIndex > feesCount) {
+            endIndex = feesCount;
         }
 
         uint256 fee = 0;
