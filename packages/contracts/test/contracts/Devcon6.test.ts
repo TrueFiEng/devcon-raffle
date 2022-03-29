@@ -678,7 +678,7 @@ describe('Devcon6', function () {
     describe('when claiming using multiple transactions', function () {
       it('transfers correct amount', async function () {
         await bidAndSettleRaffle(15, [1])
-        const singleBidFee = reservePrice.mul(2).div(100)
+        const singleBidFee = calculateFee(reservePrice)
 
         let claimAmount = singleBidFee.mul(2)
         expect(await claimFees(2)).to.be.equal(claimAmount)
@@ -699,16 +699,33 @@ describe('Devcon6', function () {
         const bids = await getAllBidsByWinType(16, WinType.loss)
         let claimAmount = BigNumber.from(0)
         bids.forEach((bid) => {
-          claimAmount = claimAmount.add(bid.amount.mul(2).div(100))
+          claimAmount = claimAmount.add(calculateFee(bid.amount))
         })
 
         expect(await claimFees(bids.length)).to.be.equal(claimAmount)
       })
     })
 
+    describe('when bid amount is not divisible by 100', function () {
+      it('transfers correct amount', async function () {
+        const bidAmount = reservePrice.add(21)
+        await bid(9)
+        await bidAsWallet(wallets[9], bidAmount)
+
+        // Non-winning bidderID from random number: 10
+        await bidAndSettleRaffle(0, [2], [9])
+
+        expect(await claimFees(1)).to.be.equal(calculateFee(bidAmount))
+      })
+    })
+
     // Returns amount transferred to owner by claimFees method
     async function claimFees(bidsNumber: number): Promise<BigNumber> {
       return calculateTransferredAmount(() => devconAsOwner.claimFees(bidsNumber))
+    }
+
+    function calculateFee(bidAmount: BigNumber): BigNumber {
+      return bidAmount.sub(bidAmount.mul(98).div(100))
     }
   })
 

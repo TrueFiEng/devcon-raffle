@@ -440,7 +440,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         for (uint256 i = claimedFeesIndex; i < endIndex; ++i) {
             address bidderAddress = getBidderAddress(_raffleParticipants[i]);
             uint256 bidAmount = _bids[bidderAddress].amount;
-            fee += (bidAmount * 2) / 100;
+            fee += bidAmount - (bidAmount * 98) / 100;
         }
 
         _claimedFeesIndex = endIndex;
