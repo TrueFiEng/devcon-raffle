@@ -7,8 +7,6 @@ interface Config {
   useDAppConfig: UseDAppConfig
 }
 
-export const CONFIG = getConfig(import.meta.env.MODE)
-
 function getConfig(environment: string): Config {
   switch (environment) {
     case 'development':
@@ -42,3 +40,5 @@ const commonUseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
   readOnlyUrls: NODE_URLS,
 }
+
+export const CONFIG = getConfig(import.meta.env.MODE)
