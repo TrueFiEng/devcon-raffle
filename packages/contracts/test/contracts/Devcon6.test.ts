@@ -640,6 +640,78 @@ describe('Devcon6', function () {
     })
   })
 
+  describe('claimFees', function () {
+    describe('when called not by owner', function () {
+      it('reverts', async function () {
+        await expect(devcon.claimFees(10))
+          .to.be.revertedWith('Ownable: caller is not the owner')
+      })
+    })
+
+    describe('when raffle has not been settled yet', function () {
+      it('reverts', async function () {
+        await bid(2)
+        await expect(devconAsOwner.claimFees(2))
+          .to.be.revertedWith('Devcon6: is in invalid state')
+      })
+    })
+
+    describe('when fees have already been claimed', function () {
+      it('reverts', async function () {
+        await bidAndSettleRaffle(10, [1])
+        await devconAsOwner.claimFees(1)
+
+        await expect(devconAsOwner.claimFees(1))
+          .to.be.revertedWith('Devcon6: fees have already been claimed')
+      })
+    })
+
+    describe('when there are no non-winning bids', function () {
+      it('does not transfer fees', async function () {
+        await bidAndSettleRaffle(6, [])
+
+        await expect(devconAsOwner.claimFees(6))
+          .to.be.revertedWith('Devcon6: fees have already been claimed')
+      })
+    })
+
+    describe('when claiming using multiple transactions', function () {
+      it('transfers correct amount', async function () {
+        await bidAndSettleRaffle(15, [1])
+        const singleBidFee = reservePrice.mul(2).div(100)
+
+        let claimAmount = singleBidFee.mul(2)
+        expect(await claimFees(2)).to.be.equal(claimAmount)
+
+        claimAmount = singleBidFee.mul(4)
+        expect(await claimFees(4)).to.be.equal(claimAmount)
+      })
+    })
+
+    describe('when claiming using single transactions', function () {
+      it('transfers correct amount', async function () {
+        const additionalBidAmount = parseEther('0.1')
+        for (let i = 0; i < 16; i++) {
+          await bidAsWallet(wallets[i], reservePrice.add(additionalBidAmount.mul(i)))
+        }
+        await bidAndSettleRaffle(0, [1])
+
+        const bids = await getAllBidsByWinType(16, WinType.loss)
+        let claimAmount = BigNumber.from(0)
+        bids.forEach((bid) => {
+          claimAmount = claimAmount.add(bid.amount.mul(2).div(100))
+        })
+
+        expect(await claimFees(bids.length)).to.be.equal(claimAmount)
+      })
+    })
+
+    // Returns amount transferred to owner by claimFees method
+    async function claimFees(bidsNumber: number): Promise<BigNumber> {
+      return calculateTransferredAmount(() => devconAsOwner.claimFees(bidsNumber))
+    }
+  })
+
   describe('getState', function () {
     it('waiting for bidding', async function () {
       const currentTime = await getLatestBlockTimestamp(provider);
