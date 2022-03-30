@@ -1,3 +1,4 @@
+import { EmptyBid } from 'src/constants/emptyBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -17,7 +18,7 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
     <BidsEntryRow isUser={isUser} view={view}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{bid.amount ? formatEtherAmount(bid.amount) + ' ETH' : '-'} </BidColumn>
+      <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
         {bid.bidderAddress === '-' ? (
           bid.bidderAddress
