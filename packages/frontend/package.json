@@ -1,5 +1,5 @@
 {
-  "name": "devcon-raffle-frontend",
+  "name": "@devcon-raffle/frontend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
