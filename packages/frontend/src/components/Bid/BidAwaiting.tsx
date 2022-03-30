@@ -18,6 +18,6 @@ export const BidAwaiting = () => {
 }
 
 const BidStartWrapper = styled(FormWrapper)`
-  padding: 0 115px;
+  padding: 0 0 0 135px;
   justify-content: center;
 `
