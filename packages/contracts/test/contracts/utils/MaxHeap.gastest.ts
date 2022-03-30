@@ -6,11 +6,11 @@ import { BigNumberish, ContractTransaction } from 'ethers'
 
 const RUNS = 20
 
-describe('MaxHeap - Gas Usage', function() {
+describe('MaxHeap - Gas Usage', function () {
   const loadFixture = setupFixtureLoader()
 
-  describe('insert', function() {
-    it('adding 20th key', async function() {
+  describe('insert', function () {
+    it('adding 20th key', async function () {
       await measure('insert()', async () => {
         const { heap } = await loadFixture(maxHeapMockFixture)
         const [last, ...keys] = randomBigNumbers(20)
@@ -20,8 +20,8 @@ describe('MaxHeap - Gas Usage', function() {
     })
   })
 
-  describe('increaseKey', function() {
-    it('increasing key in heap of size 20', async function() {
+  describe('increaseKey', function () {
+    it('increasing key in heap of size 20', async function () {
       await measure('increaseKey()', async () => {
         const { heap } = await loadFixture(maxHeapMockFixture)
         const keys = randomBigNumbers(20)
@@ -33,8 +33,8 @@ describe('MaxHeap - Gas Usage', function() {
     })
   })
 
-  describe('removeAll', function() {
-    it('removing all keys in descending order from heap of size 20', async function() {
+  describe('removeAll', function () {
+    it('removing all keys in descending order from heap of size 20', async function () {
       await measure('removeAll()', async () => {
         const { heap } = await loadFixture(maxHeapMockFixture)
         const keys = randomBigNumbers(20)
@@ -48,10 +48,9 @@ describe('MaxHeap - Gas Usage', function() {
   async function measure(name: string, experiment: () => Promise<number>) {
     const results = []
     for (let i = 0; i < RUNS; i++) {
-      process.stdout.write(".")
+      process.stdout.write('.')
       results.push(await experiment())
     }
-
 
     const max = Math.max(...results)
     const min = Math.min(...results)
