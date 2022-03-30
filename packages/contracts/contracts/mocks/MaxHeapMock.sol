@@ -9,6 +9,8 @@ contract MaxHeapMock {
 
     uint256[] heap;
 
+    event ReturnValue(uint256 value);
+
     function insert(uint256 key) public {
         heap.insert(key);
     }
@@ -17,8 +19,8 @@ contract MaxHeapMock {
         heap.increaseKey(oldValue, newValue);
     }
 
-    function removeMax() public returns (uint256 max) {
-        return heap.removeMax();
+    function removeMax() public {
+        emit ReturnValue(heap.removeMax());
     }
 
     function getArray() public view returns (uint256[] memory) {
