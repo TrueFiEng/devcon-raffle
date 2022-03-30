@@ -20,16 +20,17 @@ library MaxHeap {
                 return i;
             }
         }
-        revert("Heap: key with given value not found");
+        revert("MaxHeap: key with given value not found");
     }
 
     function increaseKeyAt(uint256[] storage heap, uint256 index, uint256 newValue) public {
+        require(newValue > heap[index], "MaxHeap: new value must be bigger than old value");
         heap[index] = newValue;
         bubbleUp(heap, index, newValue);
     }
 
     function removeMax(uint256[] storage heap) public returns (uint256 max) {
-        require(heap.length > 0, "Heap: cannot remove max element from empty heap");
+        require(heap.length > 0, "MaxHeap: cannot remove max element from empty heap");
         max = heap[0];
         heap[0] = heap[heap.length - 1];
         heap.pop();
