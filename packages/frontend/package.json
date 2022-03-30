@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@devcon-raffle/contracts": "0.0.1",
     "@ethersproject/abi": "^5.6.0",
     "@ethersproject/bignumber": "^5.5.0",
     "@ethersproject/hash": "^5.6.0",
