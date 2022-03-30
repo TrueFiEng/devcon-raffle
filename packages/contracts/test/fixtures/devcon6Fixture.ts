@@ -1,6 +1,6 @@
 import { Devcon6__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
-import { MockProvider } from '@ethereum-waffle/provider/dist/esm/MockProvider'
+import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { WEEK } from 'utils/consts'
 
