@@ -1,7 +1,9 @@
 {
-  "name": "devcon-raffle-contracts",
+  "name": "@devcon-raffle/contracts",
   "version": "0.0.1",
   "private": true,
+  "main": "build/index.ts",
+  "types": "build/index.ts",
   "scripts": {
     "clean": "rm -rf ./build",
     "typecheck": "tsc --noEmit",

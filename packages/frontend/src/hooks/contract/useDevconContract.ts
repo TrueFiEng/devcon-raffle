@@ -1,9 +1,16 @@
-import { DEVCON6_ABI } from '../../constants/abis'
+import { useEthers } from '@usedapp/core'
 import { useAddresses } from '../useAddresses'
-
-import { useContract } from './useContract'
+import {Devcon6, Devcon6Json} from '@devcon-raffle/contracts'
+import {Contract, utils } from 'ethers'
 
 export function useDevconContract() {
   const { devcon } = useAddresses('devcon')
-  return useContract(devcon, DEVCON6_ABI)
+  const { library } = useEthers()
+
+  if (!library) {
+    return undefined
+  }
+
+  const devconInterface = new utils.Interface(Devcon6Json)
+  return new Contract(devcon, devconInterface) as Devcon6
 }
