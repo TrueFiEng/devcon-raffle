@@ -1,3 +1,4 @@
+import { EmptyBid } from 'src/constants/emptyBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -8,23 +9,24 @@ import styled, { css } from 'styled-components'
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 
 interface Props {
-  bid: BidWithPlace
+  bid?: BidWithPlace
+  emptyBid?: EmptyBid
   isUser?: boolean
   view?: 'short' | 'full'
 }
 
-export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
+export const BidListEntry = ({ bid, emptyBid, isUser, view = 'full' }: Props) => {
   return (
     <BidsEntryRow isUser={isUser}>
-      <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{bid.amount ? formatEtherAmount(bid.amount) + ' ETH' : '-'} </BidColumn>
+      <PlaceColumn>{bid ? bid.place : emptyBid?.place}.</PlaceColumn>
+      <BidColumn>{bid ? formatEtherAmount(bid.amount) + ' ETH' : emptyBid?.amount} </BidColumn>
       <AddressColumn>
-        {bid.bidderAddress === '-' ? (
-          bid.bidderAddress
-        ) : (
+        {bid ? (
           <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
             {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
           </AddressLink>
+        ) : (
+          emptyBid?.bidderAddress
         )}
       </AddressColumn>
     </BidsEntryRow>

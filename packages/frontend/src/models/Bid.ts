@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 export interface Bid {
   bidderAddress: string
-  amount?: BigNumber
+  amount: BigNumber
 }
 
 export interface BidWithPlace extends Bid {

@@ -23,7 +23,7 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
   return (
     <BidList>
       {bids.length === 0 ? (
-        emptyBids.map((bid) => <BidListEntry key={bid.place} bid={bid} />)
+        emptyBids.map((emptyBid) => <BidListEntry key={emptyBid.place} emptyBid={emptyBid} />)
       ) : (
         <>
           {bids.map((bid) => (
