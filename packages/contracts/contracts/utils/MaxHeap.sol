@@ -2,19 +2,7 @@
 
 pragma solidity 0.8.10;
 
-library Heap {
-    function parent(uint256 index) internal pure returns (uint256) {
-        return (index - 1) / 2;
-    }
-
-    function left(uint256 index) internal pure returns (uint256) {
-        return 2 * index + 1;
-    }
-
-    function right(uint256 index) internal pure returns (uint256) {
-        return 2 * index + 2;
-    }
-
+library MaxHeap {
     function insert(uint256[] storage heap, uint256 key) public {
         uint256 index = heap.length;
         heap.push(key);
@@ -73,5 +61,17 @@ library Heap {
             index = biggest;
         }
         return max;
+    }
+
+    function parent(uint256 index) internal pure returns (uint256) {
+        return (index - 1) / 2;
+    }
+
+    function left(uint256 index) internal pure returns (uint256) {
+        return 2 * index + 1;
+    }
+
+    function right(uint256 index) internal pure returns (uint256) {
+        return 2 * index + 2;
     }
 }
