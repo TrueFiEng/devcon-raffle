@@ -6,11 +6,7 @@ library MaxHeap {
     function insert(uint256[] storage heap, uint256 key) public {
         uint256 index = heap.length;
         heap.push(key);
-
-        while (index > 0 && heap[parent(index)] < heap[index]) {
-            (heap[parent(index)], heap[index]) = (key, heap[parent(index)]);
-            index = parent(index);
-        }
+        bubbleUp(heap, index, key);
     }
 
     function increaseKey(uint256[] storage heap, uint256 oldValue, uint256 newValue) public {
@@ -29,11 +25,7 @@ library MaxHeap {
 
     function increaseKeyAt(uint256[] storage heap, uint256 index, uint256 newValue) public {
         heap[index] = newValue;
-
-        while (index > 0 && heap[parent(index)] < heap[index]) {
-            (heap[parent(index)], heap[index]) = (newValue, heap[parent(index)]);
-            index = parent(index);
-        }
+        bubbleUp(heap, index, newValue);
     }
 
     function removeMax(uint256[] storage heap) public returns (uint256 max) {
@@ -61,6 +53,13 @@ library MaxHeap {
             index = biggest;
         }
         return max;
+    }
+
+    function bubbleUp(uint256[] storage heap, uint256 index, uint256 key) internal {
+        while (index > 0 && heap[parent(index)] < heap[index]) {
+            (heap[parent(index)], heap[index]) = (key, heap[parent(index)]);
+            index = parent(index);
+        }
     }
 
     function parent(uint256 index) internal pure returns (uint256) {
