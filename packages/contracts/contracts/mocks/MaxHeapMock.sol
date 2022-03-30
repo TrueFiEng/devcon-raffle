@@ -23,6 +23,13 @@ contract MaxHeapMock {
         emit ReturnValue(heap.removeMax());
     }
 
+    function removeAll() public {
+        uint256 size = heap.length;
+        for (uint256 i = 0; i < size; ++i) {
+            heap.removeMax();
+        }
+    }
+
     function getArray() public view returns (uint256[] memory) {
         return heap;
     }
