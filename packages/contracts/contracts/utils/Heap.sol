@@ -51,30 +51,27 @@ library Heap {
     function removeMax(uint256[] storage heap) public returns (uint256 max) {
         require(heap.length > 0, "Heap: cannot remove max element from empty heap");
         max = heap[0];
-        if (heap.length == 1) {
-            heap.pop();
-            return max;
-        }
-
         heap[0] = heap[heap.length - 1];
         heap.pop();
-        maxHeapify(heap, 0);
-        return max;
-    }
 
-    function maxHeapify(uint256[] storage heap, uint256 i) internal {
-        uint256 l = left(i);
-        uint256 r = right(i);
-        uint256 biggest = i;
-        if (l < heap.length && heap[l] > heap[i]) {
-            biggest = l;
+        uint256 index = 0;
+        while (true) {
+            uint256 l = left(index);
+            uint256 r = right(index);
+            uint256 biggest = index;
+
+            if (l < heap.length && heap[l] > heap[index]) {
+                biggest = l;
+            }
+            if (r < heap.length && heap[r] > heap[biggest]) {
+                biggest = r;
+            }
+            if (biggest == index) {
+                break;
+            }
+            (heap[index], heap[biggest]) = (heap[biggest], heap[index]);
+            index = biggest;
         }
-        if (r < heap.length && heap[r] > heap[biggest]) {
-            biggest = r;
-        }
-        if (biggest != i) {
-            (heap[i], heap[biggest]) = (heap[biggest], heap[i]);
-            minHeapify(heap, biggest);
-        }
+        return max;
     }
 }
