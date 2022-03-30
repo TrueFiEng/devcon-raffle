@@ -31,7 +31,7 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
     <Transaction>
       <TransactionWrapper>
         <TransactionHeading>
-          <BackButton view={view} setView={setView} />
+          {view !== BidFlowSteps.Confirmation && <BackButton view={view} setView={setView} />}
           <FormSubHeading>{heading[action.type]}</FormSubHeading>
         </TransactionHeading>
         {view === BidFlowSteps.Review && (

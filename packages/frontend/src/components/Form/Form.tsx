@@ -10,6 +10,10 @@ export const Form = styled.div`
   overflow: hidden;
 `
 
+export const FormNarrow = styled(Form)`
+  max-width: 289px;
+`
+
 export const FormRow = styled.div`
   display: flex;
   justify-content: space-between;
