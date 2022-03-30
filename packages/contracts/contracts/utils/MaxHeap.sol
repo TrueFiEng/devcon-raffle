@@ -9,12 +9,20 @@ library MaxHeap {
         bubbleUp(heap, index, key);
     }
 
-    function increaseKey(uint256[] storage heap, uint256 oldValue, uint256 newValue) public {
+    function increaseKey(
+        uint256[] storage heap,
+        uint256 oldValue,
+        uint256 newValue
+    ) public {
         uint256 index = findKey(heap, oldValue);
         increaseKeyAt(heap, index, newValue);
     }
 
-    function findKey(uint256[] storage heap, uint256 value) public view returns (uint256) {
+    function findKey(uint256[] storage heap, uint256 value)
+        public
+        view
+        returns (uint256)
+    {
         for (uint256 i = 0; i < heap.length; ++i) {
             if (heap[i] == value) {
                 return i;
@@ -23,14 +31,24 @@ library MaxHeap {
         revert("MaxHeap: key with given value not found");
     }
 
-    function increaseKeyAt(uint256[] storage heap, uint256 index, uint256 newValue) public {
-        require(newValue > heap[index], "MaxHeap: new value must be bigger than old value");
+    function increaseKeyAt(
+        uint256[] storage heap,
+        uint256 index,
+        uint256 newValue
+    ) public {
+        require(
+            newValue > heap[index],
+            "MaxHeap: new value must be bigger than old value"
+        );
         heap[index] = newValue;
         bubbleUp(heap, index, newValue);
     }
 
     function removeMax(uint256[] storage heap) public returns (uint256 max) {
-        require(heap.length > 0, "MaxHeap: cannot remove max element from empty heap");
+        require(
+            heap.length > 0,
+            "MaxHeap: cannot remove max element from empty heap"
+        );
         max = heap[0];
         heap[0] = heap[heap.length - 1];
         heap.pop();
@@ -56,7 +74,11 @@ library MaxHeap {
         return max;
     }
 
-    function bubbleUp(uint256[] storage heap, uint256 index, uint256 key) internal {
+    function bubbleUp(
+        uint256[] storage heap,
+        uint256 index,
+        uint256 key
+    ) internal {
         while (index > 0 && heap[parent(index)] < heap[index]) {
             (heap[parent(index)], heap[index]) = (key, heap[parent(index)]);
             index = parent(index);

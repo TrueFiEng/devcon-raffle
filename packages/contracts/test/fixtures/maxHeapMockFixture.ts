@@ -9,7 +9,7 @@ export async function maxHeapMockFixture([deployer]: Wallet[], provider: MockPro
 
   const libraryLink = {
     'contracts/utils/MaxHeap.sol:MaxHeap': heapLibrary.address,
-    '__$f92e1b546cb81b0df9056e27145904c2f5$__': heapLibrary.address,
+    __$f92e1b546cb81b0df9056e27145904c2f5$__: heapLibrary.address,
   }
   const heap = await new MaxHeapMock__factory(libraryLink, deployer).deploy()
 
