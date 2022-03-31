@@ -30,6 +30,14 @@ contract MaxHeapMock {
         }
     }
 
+    function findMin() public view returns (uint256 index, uint256 min) {
+        return heap.findMin();
+    }
+
+    function findKey(uint256 value) public view returns (uint256) {
+        return heap.findKey(value);
+    }
+
     function getArray() public view returns (uint256[] memory) {
         return heap;
     }
