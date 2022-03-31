@@ -156,7 +156,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             }
             _heap.increaseKey(oldKey, key);
         } else {
-            bool updatingMinKey = key <= minKeyValue;
+            bool updatingMinKey = key <= minKeyValue || oldKey == minKeyValue;
             if (updatingMinKey) {
                 _heap.increaseKeyAt(_minKeyIndex, key);
                 updateMinKey();
@@ -448,5 +448,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
+    }
+
+    function getAuctionWinners() external view returns (uint256[] memory) {
+        return _auctionWinners;
     }
 }
