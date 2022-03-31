@@ -12,20 +12,20 @@ import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
-  bid: BigNumber
-  setBid: (val: BigNumber) => void
+  amount: BigNumber
+  setAmount: (val: BigNumber) => void
   notEnoughBalance: boolean
   bidTooLow: boolean
 }
 
 const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
-export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) => {
+export const Input = ({ amount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
   const userBid = useUserBid()
 
-  const initialInputValue = bid.isZero() ? '' : formatEther(bid)
+  const initialInputValue = amount.isZero() ? '' : formatEther(amount)
   const [inputValue, setInputValue] = useState(initialInputValue)
 
   const onChange = (value: string) => {
@@ -35,10 +35,10 @@ export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) 
     if (value !== '') {
       const formattedValue = value.replace(',', '.')
       setInputValue(formattedValue)
-      setBid(parseEther(formattedValue))
+      setAmount(parseEther(formattedValue))
     } else {
       setInputValue('')
-      setBid(parseEther('0'))
+      setAmount(parseEther('0'))
     }
   }
 
@@ -46,7 +46,7 @@ export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) 
     if (value !== '') {
       const formattedValue = formatInputAmount(value)
       setInputValue(formattedValue)
-      setBid(parseEther(formattedValue))
+      setAmount(parseEther(formattedValue))
     }
   }
 

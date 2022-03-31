@@ -42,7 +42,12 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
           <span>Current place in the raffle</span>
           <span>No. {userBid.place}</span>
         </FormRow>
-        <Input bid={bumpAmount} setBid={setBumpAmount} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
+        <Input
+          amount={bumpAmount}
+          setAmount={setBumpAmount}
+          notEnoughBalance={notEnoughBalance}
+          bidTooLow={bidTooLow}
+        />
         <FormRow>
           <span>Min. increment of the bid</span>
           <span>{formatEther(minimumIncrement)} ETH</span>
@@ -60,7 +65,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
             setView(BidFlowSteps.Review)
-            setBid(newBidAmount)
+            setBid(newBid)
           }}
         >
           Bump your bid

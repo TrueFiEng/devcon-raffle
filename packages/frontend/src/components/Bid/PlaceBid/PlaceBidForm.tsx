@@ -30,7 +30,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
-        <Input bid={bid} setBid={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
+        <Input amount={bid} setAmount={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
           <span>No. {getPositionAfterBid(bid, bids)}</span>
