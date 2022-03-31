@@ -1,9 +1,14 @@
-import { DEVCON6_ABI } from '../../constants/abis'
+import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
+import { useEthers } from '@usedapp/core'
+
 import { useAddresses } from '../useAddresses'
 
-import { useContract } from './useContract'
-
-export function useDevconContract() {
+export function useDevconContract(): Devcon6 {
   const { devcon } = useAddresses('devcon')
-  return useContract(devcon, DEVCON6_ABI)
+  const { library } = useEthers()
+
+  if (!library) {
+    throw new Error('library not found')
+  }
+  return Devcon6__factory.connect(devcon, library)
 }
