@@ -17,20 +17,21 @@ describe('UI: BumpBidForm', () => {
   const mockBids = generateMockBids(5)
 
   it('Displays current place and place after bump', () => {
-    renderComponent(parseEther('4.5'))
+    renderComponent(parseEther('4.5'), parseEther('1'))
     const places = screen.queryAllByText(/No\. [0-9]/)
     expect(places[0]).toHaveTextContent('No. 5')
     expect(places[1]).toHaveTextContent('No. 2')
   })
 
-  const renderComponent = (newAmount: BigNumber) =>
+  const renderComponent = (newAmount: BigNumber, bumpAmount: BigNumber) =>
     render(
       <BumpBidForm
         userBid={mockBids[4]}
         newBid={newAmount}
-        setBid={() => undefined}
-        bids={mockBids}
+        bumpAmount={bumpAmount}
+        setBumpAmount={() => undefined}
         setView={() => undefined}
+        bids={mockBids}
       />
     )
 })
