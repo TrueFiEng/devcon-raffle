@@ -25,7 +25,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
 
-    uint256[] _auctionWinners;
+    uint256[] _auctionWinners; // TODO pass by param to claimProceeds to save gas
     bool _proceedsClaimed;
 
     mapping(address => Bid) _bids;
@@ -117,6 +117,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return (amount << 16) | (_bidderMask - bidderID);
     }
 
+    function extractBidderID(uint256 key) internal pure returns (uint256) {
+        return _bidderMask - (key & _bidderMask);
+    }
+
     function updateMinKey() internal {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
@@ -177,8 +181,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    // auctionWinners should be sorted in descending order
-    function settleAuction(uint256[] calldata auctionWinners)
+    uint256[] _tempWinners; // temp array for sorting auction winners
+
+    function settleAuction()
         external
         onlyOwner
         onlyInState(State.BIDDING_CLOSED)
@@ -186,39 +191,26 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
         if (biddersCount <= _raffleWinnersCount) {
-            require(
-                auctionWinners.length == 0,
-                "Devcon6: invalid auction winners length"
-            );
             return;
         }
 
-        uint256 auctionParticipantsCount = biddersCount - _raffleWinnersCount;
-        uint256 expectedWinnersLength = _auctionWinnersCount;
-        if (auctionParticipantsCount < expectedWinnersLength) {
-            expectedWinnersLength = auctionParticipantsCount;
+        uint256 winnersLength = _heap.length;
+
+        for (uint256 i = 0; i < winnersLength; ++i) {
+            uint256 key = _heap.removeMax();
+            uint256 bidderID = extractBidderID(key);
+            _auctionWinners.push(bidderID);
+            _tempWinners.insert(bidderID);
         }
 
-        require(
-            auctionWinners.length == expectedWinnersLength,
-            "Devcon6: invalid auction winners length"
-        );
+        delete _minKeyIndex;
+        delete _minKeyValue;
 
-        _auctionWinners = auctionWinners;
-
-        uint256 lastBidderID = type(uint256).max;
-        for (uint256 i = 0; i < auctionWinners.length; ++i) {
-            uint256 bidderID = auctionWinners[i];
-            require(
-                bidderID < lastBidderID,
-                "Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order"
-            );
-            lastBidderID = bidderID;
-
+        for (uint256 i = 0; i < winnersLength; ++i) {
+            uint256 bidderID = _tempWinners.removeMax();
             setBidWinType(bidderID, WinType.AUCTION);
-            emit NewAuctionWinner(bidderID);
-
             removeRaffleParticipant(bidderID - 1);
+            emit NewAuctionWinner(bidderID);
         }
     }
 
