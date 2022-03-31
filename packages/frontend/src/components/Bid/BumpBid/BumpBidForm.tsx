@@ -57,7 +57,7 @@ export const BumpBidForm = ({ userBid, newBid, bumpAmount, setBumpAmount, setVie
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {getPositionAfterBid(newBid, bids)}</span>
+          <span>No. {bidTooLow ? userBid.place : getPositionAfterBid(newBid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
