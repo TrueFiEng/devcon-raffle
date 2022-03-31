@@ -14,14 +14,13 @@ import "./utils/MaxHeap.sol";
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
-    uint256[] heap;
+    uint256[] _heap;
 
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
     uint256 constant _bidderMask = 0xffff;
-    uint256 _smallestKeyIndex;
-    uint256 _smallestKeyValue = type(uint256).max;
-    uint256 _smallestAuctionBid = type(uint256).max;
+    uint256 _minKeyIndex;
+    uint256 _minKeyValue = type(uint256).max;
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -62,7 +61,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     modifier onlyInState(State requiredState) {
         require(getState() == requiredState, "Devcon6: is in invalid state");
-
         _;
     }
 
@@ -78,7 +76,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
                 msg.value >= _minBidIncrement,
                 "Devcon6: bid increment too low"
             );
+            uint256 oldAmount = bidder.amount;
             bidder.amount += msg.value;
+
+            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
         } else {
             require(
                 msg.value >= _reservePrice,
@@ -94,29 +95,72 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function addToHeap(uint256 bidderID, uint256 amount) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
-        if (isHeapFull && amount <= _smallestAuctionBid) {
-            return;
-        }
-
-        amount = amount << 16;
-        amount = amount | (_bidderMask - bidderID);
-
-        if (isHeapFull) {
-            heap.increaseKey(_smallestKeyValue, amount);
-        }
-        heap.insert(amount);
-
-        updateSmallestTreeNode();
+    function getKey(uint256 bidderID, uint256 amount)
+        internal
+        pure
+        returns (uint256)
+    {
+        return (amount << 16) | (_bidderMask - bidderID);
     }
 
-    function updateSmallestTreeNode() private {
-        // override smallest heap element
-        uint256 smallestKeyValue;
-        (_smallestKeyIndex, smallestKeyValue) = heap.findMin();
-        _smallestKeyValue = smallestKeyValue;
-        _smallestAuctionBid = smallestKeyValue >> 16;
+    function updateMinKey() internal {
+        (_minKeyIndex, _minKeyValue) = _heap.findMin();
+    }
+
+    function addToHeap(uint256 bidderID, uint256 amount) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        uint256 key = getKey(bidderID, amount);
+        uint256 minKeyValue = _minKeyValue;
+
+        if (isHeapFull) {
+            if (key <= minKeyValue) {
+                return;
+            }
+            _heap.increaseKey(minKeyValue, key);
+            updateMinKey();
+        } else {
+            _heap.insert(key);
+            if (key <= minKeyValue) {
+                _minKeyIndex = _heap.length - 1;
+                _minKeyValue = key;
+                return;
+            }
+            updateMinKey();
+        }
+    }
+
+    function updateHeapBid(
+        uint256 bidderID,
+        uint256 oldAmount,
+        uint256 newAmount
+    ) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        uint256 key = getKey(bidderID, newAmount);
+        uint256 minKeyValue = _minKeyValue;
+
+        if (isHeapFull) {
+            bool shouldUpdateHeap = key > minKeyValue;
+            if (!shouldUpdateHeap) {
+                return;
+            }
+            uint256 oldKey = getKey(bidderID, oldAmount);
+            bool updatingMinKey = oldKey <= minKeyValue;
+            if (updatingMinKey) {
+                _heap.increaseKeyAt(_minKeyIndex, key);
+                updateMinKey();
+                return;
+            }
+            _heap.increaseKey(oldKey, key);
+        } else {
+            bool updatingMinKey = key <= minKeyValue;
+            if (updatingMinKey) {
+                _heap.increaseKeyAt(_minKeyIndex, key);
+                updateMinKey();
+                return;
+            }
+            uint256 oldKey = getKey(bidderID, oldAmount);
+            _heap.increaseKey(oldKey, key);
+        }
     }
 
     // auctionWinners should be sorted in descending order
