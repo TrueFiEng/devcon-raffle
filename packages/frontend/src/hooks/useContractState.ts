@@ -14,11 +14,13 @@ export enum ContractState {
 export function useContractState() {
   const devconContract = useDevconContract()
   const { value, error } =
-    useCall(devconContract && {
-      contract: devconContract,
-      method: 'getState',
-      args: [],
-    }) ?? {}
+    useCall(
+      devconContract && {
+        contract: devconContract,
+        method: 'getState',
+        args: [],
+      }
+    ) ?? {}
   const state: ContractState | undefined = value && value[0]
   return { state, error }
 }

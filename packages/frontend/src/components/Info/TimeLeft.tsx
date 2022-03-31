@@ -12,7 +12,7 @@ interface Props {
 export const TimeLeft = ({ endTimestamp }: Props) => {
   const state = useAuctionState()
   const time = endTimestamp !== undefined ? endTimestamp : BigNumber.from(0)
-  
+
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(time))
   useEffect(() => {
     const interval = setInterval(() => setTimeLeft(timeLeft), 1_000)
