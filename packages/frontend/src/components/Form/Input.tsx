@@ -4,6 +4,8 @@ import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
+import { useUserBid } from 'src/hooks/useUserBid'
+import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
@@ -21,6 +23,7 @@ const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
+  const userBid = useUserBid()
 
   const initialInputValue = bid.isZero() ? '' : formatEther(bid)
   const [inputValue, setInputValue] = useState(initialInputValue)
@@ -48,7 +51,7 @@ export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) 
   }
 
   return (
-    <InputWrapper>
+    <InputWrapper userBid={userBid}>
       <InputLabel>Balance: {userBalance ? formatEtherAmount(userBalance) : '-'} ETH</InputLabel>
       <StyledInputWrapper isBadAmount={notEnoughBalance || bidTooLow}>
         <TokenIconWrapper>
@@ -63,7 +66,9 @@ export const Input = ({ bid, setBid, notEnoughBalance, bidTooLow }: InputProps) 
         <InputTokenName>ETH</InputTokenName>
       </StyledInputWrapper>
       {notEnoughBalance && <ErrorMessage message="Not enough balance" />}
-      {!notEnoughBalance && bidTooLow && <ErrorMessage message="Bid amount must be at least Raffle price" />}
+      {!notEnoughBalance && bidTooLow && (
+        <ErrorMessage message={userBid ? 'Amount below min increment' : 'Bid amount must be at least Raffle price'} />
+      )}
     </InputWrapper>
   )
 }
@@ -77,12 +82,12 @@ const ErrorMessage = ({ message }: { message: string }) => {
   )
 }
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ userBid: BidWithPlace | undefined }>`
   display: flex;
   position: relative;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: ${({ userBid }) => (userBid === undefined ? '12px' : '16px')};
 `
 
 export const InputLabel = styled.div`
@@ -132,12 +137,6 @@ const StyledInput = styled.input`
   cursor: inherit;
   color: ${Colors.Black};
   transition: all 0.25s ease;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
 
   &,
   &:disabled {
