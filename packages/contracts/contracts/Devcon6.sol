@@ -9,12 +9,19 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
+import "./utils/MaxHeap.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
+    using MaxHeap for uint256[];
+    uint256[] heap;
 
     // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
     uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
+    uint256 constant _bidderMask = 0xffff;
+    uint256 _smallestKeyIndex;
+    uint256 _smallestKeyValue = type(uint256).max;
+    uint256 _smallestAuctionBid = type(uint256).max;
 
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
@@ -95,8 +102,35 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
+
+            addToHeap(bidder.bidderID, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
+    }
+
+    function addToHeap(uint256 bidderID, uint256 amount) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        if (isHeapFull && amount <= _smallestAuctionBid) {
+            return;
+        }
+
+        amount = amount << 16;
+        amount = amount | (_bidderMask - bidderID);
+
+        if (isHeapFull) {
+            heap.increaseKey(_smallestKeyValue, amount);
+        }
+        heap.insert(amount);
+
+        updateSmallestTreeNode();
+    }
+
+    function updateSmallestTreeNode() private {
+        // override smallest heap element
+        uint256 smallestKeyValue;
+        (_smallestKeyIndex, smallestKeyValue) = heap.findMin();
+        _smallestKeyValue = smallestKeyValue;
+        _smallestAuctionBid = smallestKeyValue >> 16;
     }
 
     // auctionWinners should be sorted in descending order
