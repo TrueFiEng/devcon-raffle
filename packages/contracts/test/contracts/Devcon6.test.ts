@@ -146,6 +146,43 @@ describe('Devcon6', function () {
       expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
     })
 
+    it.only('heap test', async function() {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
+      devconAsOwner = devcon.connect(wallets[1])
+
+      await bid(8)
+
+      await bidAsWallet(wallets[9], reservePrice.add(20))
+      await bidAsWallet(wallets[10], reservePrice.add(20))
+      await bidAsWallet(wallets[11], reservePrice.add(10))
+      await bidAsWallet(wallets[12], reservePrice.add(30))
+
+      // update values
+      await bidAsWallet(wallets[11], reservePrice)
+
+      // less than minimum
+      await bidAsWallet(wallets[13], reservePrice.add(15))
+
+      // new bid greater than minimum
+      await bidAsWallet(wallets[14], reservePrice.add(25))
+
+      await bidAndSettleRaffle(0,[])
+
+      // bid amounts:
+      // 0: reservePrice
+      // ...
+      // 8: reservePrice
+      // 9: reservePrice.add(20)
+      // 10: reservePrice.add(20)
+      // 11: reservePrice.mul(2).add(10)
+      // 12: reservePrice.add(30)
+      // 13: reservePrice.add(15)
+      // 14: reservePrice.add(25)
+
+      // expected winners: 11, 12, 14, 9
+      expect(await devconAsOwner.getAuctionWinners()).to.deep.eq(bigNumberArrayFrom([11,12,14,9]))
+    })
+
     it('reverts if number of bidders is less than raffleWinnersCount and auction winners were passed', async function () {
       ({ devcon } = await loadFixture(devcon6Fixture))
       devconAsOwner = devcon.connect(wallets[1])
@@ -715,7 +752,7 @@ describe('Devcon6', function () {
   async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(devconAsOwner)
-    await devconAsOwner.settleAuction(auctionWinners)
+    await devconAsOwner.settleAuction()
     return devconAsOwner.settleRaffle(randomBigNumbers(1))
   }
 
