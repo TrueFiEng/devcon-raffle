@@ -15,7 +15,7 @@ interface Props {
 
 export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
-    <BidsEntryRow isUser={isUser} view={view}>
+    <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
       <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
       <AddressColumn>
@@ -27,15 +27,14 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   )
 }
 
-const BidsEntryRow = styled.div<{ isUser?: boolean; view?: 'short' | 'full' }>`
+const BidsEntryRow = styled.div<{ isUser?: boolean }>`
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
   grid-template-areas: 'place bid address';
   position: relative;
 
-  ${({ isUser, view }) =>
+  ${({ isUser }) =>
     isUser &&
-    view === 'short' &&
     css`
       &::before {
         content: '';
