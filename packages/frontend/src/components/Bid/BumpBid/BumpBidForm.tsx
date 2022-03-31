@@ -2,7 +2,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
@@ -16,19 +15,18 @@ import styled from 'styled-components'
 interface BumpBidProps {
   userBid: BidWithPlace
   newBid: BigNumber
-  setBid: (val: BigNumber) => void
+  bumpAmount: BigNumber
+  setBumpAmount: (val: BigNumber) => void
   setView: (state: BidFlowSteps) => void
   bids: BidWithPlace[]
 }
 
-export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidProps) => {
+export const BumpBidForm = ({ userBid, newBid, bumpAmount, setBumpAmount, setView, bids }: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
   const minimumIncrement = parseEther('0.01')
-  const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
-  const newBidAmount = newBid.add(bumpAmount)
 
   return (
     <BumpFormWrapper>
@@ -55,17 +53,16 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
         <Separator />
         <FormRow>
           <span>Your bid after the bump</span>
-          <span>{formatEtherAmount(newBidAmount)} ETH</span>
+          <span>{formatEtherAmount(newBid)} ETH</span>
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {getPositionAfterBid(newBidAmount, bids)}</span>
+          <span>No. {getPositionAfterBid(newBid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
             setView(BidFlowSteps.Review)
-            setBid(newBid)
           }}
         >
           Bump your bid
