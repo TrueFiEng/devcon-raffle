@@ -7,6 +7,7 @@ export type AuctionState =
   | 'WrongNetwork'
   | 'BiddingFlow'
   | 'AwaitingResults'
+  | 'ClaimingFlow'
 
 enum ContractState {
   AWAITING_BIDDING,
@@ -32,6 +33,10 @@ export function useAuctionState(): AuctionState {
 
   if (contractState === ContractState.BIDDING_CLOSED || contractState === ContractState.AUCTION_SETTLED) {
     return 'AwaitingResults'
+  }
+
+  if (contractState === ContractState.RAFFLE_SETTLED) {
+    return getStateUsingWallet(account, chainId, networks, 'ClaimingFlow')
   }
 
   throw new Error('unknown state')
