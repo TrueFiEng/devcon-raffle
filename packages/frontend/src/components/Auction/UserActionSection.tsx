@@ -6,6 +6,7 @@ import { Colors } from '../../styles/colors'
 import { BidAwaiting } from '../Bid/BidAwaiting'
 import { BidFlow } from '../Bid/BidFlow'
 import { ClaimFlow } from '../Claim/ClaimFlow'
+import { ResultsAwaiting } from '../Claim/ResultsAwaiting'
 
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
@@ -15,9 +16,7 @@ const UserActions: Record<AuctionState, () => ReactElement> = {
   WalletNotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: BidFlow,
-  AwaitingResults: () => {
-    throw new Error('TODO')
-  },
+  AwaitingResults: ResultsAwaiting,
   ClaimingFlow: ClaimFlow,
 }
 
