@@ -1,7 +1,7 @@
 import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 
-export type AuctionState = 'NotConnected' | 'WrongNetwork' | 'BiddingFlow' | 'Awaiting'
+export type AuctionState = 'Awaiting' | 'NotConnected' | 'WrongNetwork' | 'BiddingFlow'
 
 enum ContractState {
   AWAITING_BIDDING,

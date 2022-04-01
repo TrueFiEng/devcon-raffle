@@ -10,10 +10,10 @@ import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
 
 const UserActions: Record<AuctionState, () => ReactElement> = {
+  Awaiting: BidAwaiting,
   NotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: BidFlow,
-  Awaiting: BidAwaiting,
 }
 
 export const UserActionSection = () => {
