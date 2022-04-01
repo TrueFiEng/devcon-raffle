@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
-import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
 import { Button } from 'src/components/Buttons/Button'
+import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'

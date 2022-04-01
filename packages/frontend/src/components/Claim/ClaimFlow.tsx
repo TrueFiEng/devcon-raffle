@@ -1,6 +1,7 @@
 import { useUserBid } from '../../hooks/useUserBid'
-import { NoBidding } from '../Bid/NoBidding'
-import { WinBidFlow } from '../Bid/WinBid/WinBidFlow'
+
+import { NoBidding } from './NoBidding'
+import { WinBidFlow } from './WinBid/WinBidFlow'
 
 export const ClaimFlow = () => {
   const userBid = useUserBid()
