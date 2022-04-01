@@ -14,6 +14,7 @@ const UserActions: Record<AuctionState, () => ReactElement> = {
   WalletNotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: BidFlow,
+  AwaitingResults: () => {throw new Error("TODO")}
 }
 
 export const UserActionSection = () => {
