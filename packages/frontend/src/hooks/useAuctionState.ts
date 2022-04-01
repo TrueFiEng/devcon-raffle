@@ -17,12 +17,12 @@ export function useAuctionState(): AuctionState {
   const { networks } = useConfig()
   const [contractState] = useState(ContractState.BIDDING_OPEN)
 
-  if (contractState === ContractState.BIDDING_OPEN) {
-    return getStateUsingWallet(account, chainId, networks, 'BiddingFlow')
+  if (contractState === ContractState.AWAITING_BIDDING) {
+    return 'Awaiting'
   }
 
-  if (contractState === ContractState.AWAITING_BIDDING) {
-    return getStateUsingWallet(account, chainId, networks, 'Awaiting')
+  if (contractState === ContractState.BIDDING_OPEN) {
+    return getStateUsingWallet(account, chainId, networks, 'BiddingFlow')
   }
 
   throw new Error('unknown state')
