@@ -1,4 +1,3 @@
-import { EmptyBid } from 'src/constants/emptyBids'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -9,14 +8,13 @@ import styled, { css } from 'styled-components'
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 
 interface Props {
-  bid?: BidWithPlace
-  emptyBid?: EmptyBid
+  bid: BidWithPlace
   isUser?: boolean
   view?: 'short' | 'full'
 }
 
-export const BidListEntry = ({ bid, emptyBid, isUser, view = 'full' }: Props) => {
-  return bid ? (
+export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
+  return (
     <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
       <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
@@ -26,17 +24,15 @@ export const BidListEntry = ({ bid, emptyBid, isUser, view = 'full' }: Props) =>
         </AddressLink>
       </AddressColumn>
     </BidsEntryRow>
-  ) : (
-    <EmptyBidListEntry emptyBid={emptyBid} />
   )
 }
 
-const EmptyBidListEntry = ({ emptyBid }: { emptyBid?: EmptyBid }) => {
+export const EmptyBidListEntry = ({ place }: { place: number }) => {
   return (
     <BidsEntryRow>
-      <PlaceColumn>{emptyBid?.place}.</PlaceColumn>
-      <BidColumn>{emptyBid?.amount} </BidColumn>
-      <AddressColumn>{emptyBid?.bidderAddress}</AddressColumn>
+      <PlaceColumn>{place}.</PlaceColumn>
+      <BidColumn>-</BidColumn>
+      <AddressColumn>-</AddressColumn>
     </BidsEntryRow>
   )
 }

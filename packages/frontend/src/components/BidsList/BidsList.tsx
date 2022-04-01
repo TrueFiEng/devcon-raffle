@@ -1,6 +1,6 @@
 import { addressEqual } from '@usedapp/core'
 import { useMemo } from 'react'
-import { BidListEntry } from 'src/components/BidsList/BidListEntry'
+import { BidListEntry, EmptyBidListEntry } from 'src/components/BidsList/BidListEntry'
 import { Separator } from 'src/components/common/Separator'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { emptyBids } from 'src/constants/emptyBids'
@@ -23,7 +23,7 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
   return (
     <BidList>
       {bids.length === 0 ? (
-        emptyBids.map((emptyBid) => <BidListEntry key={emptyBid.place} emptyBid={emptyBid} />)
+        emptyBids.map((emptyBid) => <EmptyBidListEntry key={emptyBid} place={emptyBid} />)
       ) : (
         <>
           {bids.map((bid) => (
