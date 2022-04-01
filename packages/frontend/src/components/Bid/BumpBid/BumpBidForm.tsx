@@ -3,7 +3,7 @@ import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useState } from 'react'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
@@ -17,7 +17,7 @@ interface BumpBidProps {
   userBid: BidWithPlace
   newBid: BigNumber
   setBid: (val: BigNumber) => void
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
   bids: BidWithPlace[]
 }
 
@@ -59,7 +59,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
-            setView(BidFlowSteps.Review)
+            setView(TxFlowSteps.Review)
             setBid(newBidAmount)
           }}
         >

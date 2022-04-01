@@ -17,12 +17,22 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
     <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
+      <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
         <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
           {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
         </AddressLink>
       </AddressColumn>
+    </BidsEntryRow>
+  )
+}
+
+export const EmptyBidListEntry = ({ place }: { place: number }) => {
+  return (
+    <BidsEntryRow>
+      <PlaceColumn>{place}.</PlaceColumn>
+      <BidColumn>-</BidColumn>
+      <AddressColumn>-</AddressColumn>
     </BidsEntryRow>
   )
 }

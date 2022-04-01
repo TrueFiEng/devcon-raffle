@@ -37,3 +37,7 @@ export const FormWrapper = styled.div`
   padding: 82px 115px 82px 170px;
   width: 100%;
 `
+
+export const FormText = styled.p`
+  color: ${Colors.White};
+`

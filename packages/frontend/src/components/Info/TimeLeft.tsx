@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useState } from 'react'
+import { useAuctionState } from 'src/hooks/useAuctionState'
 import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 import styled from 'styled-components'
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const TimeLeft = ({ endTimestamp }: Props) => {
+  const state = useAuctionState()
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(endTimestamp))
   useEffect(() => {
     const interval = setInterval(() => setTimeLeft(formatTimeLeft(endTimestamp)), 1_000)
@@ -18,12 +20,13 @@ export const TimeLeft = ({ endTimestamp }: Props) => {
 
   return (
     <TimeBox>
-      <p>
-        Time left <RemainingTime>{timeLeft}</RemainingTime>
-      </p>
-      <p>
+      <TimeRow>
+        <span>{state === 'AwaitingBidding' ? 'Till start' : ' Time left'}</span>
+        <RemainingTime>{timeLeft}</RemainingTime>
+      </TimeRow>
+      <TimeRow>
         Ends on <RemainingTime>{formatEndDate(endTimestamp)}</RemainingTime>
-      </p>
+      </TimeRow>
     </TimeBox>
   )
 }
@@ -34,6 +37,12 @@ const TimeBox = styled.div`
   row-gap: 4px;
   font-family: 'Space Mono', 'Roboto Mono', monospace;
 `
+const TimeRow = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+`
+
 const RemainingTime = styled.span`
   font-weight: 700;
 `

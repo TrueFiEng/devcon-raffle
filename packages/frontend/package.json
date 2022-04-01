@@ -25,6 +25,7 @@
     "@types/styled-components": "^5.1.24",
     "@usedapp/core": "^0.12.2",
     "copy-to-clipboard": "^3.3.1",
+    "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-async-hook": "^4.0.0",
     "react-dom": "^17.0.2",

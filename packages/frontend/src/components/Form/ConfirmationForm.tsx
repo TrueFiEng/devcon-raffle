@@ -1,4 +1,4 @@
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
@@ -6,7 +6,7 @@ import { TransactionSuccess } from 'src/components/Transaction/TransactionSucces
 interface ConfirmationFormProps {
   action: Transactions
   txHash: string
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
 }
 
 export const ConfirmationForm = ({ action, txHash, setView }: ConfirmationFormProps) => {
