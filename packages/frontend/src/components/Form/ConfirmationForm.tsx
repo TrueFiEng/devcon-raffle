@@ -1,4 +1,4 @@
-import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Form } from 'src/components/Form/Form'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'

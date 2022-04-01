@@ -1,4 +1,4 @@
-import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button, CopyButton, RedirectButton } from 'src/components/Buttons'
 import { FormNarrow } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'

@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
