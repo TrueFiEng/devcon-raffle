@@ -26,13 +26,14 @@ export async function deployDevcon(biddingStartTime: number, deployer: Signer, h
     biddingEndTime,
     claimingEndTime,
     20,
-    80,
+    8,
     reservePrice,
     minBidIncrement,
   )
 
   await devcon.deployed()
-  console.log(`Devcon6 address: ${devcon.address}`)
+  const receipt = await devcon.provider.getTransactionReceipt(devcon.deployTransaction.hash)
+  console.log(`Devcon6 address: ${devcon.address}, gasUsed: ${receipt.gasUsed}`)
 
   return devcon
 }
@@ -41,7 +42,9 @@ export async function deployMaxHeap(deployer: Signer, hre: HardhatRuntimeEnviron
   const heapFactory = await hre.ethers.getContractFactory('MaxHeap')
   const heap = await heapFactory.connect(deployer).deploy()
   await heap.deployed()
-  console.log(`MaxHeap address: ${heap.address}`)
+  const receipt = await heap.provider.getTransactionReceipt(heap.deployTransaction.hash)
+
+  console.log(`MaxHeap address: ${heap.address}, gasUsed: ${receipt.gasUsed}`)
 
   return {
     'contracts/utils/MaxHeap.sol:MaxHeap': heap.address,

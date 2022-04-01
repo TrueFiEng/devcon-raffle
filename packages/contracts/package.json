@@ -21,6 +21,10 @@
     "node:increase-time": "hardhat --network localhost increase-time",
     "node:accounts": "hardhat --network localhost accounts",
     "devcon:bid": "hardhat --network localhost bid",
+    "arbitrum:deploy": "hardhat --network arbitrumRinkeby deploy",
+    "arbitrum:bid30": "hardhat --network arbitrumRinkeby bid20",
+    "arbitrum:getState": "hardhat --network arbitrumRinkeby getState",
+    "arbitrum:settleAuction": "hardhat --network arbitrumRinkeby settleAuction",
     "devcon:settle-auction": "hardhat --network localhost settle-auction",
     "devcon:settle-raffle": "hardhat --network localhost settle-raffle"
   },

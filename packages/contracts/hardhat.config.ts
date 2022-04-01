@@ -30,7 +30,7 @@ module.exports = {
     },
     arbitrumRinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',
-      accounts: [],
+      accounts: ['todo'],
     },
   },
   typechain: {

@@ -69,7 +69,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     event NewRaffleWinner(uint256 bidderID);
     event NewGoldenTicketWinner(uint256 bidderID);
 
-    function bid(address sender) external payable onlyInState(State.BIDDING_OPEN) {
+    function bid(address sender) external payable {
         Bid storage bidder = _bids[sender];
         if (bidder.amount > 0) {
             require(
@@ -172,7 +172,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function settleAuction()
         external
         onlyOwner
-        onlyInState(State.BIDDING_CLOSED)
     {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
@@ -203,7 +202,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function settleRaffle(uint256[] memory randomNumbers)
         external
         onlyOwner
-        onlyInState(State.AUCTION_SETTLED)
     {
         require(
             randomNumbers.length > 0,
@@ -452,5 +450,18 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
+    }
+
+    struct HeapBid {
+        uint256 bidderID;
+        uint256 amount;
+    }
+
+    function getHeap() external view returns (HeapBid[] memory result) {
+        result = new HeapBid[](_heap.length);
+        for (uint256 i = 0; i < _heap.length; ++i) {
+            uint256 item = _heap[i];
+            result[i] = HeapBid(extractBidderID(item), item >> 16);
+        }
     }
 }

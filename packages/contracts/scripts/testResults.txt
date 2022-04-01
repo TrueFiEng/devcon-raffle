@@ -1,0 +1,75 @@
+Deploying contracts...
+MaxHeap address: 0x064a307d7FA3d4A207A0AA1D30767424CADf6aaF, gasUsed: 8761989
+Devcon6 address: 0x63bDFf973A7000f1d52fa183753C00c6b62c4bC8, gasUsed: 39674257
+
+
+Placing initial bids...
+Bid 200000000 wei as 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, gasUsed: 813473
+Bid 210000000 wei as 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc, gasUsed: 765230
+Bid 220000000 wei as 0x90f79bf6eb2c4f870365e785982e1f101e93b906, gasUsed: 716688
+Bid 230000000 wei as 0x15d34aaf54267db7d7c367839aaf71a00a2c6a65, gasUsed: 716357
+Bid 240000000 wei as 0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc, gasUsed: 717942
+Bid 250000000 wei as 0x976ea74026e726554db657fa54763abd0c3a0aa9, gasUsed: 716617
+Bid 260000000 wei as 0x14dc79964da2c08b23698b3d3cc7ca32193d9955, gasUsed: 716764
+Bid 270000000 wei as 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, gasUsed: 716381
+Bid 280000000 wei as 0xa0ee7a142d267c1f36714e4a8f75612f20a79720, gasUsed: 717917
+Bid 290000000 wei as 0xbcd4042de499d14e55001ccbb24a551f3b954096, gasUsed: 717978
+Bid 300000000 wei as 0x71be63f3384f5fb98995898a86b02fb2426c5788, gasUsed: 718192
+Bid 310000000 wei as 0xfabb0ac9d68b0b445fb7357272ff202c5651694a, gasUsed: 718210
+Bid 320000000 wei as 0x1cbd3b2770909d4e10f157cabc84c7264073c9ec, gasUsed: 719721
+Bid 330000000 wei as 0xdf3e18d64bc6a983f673ab319ccae4f1a57c7097, gasUsed: 718349
+Bid 340000000 wei as 0xcd3b766ccdd6ae721141f452c550ca635964ce71, gasUsed: 719840
+Bid 350000000 wei as 0x2546bcd3c84621e976d8185a91a922ae77ecec30, gasUsed: 719500
+Bid 360000000 wei as 0xbda5747bfd65f08deb54cb465eb87d40e51b197e, gasUsed: 719690
+Bid 370000000 wei as 0xdd2fd4581271e230360230f9337d5c0430bf44c0, gasUsed: 721095
+Bid 380000000 wei as 0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199, gasUsed: 719883
+Bid 390000000 wei as 0x09db0a93b389bef724429898f539aeb7ac2dd55f, gasUsed: 719845
+Bid 400000000 wei as 0x02484cb50aac86eae85610d6f4bf026f30f6627d, gasUsed: 672792
+Bid 410000000 wei as 0x08135da0a343e492fa2d4282f2ae34c6c5cc1bbe, gasUsed: 670914
+Bid 420000000 wei as 0x5e661b79fe2d3f6ce70f5aac07d8cd9abb2743f1, gasUsed: 670668
+Bid 430000000 wei as 0x61097ba76cd906d2ba4fd106e757f7eb455fc295, gasUsed: 671695
+Bid 440000000 wei as 0xdf37f81daad2b0327a0a50003740e1c935c70913, gasUsed: 671326
+Bid 450000000 wei as 0x1aac82773cb722166d7da0d5b0fa35b0307dd99d, gasUsed: 671173
+Bid 460000000 wei as 0x2f4f06d218e426344cfe1a83d53dad806994d325, gasUsed: 672951
+Bid 470000000 wei as 0x1003ff39d25f2ab16dbcc18ece05a9b6154f65f4, gasUsed: 672199
+Bid 480000000 wei as 0x9eaf5590f2c84912a08de97fa28d0529361deb9e, gasUsed: 672067
+Bid 490000000 wei as 0x11e8f3ea3c6fcf12ecff2722d75cefc539c51a1c, gasUsed: 672723
+
+Bumping a few bids...
+Bid 200000000 wei as 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, gasUsed: 466915
+Bid 200000000 wei as 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc, gasUsed: 465223
+Bid 200000000 wei as 0x90f79bf6eb2c4f870365e785982e1f101e93b906, gasUsed: 466624
+Bid 200000000 wei as 0x15d34aaf54267db7d7c367839aaf71a00a2c6a65, gasUsed: 467976
+Bid 200000000 wei as 0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc, gasUsed: 466609
+
+
+#0: bidderID: 30, amount: 490000000
+#1: bidderID: 29, amount: 480000000
+#2: bidderID: 25, amount: 440000000
+#3: bidderID: 28, amount: 470000000
+#4: bidderID: 27, amount: 460000000
+#5: bidderID: 4, amount: 430000000
+#6: bidderID: 3, amount: 420000000
+#7: bidderID: 23, amount: 420000000
+#8: bidderID: 5, amount: 440000000
+#9: bidderID: 26, amount: 450000000
+#10: bidderID: 20, amount: 390000000
+#11: bidderID: 1, amount: 400000000
+#12: bidderID: 24, amount: 430000000
+#13: bidderID: 2, amount: 410000000
+#14: bidderID: 21, amount: 400000000
+#15: bidderID: 22, amount: 410000000
+#16: bidderID: 17, amount: 360000000
+#17: bidderID: 16, amount: 350000000
+#18: bidderID: 19, amount: 380000000
+#19: bidderID: 18, amount: 370000000
+raffleParticipants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+state = 1
+
+
+Settling auction...
+Auction settled, gas used: 2686224
+
+
+raffleParticipants = [11, 12, 13, 14, 15, 6, 7, 8, 9, 10]
+state = 3

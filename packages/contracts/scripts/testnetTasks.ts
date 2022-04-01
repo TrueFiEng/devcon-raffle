@@ -29,9 +29,14 @@ const bidders = [
   '0x5e661b79fe2d3f6ce70f5aac07d8cd9abb2743f1',
   '0x61097ba76cd906d2ba4fd106e757f7eb455fc295',
   '0xdf37f81daad2b0327a0a50003740e1c935c70913',
+  "0x1aac82773cb722166d7da0d5b0fa35b0307dd99d",
+  "0x2f4f06d218e426344cfe1a83d53dad806994d325",
+  "0x1003ff39d25f2ab16dbcc18ece05a9b6154f65f4",
+  "0x9eaf5590f2c84912a08de97fa28d0529361deb9e",
+  "0x11e8f3ea3c6fcf12ecff2722d75cefc539c51a1c",
 ]
 
-const devconAddress = ''
+const devconAddress = '0x63bDFf973A7000f1d52fa183753C00c6b62c4bC8'
 
 task('deploy', 'Deploys')
   .addParam('delay', 'Time in seconds to push forward bidding start time', 0, types.int, true)
@@ -56,9 +61,44 @@ task('bid20', 'Places initial bids')
     for (let i = 0; i < bidders.length; i++) {
       await bidAs(devcon, bidders[i], initialBidAmount.add(minBidIncrement.mul(i)))
     }
+
+    console.log('Bumping a few bids...')
+    for (let i = 0; i < 5; i++) {
+      await bidAs(devcon, bidders[i], initialBidAmount)
+    }
+  })
+
+task('getState', 'Returns state')
+  .setAction(async (_, hre) => {
+    const [deployer] = await hre.ethers.getSigners()
+    const devcon = Devcon6__factory.connect(devconAddress, deployer)
+
+    const heap = await devcon.getHeap()
+    heap.forEach(({bidderID, amount}, index) => {
+      console.log(`#${index}: bidderID: ${bidderID}, amount: ${amount}`);
+    })
+
+    const raffleParticipants = await devcon.getRaffleParticipants()
+    const p = raffleParticipants.map(bidderID => bidderID.toString()).join(', ')
+    console.log(`raffleParticipants = [${p}]`);
+
+    const state = await devcon.getState()
+    console.log(`state = ${state}`);
+  })
+
+task('settleAuction', 'Settles the auction')
+  .setAction(async (_, hre) => {
+    const [deployer] = await hre.ethers.getSigners()
+    const devcon = Devcon6__factory.connect(devconAddress, deployer)
+
+    console.log('Settling auction...')
+    const tx = await devcon.settleAuction()
+    const receipt = await tx.wait()
+    console.log(`Auction settled, gas used: ${receipt.gasUsed}`);
   })
 
 export async function bidAs(devcon: Devcon6, bidder: string, value: BigNumberish) {
-  await devcon.bid(bidder, { value })
-  console.log(`Bid ${value.toString()} wei as ${bidder}`);
+  const tx = await devcon.bid(bidder, { value })
+  const { gasUsed } = await tx.wait()
+  console.log(`Bid ${value.toString()} wei as ${bidder}, gasUsed: ${gasUsed.toString()}`);
 }
