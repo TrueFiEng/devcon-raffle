@@ -21,7 +21,7 @@ export const TimeLeft = ({ endTimestamp }: Props) => {
   return (
     <TimeBox>
       <TimeRow>
-        <span>{state === 'Awaiting' ? 'Till start' : ' Time left'}</span>
+        <span>{state === 'AwaitingBidding' ? 'Till start' : ' Time left'}</span>
         <RemainingTime>{timeLeft}</RemainingTime>
       </TimeRow>
       <TimeRow>

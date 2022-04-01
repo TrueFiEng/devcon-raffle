@@ -1,7 +1,7 @@
 import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 
-export type AuctionState = 'Awaiting' | 'NotConnected' | 'WrongNetwork' | 'BiddingFlow'
+export type AuctionState = 'AwaitingBidding' | 'NotConnected' | 'WrongNetwork' | 'BiddingFlow'
 
 enum ContractState {
   AWAITING_BIDDING,
@@ -18,7 +18,7 @@ export function useAuctionState(): AuctionState {
   const [contractState] = useState(ContractState.BIDDING_OPEN)
 
   if (contractState === ContractState.AWAITING_BIDDING) {
-    return 'Awaiting'
+    return 'AwaitingBidding'
   }
 
   if (contractState === ContractState.BIDDING_OPEN) {
