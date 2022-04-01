@@ -1,4 +1,3 @@
-import { parseEther } from '@ethersproject/units'
 import { useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -7,10 +6,11 @@ import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
+import { useMinimumBid } from 'src/hooks/useMinimumBid'
 
 export const PlaceBidFlow = () => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
-  const minimumBid = parseEther('0.15')
+  const { minimumBid } = useMinimumBid()
   const [bid, setBid] = useState(minimumBid)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
