@@ -2,12 +2,12 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BackButton } from 'src/components/Buttons/BackButton'
-import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
+import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
 import styled from 'styled-components'
 
 export const heading = {
@@ -45,7 +45,7 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           />
         )}
         {view === TxFlowSteps.Confirmation && (
-          <ConfirmationForm action={action.type} txHash={txHash} setView={setView} />
+          <TransactionSuccess action={action.type} txHash={txHash} setView={setView} />
         )}
       </TransactionWrapper>
       <TransactionStepper
