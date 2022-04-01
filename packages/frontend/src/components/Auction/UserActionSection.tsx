@@ -11,7 +11,7 @@ import { ConnectWalletWarning } from './ConnectWalletWarning'
 
 const UserActions: Record<AuctionState, () => ReactElement> = {
   AwaitingBidding: BidAwaiting,
-  NotConnected: ConnectWalletWarning,
+  WalletNotConnected: ConnectWalletWarning,
   WrongNetwork: ChainIdWarning,
   BiddingFlow: BidFlow,
 }
