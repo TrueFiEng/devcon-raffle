@@ -69,8 +69,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     event NewRaffleWinner(uint256 bidderID);
     event NewGoldenTicketWinner(uint256 bidderID);
 
-    function bid() external payable onlyInState(State.BIDDING_OPEN) {
-        Bid storage bidder = _bids[msg.sender];
+    function bid(address sender) external payable onlyInState(State.BIDDING_OPEN) {
+        Bid storage bidder = _bids[sender];
         if (bidder.amount > 0) {
             require(
                 msg.value >= _minBidIncrement,
@@ -87,12 +87,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             );
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = payable(msg.sender);
+            _bidders[bidder.bidderID] = payable(sender);
             _raffleParticipants.push(bidder.bidderID);
 
             addToHeap(bidder.bidderID, bidder.amount);
         }
-        emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
+        emit NewBid(sender, bidder.bidderID, bidder.amount);
     }
 
     function getKey(uint256 bidderID, uint256 amount)

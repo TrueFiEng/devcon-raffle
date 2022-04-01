@@ -1,9 +1,9 @@
 import { deploy, minBidIncrement } from './deploy'
 import { Devcon6 } from 'contracts'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bidAsSigner } from 'scripts/utils/bid'
 import * as hre from 'hardhat'
 import { parseEther } from 'ethers/lib/utils'
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 
 async function run() {
   const nodeProcess = hre.run('node')
