@@ -26,7 +26,7 @@ export const TimeLeft = () => {
         <RemainingTime>{timeLeft}</RemainingTime>
       </TimeRow>
       <TimeRow>
-      Ends on <RemainingTime>{formatEndDate(time)}</RemainingTime>
+        Ends on <RemainingTime>{formatEndDate(time)}</RemainingTime>
       </TimeRow>
     </TimeBox>
   )
