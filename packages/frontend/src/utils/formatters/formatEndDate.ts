@@ -1,8 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-
-import { padZeroes } from './padZeroes'
+import moment from 'moment'
 
 export function formatEndDate(timestamp: BigNumber) {
-  const date = new Date(timestamp.mul(1000).toNumber())
-  return padZeroes(date.getDate()) + '.' + padZeroes(date.getMonth() + 1)
+  const date = new Date(timestamp.toNumber()).toISOString()
+  return moment(date).format('DD.MM')
 }
