@@ -1,4 +1,3 @@
-import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -8,8 +7,6 @@ import { KeyIcon } from '../Icons/KeyIcon'
 import { TimeLeft } from './TimeLeft'
 
 export const Header = () => {
-  const { timestamp } = useAuctionTime()
-
   return (
     <StyledHeader>
       <HeaderWrapper>
@@ -18,7 +15,7 @@ export const Header = () => {
             <h1>Devcon 6</h1>
             <SubTitle>Ticket Sale</SubTitle>
           </Title>
-          <TimeLeft endTimestamp={timestamp} />
+          <TimeLeft />
         </Wrapper>
         <Key>
           <KeyIcon />
