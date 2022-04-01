@@ -1,12 +1,11 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { useState } from 'react'
 import { FormWrapper } from 'src/components/Form/Form'
+import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { formatEndDateText } from 'src/utils/formatters/formatEndDateText'
 import styled from 'styled-components'
 
 export const BidAwaiting = () => {
-  const [endTimestamp] = useState(BigNumber.from(Math.floor(Date.now() / 1000) + 1234))
-  const { dateText, timeText } = formatEndDateText(endTimestamp)
+  const { timestamp } = useAuctionTime()
+  const { dateText, timeText } = formatEndDateText(timestamp)
 
   return (
     <BidStartWrapper>
