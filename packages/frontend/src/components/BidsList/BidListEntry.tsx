@@ -16,19 +16,27 @@ interface Props {
 }
 
 export const BidListEntry = ({ bid, emptyBid, isUser, view = 'full' }: Props) => {
-  return (
+  return bid ? (
     <BidsEntryRow isUser={isUser}>
-      <PlaceColumn>{bid ? bid.place : emptyBid?.place}.</PlaceColumn>
-      <BidColumn>{bid ? formatEtherAmount(bid.amount) + ' ETH' : emptyBid?.amount} </BidColumn>
+      <PlaceColumn>{bid.place}.</PlaceColumn>
+      <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
-        {bid ? (
-          <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
-            {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
-          </AddressLink>
-        ) : (
-          emptyBid?.bidderAddress
-        )}
+        <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+          {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
+        </AddressLink>
       </AddressColumn>
+    </BidsEntryRow>
+  ) : (
+    <EmptyBidListEntry emptyBid={emptyBid} />
+  )
+}
+
+const EmptyBidListEntry = ({ emptyBid }: { emptyBid?: EmptyBid }) => {
+  return (
+    <BidsEntryRow>
+      <PlaceColumn>{emptyBid?.place}.</PlaceColumn>
+      <BidColumn>{emptyBid?.amount} </BidColumn>
+      <AddressColumn>{emptyBid?.bidderAddress}</AddressColumn>
     </BidsEntryRow>
   )
 }
