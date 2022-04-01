@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { useCall } from '@usedapp/core'
 
 import { useDevconContract } from './contract'
@@ -16,6 +17,6 @@ export function useAuctionTime() {
         args: [],
       }
     ) ?? {}
-  const timestamp = value && value[0]
+  const timestamp = value !== undefined ? value[0] : BigNumber.from(0)
   return { timestamp, error }
 }

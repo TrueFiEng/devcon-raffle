@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useState } from 'react'
 import { useAuctionState } from 'src/hooks/useAuctionState'
 import { useAuctionTime } from 'src/hooks/useAuctionTime'
@@ -9,9 +8,8 @@ import styled from 'styled-components'
 export const TimeLeft = () => {
   const { timestamp } = useAuctionTime()
   const state = useAuctionState()
-  const time = timestamp !== undefined ? timestamp : BigNumber.from(0)
 
-  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(time))
+  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))
 
   useEffect(() => {
     const interval = setInterval(() => setTimeLeft(timeLeft), 1_000)
@@ -26,7 +24,7 @@ export const TimeLeft = () => {
         <RemainingTime>{timeLeft}</RemainingTime>
       </TimeRow>
       <TimeRow>
-        Ends on <RemainingTime>{formatEndDate(time)}</RemainingTime>
+        Ends on <RemainingTime>{formatEndDate(timestamp)}</RemainingTime>
       </TimeRow>
     </TimeBox>
   )
