@@ -1,7 +1,7 @@
 import { parseEther } from '@ethersproject/units'
 import { useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -17,7 +17,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
   const minimumIncrement = parseEther('0.01')
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
-  const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
+  const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
   const newBid = useMemo(() => {
     return userBid.amount.add(bumpAmount)
@@ -34,7 +34,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
 
   return (
     <>
-      {view === BidFlowSteps.Placing ? (
+      {view === TxFlowSteps.Placing ? (
         <BumpBidForm
           userBid={userBid}
           newBid={newBid}

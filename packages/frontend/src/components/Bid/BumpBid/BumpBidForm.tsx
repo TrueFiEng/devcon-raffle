@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
@@ -17,7 +17,7 @@ interface BumpBidProps {
   newBid: BigNumber
   bumpAmount: BigNumber
   setBumpAmount: (val: BigNumber) => void
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
   bids: BidWithPlace[]
 }
 
@@ -62,7 +62,7 @@ export const BumpBidForm = ({ userBid, newBid, bumpAmount, setBumpAmount, setVie
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
-            setView(BidFlowSteps.Review)
+            setView(TxFlowSteps.Review)
           }}
         >
           Bump your bid

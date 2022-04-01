@@ -1,4 +1,4 @@
-import { formatInputAmount } from '../../../src/utils/formatters/formatInputAmount'
+import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 
 describe('formatInputAmount', () => {
   it('Handles integers start with 0', () => {

@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
-import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
-import { Form, FormHeading } from 'src/components/Form/Form'
+import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
@@ -23,7 +23,7 @@ interface WinBidFormProps {
   bid: BigNumber
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
@@ -42,14 +42,14 @@ export const WinBidForm = ({
   return (
     <Form>
       <WinFormHeading voucher={voucher}>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
-      <WinText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</WinText>
+      <FormText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</FormText>
       {!withdrawnBid && win !== WinOptions.Auction && (
         <WinOption>
           <span>{luck ? withdrawText[win] : 'You can withdraw your bid amount minus 2% fee.'}</span>
           <Button
             view="primary"
             onClick={() => {
-              setView(BidFlowSteps.Review)
+              setView(TxFlowSteps.Review)
               setWithdrawnBid(true)
             }}
           >
@@ -75,10 +75,6 @@ export const WinBidForm = ({
     </Form>
   )
 }
-
-const WinText = styled.p`
-  color: ${Colors.White};
-`
 
 const WinOption = styled.div`
   display: flex;
