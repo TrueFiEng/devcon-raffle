@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
@@ -23,7 +23,7 @@ interface WinBidFormProps {
   bid: BigNumber
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
@@ -49,7 +49,7 @@ export const WinBidForm = ({
           <Button
             view="primary"
             onClick={() => {
-              setView(BidFlowSteps.Review)
+              setView(TxFlowSteps.Review)
               setWithdrawnBid(true)
             }}
           >

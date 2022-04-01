@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -13,7 +13,7 @@ interface BumpBidFlowProps {
 }
 
 export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
-  const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
+  const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [newBid, setNewBid] = useState(userBid.amount)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
@@ -30,7 +30,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
 
   return (
     <>
-      {view === BidFlowSteps.Placing ? (
+      {view === TxFlowSteps.Placing ? (
         <BumpBidForm userBid={userBid} newBid={newBid} setBid={setNewBid} setView={setView} bids={bids} />
       ) : (
         <AuctionTransaction action={bumpAction} amount={bumpBidAmount} impact={newBid} view={view} setView={setView} />

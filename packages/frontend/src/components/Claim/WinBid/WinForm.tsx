@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Bid/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -10,7 +10,7 @@ import styled from 'styled-components'
 interface WinFormProps {
   win?: WinOptions
   bid: BigNumber
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
   voucher: boolean
