@@ -190,11 +190,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
-        if (biddersCount <= _raffleWinnersCount) {
+        uint256 raffleWinnersCount = _raffleWinnersCount;
+        if (biddersCount <= raffleWinnersCount) {
             return;
         }
 
-        uint256 winnersLength = _heap.length;
+        uint256 auctionParticipantsCount = biddersCount - raffleWinnersCount;
+        uint256 winnersLength = _auctionWinnersCount;
+        if (auctionParticipantsCount < winnersLength) {
+            winnersLength = auctionParticipantsCount;
+        }
 
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 key = _heap.removeMax();
