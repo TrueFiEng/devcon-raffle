@@ -35,14 +35,10 @@ task('bid', 'Places bid for given account with provided amount')
   })
 
 task('settle-auction', 'Settles auction')
-  .addParam('winners', 'Array of winners IDs', undefined, types.json)
-  .setAction(async (
-    { winners }: { winners: number[] },
-    hre,
-  ) => {
+  .setAction(async (taskArgs, hre) => {
     const devcon = await devconAsOwner(hre)
 
-    await devcon.settleAuction(winners)
+    await devcon.settleAuction()
     console.log('Auction settled!')
   })
 
