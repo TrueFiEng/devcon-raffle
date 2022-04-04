@@ -23,12 +23,6 @@ describe('formatTimeLeft', () => {
     expect(formatTimeLeft(date, now)).toBe('01d 01h 30m')
   })
 
-  it('Rounds down excess seconds', () => {
-    const date = BigNumber.from(minutesToSeconds(60))
-    const now = minutesToMillis(30) + 1000 * 40
-    expect(formatTimeLeft(date, now)).toBe('00d 00h 30m')
-  })
-
   it('Past date displays as zeroes', () => {
     const date = BigNumber.from(minutesToSeconds(60))
     const now = minutesToMillis(230)
