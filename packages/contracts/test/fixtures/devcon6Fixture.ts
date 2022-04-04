@@ -3,7 +3,7 @@ import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { WEEK } from 'utils/consts'
-import { deployMaxHeapLibrary } from 'fixtures/maxHeapMockFixture'
+import { deployMaxHeap } from 'scripts/deploy/deploy'
 
 export const auctionWinnersCount = 1
 export const raffleWinnersCount = 8
@@ -38,7 +38,7 @@ export function configuredDevcon6Fixture(params: devcon6Params) {
     const currentBlockTimestamp = await getLatestBlockTimestamp(provider)
     params = setDevcon6ParamsDefaults(owner, currentBlockTimestamp, params)
 
-    const libraryLink = await deployMaxHeapLibrary()
+    const libraryLink = await deployMaxHeap(deployer)
     const devcon = await new Devcon6__factory(libraryLink, deployer).deploy(
       params.initialOwner,
       params.biddingStartTime,

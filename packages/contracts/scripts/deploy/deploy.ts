@@ -1,6 +1,6 @@
 import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
 import { Signer, utils } from 'ethers'
-import { deployMaxHeapLibrary } from 'fixtures/maxHeapMockFixture'
+import { ethers } from 'hardhat'
 
 const HOUR = 3600
 export const reservePrice = utils.parseEther('0.15')
@@ -16,13 +16,13 @@ export async function deploy(biddingStartTime: number, owner: Signer): Promise<D
   return devcon
 }
 
-export async function deployDevcon(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
+export async function deployDevcon(biddingStartTime: number, deployer: Signer): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
-  const ownerAddress = await owner.getAddress()
-  const libraryLink = await deployMaxHeapLibrary()
-  return new Devcon6__factory(libraryLink, owner).deploy(
+  const ownerAddress = await deployer.getAddress()
+  const libraryLink = await deployMaxHeap(deployer)
+  return new Devcon6__factory(libraryLink, deployer).deploy(
     ownerAddress,
     biddingStartTime,
     biddingEndTime,
@@ -32,4 +32,14 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
     reservePrice,
     minBidIncrement,
   )
+}
+
+export async function deployMaxHeap(deployer: Signer) {
+  const heapLibraryFactory = await ethers.getContractFactory('MaxHeap')
+  const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
+
+  return {
+    'contracts/utils/MaxHeap.sol:MaxHeap': heapLibrary.address,
+    __$f92e1b546cb81b0df9056e27145904c2f5$__: heapLibrary.address,
+  }
 }
