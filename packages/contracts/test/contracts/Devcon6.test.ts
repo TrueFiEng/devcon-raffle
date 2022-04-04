@@ -118,19 +118,19 @@ describe('Devcon6', function () {
     })
 
     it('reverts if called not by owner', async function () {
-      await expect(devcon.settleAuction([1]))
+      await expect(devcon.settleAuction())
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if bidding is in progress', async function () {
-      await expect(settleAuction([1]))
+      await expect(settleAuction())
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(devconAsOwner)
-      await settleAuction([1])
-      await expect(settleAuction([1]))
+      await settleAuction()
+      await expect(settleAuction())
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
@@ -141,57 +141,9 @@ describe('Devcon6', function () {
       await bid(1)
 
       await endBidding(devconAsOwner)
-      await settleAuction([])
+      await settleAuction()
 
       expect(await devconAsOwner.getState()).to.be.equal(State.auctionSettled)
-    })
-
-    it.only('heap test', async function() {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
-      devconAsOwner = devcon.connect(wallets[1])
-
-      await bid(8)
-
-      await bidAsWallet(wallets[9], reservePrice.add(20))
-      await bidAsWallet(wallets[10], reservePrice.add(20))
-      await bidAsWallet(wallets[11], reservePrice.add(10))
-      await bidAsWallet(wallets[12], reservePrice.add(30))
-
-      // update values
-      await bidAsWallet(wallets[11], reservePrice)
-
-      // less than minimum
-      await bidAsWallet(wallets[13], reservePrice.add(15))
-
-      // new bid greater than minimum
-      await bidAsWallet(wallets[14], reservePrice.add(25))
-
-      await bidAndSettleRaffle(0,[])
-
-      // bid amounts:
-      // 0: reservePrice
-      // ...
-      // 8: reservePrice
-      // 9: reservePrice.add(20)
-      // 10: reservePrice.add(20)
-      // 11: reservePrice.mul(2).add(10)
-      // 12: reservePrice.add(30)
-      // 13: reservePrice.add(15)
-      // 14: reservePrice.add(25)
-
-      // expected winners: 11, 12, 14, 9
-      expect(await devconAsOwner.getAuctionWinners()).to.deep.eq(bigNumberArrayFrom([11,12,14,9]))
-    })
-
-    it('reverts if number of bidders is less than raffleWinnersCount and auction winners were passed', async function () {
-      ({ devcon } = await loadFixture(devcon6Fixture))
-      devconAsOwner = devcon.connect(wallets[1])
-
-      await bid(1)
-
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([1]))
-        .to.be.revertedWith('Devcon6: invalid auction winners length')
     })
 
     it('chooses auction winners when there are not enough participants for entire auction', async function () {
@@ -201,30 +153,18 @@ describe('Devcon6', function () {
       await bid(9)
 
       await endBidding(devconAsOwner)
-      await settleAuction([1])
+      await settleAuction()
 
-      const auctionWinnerBid = await getBidByID(1)
-      expect(auctionWinnerBid.winType).to.deep.equal(WinType.auction)
-    })
-
-    it('reverts if passed auction winners array length is less than auctionWinnersCount', async function () {
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([]))
-        .to.be.revertedWith('Devcon6: invalid auction winners length')
-    })
-
-    it('reverts if winner does not exist', async function () {
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([30]))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+      const auctionWinners = await getAllBidsByWinType(9, WinType.auction)
+      expect(auctionWinners.length).to.equal(1)
     })
 
     it('saves auction winners', async function () {
       await endBidding(devconAsOwner)
 
-      await settleAuction([2])
+      await settleAuction()
 
-      const bid = await getBidByID(2)
+      const bid = await getBidByID(1)
       expect(bid.winType).to.deep.equal(WinType.auction)
     })
 
@@ -235,31 +175,9 @@ describe('Devcon6', function () {
       await bid(10)
 
       await endBidding(devconAsOwner)
-      await settleAuction([3, 2])
+      await settleAuction()
 
-      expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([1, 9, 10, 4, 5, 6, 7, 8]))
-    })
-
-    it('reverts if IDs in winners array are not unique', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-      devconAsOwner = devcon.connect(wallets[1])
-
-      await bid(10)
-
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([3, 3]))
-        .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
-    })
-
-    it('reverts if IDs in winners array are not sorted in descending order', async function () {
-      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-      devconAsOwner = devcon.connect(wallets[1])
-
-      await bid(10)
-
-      await endBidding(devconAsOwner)
-      await expect(settleAuction([2, 3]))
-        .to.be.revertedWith('Devcon6: bidder IDs in auction winners array must be unique and sorted in descending order')
+      expect(await devcon.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([9, 10, 3, 4, 5, 6, 7, 8]))
     })
 
     it('emits events', async function () {
@@ -269,8 +187,8 @@ describe('Devcon6', function () {
       await bid(10)
       await endBidding(devconAsOwner)
 
-      const tx = await settleAuction([3, 2])
-      await emitsEvents(tx, 'NewAuctionWinner', [3], [2])
+      const tx = await settleAuction()
+      await emitsEvents(tx, 'NewAuctionWinner', [2], [1])
     })
   })
 
@@ -762,8 +680,8 @@ describe('Devcon6', function () {
     await network.provider.send('evm_mine')
   }
 
-  async function settleAuction(auctionWinners: BigNumberish[]): Promise<ContractTransaction> {
-    return devconAsOwner.settleAuction(auctionWinners, { gasLimit: 500_000 })
+  async function settleAuction(auctionWinners?: BigNumberish[]): Promise<ContractTransaction> {
+    return devconAsOwner.settleAuction({ gasLimit: 4_000_000 })
   }
 
   async function bid(walletCount: number) {
@@ -788,6 +706,17 @@ describe('Devcon6', function () {
         return bid
       }
     }
+  }
+
+  async function getAllBidsByWinType(bidCount: number, winType: WinType): Promise<Bid[]> {
+    const bids = []
+    for (let i = 1; i <= bidCount; i++) {
+      const bid = await getBidByID(i)
+      if (bid.winType === winType) {
+        bids.push(bid)
+      }
+    }
+    return bids
   }
 
   async function calculateTransferredAmount(transaction: () => Promise<ContractTransaction>): Promise<BigNumber> {
