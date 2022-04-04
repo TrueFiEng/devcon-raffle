@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { useUserBid } from 'src/hooks/useUserBid'
@@ -25,8 +25,12 @@ export const Input = ({ amount, setAmount, notEnoughBalance, bidTooLow }: InputP
   const userBalance = useEtherBalance(account)
   const userBid = useUserBid()
 
-  const initialInputValue = amount.isZero() ? '' : formatEther(amount)
-  const [inputValue, setInputValue] = useState(initialInputValue)
+  const [initialInput, setInitialInput] = useState(formatEther(amount))
+  const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    setInitialInput(formatEther(amount))
+  }, [amount])
 
   const onChange = (value: string) => {
     if (!numberInputRegex.test(value)) {
@@ -59,8 +63,10 @@ export const Input = ({ amount, setAmount, notEnoughBalance, bidTooLow }: InputP
         </TokenIconWrapper>
         <StyledInput
           value={inputValue}
+          placeholder={initialInput}
           onChange={(e) => onChange(e.target.value)}
           onBlur={(e) => onBlur(e.target.value)}
+          onFocus={() => setInputValue(initialInput)}
           role="input"
         />
         <InputTokenName>ETH</InputTokenName>
@@ -141,6 +147,10 @@ const StyledInput = styled.input`
   &,
   &:disabled {
     background-color: transparent;
+  }
+
+  &::placeholder {
+    color: currentColor;
   }
 `
 
