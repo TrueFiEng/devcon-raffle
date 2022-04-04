@@ -59,12 +59,26 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _;
     }
 
+    modifier onlyExternalTransactions() {
+        require(
+            msg.sender == tx.origin,
+            "Devcon6: internal transactions are forbidden"
+        );
+
+        _;
+    }
+
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
     event NewAuctionWinner(uint256 bidderID);
     event NewRaffleWinner(uint256 bidderID);
     event NewGoldenTicketWinner(uint256 bidderID);
 
-    function bid() external payable onlyInState(State.BIDDING_OPEN) {
+    function bid()
+        external
+        payable
+        onlyExternalTransactions
+        onlyInState(State.BIDDING_OPEN)
+    {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount > 0) {
             require(
