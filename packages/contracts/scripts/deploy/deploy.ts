@@ -16,13 +16,13 @@ export async function deploy(biddingStartTime: number, owner: Signer): Promise<D
   return devcon
 }
 
-export async function deployDevcon(biddingStartTime: number, deployer: Signer): Promise<Devcon6> {
+export async function deployDevcon(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
-  const ownerAddress = await deployer.getAddress()
-  const libraryLink = await deployMaxHeap(deployer)
-  return new Devcon6__factory(libraryLink, deployer).deploy(
+  const ownerAddress = await owner.getAddress()
+  const libraryLink = await deployMaxHeap(owner)
+  return new Devcon6__factory(libraryLink, owner).deploy(
     ownerAddress,
     biddingStartTime,
     biddingEndTime,
