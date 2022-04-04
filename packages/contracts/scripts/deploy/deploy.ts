@@ -1,5 +1,6 @@
 import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
 import { Signer, utils } from 'ethers'
+import { deployMaxHeapLibrary } from 'fixtures/maxHeapMockFixture'
 
 const HOUR = 3600
 export const reservePrice = utils.parseEther('0.15')
@@ -20,8 +21,8 @@ export async function deployDevcon(biddingStartTime: number, owner: Signer): Pro
   const claimingEndTime = biddingEndTime + HOUR
 
   const ownerAddress = await owner.getAddress()
-
-  return new Devcon6__factory(owner).deploy(
+  const libraryLink = await deployMaxHeapLibrary()
+  return new Devcon6__factory(libraryLink, owner).deploy(
     ownerAddress,
     biddingStartTime,
     biddingEndTime,
