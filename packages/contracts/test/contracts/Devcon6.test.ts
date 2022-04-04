@@ -209,7 +209,7 @@ describe('Devcon6', function () {
 
     it('reverts if called with zero random numbers', async function () {
       await endBidding(devconAsOwner)
-      await settleAuction([1])
+      await settleAuction()
 
       await expect(devconAsOwner.settleRaffle([]))
         .to.be.revertedWith('Devcon6: there must be at least one random number passed')
@@ -221,7 +221,7 @@ describe('Devcon6', function () {
 
       await bid(20)
       await endBidding(devconAsOwner)
-      await settleAuction([1])
+      await settleAuction()
 
       // Reverts because it expects 2 random numbers
       await expect(devconAsOwner.settleRaffle(randomBigNumbers(3)))
@@ -235,7 +235,7 @@ describe('Devcon6', function () {
       await bid(4)
 
       await endBidding(devconAsOwner)
-      await settleAuction([])
+      await settleAuction()
 
       // Golden ticket winner participant index generated from this number: 2, bidderID: 3
       const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
@@ -255,7 +255,7 @@ describe('Devcon6', function () {
     it('picks correct numbers of winners', async function () {
       await bid(10)
       await endBidding(devconAsOwner)
-      await settleAuction([1])
+      await settleAuction()
 
       const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
       await devconAsOwner.settleRaffle([randomNumber])
@@ -284,7 +284,7 @@ describe('Devcon6', function () {
       await bid(20)
 
       await endBidding(devconAsOwner)
-      await settleAuction([1])
+      await settleAuction()
 
       // Participant indexes generated from this number:
       // [[16, 16, 6, 7, 4, 9, 0, 1], [6, 3, 6, 7, 1, 3, 2, 2]]
@@ -310,13 +310,13 @@ describe('Devcon6', function () {
       ({ devcon } = await loadFixture(devcon6Fixture))
       devconAsOwner = devcon.connect(wallets[1])
 
-      await bidAndSettleRaffle(0, [])
+      await bidAndSettleRaffle(0)
     })
 
     it('changes state', async function () {
       await endBidding(devconAsOwner)
 
-      await settleAuction([2])
+      await settleAuction()
 
       await devconAsOwner.settleRaffle(randomBigNumbers(1))
 
@@ -325,7 +325,7 @@ describe('Devcon6', function () {
 
     describe('when golden ticket winner has been selected', function () {
       it('emits event', async function () {
-        const tx = await bidAndSettleRaffle(0, [1])
+        const tx = await bidAndSettleRaffle(0)
 
         const goldenBid = await getBidByWinType(9, WinType.goldenTicket)
         await emitsEvents(tx, 'NewGoldenTicketWinner', [goldenBid.bidderID])
@@ -335,13 +335,13 @@ describe('Devcon6', function () {
     describe('when raffle winners have been selected', function () {
       it('emits events', async function () {
         await endBidding(devconAsOwner)
-        await devconAsOwner.settleAuction([9])
+        await settleAuction() // auction winner bidderID: 1
 
         // Golden ticket winner participant index generated from this number: 7, bidderID: 8
         const tx = await devconAsOwner.settleRaffle([7])
 
-        const raffleWinners: number[][] = []
-        for (let i = 1; i < 8; i++) {
+        const raffleWinners: number[][] = [[9]]
+        for (let i = 2; i < 8; i++) {
           raffleWinners.push([i])
         }
         await emitsEvents(tx, 'NewRaffleWinner', ...raffleWinners)
