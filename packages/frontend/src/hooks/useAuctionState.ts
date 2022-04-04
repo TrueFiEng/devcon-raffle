@@ -1,6 +1,8 @@
 import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
 import { useState } from 'react'
 
+import { ContractState } from './useContractState'
+
 export type AuctionState =
   | 'AwaitingBidding'
   | 'WalletNotConnected'
@@ -8,15 +10,6 @@ export type AuctionState =
   | 'BiddingFlow'
   | 'AwaitingResults'
   | 'ClaimingFlow'
-
-enum ContractState {
-  AWAITING_BIDDING,
-  BIDDING_OPEN,
-  BIDDING_CLOSED,
-  AUCTION_SETTLED,
-  RAFFLE_SETTLED,
-  CLAIMING_CLOSED,
-}
 
 export function useAuctionState(): AuctionState {
   const { account, chainId } = useEthers()
