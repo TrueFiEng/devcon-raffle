@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { parseEther } from '@ethersproject/units'
+import { useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -13,16 +14,19 @@ interface BumpBidFlowProps {
 }
 
 export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
-  const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
-  const [newBid, setNewBid] = useState(userBid.amount)
+  const minimumIncrement = parseEther('0.01')
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
-  const bumpBidAmount = newBid.sub(userBid.amount)
+  const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
+  const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
+  const newBid = useMemo(() => {
+    return userBid.amount.add(bumpAmount)
+  }, [bumpAmount, userBid.amount])
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
     send: async () => {
-      await placeBid(bumpBidAmount)
+      await placeBid(bumpAmount)
     },
     state: state,
     resetState: resetState,
@@ -30,10 +34,17 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
 
   return (
     <>
-      {view === BidFlowSteps.Placing ? (
-        <BumpBidForm userBid={userBid} newBid={newBid} setBid={setNewBid} setView={setView} bids={bids} />
+      {view === TxFlowSteps.Placing ? (
+        <BumpBidForm
+          userBid={userBid}
+          newBid={newBid}
+          bumpAmount={bumpAmount}
+          setBumpAmount={setBumpAmount}
+          setView={setView}
+          bids={bids}
+        />
       ) : (
-        <AuctionTransaction action={bumpAction} amount={bumpBidAmount} impact={newBid} view={view} setView={setView} />
+        <AuctionTransaction action={bumpAction} amount={bumpAmount} impact={newBid} view={view} setView={setView} />
       )}
     </>
   )

@@ -1,8 +1,9 @@
 import { addressEqual } from '@usedapp/core'
 import { useMemo } from 'react'
-import { BidListEntry } from 'src/components/BidsList/BidListEntry'
+import { BidListEntry, EmptyBidListEntry } from 'src/components/BidsList/BidListEntry'
 import { Separator } from 'src/components/common/Separator'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
+import { emptyBids } from 'src/constants/emptyBids'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -21,18 +22,24 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
 
   return (
     <BidList>
-      {bids.map((bid) => (
-        <BidListEntry
-          key={bid.bidderAddress}
-          bid={bid}
-          isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
-          view={view}
-        />
-      ))}
-      {userRaffleBid && view === 'short' && (
+      {bids.length === 0 ? (
+        emptyBids.map((emptyBid) => <EmptyBidListEntry key={emptyBid} place={emptyBid} />)
+      ) : (
         <>
-          <Separator color={Colors.Grey} />
-          <BidListEntry bid={userRaffleBid} isUser view={view} />
+          {bids.map((bid) => (
+            <BidListEntry
+              key={bid.bidderAddress}
+              bid={bid}
+              isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
+              view={view}
+            />
+          ))}
+          {userRaffleBid && view === 'short' && (
+            <>
+              <Separator color={Colors.Grey} />
+              <BidListEntry bid={userRaffleBid} isUser view={view} />
+            </>
+          )}
         </>
       )}
     </BidList>

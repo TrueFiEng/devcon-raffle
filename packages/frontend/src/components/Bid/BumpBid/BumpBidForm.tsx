@@ -2,8 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
@@ -16,19 +15,18 @@ import styled from 'styled-components'
 interface BumpBidProps {
   userBid: BidWithPlace
   newBid: BigNumber
-  setBid: (val: BigNumber) => void
-  setView: (state: BidFlowSteps) => void
+  bumpAmount: BigNumber
+  setBumpAmount: (val: BigNumber) => void
+  setView: (state: TxFlowSteps) => void
   bids: BidWithPlace[]
 }
 
-export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidProps) => {
+export const BumpBidForm = ({ userBid, newBid, bumpAmount, setBumpAmount, setView, bids }: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
   const minimumIncrement = parseEther('0.01')
-  const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
-  const newBidAmount = newBid.add(bumpAmount)
 
   return (
     <BumpFormWrapper>
@@ -42,7 +40,12 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
           <span>Current place in the raffle</span>
           <span>No. {userBid.place}</span>
         </FormRow>
-        <Input bid={bumpAmount} setBid={setBumpAmount} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
+        <Input
+          amount={bumpAmount}
+          setAmount={setBumpAmount}
+          notEnoughBalance={notEnoughBalance}
+          bidTooLow={bidTooLow}
+        />
         <FormRow>
           <span>Min. increment of the bid</span>
           <span>{formatEther(minimumIncrement)} ETH</span>
@@ -50,17 +53,16 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
         <Separator />
         <FormRow>
           <span>Your bid after the bump</span>
-          <span>{formatEtherAmount(newBidAmount)} ETH</span>
+          <span>{formatEtherAmount(newBid)} ETH</span>
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {getPositionAfterBid(newBidAmount, bids)}</span>
+          <span>No. {bidTooLow ? userBid.place : getPositionAfterBid(newBid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
-            setView(BidFlowSteps.Review)
-            setBid(newBidAmount)
+            setView(TxFlowSteps.Review)
           }}
         >
           Bump your bid
@@ -71,7 +73,7 @@ export const BumpBidForm = ({ userBid, newBid, setBid, setView, bids }: BumpBidP
 }
 
 const BumpFormWrapper = styled(FormWrapper)`
-  padding: 0 115px;
+  padding: 0 115px 0 170px;
   justify-content: center;
 `
 

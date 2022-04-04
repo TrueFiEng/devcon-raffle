@@ -2,9 +2,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useEffect } from 'react'
 import { heading } from 'src/components/Auction/AuctionTransaction'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
-import { FormRow, Form } from 'src/components/Form/Form'
+import { FormRow, FormNarrow } from 'src/components/Form/Form'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -21,8 +21,8 @@ interface ReviewFormProps {
   amount: BigNumber
   impact?: BigNumber
   setTxHash: (hash: string) => void
-  view: BidFlowSteps
-  setView: (state: BidFlowSteps) => void
+  view: TxFlowSteps
+  setView: (state: TxFlowSteps) => void
 }
 
 export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }: ReviewFormProps) => {
@@ -42,7 +42,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
   }, [view, setView, setTxHash, action])
 
   return (
-    <Form>
+    <FormNarrow>
       <FormRow>
         <span>{amountLabel[action.type]}</span>
         <span>{formatEtherAmount(amount)} ETH</span>
@@ -65,6 +65,6 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
       >
         {heading[action.type]}
       </Button>
-    </Form>
+    </FormNarrow>
   )
 }

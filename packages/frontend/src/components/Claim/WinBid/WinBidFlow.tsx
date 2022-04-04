@@ -1,9 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
-import { WinOptions } from 'src/components/Bid/WinBid/WinFlowEnum'
-import { WinForm } from 'src/components/Bid/WinBid/WinForm'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
+import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { WinForm } from 'src/components/Claim/WinBid/WinForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
@@ -14,7 +14,7 @@ interface WinBidFlowProps {
 }
 
 export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
-  const [view, setView] = useState<BidFlowSteps>(BidFlowSteps.Placing)
+  const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [withdrawnBid, setWithdrawnBid] = useState(false)
   const [voucher, setVoucher] = useState(false)
   const bidderId = BigNumber.from(1)
@@ -31,7 +31,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
 
   return (
     <>
-      {view === BidFlowSteps.Placing ? (
+      {view === TxFlowSteps.Placing ? (
         <WinForm
           bid={userBid.amount}
           setView={setView}

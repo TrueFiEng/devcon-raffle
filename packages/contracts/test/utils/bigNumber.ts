@@ -12,6 +12,16 @@ export function randomBigNumbers(amount: number): BigNumber[] {
   return randomNumbers
 }
 
+export function biggerFirst(a: BigNumber, b: BigNumber) {
+  if (a.eq(b)) {
+    return 0
+  }
+  if (a.gt(b)) {
+    return -1
+  }
+  return 1
+}
+
 function randomBN(): BigNumber {
   return BigNumber.from(utils.randomBytes(32))
 }

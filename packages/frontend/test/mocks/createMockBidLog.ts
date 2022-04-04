@@ -1,7 +1,6 @@
-import { Interface } from '@ethersproject/abi'
+import { Interface, EventFragment } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
-import { EventFragment } from '@usedapp/core/node_modules/ethers/lib/utils'
 import { DEVCON6_ABI } from 'src/constants/abis'
 
 export function createMockBidLog(blockNumber: number, address: string, bidId: number, amount: string) {
