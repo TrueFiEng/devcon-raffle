@@ -4,7 +4,7 @@ import moment from 'moment'
 import { padZeroes } from './padZeroes'
 
 export function formatTimeLeft(timestamp: BigNumber, now = Date.now()) {
-  const date = moment(new Date(timestamp.mul(1000).toNumber()).toISOString())
+  const date = moment.unix(timestamp.toNumber())
   const difference = date.diff(now) > 0 ? date.diff(now) : 0
   const duration = moment.duration(difference)
 
