@@ -13,7 +13,7 @@ async function run() {
 
   console.log('Deploying contracts...')
 
-  const now = (new Date()).valueOf()
+  const now = Math.floor((new Date()).valueOf() / 1000)
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
 
   const owner = signers[0]
