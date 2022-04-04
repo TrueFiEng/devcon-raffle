@@ -442,7 +442,7 @@ describe('Devcon6', function () {
 
     describe('when proceeds have already been claimed', function () {
       it('reverts', async function () {
-        await bidAndSettleRaffle(2, [])
+        await bidAndSettleRaffle(2)
         await devconAsOwner.claimProceeds()
 
         await expect(devconAsOwner.claimProceeds())
@@ -454,7 +454,7 @@ describe('Devcon6', function () {
       it('transfers correct amount', async function () {
         const auctionBidAmount = reservePrice.add(100)
         await bidAsWallet(wallets[10], auctionBidAmount)
-        await bidAndSettleRaffle(10, [1])
+        await bidAndSettleRaffle(10)
 
         const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
         expect(await claimProceeds()).to.eq(claimAmount)
@@ -469,7 +469,7 @@ describe('Devcon6', function () {
         const auctionBidAmount = reservePrice.add(100)
         await bidAsWallet(wallets[8], auctionBidAmount)
         await bidAsWallet(wallets[9], auctionBidAmount)
-        await bidAndSettleRaffle(8, [2, 1])
+        await bidAndSettleRaffle(8)
 
         const claimAmount = auctionBidAmount.mul(2).add(reservePrice.mul(7))
         expect(await claimProceeds()).to.eq(claimAmount)
@@ -483,7 +483,7 @@ describe('Devcon6', function () {
 
         const auctionBidAmount = reservePrice.add(100)
         await bidAsWallet(wallets[8], auctionBidAmount)
-        await bidAndSettleRaffle(8, [1])
+        await bidAndSettleRaffle(8)
 
         const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
         expect(await claimProceeds()).to.eq(claimAmount)
@@ -492,7 +492,7 @@ describe('Devcon6', function () {
 
     describe('when biddersCount == raffleWinnersCount', function () {
       it('transfers correct amount', async function () {
-        await bidAndSettleRaffle(8, [])
+        await bidAndSettleRaffle(8)
 
         const claimAmount = reservePrice.mul(7)
         expect(await claimProceeds()).to.eq(claimAmount)
@@ -501,7 +501,7 @@ describe('Devcon6', function () {
 
     describe('when biddersCount < raffleWinnersCount', function () {
       it('transfers correct amount', async function () {
-        await bidAndSettleRaffle(5, [])
+        await bidAndSettleRaffle(5)
 
         const claimAmount = reservePrice.mul(4)
         expect(await claimProceeds()).to.eq(claimAmount)
@@ -510,14 +510,14 @@ describe('Devcon6', function () {
 
     describe('when biddersCount == 1', function () {
       it('does not transfer funds', async function () {
-        await bidAndSettleRaffle(1, [])
+        await bidAndSettleRaffle(1)
         expect(await claimProceeds()).to.eq(0)
       })
     })
 
     describe('when biddersCount == 0', function () {
       it('does not transfer funds', async function () {
-        await bidAndSettleRaffle(0, [])
+        await bidAndSettleRaffle(0)
         expect(await claimProceeds()).to.eq(0)
       })
     })
