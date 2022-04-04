@@ -30,7 +30,7 @@ describe('Devcon6', function () {
 
   beforeEach(async function () {
     ({ provider, devcon, wallets } = await loadFixture(devcon6Fixture))
-    devconAsOwner = devcon.connect(wallets[1])
+    devconAsOwner = devcon.connect(ownerWallet())
     bidderAddress = await devcon.signer.getAddress()
   })
 
@@ -136,7 +136,7 @@ describe('Devcon6', function () {
 
     it('changes state if number of bidders is less than raffleWinnersCount', async function () {
       ({ devcon } = await loadFixture(devcon6Fixture))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(1)
 
@@ -148,7 +148,7 @@ describe('Devcon6', function () {
 
     it('chooses auction winners when there are not enough participants for entire auction', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(9)
 
@@ -170,7 +170,7 @@ describe('Devcon6', function () {
 
     it('removes winners from raffle participants', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(10)
 
@@ -182,7 +182,7 @@ describe('Devcon6', function () {
 
     it('emits events', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(10)
       await endBidding(devconAsOwner)
@@ -217,7 +217,7 @@ describe('Devcon6', function () {
 
     it('reverts if called with incorrect amount of random numbers', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(20)
       await endBidding(devconAsOwner)
@@ -230,7 +230,7 @@ describe('Devcon6', function () {
 
     it('picks all participants as winners if amount of bidders is less than raffleWinnersCount', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(4)
 
@@ -279,7 +279,7 @@ describe('Devcon6', function () {
 
     it('selects random winners', async function () {
       ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bid(20)
 
@@ -308,7 +308,7 @@ describe('Devcon6', function () {
 
     it('works if there are no participants', async function () {
       ({ devcon } = await loadFixture(devcon6Fixture))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
 
       await bidAndSettleRaffle(0)
     })
@@ -464,7 +464,7 @@ describe('Devcon6', function () {
     describe('when biddersCount == (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
-        devconAsOwner = devcon.connect(wallets[1])
+        devconAsOwner = devcon.connect(ownerWallet())
 
         const auctionBidAmount = reservePrice.add(100)
         await bidAsWallet(wallets[8], auctionBidAmount)
@@ -479,7 +479,7 @@ describe('Devcon6', function () {
     describe('when raffleWinnersCount < biddersCount < (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
-        devconAsOwner = devcon.connect(wallets[1])
+        devconAsOwner = devcon.connect(ownerWallet())
 
         const auctionBidAmount = reservePrice.add(100)
         await bidAsWallet(wallets[8], auctionBidAmount)
@@ -579,7 +579,7 @@ describe('Devcon6', function () {
 
     beforeEach(async function () {
       ({ exampleToken, devcon, provider } = await loadFixture(devcon6FixtureWithToken))
-      devconAsOwner = devcon.connect(wallets[1])
+      devconAsOwner = devcon.connect(ownerWallet())
     })
 
     describe('when called not by owner', function () {
@@ -598,10 +598,10 @@ describe('Devcon6', function () {
 
     it('transfers tokens', async function () {
       await exampleToken.transfer(devcon.address, 100)
-      const balanceBeforeRescue = await exampleToken.balanceOf(wallets[1].address)
+      const balanceBeforeRescue = await exampleToken.balanceOf(ownerWallet().address)
 
       await devconAsOwner.rescueTokens(exampleToken.address)
-      expect(await exampleToken.balanceOf(wallets[1].address)).to.be.equal(balanceBeforeRescue.add(100))
+      expect(await exampleToken.balanceOf(ownerWallet().address)).to.be.equal(balanceBeforeRescue.add(100))
     })
   })
 
@@ -727,10 +727,10 @@ describe('Devcon6', function () {
   }
 
   async function calculateTransferredAmount(transaction: () => Promise<ContractTransaction>): Promise<BigNumber> {
-    const balanceBeforeClaim = await wallets[1].getBalance()
+    const balanceBeforeClaim = await ownerWallet().getBalance()
     const tx = await transaction()
     const txCost = await calculateTxCost(tx)
-    const balanceAfterClaim = await wallets[1].getBalance()
+    const balanceAfterClaim = await ownerWallet().getBalance()
     return balanceAfterClaim.add(txCost).sub(balanceBeforeClaim)
   }
 
