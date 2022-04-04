@@ -1,8 +1,8 @@
 import { setupFixtureLoader } from '../../setup'
 import { maxHeapMockFixture } from 'fixtures/maxHeapMockFixture'
 import { MaxHeapMock } from 'contracts'
-import { randomBigNumbers } from 'utils/bigNumber'
 import { BigNumberish, ContractTransaction } from 'ethers'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 const RUNS = 20
 

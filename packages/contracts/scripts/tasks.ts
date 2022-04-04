@@ -4,7 +4,7 @@ import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { randomBigNumbers } from 'utils/bigNumber'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 task('increase-time', 'Increases block time')
   .addParam('value', 'Time in seconds to increase', undefined, types.int, false)

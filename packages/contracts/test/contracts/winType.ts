@@ -1,4 +1,4 @@
-export enum WinType{
+export enum WinType {
   loss,
   goldenTicket,
   auction,

@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 
-export type Bid = {
+export interface Bid {
   bidderID: BigNumber,
   amount: BigNumber,
   winType: number,

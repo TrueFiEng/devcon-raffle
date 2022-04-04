@@ -2,8 +2,9 @@ import { setupFixtureLoader } from '../../setup'
 import { maxHeapMockFixture } from 'fixtures/maxHeapMockFixture'
 import { MaxHeapMock } from 'contracts'
 import { expect } from 'chai'
-import { biggerFirst, bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
+import { biggerFirst, bigNumberArrayFrom } from 'utils/bigNumber'
 import { BigNumber, BigNumberish } from 'ethers'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 describe('MaxHeap', function () {
   const loadFixture = setupFixtureLoader()

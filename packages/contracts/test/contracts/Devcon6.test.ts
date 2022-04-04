@@ -15,9 +15,10 @@ import { network } from 'hardhat'
 import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
-import { bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
+import { bigNumberArrayFrom } from 'utils/bigNumber'
 import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
