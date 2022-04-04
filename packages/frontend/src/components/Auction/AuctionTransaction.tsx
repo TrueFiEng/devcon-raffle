@@ -1,13 +1,13 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BackButton } from 'src/components/Buttons/BackButton'
-import { ConfirmationForm } from 'src/components/Form/ConfirmationForm'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
+import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
 import styled from 'styled-components'
 
 export const heading = {
@@ -20,8 +20,8 @@ interface AuctionTransactionProps {
   action: TransactionAction
   amount: BigNumber
   impact?: BigNumber
-  view: BidFlowSteps
-  setView: (state: BidFlowSteps) => void
+  view: TxFlowSteps
+  setView: (state: TxFlowSteps) => void
 }
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
@@ -31,10 +31,10 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
     <Transaction>
       <TransactionWrapper>
         <TransactionHeading>
-          <BackButton view={view} setView={setView} />
+          {view !== TxFlowSteps.Confirmation && <BackButton view={view} setView={setView} />}
           <FormSubHeading>{heading[action.type]}</FormSubHeading>
         </TransactionHeading>
-        {view === BidFlowSteps.Review && (
+        {view === TxFlowSteps.Review && (
           <ReviewForm
             action={action}
             amount={amount}
@@ -44,13 +44,13 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
             setView={setView}
           />
         )}
-        {view === BidFlowSteps.Confirmation && (
-          <ConfirmationForm action={action.type} txHash={txHash} setView={setView} />
+        {view === TxFlowSteps.Confirmation && (
+          <TransactionSuccess action={action.type} txHash={txHash} setView={setView} />
         )}
       </TransactionWrapper>
       <TransactionStepper
         action={action.type}
-        current={view === BidFlowSteps.Confirmation ? 'Finalized' : `${heading[action.type]}`}
+        current={view === TxFlowSteps.Confirmation ? 'Finalized' : `${heading[action.type]}`}
       />
     </Transaction>
   )

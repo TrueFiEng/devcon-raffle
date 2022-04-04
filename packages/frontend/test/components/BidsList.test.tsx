@@ -94,7 +94,7 @@ describe('UI: BidsListSection', () => {
     const place = screen.getByText(bid.place + '.')
     // eslint-disable-next-line testing-library/no-node-access
     expect(place.parentElement).toHaveTextContent(
-      `${bid.place}.${formatEtherAmount(bid.amount)} ETH${shortenEthAddress(bid.bidderAddress)}`
+      `${bid.place}.${formatEtherAmount(bid.amount)} ETH ${shortenEthAddress(bid.bidderAddress)}`
     )
   }
   const testHiddenBid = (bid: BidWithPlace) => {

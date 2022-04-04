@@ -10,6 +10,10 @@ export const Form = styled.div`
   overflow: hidden;
 `
 
+export const FormNarrow = styled(Form)`
+  max-width: 289px;
+`
+
 export const FormRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -32,4 +36,8 @@ export const FormWrapper = styled.div`
   row-gap: 16px;
   padding: 82px 115px 82px 170px;
   width: 100%;
+`
+
+export const FormText = styled.p`
+  color: ${Colors.White};
 `

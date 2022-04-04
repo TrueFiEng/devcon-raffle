@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { BidFlowSteps } from 'src/components/Bid/BidFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
@@ -13,7 +13,7 @@ interface PlaceBidFormProps {
   setBid: (val: BigNumber) => void
   minimumBid: BigNumber
   bids: Bid[]
-  setView: (state: BidFlowSteps) => void
+  setView: (state: TxFlowSteps) => void
 }
 
 export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
@@ -30,7 +30,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
-        <Input bid={bid} setBid={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
+        <Input amount={bid} setAmount={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
           <span>No. {getPositionAfterBid(bid, bids)}</span>
@@ -38,7 +38,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
         <Button
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
-            setView(BidFlowSteps.Review)
+            setView(TxFlowSteps.Review)
             account && bids.push({ bidderAddress: account, amount: bid })
           }}
         >

@@ -15,9 +15,9 @@ interface Props {
 
 export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
-    <BidsEntryRow isUser={isUser} view={view}>
+    <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{formatEtherAmount(bid.amount)} ETH</BidColumn>
+      <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
         <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
           {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
@@ -27,15 +27,24 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   )
 }
 
-const BidsEntryRow = styled.div<{ isUser?: boolean; view?: 'short' | 'full' }>`
+export const EmptyBidListEntry = ({ place }: { place: number }) => {
+  return (
+    <BidsEntryRow>
+      <PlaceColumn>{place}.</PlaceColumn>
+      <BidColumn>-</BidColumn>
+      <AddressColumn>-</AddressColumn>
+    </BidsEntryRow>
+  )
+}
+
+const BidsEntryRow = styled.div<{ isUser?: boolean }>`
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
   grid-template-areas: 'place bid address';
   position: relative;
 
-  ${({ isUser, view }) =>
+  ${({ isUser }) =>
     isUser &&
-    view === 'short' &&
     css`
       &::before {
         content: '';
