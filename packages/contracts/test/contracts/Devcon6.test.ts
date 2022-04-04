@@ -535,14 +535,14 @@ describe('Devcon6', function () {
     })
 
     it('reverts if claiming has not been closed yet', async function () {
-      await bidAndSettleRaffle(2, [])
+      await bidAndSettleRaffle(2)
 
       await expect(devconAsOwner.withdrawUnclaimedFunds())
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('transfers unclaimed funds', async function () {
-      await bidAndSettleRaffle(10, [1])
+      await bidAndSettleRaffle(10)
       await devconAsOwner.claimProceeds()
 
       await endClaiming(devconAsOwner)
@@ -552,7 +552,7 @@ describe('Devcon6', function () {
     })
 
     it('transfers remaining unclaimed funds', async function () {
-      await bidAndSettleRaffle(10, [1])
+      await bidAndSettleRaffle(10)
       await devconAsOwner.claimProceeds()
 
       const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
@@ -687,7 +687,7 @@ describe('Devcon6', function () {
     await network.provider.send('evm_mine')
   }
 
-  async function settleAuction(auctionWinners?: BigNumberish[]): Promise<ContractTransaction> {
+  async function settleAuction(): Promise<ContractTransaction> {
     return devconAsOwner.settleAuction({ gasLimit: 4_000_000 })
   }
 
