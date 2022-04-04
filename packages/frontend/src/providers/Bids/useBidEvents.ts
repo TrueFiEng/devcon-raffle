@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import 'react'
 import { useAsync } from 'react-async-hook'
 
-const GANACHE_DEVCON6_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+const GANACHE_DEVCON6_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
 const FIRST_QUERIED_BLOCK = 0
 const POLL_INTERVAL = 10_000
 
