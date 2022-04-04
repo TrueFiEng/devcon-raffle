@@ -5,6 +5,8 @@ import { bidAsSigner } from 'scripts/utils/bid'
 import * as hre from 'hardhat'
 import { parseEther } from 'ethers/lib/utils'
 
+const SECOND = 1000
+
 async function run() {
   const nodeProcess = hre.run('node')
   await delay(500)
@@ -13,7 +15,7 @@ async function run() {
 
   console.log('Deploying contracts...')
 
-  const now = Math.floor((new Date()).valueOf() / 1000)
+  const now = Math.floor((new Date()).valueOf() / SECOND)
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
 
   const owner = signers[0]
