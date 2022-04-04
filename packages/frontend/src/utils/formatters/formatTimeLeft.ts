@@ -1,21 +1,14 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import moment from 'moment'
 
-import { padZeroes } from './padZeroes'
+export function formatTimeLeft(timestamp: BigNumber, now = Date.now()) {
+  const date = moment(new Date(timestamp.mul(1000).toNumber()).toISOString())
+  const difference = date.diff(now)
+  const duration = moment.duration(difference)
 
-const MillisInMinute = 1000 * 60
-const SecondsInMinute = 60
-const MinutesInHour = 60
-const MinutesInDay = 24 * 60
-
-export function formatTimeLeft(dateSeconds: BigNumber, now = Date.now()) {
-  const dateMinutes = dateSeconds.div(SecondsInMinute)
-  const nowMinutes = Math.floor(now / MillisInMinute)
-
-  const difference = dateMinutes.gt(nowMinutes) ? dateMinutes.sub(nowMinutes) : BigNumber.from(0)
-
-  const days = padZeroes(difference.div(MinutesInDay))
-  const hours = padZeroes(difference.mod(MinutesInDay).div(MinutesInHour))
-  const minutes = padZeroes(difference.mod(MinutesInHour))
+  const days = duration.days()
+  const hours = duration.hours()
+  const minutes = duration.minutes()
 
   return `${days}d ${hours}h ${minutes}m`
 }
