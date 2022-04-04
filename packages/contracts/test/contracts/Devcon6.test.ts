@@ -352,21 +352,21 @@ describe('Devcon6', function () {
   describe('claim', function () {
     it('reverts if settling is not finished yet', async function () {
       await endBidding(devconAsOwner)
-      await devconAsOwner.settleAuction([])
+      await settleAuction()
 
       await expect(devcon.claim(4))
         .to.be.revertedWith('Devcon6: is in invalid state')
     })
 
     it('reverts if bidder does not exist', async function () {
-      await bidAndSettleRaffle(2, [])
+      await bidAndSettleRaffle(2)
 
       await expect(devcon.claim(20))
         .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
     })
 
     it('reverts if funds have been already claimed', async function () {
-      await bidAndSettleRaffle(4, [])
+      await bidAndSettleRaffle(4)
 
       await devcon.claim(4)
       await expect(devcon.claim(4))
@@ -374,14 +374,14 @@ describe('Devcon6', function () {
     })
 
     it('reverts if auction winner wants to claim funds', async function () {
-      await bidAndSettleRaffle(9, [1])
+      await bidAndSettleRaffle(9)
 
       await expect(devcon.claim(1))
         .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
     })
 
     it('sets bid as claimed', async function () {
-      await bidAndSettleRaffle(5, [])
+      await bidAndSettleRaffle(5)
 
       await devconAsOwner.claim(1)
 
@@ -391,7 +391,8 @@ describe('Devcon6', function () {
 
     it('transfers remaining funds for raffle winner', async function () {
       await bid(9) // place 9 bids = reservePrice
-      await bidAndSettleRaffle(9, [2]) // bumps all 9 bids and make owner wallet auction winner
+      await bidAsWallet(ownerWallet(), reservePrice) // bumps owner bid to become auction winner
+      await bidAndSettleRaffle(9) // bumps all 9 bids
       const raffleBid = await getBidByWinType(9, WinType.raffle) // get any raffle winner
       const bidderAddress = await devconAsOwner.getBidderAddress(raffleBid.bidderID)
 
@@ -402,7 +403,8 @@ describe('Devcon6', function () {
     })
 
     it('transfers bid funds for golden ticket winner', async function () {
-      await bidAndSettleRaffle(10, [2])
+      await bidAsWallet(ownerWallet(), reservePrice)
+      await bidAndSettleRaffle(10)
 
       const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
 
@@ -416,7 +418,8 @@ describe('Devcon6', function () {
     })
 
     it('transfers bid funds for non-winning bidder', async function () {
-      await bidAndSettleRaffle(10, [2])
+      await bidAsWallet(ownerWallet(), reservePrice)
+      await bidAndSettleRaffle(10)
 
       const lostBid = await getBidByWinType(10, WinType.loss)
 
@@ -667,10 +670,14 @@ describe('Devcon6', function () {
     })
   })
 
-  async function bidAndSettleRaffle(bidCount: number, auctionWinners: number[]): Promise<ContractTransaction> {
+  function ownerWallet() {
+    return wallets[1]
+  }
+
+  async function bidAndSettleRaffle(bidCount: number): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(devconAsOwner)
-    await devconAsOwner.settleAuction()
+    await settleAuction()
     return devconAsOwner.settleRaffle(randomBigNumbers(1))
   }
 
