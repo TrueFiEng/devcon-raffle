@@ -12,10 +12,9 @@ export const TimeLeft = () => {
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))
 
   useEffect(() => {
-    const interval = setInterval(() => setTimeLeft(timeLeft), 1_000)
+    const interval = setInterval(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
     return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [timestamp, timeLeft])
 
   return (
     <TimeBox>
