@@ -2,8 +2,9 @@ import { setupFixtureLoader } from '../../setup'
 import { maxHeapMockFixture } from 'fixtures/maxHeapMockFixture'
 import { MaxHeapMock } from 'contracts'
 import { expect } from 'chai'
-import { biggerFirst, bigNumberArrayFrom, randomBigNumbers } from 'utils/bigNumber'
+import { biggerFirst, bigNumberArrayFrom } from 'utils/bigNumber'
 import { BigNumber, BigNumberish } from 'ethers'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 describe('MaxHeap', function () {
   const loadFixture = setupFixtureLoader()
@@ -106,6 +107,38 @@ describe('MaxHeap', function () {
         expect(await removeMax()).to.eq(key)
       }
       expect(await heap.getArray()).to.be.empty
+    })
+  })
+
+  describe('findMin', function () {
+    it('reverts when heap is empty', async function () {
+      await expect(heap.findMin())
+        .to.be.revertedWith('MaxHeap: cannot find minimum element on empty heap')
+    })
+
+    it('finds minimum when there is 1 element', async function () {
+      await insert([5])
+      expect(await heap.findMin()).to.deep.eq(bigNumberArrayFrom([0, 5]))
+    })
+
+    it('finds minimum when there are 2 elements', async function () {
+      await insert([5, 10])
+      expect(await heap.findMin()).to.deep.eq(bigNumberArrayFrom([1, 5]))
+    })
+
+    it('finds minimum when there are 3 elements', async function () {
+      await insert([5, 10, 4])
+      expect(await heap.findMin()).to.deep.eq(bigNumberArrayFrom([2, 4]))
+    })
+
+    it('finds minimum when there are 20 elements', async function () {
+      const keys = randomBigNumbers(20)
+      await insert(keys)
+
+      keys.sort(biggerFirst)
+      const minElement = keys[keys.length - 1]
+      const minElementIndex = await heap.findKey(minElement)
+      expect(await heap.findMin()).to.deep.eq([minElementIndex, minElement])
     })
   })
 })

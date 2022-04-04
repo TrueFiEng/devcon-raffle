@@ -12,7 +12,7 @@ To interact with contracts change directory to `contracts`, then use below comma
 - `yarn node:increase-time --value 100` - increases block time by *value* seconds
 - `yarn node:accounts` - prints list of available accounts
 - `yarn devcon:bid --address 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc --amount 0.6` - bids as *address* with *amount* ETH
-- `yarn devcon:settle-auction --winners "[1,2]"` - settles auction and selects winners based on passed array of bidders IDs
+- `yarn devcon:settle-auction` - settles auction
 - `yarn devcon:settle-raffle` - settles raffle
 
 For additional information run below command:

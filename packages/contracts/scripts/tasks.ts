@@ -1,12 +1,10 @@
 import { task, types } from 'hardhat/config'
-import { devconAddress } from 'scripts/utils/devcon'
+import { devconAddress, devconArtifactName, devconLibraries } from 'scripts/utils/devcon'
 import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { randomBigNumbers } from 'utils/bigNumber'
-
-const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
+import { randomBigNumbers } from 'scripts/utils/random'
 
 task('increase-time', 'Increases block time')
   .addParam('value', 'Time in seconds to increase', undefined, types.int, false)
@@ -26,7 +24,7 @@ task('bid', 'Places bid for given account with provided amount')
     hre,
   ) => {
     const signer = await hre.ethers.getSigner(address)
-    const devconFactory = await hre.ethers.getContractFactory(devconArtifactName)
+    const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: devconLibraries })
     const devcon = devconFactory.attach(devconAddress).connect(signer)
 
     const ethAmount = parseEther(amount)
@@ -35,14 +33,10 @@ task('bid', 'Places bid for given account with provided amount')
   })
 
 task('settle-auction', 'Settles auction')
-  .addParam('winners', 'Array of winners IDs', undefined, types.json)
-  .setAction(async (
-    { winners }: { winners: number[] },
-    hre,
-  ) => {
+  .setAction(async (taskArgs, hre) => {
     const devcon = await devconAsOwner(hre)
 
-    await devcon.settleAuction(winners)
+    await devcon.settleAuction()
     console.log('Auction settled!')
   })
 
@@ -76,7 +70,7 @@ function formatEther(amount: BigNumberish): string {
 
 async function devconAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const owner = await getDevconOwner(hre)
-  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName)
+  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: devconLibraries })
   return devconFactory.attach(devconAddress).connect(owner)
 }
 

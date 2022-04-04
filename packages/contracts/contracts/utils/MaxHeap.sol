@@ -74,6 +74,30 @@ library MaxHeap {
         return max;
     }
 
+    function findMin(uint256[] storage heap)
+        public
+        view
+        returns (uint256 index, uint256 min)
+    {
+        uint256 heapLength = heap.length;
+        require(
+            heapLength > 0,
+            "MaxHeap: cannot find minimum element on empty heap"
+        );
+
+        uint256 n = heapLength / 2;
+        min = heap[n];
+        index = n;
+
+        for (uint256 i = n + 1; i < heapLength; ++i) {
+            uint256 element = heap[i];
+            if (element < min) {
+                min = element;
+                index = i;
+            }
+        }
+    }
+
     function bubbleUp(
         uint256[] storage heap,
         uint256 index,
