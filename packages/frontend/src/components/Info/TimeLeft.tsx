@@ -1,22 +1,20 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useState } from 'react'
 import { useAuctionState } from 'src/hooks/useAuctionState'
+import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
 import styled from 'styled-components'
 
-interface Props {
-  endTimestamp: BigNumber
-}
-
-export const TimeLeft = ({ endTimestamp }: Props) => {
+export const TimeLeft = () => {
+  const { timestamp } = useAuctionTime()
   const state = useAuctionState()
-  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(endTimestamp))
+
+  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))
+
   useEffect(() => {
-    const interval = setInterval(() => setTimeLeft(formatTimeLeft(endTimestamp)), 1_000)
+    const interval = setInterval(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
     return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [timestamp, timeLeft])
 
   return (
     <TimeBox>
@@ -25,7 +23,7 @@ export const TimeLeft = ({ endTimestamp }: Props) => {
         <RemainingTime>{timeLeft}</RemainingTime>
       </TimeRow>
       <TimeRow>
-        Ends on <RemainingTime>{formatEndDate(endTimestamp)}</RemainingTime>
+        Ends on <RemainingTime>{formatEndDate(timestamp)}</RemainingTime>
       </TimeRow>
     </TimeBox>
   )

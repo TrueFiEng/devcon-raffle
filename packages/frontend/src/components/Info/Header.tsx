@@ -1,5 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { useState } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -9,8 +7,6 @@ import { KeyIcon } from '../Icons/KeyIcon'
 import { TimeLeft } from './TimeLeft'
 
 export const Header = () => {
-  const [endTimestamp] = useState(BigNumber.from(Math.floor(Date.now() / 1000) + 1234))
-
   return (
     <StyledHeader>
       <HeaderWrapper>
@@ -19,7 +15,7 @@ export const Header = () => {
             <h1>Devcon 6</h1>
             <SubTitle>Ticket Sale</SubTitle>
           </Title>
-          <TimeLeft endTimestamp={endTimestamp} />
+          <TimeLeft />
         </Wrapper>
         <Key>
           <KeyIcon />
