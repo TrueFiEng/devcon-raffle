@@ -23,12 +23,13 @@ describe('UI: BumpBidForm', () => {
     expect(places[1]).toHaveTextContent('No. 2')
   })
 
-  const renderComponent = (newAmount: BigNumber, bumpAmount: BigNumber) =>
+  const renderComponent = (newAmount: BigNumber, minimumIncrement: BigNumber) =>
     render(
       <BumpBidForm
         userBid={mockBids[4]}
         newBid={newAmount}
-        bumpAmount={bumpAmount}
+        bumpAmount={minimumIncrement}
+        minimumIncrement={minimumIncrement}
         setBumpAmount={() => undefined}
         setView={() => undefined}
         bids={mockBids}

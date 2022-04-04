@@ -7,7 +7,6 @@ import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
 import type { BidWithPlace } from 'src/models/Bid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
@@ -17,15 +16,23 @@ interface BumpBidProps {
   userBid: BidWithPlace
   newBid: BigNumber
   bumpAmount: BigNumber
+  minimumIncrement: BigNumber
   setBumpAmount: (val: BigNumber) => void
   setView: (state: TxFlowSteps) => void
   bids: BidWithPlace[]
 }
 
-export const BumpBidForm = ({ userBid, newBid, bumpAmount, setBumpAmount, setView, bids }: BumpBidProps) => {
+export const BumpBidForm = ({
+  userBid,
+  newBid,
+  bumpAmount,
+  minimumIncrement,
+  setBumpAmount,
+  setView,
+  bids,
+}: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const { minimumIncrement } = useMinimumIncrement()
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
 

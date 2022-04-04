@@ -40,6 +40,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
           newBid={newBid}
           bumpAmount={bumpAmount}
           setBumpAmount={setBumpAmount}
+          minimumIncrement={minimumIncrement}
           setView={setView}
           bids={bids}
         />
