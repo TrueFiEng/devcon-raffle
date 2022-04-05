@@ -18,11 +18,7 @@ library MaxHeap {
         increaseKeyAt(heap, index, newValue);
     }
 
-    function findKey(uint256[] storage heap, uint256 value)
-        public
-        view
-        returns (uint256)
-    {
+    function findKey(uint256[] storage heap, uint256 value) public view returns (uint256) {
         for (uint256 i = 0; i < heap.length; ++i) {
             if (heap[i] == value) {
                 return i;
@@ -36,19 +32,13 @@ library MaxHeap {
         uint256 index,
         uint256 newValue
     ) public {
-        require(
-            newValue > heap[index],
-            "MaxHeap: new value must be bigger than old value"
-        );
+        require(newValue > heap[index], "MaxHeap: new value must be bigger than old value");
         heap[index] = newValue;
         bubbleUp(heap, index, newValue);
     }
 
     function removeMax(uint256[] storage heap) public returns (uint256 max) {
-        require(
-            heap.length > 0,
-            "MaxHeap: cannot remove max element from empty heap"
-        );
+        require(heap.length > 0, "MaxHeap: cannot remove max element from empty heap");
         max = heap[0];
         heap[0] = heap[heap.length - 1];
         heap.pop();
@@ -74,16 +64,9 @@ library MaxHeap {
         return max;
     }
 
-    function findMin(uint256[] storage heap)
-        public
-        view
-        returns (uint256 index, uint256 min)
-    {
+    function findMin(uint256[] storage heap) public view returns (uint256 index, uint256 min) {
         uint256 heapLength = heap.length;
-        require(
-            heapLength > 0,
-            "MaxHeap: cannot find minimum element on empty heap"
-        );
+        require(heapLength > 0, "MaxHeap: cannot find minimum element on empty heap");
 
         uint256 n = heapLength / 2;
         min = heap[n];
