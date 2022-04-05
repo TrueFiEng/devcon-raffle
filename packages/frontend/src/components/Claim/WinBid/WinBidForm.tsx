@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 const winText = {
   [WinOptions.Ticket]: 'You won the Golden Ticket!',
-  [WinOptions.Auction]: 'You bid was in the top 20, so you win a free ticket to Devcon 6!',
+  [WinOptions.Auction]: 'You bid was in the top 20, so you win a ticket to Devcon 6!',
   [WinOptions.Raffle]: 'You were chosen in the raffle!',
 }
 
@@ -60,7 +60,7 @@ export const WinBidForm = ({
 
       {!voucher && luck && (
         <WinOption>
-          <span>Get your voucher code</span>
+          <span>Claim your voucher code now!</span>
           <Button view="primary" onClick={() => setVoucher(true)}>
             Get voucher code
           </Button>
