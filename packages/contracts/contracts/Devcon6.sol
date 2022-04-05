@@ -27,6 +27,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     uint256[] _auctionWinners; // TODO pass by param to claimProceeds to save gas
     bool _proceedsClaimed;
+    uint256 _claimedFeesIndex;
 
     mapping(address => Bid) _bids;
     // bidderID -> address
@@ -293,6 +294,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             setBidWinType(bidderID, WinType.RAFFLE);
             emit NewRaffleWinner(bidderID);
         }
+        delete _raffleParticipants;
     }
 
     function selectRaffleWinners(
@@ -372,8 +374,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 claimAmount;
         if (bidder.winType == WinType.RAFFLE) {
             claimAmount = bidder.amount - _reservePrice;
-        } else {
+        } else if (bidder.winType == WinType.GOLDEN_TICKET) {
             claimAmount = bidder.amount;
+        } else if (bidder.winType == WinType.LOSS) {
+            claimAmount = (bidder.amount * 98) / 100;
         }
 
         if (claimAmount > 0) {
@@ -412,6 +416,35 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         totalAmount += raffleWinnersCount * _reservePrice;
 
         payable(owner()).transfer(totalAmount);
+    }
+
+    function claimFees(uint256 bidsCount)
+        external
+        onlyOwner
+        onlyInState(State.RAFFLE_SETTLED)
+    {
+        uint256 claimedFeesIndex = _claimedFeesIndex;
+        uint256 feesCount = _raffleParticipants.length;
+        require(feesCount > 0, "Devcon6: there are no fees to claim");
+        require(
+            claimedFeesIndex < feesCount,
+            "Devcon6: fees have already been claimed"
+        );
+
+        uint256 endIndex = claimedFeesIndex + bidsCount;
+        if (endIndex > feesCount) {
+            endIndex = feesCount;
+        }
+
+        uint256 fee = 0;
+        for (uint256 i = claimedFeesIndex; i < endIndex; ++i) {
+            address bidderAddress = getBidderAddress(_raffleParticipants[i]);
+            uint256 bidAmount = _bids[bidderAddress].amount;
+            fee += bidAmount - (bidAmount * 98) / 100;
+        }
+
+        _claimedFeesIndex = endIndex;
+        payable(owner()).transfer(fee);
     }
 
     function withdrawUnclaimedFunds()
