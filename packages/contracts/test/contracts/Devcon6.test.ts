@@ -237,8 +237,8 @@ describe('Devcon6', function () {
 
         await bid(4)
 
-      await endBidding(devconAsOwner)
-      await settleAuction()
+        await endBidding(devconAsOwner)
+        await settleAuction()
 
         // Golden ticket winner participant index generated from this number: 2, bidderID: 3
         const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
@@ -259,7 +259,7 @@ describe('Devcon6', function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
         devconAsOwner = devcon.connect(wallets[1])
 
-        await bidAndSettleRaffle(4, [])
+        await bidAndSettleRaffle(4)
         const raffleParticipants = await devconAsOwner.getRaffleParticipants()
         expect(raffleParticipants.length).to.be.equal(0)
       })
@@ -658,7 +658,7 @@ describe('Devcon6', function () {
 
     describe('when fees have already been claimed', function () {
       it('reverts', async function () {
-        await bidAndSettleRaffle(10, [1])
+        await bidAndSettleRaffle(10)
         await devconAsOwner.claimFees(1)
 
         await expect(devconAsOwner.claimFees(1))
@@ -668,7 +668,7 @@ describe('Devcon6', function () {
 
     describe('when there are no non-winning bids', function () {
       it('reverts', async function () {
-        await bidAndSettleRaffle(6, [])
+        await bidAndSettleRaffle(6)
 
         await expect(devconAsOwner.claimFees(6))
           .to.be.revertedWith('Devcon6: there are no fees to claim')
@@ -677,7 +677,7 @@ describe('Devcon6', function () {
 
     describe('when claiming using multiple transactions', function () {
       it('transfers correct amount', async function () {
-        await bidAndSettleRaffle(15, [1])
+        await bidAndSettleRaffle(15)
         const singleBidFee = calculateFee(reservePrice)
 
         let claimAmount = singleBidFee.mul(2)
@@ -694,7 +694,7 @@ describe('Devcon6', function () {
         for (let i = 0; i < 16; i++) {
           await bidAsWallet(wallets[i], reservePrice.add(additionalBidAmount.mul(i)))
         }
-        await bidAndSettleRaffle(0, [1])
+        await bidAndSettleRaffle(0)
 
         const bids = await getAllBidsByWinType(16, WinType.loss)
         let claimAmount = BigNumber.from(0)
@@ -707,13 +707,14 @@ describe('Devcon6', function () {
     })
 
     describe('when bid amount is not divisible by 100', function () {
-      it('transfers correct amount', async function () {
+      it('transfers correct amount with remainder', async function () {
         const bidAmount = reservePrice.add(21)
-        await bid(9)
+        await bid(8)
         await bidAsWallet(wallets[9], bidAmount)
+        await bidAsWallet(wallets[10], reservePrice.mul(2))
 
-        // Non-winning bidderID from random number: 10
-        await bidAndSettleRaffle(0, [2], [9])
+        // Non-winning bidderID from random number: 9
+        await bidAndSettleRaffle(0, [10])
 
         expect(await claimFees(1)).to.be.equal(calculateFee(bidAmount))
       })
@@ -798,11 +799,13 @@ describe('Devcon6', function () {
     return wallets[1]
   }
 
-  async function bidAndSettleRaffle(bidCount: number): Promise<ContractTransaction> {
+  async function bidAndSettleRaffle(bidCount: number, randomNumbers?: BigNumberish[]): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(devconAsOwner)
     await settleAuction()
-    return devconAsOwner.settleRaffle(randomBigNumbers(1))
+
+    const numbers = randomNumbers || randomBigNumbers(1)
+    return devconAsOwner.settleRaffle(numbers)
   }
 
   async function endBidding(devcon: Devcon6) {
