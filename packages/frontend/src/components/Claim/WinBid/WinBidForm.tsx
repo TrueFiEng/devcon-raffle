@@ -3,6 +3,7 @@ import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
+import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
@@ -38,6 +39,7 @@ export const WinBidForm = ({
   setVoucher,
 }: WinBidFormProps) => {
   const luck = win !== undefined
+  const { claimingEndTime } = useClaimingEndTime()
 
   return (
     <Form>
@@ -69,7 +71,7 @@ export const WinBidForm = ({
 
       {!luck && !withdrawnBid && (
         <WinOption>
-          <span>You have time until XX.XX.2023 to withdraw your funds.</span>
+          <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>
       )}
     </Form>
