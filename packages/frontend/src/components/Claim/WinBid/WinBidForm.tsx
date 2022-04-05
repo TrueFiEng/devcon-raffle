@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useMemo } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -40,6 +41,8 @@ export const WinBidForm = ({
 }: WinBidFormProps) => {
   const luck = win !== undefined
   const { claimingEndTime } = useClaimingEndTime()
+  const FEE = 2
+  const withdrawalAmount = useMemo(() => bid.sub(bid.mul(FEE).div(100)), [bid])
 
   return (
     <Form>
@@ -47,7 +50,7 @@ export const WinBidForm = ({
       <FormText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</FormText>
       {!withdrawnBid && win !== WinOptions.Auction && (
         <WinOption>
-          <span>{luck ? withdrawText[win] : 'You can withdraw your bid amount minus 2% fee.'}</span>
+          <span>{luck ? withdrawText[win] : `You can withdraw your bid amount minus ${FEE}% fee.`}</span>
           <Button
             view="primary"
             onClick={() => {
@@ -55,7 +58,7 @@ export const WinBidForm = ({
               setWithdrawnBid(true)
             }}
           >
-            <span>Withdraw {formatEtherAmount(bid)} ETH</span>
+            <span>Withdraw {formatEtherAmount(withdrawalAmount)} ETH</span>
           </Button>
         </WinOption>
       )}
