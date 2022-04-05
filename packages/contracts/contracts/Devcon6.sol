@@ -78,6 +78,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     event NewRaffleWinner(uint256 bidderID);
     event NewGoldenTicketWinner(uint256 bidderID);
 
+    receive() external payable {
+        revert("Devcon6: contract accepts ether transfers only by bid method");
+    }
+
+    fallback() external payable {
+        revert("Devcon6: contract accepts ether transfers only by bid method");
+    }
+
     function bid()
         external
         payable

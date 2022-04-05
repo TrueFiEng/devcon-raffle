@@ -18,6 +18,7 @@ import { WinType } from './winType'
 import { bigNumberArrayFrom } from 'utils/bigNumber'
 import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
+import { parseEther } from 'ethers/lib/utils'
 import { randomBigNumbers } from 'scripts/utils/random'
 
 describe('Devcon6', function () {
@@ -603,6 +604,27 @@ describe('Devcon6', function () {
 
       await devconAsOwner.rescueTokens(exampleToken.address)
       expect(await exampleToken.balanceOf(owner().address)).to.be.equal(balanceBeforeRescue.add(100))
+    })
+  })
+
+  describe('fallback', function () {
+    describe('when transfers ether without calldata', function () {
+      it('reverts', async function () {
+        await expect(owner().sendTransaction({ to: devcon.address, value: parseEther('1') }))
+          .to.be.revertedWith('Devcon6: contract accepts ether transfers only by bid method')
+      })
+    })
+
+    describe('when transfers ether with calldata', function () {
+      it('reverts', async function () {
+        const params = {
+          to: devcon.address,
+          value: parseEther('1'),
+          data: '0x7D86687F980A56b832e9378952B738b614A99dc6',
+        }
+        await expect(owner().sendTransaction(params))
+          .to.be.revertedWith('Devcon6: contract accepts ether transfers only by bid method')
+      })
     })
   })
 
