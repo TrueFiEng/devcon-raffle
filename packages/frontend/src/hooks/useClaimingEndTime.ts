@@ -14,6 +14,6 @@ export function useClaimingEndTime() {
         args: [],
       }
     ) ?? {}
-  const claimingEndTime = value && moment.unix(value[0].toNumber()).format('DD.MM.YYYY')
+  const claimingEndTime = value ? moment.unix(value[0].toNumber()).format('DD.MM.YYYY') : '--.--.----'
   return { claimingEndTime, error }
 }
