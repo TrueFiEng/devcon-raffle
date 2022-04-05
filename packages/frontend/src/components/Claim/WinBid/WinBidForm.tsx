@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useMemo } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -8,6 +7,8 @@ import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
+
+import { FEE } from './WinBidFlow'
 
 const winText = {
   [WinOptions.Ticket]: 'You won the Golden Ticket!',
@@ -41,8 +42,6 @@ export const WinBidForm = ({
 }: WinBidFormProps) => {
   const luck = win !== undefined
   const { claimingEndTime } = useClaimingEndTime()
-  const FEE = 2
-  const withdrawalAmount = useMemo(() => bid.sub(bid.mul(FEE).div(100)), [bid])
 
   return (
     <Form>
@@ -58,7 +57,7 @@ export const WinBidForm = ({
               setWithdrawnBid(true)
             }}
           >
-            <span>Withdraw {formatEtherAmount(withdrawalAmount)} ETH</span>
+            <span>Withdraw {formatEtherAmount(bid)} ETH</span>
           </Button>
         </WinOption>
       )}
