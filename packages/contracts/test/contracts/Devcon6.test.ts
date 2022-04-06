@@ -304,13 +304,30 @@ describe('Devcon6', function () {
       expect(auctionWinners.length).to.equal(1)
     })
 
-    it('saves auction winners', async function () {
+    it('changes bidder win type', async function () {
       await endBidding(devconAsOwner)
-
       await settleAuction()
 
       const bid = await getBidByID(1)
       expect(bid.winType).to.deep.equal(WinType.auction)
+    })
+
+    it('saves auction winners', async function () {
+      await endBidding(devconAsOwner)
+      await settleAuction()
+
+      expect(await devconAsOwner.getAuctionWinners()).to.deep.equal(bigNumberArrayFrom([1]))
+    })
+
+    it('deletes heap', async function () {
+      ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 5 })))
+      devconAsOwner = devcon.connect(owner())
+
+      await bid(10)
+      await endBidding(devconAsOwner)
+      await settleAuction()
+
+      expect(await devconAsOwner.getHeap()).to.deep.equal([])
     })
 
     it('removes winners from raffle participants', async function () {

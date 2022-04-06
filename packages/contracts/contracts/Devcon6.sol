@@ -195,6 +195,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _tempWinners.insert(bidderID);
         }
 
+        delete _heap;
         delete _minKeyIndex;
         delete _minKeyValue;
 
