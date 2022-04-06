@@ -3,6 +3,7 @@ import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
+import { RAFFLE_PARTICIPANTS_COUNT } from 'src/constants/raffleParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
 import { BidWithPlace } from 'src/models/Bid'
 
@@ -18,14 +19,19 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
     [search]
   )
 
+  const raffleBidsOffset = Math.max(0, bids.length - RAFFLE_PARTICIPANTS_COUNT)
+  const firstRaffleBidIndex =
+    raffleBidsOffset >= AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT : raffleBidsOffset
+
   const auctionBids = useMemo(() => {
-    const sectionBids = bids.length <= AUCTION_PARTICIPANTS_COUNT ? bids : bids.slice(0, AUCTION_PARTICIPANTS_COUNT)
+    const sectionBids = bids.length <= RAFFLE_PARTICIPANTS_COUNT ? [] : bids.slice(0, firstRaffleBidIndex)
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid])
+  }, [search, bids, searchBid, firstRaffleBidIndex])
   const raffleBids = useMemo(() => {
-    const sectionBids = bids.length <= AUCTION_PARTICIPANTS_COUNT ? [] : bids.slice(AUCTION_PARTICIPANTS_COUNT)
+    const sectionBids = bids.length > RAFFLE_PARTICIPANTS_COUNT ? bids.slice(firstRaffleBidIndex) : bids
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid])
+  }, [search, bids, searchBid, firstRaffleBidIndex])
+
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
   return (
