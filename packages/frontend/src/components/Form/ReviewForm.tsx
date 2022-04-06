@@ -59,7 +59,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
       </FormRow>
       <Button
         view="primary"
-        disabled={action.state.status !== 'None'}
+        disabled={action.state.status === 'PendingSignature' || action.state.status === 'Mining'}
         isLoading={isPending}
         onClick={() => action.send()}
       >
