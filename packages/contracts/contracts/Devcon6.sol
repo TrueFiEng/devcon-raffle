@@ -66,10 +66,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     modifier onlyExternalTransactions() {
-        require(
-            msg.sender == tx.origin,
-            "Devcon6: internal transactions are forbidden"
-        );
+        require(msg.sender == tx.origin, "Devcon6: internal transactions are forbidden");
 
         _;
     }
@@ -87,27 +84,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         revert("Devcon6: contract accepts ether transfers only by bid method");
     }
 
-    function bid()
-        external
-        payable
-        onlyExternalTransactions
-        onlyInState(State.BIDDING_OPEN)
-    {
+    function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount > 0) {
-            require(
-                msg.value >= _minBidIncrement,
-                "Devcon6: bid increment too low"
-            );
+            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
             uint256 oldAmount = bidder.amount;
             bidder.amount += msg.value;
 
             updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
         } else {
-            require(
-                msg.value >= _reservePrice,
-                "Devcon6: bidding amount is below reserve price"
-            );
+            require(msg.value >= _reservePrice, "Devcon6: bidding amount is below reserve price");
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);
@@ -118,11 +104,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function getKey(uint256 bidderID, uint256 amount)
-        internal
-        pure
-        returns (uint256)
-    {
+    function getKey(uint256 bidderID, uint256 amount) internal pure returns (uint256) {
         return (amount << 16) | (_bidderMask - bidderID);
     }
 
@@ -192,11 +174,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     uint256[] _tempWinners; // temp array for sorting auction winners
 
-    function settleAuction()
-        external
-        onlyOwner
-        onlyInState(State.BIDDING_CLOSED)
-    {
+    function settleAuction() external onlyOwner onlyInState(State.BIDDING_CLOSED) {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
         uint256 raffleWinnersCount = _raffleWinnersCount;
@@ -228,15 +206,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    function settleRaffle(uint256[] memory randomNumbers)
-        external
-        onlyOwner
-        onlyInState(State.AUCTION_SETTLED)
-    {
-        require(
-            randomNumbers.length > 0,
-            "Devcon6: there must be at least one random number passed"
-        );
+    function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
+        require(randomNumbers.length > 0, "Devcon6: there must be at least one random number passed");
 
         _settleState = SettleState.RAFFLE_SETTLED;
 
@@ -245,10 +216,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        (participantsLength, randomNumbers[0]) = selectGoldenTicketWinner(
-            participantsLength,
-            randomNumbers[0]
-        );
+        (participantsLength, randomNumbers[0]) = selectGoldenTicketWinner(participantsLength, randomNumbers[0]);
 
         uint256 raffleWinnersCount = _raffleWinnersCount;
         if (participantsLength < raffleWinnersCount) {
@@ -256,10 +224,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        require(
-            randomNumbers.length == raffleWinnersCount / 8,
-            "Devcon6: passed incorrect number of random numbers"
-        );
+        require(randomNumbers.length == raffleWinnersCount / 8, "Devcon6: passed incorrect number of random numbers");
 
         selectRaffleWinners(participantsLength, randomNumbers);
     }
@@ -269,14 +234,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
-    function selectGoldenTicketWinner(
-        uint256 participantsLength,
-        uint256 randomNumber
-    ) private returns (uint256, uint256) {
-        uint256 winnerIndex = winnerIndexFromRandomNumber(
-            participantsLength,
-            randomNumber
-        );
+    function selectGoldenTicketWinner(uint256 participantsLength, uint256 randomNumber)
+        private
+        returns (uint256, uint256)
+    {
+        uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
         uint256 bidderID = _raffleParticipants[winnerIndex];
         setBidWinType(bidderID, WinType.GOLDEN_TICKET);
@@ -286,9 +248,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return (participantsLength - 1, randomNumber >> 32);
     }
 
-    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength)
-        private
-    {
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
         for (uint256 i = 0; i < participantsLength; ++i) {
             uint256 bidderID = _raffleParticipants[i];
             setBidWinType(bidderID, WinType.RAFFLE);
@@ -297,21 +257,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         delete _raffleParticipants;
     }
 
-    function selectRaffleWinners(
-        uint256 participantsLength,
-        uint256[] memory randomNumbers
-    ) private {
-        participantsLength = selectRandomRaffleWinners(
-            participantsLength,
-            randomNumbers[0],
-            7
-        );
+    function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
+        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
         for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(
-                participantsLength,
-                randomNumbers[i],
-                8
-            );
+            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
         }
     }
 
@@ -321,10 +270,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 winnersCount
     ) private returns (uint256) {
         for (uint256 i = 0; i < winnersCount; ++i) {
-            uint256 winnerIndex = winnerIndexFromRandomNumber(
-                participantsLength,
-                randomNumber
-            );
+            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
             uint256 bidderID = _raffleParticipants[winnerIndex];
             setBidWinType(bidderID, WinType.RAFFLE);
@@ -338,37 +284,27 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return participantsLength;
     }
 
-    function winnerIndexFromRandomNumber(
-        uint256 participantsLength,
-        uint256 randomNumber
-    ) private pure returns (uint256) {
+    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
+        private
+        pure
+        returns (uint256)
+    {
         uint256 smallRandom = randomNumber & _randomMask;
         return smallRandom % participantsLength;
     }
 
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
-        require(
-            index < participantsLength,
-            "Devcon6: invalid raffle participant index"
-        );
-        _raffleParticipants[index] = _raffleParticipants[
-            participantsLength - 1
-        ];
+        require(index < participantsLength, "Devcon6: invalid raffle participant index");
+        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
         _raffleParticipants.pop();
     }
 
-    function claim(uint256 bidderID)
-        external
-        onlyInState(State.RAFFLE_SETTLED)
-    {
+    function claim(uint256 bidderID) external onlyInState(State.RAFFLE_SETTLED) {
         address payable bidderAddress = getBidderAddress(bidderID);
         Bid storage bidder = _bids[bidderAddress];
         require(!bidder.claimed, "Devcon6: funds have already been claimed");
-        require(
-            bidder.winType != WinType.AUCTION,
-            "Devcon6: auction winners cannot claim funds"
-        );
+        require(bidder.winType != WinType.AUCTION, "Devcon6: auction winners cannot claim funds");
 
         bidder.claimed = true;
         uint256 claimAmount;
@@ -385,15 +321,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    function claimProceeds()
-        external
-        onlyOwner
-        onlyInState(State.RAFFLE_SETTLED)
-    {
-        require(
-            !_proceedsClaimed,
-            "Devcon6: proceeds have already been claimed"
-        );
+    function claimProceeds() external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
+        require(!_proceedsClaimed, "Devcon6: proceeds have already been claimed");
         _proceedsClaimed = true;
 
         uint256 biddersCount = getBiddersCount();
@@ -418,18 +347,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(totalAmount);
     }
 
-    function claimFees(uint256 bidsCount)
-        external
-        onlyOwner
-        onlyInState(State.RAFFLE_SETTLED)
-    {
+    function claimFees(uint256 bidsCount) external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
         uint256 claimedFeesIndex = _claimedFeesIndex;
         uint256 feesCount = _raffleParticipants.length;
         require(feesCount > 0, "Devcon6: there are no fees to claim");
-        require(
-            claimedFeesIndex < feesCount,
-            "Devcon6: fees have already been claimed"
-        );
+        require(claimedFeesIndex < feesCount, "Devcon6: fees have already been claimed");
 
         uint256 endIndex = claimedFeesIndex + bidsCount;
         if (endIndex > feesCount) {
@@ -447,11 +369,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(fee);
     }
 
-    function withdrawUnclaimedFunds()
-        external
-        onlyOwner
-        onlyInState(State.CLAIMING_CLOSED)
-    {
+    function withdrawUnclaimedFunds() external onlyOwner onlyInState(State.CLAIMING_CLOSED) {
         uint256 unclaimedFunds = address(this).balance;
         payable(owner()).transfer(unclaimedFunds);
     }
@@ -489,16 +407,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return bid_;
     }
 
-    function getBidderAddress(uint256 bidderID)
-        public
-        view
-        returns (address payable)
-    {
+    function getBidderAddress(uint256 bidderID) public view returns (address payable) {
         address payable bidderAddress = _bidders[bidderID];
-        require(
-            bidderAddress != address(0),
-            "Devcon6: bidder with given ID does not exist"
-        );
+        require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
         return bidderAddress;
     }
 

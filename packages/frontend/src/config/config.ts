@@ -20,7 +20,7 @@ function getDevConfig(): Config {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
-      readOnlyChainId: ArbitrumRinkeby.chainId,
+      readOnlyChainId: Hardhat.chainId,
       networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
     },
   }
