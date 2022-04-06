@@ -5,7 +5,7 @@ import {
   devcon6Fixture,
   devcon6FixtureWithToken,
   minBidIncrement,
-  reservePrice,
+  reservePrice
 } from 'fixtures/devcon6Fixture'
 import { Devcon6, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -230,7 +230,7 @@ describe('Devcon6', function () {
         .to.be.revertedWith('Devcon6: passed incorrect number of random numbers')
     })
 
-    describe('when amount of bidders is less than raffleWinnersCount', function () {
+    describe('when bidders count is less than raffleWinnersCount', function () {
       it('picks all participants as winners', async function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
         devconAsOwner = devcon.connect(owner())
@@ -255,6 +255,11 @@ describe('Devcon6', function () {
         }
       })
 
+      it('saves raffle winners', async function() {
+        await bidAndSettleRaffle(0)
+        await verifyRaffleWinners()
+      })
+
       it('removes raffle participants', async function () {
         ({ devcon } = await loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 16 })))
         devconAsOwner = devcon.connect(wallets[1])
@@ -262,6 +267,13 @@ describe('Devcon6', function () {
         await bidAndSettleRaffle(4)
         const raffleParticipants = await devconAsOwner.getRaffleParticipants()
         expect(raffleParticipants.length).to.be.equal(0)
+      })
+    })
+
+    describe('when bidders count is greater than raffleWinnersCount', function () {
+      it('saves raffle winners', async function() {
+        await bidAndSettleRaffle(12)
+        await verifyRaffleWinners()
       })
     })
 
@@ -360,6 +372,20 @@ describe('Devcon6', function () {
         await emitsEvents(tx, 'NewRaffleWinner', ...raffleWinners)
       })
     })
+
+    async function verifyRaffleWinners(){
+      const raffleWinners = await devconAsOwner.getRaffleWinners()
+
+      for (let i = 0; i < raffleWinners.length; i++) {
+        const winnerBid = await getBidByID(raffleWinners[i].toNumber())
+        if (i === 0) {
+          expect(winnerBid.winType).to.be.equal(WinType.goldenTicket)
+          continue
+        }
+
+        expect(winnerBid.winType).to.be.equal(WinType.raffle)
+      }
+    }
   })
 
   describe('claim', function () {
