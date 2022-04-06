@@ -4,6 +4,7 @@ import { FormNarrow } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
+import { useChainId } from 'src/hooks/useChainId'
 import { Colors } from 'src/styles/colors'
 import { shortenTxHash } from 'src/utils/formatters/shortenTxHash'
 import { getArbiscanTxLink } from 'src/utils/getArbiscanLink'
@@ -16,7 +17,8 @@ interface Props {
 }
 
 export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
-  const transactionLink = getArbiscanTxLink(txHash)
+  const chainId = useChainId()
+  const transactionLink = getArbiscanTxLink(chainId, txHash)
 
   return (
     <Container>
