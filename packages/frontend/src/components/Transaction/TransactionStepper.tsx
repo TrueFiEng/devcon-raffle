@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
+import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -23,10 +24,6 @@ const transactionSteps = (action: Transactions) => {
       default: {
         name: `${heading[action]}`,
         description: `${description[action]}`,
-      },
-      failed: {
-        name: `Transaction failed`,
-        description: 'Transaction failed.',
       },
     },
     {
@@ -56,11 +53,16 @@ export interface Step<StepName extends string> {
 
 export interface StepperProps<StepName extends string> {
   current: StepName
-  action: Transactions
+  action: TransactionAction
+  failedTransaction: boolean
 }
 
-export const TransactionStepper = <StepName extends string>({ current, action }: StepperProps<StepName>) => {
-  const steps = transactionSteps(action)
+export const TransactionStepper = <StepName extends string>({
+  current,
+  action,
+  failedTransaction,
+}: StepperProps<StepName>) => {
+  const steps = transactionSteps(action.type)
   const currentStepIndex = useMemo(
     () => steps.findIndex((step) => [step.default.name, step.failed?.name].includes(current)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,22 +70,22 @@ export const TransactionStepper = <StepName extends string>({ current, action }:
   )
   return (
     <StepperContainer>
-      <StepperHeader>Finalize {header[action]}</StepperHeader>
+      <StepperHeader>Finalize {header[action.type]}</StepperHeader>
       <StepperList>
         {steps.map((item, index) => {
           const status = index === currentStepIndex ? 'current' : index < currentStepIndex ? 'completed' : 'next'
           const isLast = index === steps.length - 1
-          const { step, type } = pickStepVersion(item, current, isLast)
-          return <StepperListItem key={index} step={step} status={status} type={type} />
+          const { step, type } = pickStepVersion(item, isLast, failedTransaction)
+          return <StepperListItem key={index} step={step} status={status} type={isLast ? type : 'success'} />
         })}
       </StepperList>
     </StepperContainer>
   )
 }
 
-function pickStepVersion<Name extends string>(item: Step<Name>, current: Name, isLast: boolean) {
+function pickStepVersion<Name extends string>(item: Step<Name>, isLast: boolean, failedTransaction: boolean) {
   const [step, type]: [StepContent<Name>, StepType] =
-    item.failed?.name === current ? [item.failed, 'failure'] : [item.default, isLast ? 'success' : 'neutral']
+    item.failed && failedTransaction ? [item.failed, 'failure'] : [item.default, !isLast ? 'success' : 'neutral']
   return { step, type }
 }
 
@@ -194,7 +196,7 @@ const StepperBullet = styled.div<DisplayTypeProps>`
       case 'current':
         switch (type) {
           case 'neutral':
-            return Colors.GreenDark
+            return Colors.BlueDark
           case 'failure':
             return Colors.Red
           case 'success':
@@ -203,9 +205,6 @@ const StepperBullet = styled.div<DisplayTypeProps>`
         break
       case 'completed':
         return Colors.GreenDark
-
-      default:
-        return Colors.BlueDark
     }
   }};
 
