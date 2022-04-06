@@ -1,19 +1,16 @@
-import { useCall } from '@usedapp/core'
 import moment from 'moment'
+import { useMemo } from 'react'
 
-import { useDevconContract } from './contract'
+import { useDevconParam } from './useDevconParam'
 
 export function useClaimingEndTime() {
-  const devconContract = useDevconContract()
+  const { devconValue, error } = useDevconParam('claimingEndTime')
 
-  const { value, error } =
-    useCall(
-      devconContract && {
-        contract: devconContract,
-        method: 'claimingEndTime',
-        args: [],
-      }
-    ) ?? {}
-  const claimingEndTime = value ? moment.unix(value[0].toNumber()).format('DD.MM.YYYY') : '--.--.----'
+  const claimingEndTime = useMemo(() => {
+    return devconValue
+      ? moment.unix(devconValue.toNumber()).format('DD.MM.YYYY')
+      : '--.--.----'
+  }, [devconValue])
+
   return { claimingEndTime, error }
 }
