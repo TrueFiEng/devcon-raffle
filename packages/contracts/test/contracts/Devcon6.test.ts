@@ -20,6 +20,7 @@ import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
 import { parseEther } from 'ethers/lib/utils'
 import { randomBigNumbers } from 'scripts/utils/random'
+import { ZERO } from '@devcon-raffle/frontend/src/constants/bigNumber'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -697,7 +698,7 @@ describe('Devcon6', function () {
         await bidAndSettleRaffle(0)
 
         const bids = await getAllBidsByWinType(16, WinType.loss)
-        let claimAmount = BigNumber.from(0)
+        let claimAmount = ZERO
         bids.forEach((bid) => {
           claimAmount = claimAmount.add(calculateFee(bid.amount))
         })
