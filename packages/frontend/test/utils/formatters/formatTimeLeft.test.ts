@@ -5,6 +5,10 @@ describe('formatTimeLeft', () => {
   const minutesToMillis = (n: number) => n * 60 * 1000
   const minutesToSeconds = (n: number) => n * 60
 
+  it('Returns hyphen for undefined timestamp', () => {
+    expect(formatTimeLeft(undefined)).toBe('-')
+  })
+
   it('Formats minutes', () => {
     const date = BigNumber.from(minutesToSeconds(60))
     const now = minutesToMillis(30)
