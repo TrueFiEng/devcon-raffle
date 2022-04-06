@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
@@ -14,6 +14,8 @@ export const PlaceBidFlow = () => {
   const [bid, setBid] = useState(minimumBid)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
+
+  useEffect(() => setBid(minimumBid), [minimumBid, setBid])
 
   const bidAction: TransactionAction = {
     type: Transactions.Place,

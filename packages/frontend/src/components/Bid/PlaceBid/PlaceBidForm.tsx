@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useEffect } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
@@ -22,8 +21,6 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
   const userBalance = useEtherBalance(account)
   const notEnoughBalance = userBalance !== undefined && bid.gt(userBalance)
   const bidTooLow = bid.lt(minimumBid)
-
-  useEffect(() => setBid(minimumBid), [minimumBid, setBid])
 
   return (
     <FormWrapper>

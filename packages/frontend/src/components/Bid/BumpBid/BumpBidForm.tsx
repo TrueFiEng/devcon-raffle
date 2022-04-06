@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useEffect } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
@@ -35,8 +34,6 @@ export const BumpBidForm = ({
   const userBalance = useEtherBalance(account)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
-
-  useEffect(() => setBumpAmount(minimumIncrement), [minimumIncrement, setBumpAmount])
 
   return (
     <BumpFormWrapper>

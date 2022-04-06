@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
@@ -22,6 +22,8 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
   const newBid = useMemo(() => {
     return userBid.amount.add(bumpAmount)
   }, [bumpAmount, userBid.amount])
+
+  useEffect(() => setBumpAmount(minimumIncrement), [minimumIncrement, setBumpAmount])
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
