@@ -1,21 +1,14 @@
-import { useCall } from '@usedapp/core'
+import { BigNumber } from '@ethersproject/bignumber'
+import moment from 'moment'
 
-import { useDevconContract } from './contract'
 import { useContractState, ContractState } from './useContractState'
+import { useDevconParam } from './useDevconParam'
 
 export function useAuctionTime() {
-  const devconContract = useDevconContract()
   const { state } = useContractState()
   const getTime = state === ContractState.AWAITING_BIDDING ? 'biddingStartTime' : 'biddingEndTime'
+  const { devconValue } = useDevconParam(getTime)
 
-  const { value, error } =
-    useCall(
-      devconContract && {
-        contract: devconContract,
-        method: getTime,
-        args: [],
-      }
-    ) ?? {}
-  const timestamp = value && value[0]
-  return { timestamp, error }
+  const timestamp = devconValue ? devconValue : BigNumber.from(moment().unix())
+  return { timestamp }
 }
