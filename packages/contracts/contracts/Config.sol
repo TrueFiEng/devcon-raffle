@@ -27,6 +27,8 @@ contract Config {
         require(raffleWinnersCount_ % 8 == 0, "Config: raffle winners count must be divisible by 8");
         require(biddingStartTime_ < biddingEndTime_, "Config: bidding start time must be before bidding end time");
         require(biddingEndTime_ < claimingEndTime_, "Config: bidding end time must be before claiming end time");
+        require(reservePrice_ > 0, "Config: reserve price must be greater than 0");
+        require(minBidIncrement_ > 0, "Config: min bid increment must be greater than 0");
 
         _biddingStartTime = biddingStartTime_;
         _biddingEndTime = biddingEndTime_;
