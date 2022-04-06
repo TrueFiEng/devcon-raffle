@@ -5,7 +5,7 @@ import {
   devcon6Fixture,
   devcon6FixtureWithToken,
   minBidIncrement,
-  reservePrice
+  reservePrice,
 } from 'fixtures/devcon6Fixture'
 import { Devcon6, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -255,7 +255,7 @@ describe('Devcon6', function () {
         }
       })
 
-      it('saves raffle winners', async function() {
+      it('saves raffle winners', async function () {
         await bidAndSettleRaffle(0)
         await verifyRaffleWinners()
       })
@@ -271,7 +271,7 @@ describe('Devcon6', function () {
     })
 
     describe('when bidders count is greater than raffleWinnersCount', function () {
-      it('saves raffle winners', async function() {
+      it('saves raffle winners', async function () {
         await bidAndSettleRaffle(12)
         await verifyRaffleWinners()
       })
@@ -285,21 +285,11 @@ describe('Devcon6', function () {
       const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
       await devconAsOwner.settleRaffle([randomNumber])
 
-      const winnersCounter = {
-        raffleWinner: 0,
-        goldenTicketWinner: 0,
-      }
-      for (let i = 1; i <= 10; i++) {
-        const bid = await getBidByID(i)
-        if (bid.winType === WinType.raffle) {
-          winnersCounter.raffleWinner++
-        } else if (bid.winType === WinType.goldenTicket) {
-          winnersCounter.goldenTicketWinner++
-        }
-      }
+      const raffleWinners = await getAllBidsByWinType(10, WinType.raffle)
+      const goldenWinners = await getAllBidsByWinType(10, WinType.goldenTicket)
 
-      expect(winnersCounter.raffleWinner).to.be.equal(7)
-      expect(winnersCounter.goldenTicketWinner).to.be.equal(1)
+      expect(raffleWinners.length).to.be.equal(7)
+      expect(goldenWinners.length).to.be.equal(1)
     })
 
     it('selects random winners', async function () {
@@ -373,7 +363,7 @@ describe('Devcon6', function () {
       })
     })
 
-    async function verifyRaffleWinners(){
+    async function verifyRaffleWinners() {
       const raffleWinners = await devconAsOwner.getRaffleWinners()
 
       for (let i = 0; i < raffleWinners.length; i++) {
