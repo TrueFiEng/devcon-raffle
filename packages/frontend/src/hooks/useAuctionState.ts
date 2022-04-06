@@ -1,7 +1,7 @@
 import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { ContractState } from './useContractState'
+import { ContractState, useContractState } from './useContractState'
 
 export type AuctionState =
   | 'AwaitingBidding'
@@ -14,7 +14,10 @@ export type AuctionState =
 export function useAuctionState(): AuctionState {
   const { account, chainId } = useEthers()
   const { networks } = useConfig()
-  const [contractState] = useState(ContractState.BIDDING_OPEN)
+  const { state } = useContractState()
+  const [contractState, setContractState] = useState(state)
+
+  useEffect(() => setContractState(state), [state])
 
   if (contractState === ContractState.AWAITING_BIDDING) {
     return 'AwaitingBidding'
