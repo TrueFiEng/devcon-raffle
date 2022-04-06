@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
@@ -8,14 +8,16 @@ import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 
+import { ZERO } from '../../../constants/bigNumber'
+
 export const PlaceBidFlow = () => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
-  const [bid, setBid] = useState(minimumBid)
+  const [bid, setBid] = useState(ZERO)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
 
-  useEffect(() => setBid(minimumBid), [minimumBid, setBid])
+  useEffect(() => setBid(minimumBid), [minimumBid])
 
   const bidAction: TransactionAction = {
     type: Transactions.Place,

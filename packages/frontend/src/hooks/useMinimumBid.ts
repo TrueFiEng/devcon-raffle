@@ -1,8 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { ZERO } from '../constants/bigNumber'
 
 import { useDevconParam } from './useDevconParam'
 
 export function useMinimumBid() {
   const { devconValue } = useDevconParam('reservePrice')
-  return devconValue ? devconValue : BigNumber.from(0)
+  return devconValue ? devconValue : ZERO
 }

@@ -48,7 +48,7 @@ export const BumpBidForm = ({
           <span>No. {userBid.place}</span>
         </FormRow>
         <Input
-          amount={bumpAmount}
+          initialAmount={minimumIncrement}
           setAmount={setBumpAmount}
           notEnoughBalance={notEnoughBalance}
           bidTooLow={bidTooLow}
