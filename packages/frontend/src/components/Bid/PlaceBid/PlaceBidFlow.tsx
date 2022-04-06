@@ -10,7 +10,7 @@ import { useMinimumBid } from 'src/hooks/useMinimumBid'
 
 export const PlaceBidFlow = () => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
-  const { minimumBid } = useMinimumBid()
+  const minimumBid = useMinimumBid()
   const [bid, setBid] = useState(minimumBid)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()

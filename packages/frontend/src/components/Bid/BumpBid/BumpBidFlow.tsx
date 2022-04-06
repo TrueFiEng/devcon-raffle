@@ -14,7 +14,7 @@ interface BumpBidFlowProps {
 }
 
 export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
-  const { minimumIncrement } = useMinimumIncrement()
+  const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
