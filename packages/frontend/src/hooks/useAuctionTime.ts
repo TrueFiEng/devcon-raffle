@@ -1,6 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import { useCall } from '@usedapp/core'
-import moment from 'moment'
 
 import { useDevconContract } from './contract'
 import { useContractState, ContractState } from './useContractState'
@@ -18,6 +16,6 @@ export function useAuctionTime() {
         args: [],
       }
     ) ?? {}
-  const timestamp = value !== undefined ? value[0] : BigNumber.from(moment().unix())
+  const timestamp = value && value[0]
   return { timestamp, error }
 }
