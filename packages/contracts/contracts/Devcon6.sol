@@ -162,7 +162,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _heap.increaseKey(oldKey, key);
         } else {
             uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = key <= minKeyValue || oldKey == minKeyValue;
+            bool updatingMinKey = oldKey <= minKeyValue;
             if (updatingMinKey) {
                 _heap.increaseKeyAt(_minKeyIndex, key);
                 updateMinKey();
