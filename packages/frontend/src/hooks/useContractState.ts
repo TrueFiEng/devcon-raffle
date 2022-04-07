@@ -21,6 +21,6 @@ export function useContractState() {
         args: [],
       }
     ) ?? {}
-  const state: ContractState | undefined = value && value[0]
+  const state = value ? value[0] : ContractState.AWAITING_BIDDING
   return { state, error }
 }

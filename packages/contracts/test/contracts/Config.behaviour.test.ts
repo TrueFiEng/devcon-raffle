@@ -40,5 +40,15 @@ describe('Config', function () {
         }),
       )).to.be.revertedWith('Config: bidding end time must be before claiming end time')
     })
+
+    it('reverts for zero reserve price', async function () {
+      await expect(loadFixture(configuredDevcon6Fixture({ reservePrice: 0 })))
+        .to.be.revertedWith('Config: reserve price must be greater than 0')
+    })
+
+    it('reverts for zero min bid increment', async function () {
+      await expect(loadFixture(configuredDevcon6Fixture({ minBidIncrement: 0 })))
+        .to.be.revertedWith('Config: min bid increment must be greater than 0')
+    })
   })
 })
