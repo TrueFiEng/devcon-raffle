@@ -147,29 +147,18 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 key = getKey(bidderID, newAmount);
         uint256 minKeyValue = _minKeyValue;
 
-        if (isHeapFull) {
-            bool shouldUpdateHeap = key > minKeyValue;
-            if (!shouldUpdateHeap) {
-                return;
-            }
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = oldKey <= minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
-        } else {
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = oldKey <= minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
+        bool shouldUpdateHeap = key > minKeyValue;
+        if (isHeapFull && !shouldUpdateHeap) {
+            return;
         }
+        uint256 oldKey = getKey(bidderID, oldAmount);
+        bool updatingMinKey = oldKey <= minKeyValue;
+        if (updatingMinKey) {
+            _heap.increaseKeyAt(_minKeyIndex, key);
+            updateMinKey();
+            return;
+        }
+        _heap.increaseKey(oldKey, key);
     }
 
     uint256[] _tempWinners; // temp array for sorting auction winners
