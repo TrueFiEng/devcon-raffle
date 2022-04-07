@@ -26,7 +26,8 @@
     "devcon:settle-auction": "hardhat --network localhost settle-auction",
     "devcon:settle-raffle": "hardhat --network localhost settle-raffle",
     "arbitrum:deploy": "hardhat --network rinkeby deploy",
-    "arbitrum:init-bids": "hardhat --network rinkeby init-bids"
+    "arbitrum:init-bids": "hardhat --network rinkeby init-bids",
+    "arbitrum:transfer-ether": "hardhat --network rinkeby transfer-ether"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",

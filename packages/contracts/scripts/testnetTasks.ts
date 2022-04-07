@@ -1,7 +1,8 @@
 import { task, types } from 'hardhat/config'
 import { deployTestnetDevcon, minBidIncrement } from 'scripts/deploy/deploy'
 import { Devcon6__factory } from 'contracts'
-import { BigNumberish, Signer, utils, Wallet } from 'ethers'
+import { BigNumberish, constants, Signer, utils, Wallet } from 'ethers'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 
 const testnetDevconAddress = '0xd92fa056843C0ef9857B745cF4Ad66d84AD7a347'
 
@@ -27,6 +28,24 @@ task('init-bids', 'Places initial bids')
     for (let i = 0; i < privateKeys.length; i++) {
       const wallet = new Wallet(privateKeys[i], hre.ethers.provider)
       await bidAs(wallet, initialBidAmount.add(minBidIncrement.mul(i)))
+    }
+  })
+
+task('transfer-ether', 'Transfers ether')
+  .addParam('value', 'ETH amount to send', "0.001", types.string, true)
+  .setAction(async ({ value }: { value: string }, hre) => {
+    const [deployer] = await hre.ethers.getSigners()
+
+    const amountToSend = parseEther(value)
+    const privateKeys: string[] = JSON.parse(process.env.PRIVATE_KEYS)
+    for (const privateKey of privateKeys) {
+      const wallet = new Wallet(privateKey, hre.ethers.provider)
+      const tx = await deployer.sendTransaction({
+        to: wallet.address,
+        value: amountToSend
+      })
+      await tx.wait()
+      console.log(`Sent ${formatEther(amountToSend)}${constants.EtherSymbol} to ${wallet.address}`)
     }
   })
 
