@@ -1,10 +1,10 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { Log } from '@ethersproject/providers'
 import { parseEther } from '@ethersproject/units'
 import { renderHook } from '@testing-library/react-hooks'
 import { useBids } from 'src/hooks/useBids'
 import { BidsProvider } from 'src/providers/Bids'
 import { createMockBidLog } from 'test/mocks/createMockBidLog'
-import {BigNumber} from "@ethersproject/bignumber";
 
 let mockEvents: Log[] = []
 

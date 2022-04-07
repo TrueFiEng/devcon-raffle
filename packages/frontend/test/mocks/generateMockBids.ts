@@ -1,6 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import type { BidWithPlace } from 'src/models/Bid'
-import {BigNumber} from "@ethersproject/bignumber";
 
 export const mockBidsAddresses = [
   '0x0537a5C46D9719b8548d72c7175ad1fE30bD84EE',
