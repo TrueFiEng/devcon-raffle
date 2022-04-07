@@ -19,7 +19,7 @@ async function run() {
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
 
   const deployer = signers[0]
-  const devcon = await deploy(now, deployer)
+  const devcon = await deploy(now, deployer, hre)
   console.log('Contracts deployed\n')
 
   await bid(devcon, signers.slice(0, 20))

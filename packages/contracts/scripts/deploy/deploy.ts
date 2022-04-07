@@ -7,8 +7,8 @@ import { HOUR, YEAR } from 'scripts/utils/consts'
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
 
-export async function deploy(biddingStartTime: number, deployer: SignerWithAddress): Promise<Devcon6> {
-  const devcon = await deployDevcon(biddingStartTime, deployer, undefined)
+export async function deploy(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Devcon6> {
+  const devcon = await deployDevcon(biddingStartTime, deployer, hre)
   const multicall = await new Multicall2__factory(deployer).deploy()
 
   console.log('\nDevcon6 address: ', devcon.address)
