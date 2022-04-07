@@ -112,7 +112,7 @@ describe('Devcon6', function () {
 
           expect(await devcon.getHeap()).to.deep.equal([
             heapKey(2, reservePrice.add(200)),
-            heapKey(1, reservePrice.add(100))
+            heapKey(1, reservePrice.add(100)),
           ])
           expect(await devcon.getMinKeyIndex()).to.eq(1)
           expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice.add(100)))
@@ -146,7 +146,7 @@ describe('Devcon6', function () {
 
           expect(await devcon.getHeap()).to.deep.equal([
             heapKey(2, reservePrice.add(minBidIncrement).add(200)),
-            heapKey(1, reservePrice.add(minBidIncrement).add(100))
+            heapKey(1, reservePrice.add(minBidIncrement).add(100)),
           ])
           expect(await devcon.getMinKeyIndex()).to.eq(1)
           expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice.add(minBidIncrement).add(100)))
@@ -154,7 +154,6 @@ describe('Devcon6', function () {
       })
 
       describe('when bumped bid > min auction bid', function () {
-
         describe('when old bid < min auction bid', function () {
           it('adds bid to heap', async function () {
             ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
@@ -167,7 +166,7 @@ describe('Devcon6', function () {
 
             expect(await devcon.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
-              heapKey(1, reservePrice.add(minBidIncrement).add(100))
+              heapKey(1, reservePrice.add(minBidIncrement).add(100)),
             ])
             expect(await devcon.getMinKeyIndex()).to.eq(1)
             expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice.add(minBidIncrement).add(100)))
@@ -185,7 +184,7 @@ describe('Devcon6', function () {
 
             expect(await devcon.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
-              heapKey(1, reservePrice.add(minBidIncrement).add(100))
+              heapKey(1, reservePrice.add(minBidIncrement).add(100)),
             ])
             expect(await devcon.getMinKeyIndex()).to.eq(1)
             expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice.add(minBidIncrement).add(100)))
@@ -203,7 +202,7 @@ describe('Devcon6', function () {
 
             expect(await devcon.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
-              heapKey(1, reservePrice)
+              heapKey(1, reservePrice),
             ])
             expect(await devcon.getMinKeyIndex()).to.eq(1)
             expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice))
