@@ -24,7 +24,11 @@
     "node:accounts": "hardhat --network localhost accounts",
     "devcon:bid": "hardhat --network localhost bid",
     "devcon:settle-auction": "hardhat --network localhost settle-auction",
-    "devcon:settle-raffle": "hardhat --network localhost settle-raffle"
+    "devcon:settle-raffle": "hardhat --network localhost settle-raffle",
+    "arbitrum:deploy": "hardhat --network rinkeby deploy",
+    "arbitrum:bid20": "hardhat --network rinkeby bid20",
+    "arbitrum:getState": "hardhat --network rinkeby getState",
+    "arbitrum:settleAuction": "hardhat --network rinkeby settleAuction"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
@@ -37,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "chai": "^4.2.0",
+    "dotenv": "^16.0.0",
     "eslint": "^7.11.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "ethereum-waffle": "^3.4.0",
