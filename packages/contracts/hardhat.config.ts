@@ -33,7 +33,7 @@ module.exports = {
     },
     rinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.DEPLOYER]
     }
   },
   typechain: {
