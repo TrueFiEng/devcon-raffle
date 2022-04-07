@@ -7,22 +7,34 @@ import { WinForm } from 'src/components/Claim/WinBid/WinForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
+import { useMinimumBid } from 'src/hooks/useMinimumBid'
 import { Bid } from 'src/models/Bid'
 
 export const FEE = 2
 
 interface WinBidFlowProps {
   userBid: Bid
+  win: WinOptions | undefined
 }
 
-export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
+export const WinBidFlow = ({ userBid, win }: WinBidFlowProps) => {
+  const minimumBid = useMinimumBid()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [withdrawnBid, setWithdrawnBid] = useState(false)
   const [voucher, setVoucher] = useState(false)
   const bidderId = BigNumber.from(1)
   const { claimFunds, state, resetState } = useClaimFunds()
 
-  const withdrawalAmount = useMemo(() => userBid.amount.mul(98).div(100), [userBid])
+  const withdrawalAmount = useMemo(() => {
+    switch (win) {
+      case WinOptions.Ticket:
+        return userBid.amount
+      case WinOptions.Raffle:
+        return userBid.amount.sub(minimumBid)
+      default:
+        return userBid.amount.mul(98).div(100)
+    }
+  }, [userBid, win, minimumBid])
 
   const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
@@ -39,7 +51,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
         <WinForm
           bid={withdrawalAmount}
           setView={setView}
-          win={WinOptions.Ticket}
+          win={win}
           withdrawnBid={withdrawnBid}
           setWithdrawnBid={setWithdrawnBid}
           voucher={voucher}
