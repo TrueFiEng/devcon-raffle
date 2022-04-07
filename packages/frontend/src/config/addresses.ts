@@ -10,7 +10,7 @@ export const ADDRESSES: Record<string, Record<SupportedChainId, string>> = {
   },
   devcon: {
     [ChainId.Arbitrum]: '',
-    [ChainId.ArbitrumRinkeby]: '',
+    [ChainId.ArbitrumRinkeby]: '0x0cD6783fca8D1a9DbAa6404B759b0C2110f3C2A0',
     [ChainId.Hardhat]: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   },
 }
