@@ -189,47 +189,56 @@ describe('Devcon6', function () {
       describe('when bid < min auction bid', function () {
         it('adds bid to heap', async function () {
           ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-          devconAsOwner = devcon.connect(owner())
 
           const auctionWinnerBid = reservePrice.add(100)
           await bidAsWallet(wallets[0], auctionWinnerBid)
           await bidAsWallet(wallets[1], reservePrice)
 
-          expect(await devconAsOwner.getHeap())
+          expect(await devcon.getHeap())
             .to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
+          expect(await devcon.getMinKeyIndex()).to.eq(1)
+          expect(await devcon.getMinKeyValue()).to.eq(heapKey(2, reservePrice))
         })
       })
 
       describe('when bid > min auction bid', function () {
         it('adds bid to heap', async function () {
           ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-          devconAsOwner = devcon.connect(owner())
 
           const auctionWinnerBid = reservePrice.add(100)
           await bidAsWallet(wallets[0], reservePrice)
           await bidAsWallet(wallets[1], auctionWinnerBid)
 
-          expect(await devconAsOwner.getHeap())
+          expect(await devcon.getHeap())
             .to.deep.equal([heapKey(2, auctionWinnerBid), heapKey(1, reservePrice)])
+          expect(await devcon.getMinKeyIndex()).to.eq(1)
+          expect(await devcon.getMinKeyValue()).to.eq(heapKey(1, reservePrice))
         })
       })
 
       describe('when new bid == min auction bid', function () {
         it('updates old bid in heap', async function () {
-          ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 2 })))
-          devconAsOwner = devcon.connect(owner())
+          ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
 
-          await bidAsWallet(wallets[0], reservePrice)
+          await bidAsWallet(wallets[0], reservePrice.add(200))
+          await bidAsWallet(wallets[1], reservePrice.add(minBidIncrement))
+          await bidAsWallet(wallets[2], reservePrice.add(minBidIncrement).add(100))
+
           await bidAsWallet(wallets[0], minBidIncrement)
 
-          expect(await devconAsOwner.getHeap()).to.deep.equal([heapKey(1, reservePrice.add(minBidIncrement))])
+          expect(await devcon.getHeap()).to.deep.equal([
+            heapKey(1, reservePrice.add(minBidIncrement).add(200)),
+            heapKey(3, reservePrice.add(minBidIncrement).add(100)),
+            heapKey(2, reservePrice.add(minBidIncrement)),
+          ])
+          expect(await devcon.getMinKeyIndex()).to.eq(2)
+          expect(await devcon.getMinKeyValue()).to.eq(heapKey(2, reservePrice.add(minBidIncrement)))
         })
       })
 
       describe('when new bid > min auction bid', function () {
         it('updates old bid in heap', async function () {
           ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 3 })))
-          devconAsOwner = devcon.connect(owner())
 
           let auctionWinnerBid = reservePrice.add(100)
           await bidAsWallet(wallets[0], auctionWinnerBid)
@@ -237,8 +246,10 @@ describe('Devcon6', function () {
           await bidAsWallet(wallets[0], minBidIncrement)
           auctionWinnerBid = auctionWinnerBid.add(minBidIncrement)
 
-          expect(await devconAsOwner.getHeap())
+          expect(await devcon.getHeap())
             .to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
+          expect(await devcon.getMinKeyIndex()).to.eq(1)
+          expect(await devcon.getMinKeyValue()).to.eq(heapKey(2, reservePrice))
         })
       })
     })
