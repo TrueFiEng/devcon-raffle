@@ -425,8 +425,4 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
     }
-
-    function getHeap() external view returns (uint256[] memory) {
-        return _heap;
-    }
 }

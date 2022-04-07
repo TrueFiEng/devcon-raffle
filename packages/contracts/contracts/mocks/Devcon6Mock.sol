@@ -27,6 +27,10 @@ contract Devcon6Mock is Devcon6 {
         )
     {}
 
+    function getHeap() external view returns (uint256[] memory) {
+        return _heap;
+    }
+
     function getMinKeyIndex() external view returns (uint256) {
         return _minKeyIndex;
     }
