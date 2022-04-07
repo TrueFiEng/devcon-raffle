@@ -143,7 +143,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 oldAmount,
         uint256 newAmount
     ) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        bool isHeapFull = getBiddersCount() >= _auctionWinnersCount;
         uint256 key = getKey(bidderID, newAmount);
         uint256 minKeyValue = _minKeyValue;
 
