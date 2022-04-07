@@ -34,11 +34,14 @@ export async function deployDevcon(biddingStartTime: number, deployer: SignerWit
   )
 }
 
-export async function deployTestnetDevcon(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
+export async function deployTestnetDevcon(biddingStartTime: number, heapLibraryAddress: string, deployer: SignerWithAddress) {
   const biddingEndTime = biddingStartTime + YEAR
   const claimingEndTime = biddingEndTime + HOUR
 
-  const libraryLink = await deployMaxHeap(deployer, hre)
+  const libraryLink = {
+    'contracts/utils/MaxHeap.sol:MaxHeap': heapLibraryAddress,
+    __$f92e1b546cb81b0df9056e27145904c2f5$__: heapLibraryAddress,
+  }
   return new Devcon6__factory(libraryLink, deployer).deploy(
     deployer.address,
     biddingStartTime,

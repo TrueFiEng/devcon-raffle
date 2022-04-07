@@ -1,11 +1,11 @@
 import { Arbitrum, ArbitrumRinkeby, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
-
-import { NODE_URLS } from '../constants/nodeUrls'
-
-import { ADDRESSES } from './addresses'
+import { ADDRESSES } from 'src/config/addresses'
+import { SupportedChainId } from 'src/constants/chainIDs'
+import { NODE_URLS } from 'src/constants/nodeUrls'
 
 interface Config {
   useDAppConfig: UseDAppConfig
+  addresses: Record<string, Record<SupportedChainId, string>>
 }
 
 function getConfig(environment: string): Config {
@@ -24,6 +24,7 @@ function getDevConfig(): Config {
       readOnlyChainId: Hardhat.chainId,
       networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
     },
+    addresses: ADDRESSES,
   }
 }
 
@@ -34,6 +35,7 @@ function getProdConfig(): Config {
       readOnlyChainId: Arbitrum.chainId,
       networks: [Arbitrum],
     },
+    addresses: ADDRESSES,
   }
 }
 
