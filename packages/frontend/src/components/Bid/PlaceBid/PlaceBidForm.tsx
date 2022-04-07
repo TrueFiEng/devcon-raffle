@@ -44,7 +44,6 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           disabled={notEnoughBalance || bidTooLow}
           onClick={() => {
             setView(TxFlowSteps.Review)
-            account && bids.push({ bidderAddress: account, amount: bid })
           }}
         >
           Place bid
