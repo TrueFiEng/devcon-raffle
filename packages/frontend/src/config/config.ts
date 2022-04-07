@@ -1,4 +1,4 @@
-import { Arbitrum, ArbitrumRinkeby, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
+import { Arbitrum, ArbitrumRinkeby, ChainId, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
 import { NODE_URLS } from 'src/constants/nodeUrls'
@@ -24,7 +24,7 @@ function getDevConfig(): Config {
       readOnlyChainId: Hardhat.chainId,
       networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
     },
-    addresses: ADDRESSES,
+    addresses: getAddresses(),
   }
 }
 
@@ -35,8 +35,17 @@ function getProdConfig(): Config {
       readOnlyChainId: Arbitrum.chainId,
       networks: [Arbitrum],
     },
-    addresses: ADDRESSES,
+    addresses: getAddresses(),
   }
+}
+
+function getAddresses() {
+  const addresses = ADDRESSES
+  const testnetDevconAddress = import.meta.env.VITE_TESTNET_DEVCON as string
+  if (testnetDevconAddress) {
+    addresses['devcon'][ChainId.ArbitrumRinkeby] = testnetDevconAddress
+  }
+  return addresses
 }
 
 const commonUseDAppConfig = {
