@@ -182,6 +182,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = extractBidderID(key);
             _auctionWinners.push(bidderID);
             _tempWinners.insert(bidderID);
+            emit NewAuctionWinner(bidderID);
         }
 
         delete _heap;
@@ -192,7 +193,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = _tempWinners.removeMax();
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
-            emit NewAuctionWinner(bidderID);
         }
     }
 

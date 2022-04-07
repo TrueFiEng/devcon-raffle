@@ -340,6 +340,7 @@ describe('Devcon6', function () {
 
       const auctionWinners = await getAllBidsByWinType(9, WinType.auction)
       expect(auctionWinners.length).to.equal(1)
+      expect(auctionWinners[0].bidderID).to.eq(1)
     })
 
     it('changes bidder win type', async function () {
@@ -388,7 +389,7 @@ describe('Devcon6', function () {
       await endBidding(devconAsOwner)
 
       const tx = await settleAuction()
-      await emitsEvents(tx, 'NewAuctionWinner', [2], [1])
+      await emitsEvents(tx, 'NewAuctionWinner', [1], [2])
     })
   })
 
