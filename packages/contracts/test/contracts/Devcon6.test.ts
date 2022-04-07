@@ -78,6 +78,7 @@ describe('Devcon6', function () {
       expect(bid.bidderID).to.be.equal(1)
       expect(bid.amount).to.be.equal(reservePrice)
       expect(bid.winType).to.be.equal(WinType.loss)
+      expect(bid.claimed).to.be.false
     })
 
     it('saves bidder address', async function () {
