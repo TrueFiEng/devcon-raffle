@@ -2,16 +2,14 @@ import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
 import { Signer, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
+import { HOUR, YEAR } from 'scripts/utils/consts'
 
-const HOUR = 3600
-const DAY = 24 * HOUR
-const YEAR = 365 * DAY
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
 
-export async function deploy(biddingStartTime: number, owner: Signer): Promise<Devcon6> {
-  const devcon = await deployDevcon(biddingStartTime, owner, undefined)
-  const multicall = await new Multicall2__factory(owner).deploy()
+export async function deploy(biddingStartTime: number, deployer: SignerWithAddress): Promise<Devcon6> {
+  const devcon = await deployDevcon(biddingStartTime, deployer, undefined)
+  const multicall = await new Multicall2__factory(deployer).deploy()
 
   console.log('\nDevcon6 address: ', devcon.address)
   console.log('\nMulticall address: ', multicall.address)
@@ -19,14 +17,13 @@ export async function deploy(biddingStartTime: number, owner: Signer): Promise<D
   return devcon
 }
 
-export async function deployDevcon(biddingStartTime: number, owner: Signer, hre: HardhatRuntimeEnvironment): Promise<Devcon6> {
+export async function deployDevcon(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Devcon6> {
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
-  const ownerAddress = await owner.getAddress()
-  const libraryLink = await deployMaxHeap(owner, hre)
-  return new Devcon6__factory(libraryLink, owner).deploy(
-    ownerAddress,
+  const libraryLink = await deployMaxHeap(deployer, hre)
+  return new Devcon6__factory(libraryLink, deployer).deploy(
+    deployer.address,
     biddingStartTime,
     biddingEndTime,
     claimingEndTime,

@@ -2,7 +2,7 @@ import { Devcon6Mock__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
-import { WEEK } from 'utils/consts'
+import { WEEK } from 'scripts/utils/consts'
 import { deployMaxHeap } from 'fixtures/maxHeapMockFixture'
 
 export const auctionWinnersCount = 1

@@ -10,7 +10,7 @@ import {
 import { Devcon6Mock, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
-import { HOUR, MINUTE } from 'utils/consts'
+import { HOUR, MINUTE } from 'scripts/utils/consts'
 import { network } from 'hardhat'
 import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
 import { State } from './state'
