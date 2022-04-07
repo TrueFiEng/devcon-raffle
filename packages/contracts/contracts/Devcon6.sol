@@ -117,7 +117,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function addToHeap(uint256 bidderID, uint256 amount) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
         uint256 minKeyValue = _minKeyValue;
 
