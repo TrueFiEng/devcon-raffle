@@ -3,7 +3,7 @@ import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { WEEK } from 'utils/consts'
-import { deployMaxHeap } from 'scripts/deploy/deploy'
+import { deployMaxHeap } from 'fixtures/maxHeapMockFixture'
 
 export const auctionWinnersCount = 1
 export const raffleWinnersCount = 8
