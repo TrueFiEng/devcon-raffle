@@ -126,7 +126,7 @@ describe('Devcon6', function () {
         })
       })
 
-      describe('when new bid < min auction bid', function () {
+      describe('when bumped bid < min auction bid', function () {
         it('does not add bid to heap', async function () {
           await bid(8)
           const auctionWinnerBid = reservePrice.mul(2)
@@ -138,7 +138,7 @@ describe('Devcon6', function () {
         })
       })
 
-      describe('when new bid > min auction bid', function () {
+      describe('when bumped bid > min auction bid', function () {
         describe('when old bid < min auction bid', function () {
           it('adds bid to heap', async function () {
             await bid(8)
@@ -216,7 +216,7 @@ describe('Devcon6', function () {
         })
       })
 
-      describe('when new bid == min auction bid', function () {
+      describe('when bumped bid == min auction bid', function () {
         it('updates old bid in heap', async function () {
           ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 4 })))
 
@@ -236,7 +236,7 @@ describe('Devcon6', function () {
         })
       })
 
-      describe('when new bid > min auction bid', function () {
+      describe('when bumped bid > min auction bid', function () {
         it('updates old bid in heap', async function () {
           ({ devcon } = await loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 3 })))
 
