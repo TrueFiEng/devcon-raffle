@@ -7,7 +7,7 @@ import {
   minBidIncrement,
   reservePrice,
 } from 'fixtures/devcon6Fixture'
-import { Devcon6, ExampleToken } from 'contracts'
+import { Devcon6Mock, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { HOUR, MINUTE } from 'utils/consts'
@@ -25,8 +25,8 @@ describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
-  let devcon: Devcon6
-  let devconAsOwner: Devcon6
+  let devcon: Devcon6Mock
+  let devconAsOwner: Devcon6Mock
   let bidderAddress: string
   let wallets: Wallet[]
 
@@ -738,7 +738,7 @@ describe('Devcon6', function () {
       expect(await withdrawUnclaimedFunds()).to.be.equal(reservePrice)
     })
 
-    async function endClaiming(devcon: Devcon6) {
+    async function endClaiming(devcon: Devcon6Mock) {
       const endTime = await devcon.claimingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     }
@@ -969,7 +969,7 @@ describe('Devcon6', function () {
     return devconAsOwner.settleRaffle(numbers)
   }
 
-  async function endBidding(devcon: Devcon6) {
+  async function endBidding(devcon: Devcon6Mock) {
     const endTime = await devcon.biddingEndTime()
     await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     await network.provider.send('evm_mine')
