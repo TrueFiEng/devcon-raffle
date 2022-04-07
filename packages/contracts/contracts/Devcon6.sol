@@ -99,7 +99,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
 
-            addToHeap(bidder.bidderID, bidder.amount);
+            addBidToHeap(bidder.bidderID, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
@@ -116,7 +116,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
-    function addToHeap(uint256 bidderID, uint256 amount) private {
+    function addBidToHeap(uint256 bidderID, uint256 amount) private {
         bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
         uint256 minKeyValue = _minKeyValue;
