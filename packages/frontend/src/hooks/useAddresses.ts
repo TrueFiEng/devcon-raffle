@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ADDRESSES } from 'src/constants/addresses'
+import { ADDRESSES } from 'src/config/addresses'
 
 import { isSupportedChain } from '../constants/chainIDs'
 

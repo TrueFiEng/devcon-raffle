@@ -1,7 +1,8 @@
 import { Arbitrum, ArbitrumRinkeby, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
 
-import { ADDRESSES } from '../constants/addresses'
 import { NODE_URLS } from '../constants/nodeUrls'
+
+import { ADDRESSES } from './addresses'
 
 interface Config {
   useDAppConfig: UseDAppConfig
