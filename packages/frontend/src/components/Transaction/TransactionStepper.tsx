@@ -85,7 +85,7 @@ export const TransactionStepper = <StepName extends string>({
 
 function pickStepVersion<Name extends string>(item: Step<Name>, isLast: boolean, failedTransaction: boolean) {
   const [step, type]: [StepContent<Name>, StepType] =
-    item.failed && failedTransaction ? [item.failed, 'failure'] : [item.default, !isLast ? 'success' : 'neutral']
+    item.failed && failedTransaction ? [item.failed, 'failure'] : [item.default, isLast ? 'neutral' : 'success']
   return { step, type }
 }
 
