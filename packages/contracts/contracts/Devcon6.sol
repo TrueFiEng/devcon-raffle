@@ -201,6 +201,18 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewAuctionWinner(bidderID);
     }
 
+    function addRaffleWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.RAFFLE);
+        _raffleWinners.push(bidderID);
+        emit NewRaffleWinner(bidderID);
+    }
+
+    function addGoldenTicketWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
+        _raffleWinners.push(bidderID);
+        emit NewGoldenTicketWinner(bidderID);
+    }
+
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
         require(randomNumbers.length > 0, "Devcon6: there must be at least one random number passed");
 
@@ -236,9 +248,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
         uint256 bidderID = _raffleParticipants[winnerIndex];
-        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
-        emit NewGoldenTicketWinner(bidderID);
-        _raffleWinners.push(bidderID);
+        addGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
         return (participantsLength - 1, randomNumber >> 32);
@@ -247,9 +257,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
         for (uint256 i = 0; i < participantsLength; ++i) {
             uint256 bidderID = _raffleParticipants[i];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
-            _raffleWinners.push(bidderID);
+            addRaffleWinner(bidderID);
         }
         delete _raffleParticipants;
     }
@@ -270,9 +278,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
             uint256 bidderID = _raffleParticipants[winnerIndex];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
-            _raffleWinners.push(bidderID);
+            addRaffleWinner(bidderID);
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
