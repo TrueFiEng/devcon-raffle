@@ -33,9 +33,9 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
     <>
       {view === TxFlowSteps.Placing ? (
         <WinForm
+          userBid={userBid}
           withdrawalAmount={withdrawalAmount}
           setView={setView}
-          userBid={userBid}
           voucher={voucher}
           setVoucher={setVoucher}
         />

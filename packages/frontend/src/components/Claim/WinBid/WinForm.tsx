@@ -27,9 +27,9 @@ export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVouche
           <WrapperRow>
             <WinFormWrapper>
               <WinBidForm
+                userBid={userBid}
                 withdrawalAmount={withdrawalAmount}
                 setView={setView}
-                userBid={userBid}
                 voucher={voucher}
                 setVoucher={setVoucher}
               />
@@ -42,9 +42,9 @@ export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVouche
       ) : (
         <Wrapper>
           <WinBidForm
+            userBid={userBid}
             withdrawalAmount={withdrawalAmount}
             setView={setView}
-            userBid={userBid}
             voucher={voucher}
             setVoucher={setVoucher}
           />
