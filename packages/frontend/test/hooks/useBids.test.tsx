@@ -138,7 +138,7 @@ describe('useBids', () => {
         {
           bidderID: BigNumber.from(3),
           bidderAddress: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
-          amount: parseEther('1.0'),
+          amount: parseEther('2.0'),
           place: 3,
         },
         {
