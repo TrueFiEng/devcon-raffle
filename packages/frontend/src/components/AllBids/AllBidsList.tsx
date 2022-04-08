@@ -26,7 +26,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
   const auctionBids = useMemo(() => {
     const sectionBids = bids.slice(0, firstRaffleBidIndex)
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid, firstRaffleBidIndex])
+  }, [search, bids, searchBid]) // eslint-disable-line react-hooks/exhaustive-deps
   const raffleBids = useMemo(() => {
     const sectionBids = bids.slice(firstRaffleBidIndex)
     return search ? searchBid(sectionBids) : sectionBids
