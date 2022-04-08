@@ -9,13 +9,13 @@ import styled from 'styled-components'
 
 interface WinFormProps {
   userBid: SettledBid
-  bid: BigNumber
+  withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
 
-export const WinForm = ({ userBid, bid, setView, voucher, setVoucher }: WinFormProps) => {
+export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinFormProps) => {
   return (
     <>
       {voucher ? (
@@ -26,7 +26,13 @@ export const WinForm = ({ userBid, bid, setView, voucher, setVoucher }: WinFormP
         ) : (
           <WrapperRow>
             <WinFormWrapper>
-              <WinBidForm bid={bid} setView={setView} userBid={userBid} voucher={voucher} setVoucher={setVoucher} />
+              <WinBidForm
+                withdrawalAmount={withdrawalAmount}
+                setView={setView}
+                userBid={userBid}
+                voucher={voucher}
+                setVoucher={setVoucher}
+              />
             </WinFormWrapper>
             <VoucherFormWrapper>
               <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={userBid.claimed} />
@@ -35,7 +41,13 @@ export const WinForm = ({ userBid, bid, setView, voucher, setVoucher }: WinFormP
         )
       ) : (
         <Wrapper>
-          <WinBidForm bid={bid} setView={setView} userBid={userBid} voucher={voucher} setVoucher={setVoucher} />
+          <WinBidForm
+            withdrawalAmount={withdrawalAmount}
+            setView={setView}
+            userBid={userBid}
+            voucher={voucher}
+            setVoucher={setVoucher}
+          />
         </Wrapper>
       )}
     </>

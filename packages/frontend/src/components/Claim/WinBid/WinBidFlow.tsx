@@ -32,7 +32,13 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   return (
     <>
       {view === TxFlowSteps.Placing ? (
-        <WinForm bid={withdrawalAmount} setView={setView} userBid={userBid} voucher={voucher} setVoucher={setVoucher} />
+        <WinForm
+          withdrawalAmount={withdrawalAmount}
+          setView={setView}
+          userBid={userBid}
+          voucher={voucher}
+          setVoucher={setVoucher}
+        />
       ) : (
         <AuctionTransaction action={claimAction} amount={withdrawalAmount} view={view} setView={setView} />
       )}

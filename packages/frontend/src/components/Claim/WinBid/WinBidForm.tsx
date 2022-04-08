@@ -24,13 +24,13 @@ const withdrawText = {
 
 interface WinBidFormProps {
   userBid: SettledBid
-  bid: BigNumber
+  withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
 
-export const WinBidForm = ({ userBid, bid, setView, voucher, setVoucher }: WinBidFormProps) => {
+export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
   const noLuck = userBid.winType === WinOptions.Loss
   const { claimingEndTime } = useClaimingEndTime()
 
@@ -47,7 +47,7 @@ export const WinBidForm = ({ userBid, bid, setView, voucher, setVoucher }: WinBi
               setView(TxFlowSteps.Review)
             }}
           >
-            <span>Withdraw {formatEtherAmount(bid)} ETH</span>
+            <span>Withdraw {formatEtherAmount(withdrawalAmount)} ETH</span>
           </Button>
         </WinOption>
       )}
