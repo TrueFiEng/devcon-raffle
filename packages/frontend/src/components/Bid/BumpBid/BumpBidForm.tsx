@@ -6,7 +6,7 @@ import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import type { Bid, BidWithPlace } from 'src/models/Bid'
+import type { BidWithPlace } from 'src/models/Bid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
 import styled from 'styled-components'
@@ -34,12 +34,6 @@ export const BumpBidForm = ({
   const userBalance = useEtherBalance(account)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
-
-  const newUserBid: Bid = {
-    bidderID: userBid.bidderID,
-    bidderAddress: userBid.bidderAddress,
-    amount: newBidAmount,
-  }
 
   return (
     <BumpFormWrapper>
@@ -70,7 +64,7 @@ export const BumpBidForm = ({
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {bidTooLow ? userBid.place : getPositionAfterBump(newUserBid, bids)}</span>
+          <span>No. {bidTooLow ? userBid.place : getPositionAfterBump(newBidAmount, userBid.bidderID, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
