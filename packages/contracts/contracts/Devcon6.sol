@@ -25,7 +25,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
 
-    uint256[] _auctionWinners; // TODO pass by param to claimProceeds to save gas
+    uint256[] _auctionWinners;
+    uint256[] _raffleWinners;
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
 
@@ -99,7 +100,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
 
-            addToHeap(bidder.bidderID, bidder.amount);
+            addBidToHeap(bidder.bidderID, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
@@ -116,8 +117,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
-    function addToHeap(uint256 bidderID, uint256 amount) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+    function addBidToHeap(uint256 bidderID, uint256 amount) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
         uint256 minKeyValue = _minKeyValue;
 
@@ -143,33 +144,22 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 oldAmount,
         uint256 newAmount
     ) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        bool isHeapFull = getBiddersCount() >= _auctionWinnersCount;
         uint256 key = getKey(bidderID, newAmount);
         uint256 minKeyValue = _minKeyValue;
 
-        if (isHeapFull) {
-            bool shouldUpdateHeap = key > minKeyValue;
-            if (!shouldUpdateHeap) {
-                return;
-            }
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = oldKey <= minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
-        } else {
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = key <= minKeyValue || oldKey == minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
+        bool shouldUpdateHeap = key > minKeyValue;
+        if (isHeapFull && !shouldUpdateHeap) {
+            return;
         }
+        uint256 oldKey = getKey(bidderID, oldAmount);
+        bool updatingMinKey = oldKey <= minKeyValue;
+        if (updatingMinKey) {
+            _heap.increaseKeyAt(_minKeyIndex, key);
+            updateMinKey();
+            return;
+        }
+        _heap.increaseKey(oldKey, key);
     }
 
     uint256[] _tempWinners; // temp array for sorting auction winners
@@ -191,19 +181,36 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 key = _heap.removeMax();
             uint256 bidderID = extractBidderID(key);
-            _auctionWinners.push(bidderID);
+            addAuctionWinner(bidderID);
             _tempWinners.insert(bidderID);
         }
 
+        delete _heap;
         delete _minKeyIndex;
         delete _minKeyValue;
 
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 bidderID = _tempWinners.removeMax();
-            setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
-            emit NewAuctionWinner(bidderID);
         }
+    }
+
+    function addAuctionWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.AUCTION);
+        _auctionWinners.push(bidderID);
+        emit NewAuctionWinner(bidderID);
+    }
+
+    function addRaffleWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.RAFFLE);
+        _raffleWinners.push(bidderID);
+        emit NewRaffleWinner(bidderID);
+    }
+
+    function addGoldenTicketWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
+        _raffleWinners.push(bidderID);
+        emit NewGoldenTicketWinner(bidderID);
     }
 
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
@@ -241,8 +248,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
         uint256 bidderID = _raffleParticipants[winnerIndex];
-        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
-        emit NewGoldenTicketWinner(bidderID);
+        addGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
         return (participantsLength - 1, randomNumber >> 32);
@@ -251,8 +257,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
         for (uint256 i = 0; i < participantsLength; ++i) {
             uint256 bidderID = _raffleParticipants[i];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
+            addRaffleWinner(bidderID);
         }
         delete _raffleParticipants;
     }
@@ -273,8 +278,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
             uint256 bidderID = _raffleParticipants[winnerIndex];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
+            addRaffleWinner(bidderID);
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
@@ -423,5 +427,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
+    }
+
+    function getRaffleWinners() external view returns (uint256[] memory) {
+        return _raffleWinners;
     }
 }

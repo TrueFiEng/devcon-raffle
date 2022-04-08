@@ -24,10 +24,6 @@ const transactionSteps = (action: Transactions) => {
         name: `${heading[action]}`,
         description: `${description[action]}`,
       },
-      failed: {
-        name: `Transaction failed`,
-        description: 'Transaction failed.',
-      },
     },
     {
       default: {
@@ -36,7 +32,7 @@ const transactionSteps = (action: Transactions) => {
       },
       failed: {
         name: 'Failed',
-        description: 'The process is incompleted.',
+        description: 'The process is uncompleted.',
       },
     },
   ]
@@ -57,9 +53,10 @@ export interface Step<StepName extends string> {
 export interface StepperProps<StepName extends string> {
   current: StepName
   action: Transactions
+  isFailed: boolean
 }
 
-export const TransactionStepper = <StepName extends string>({ current, action }: StepperProps<StepName>) => {
+export const TransactionStepper = <StepName extends string>({ current, action, isFailed }: StepperProps<StepName>) => {
   const steps = transactionSteps(action)
   const currentStepIndex = useMemo(
     () => steps.findIndex((step) => [step.default.name, step.failed?.name].includes(current)),
@@ -73,17 +70,17 @@ export const TransactionStepper = <StepName extends string>({ current, action }:
         {steps.map((item, index) => {
           const status = index === currentStepIndex ? 'current' : index < currentStepIndex ? 'completed' : 'next'
           const isLast = index === steps.length - 1
-          const { step, type } = pickStepVersion(item, current, isLast)
-          return <StepperListItem key={index} step={step} status={status} type={type} />
+          const { step, type } = pickStepVersion(item, isLast, isFailed)
+          return <StepperListItem key={index} step={step} status={status} type={isLast ? type : 'success'} />
         })}
       </StepperList>
     </StepperContainer>
   )
 }
 
-function pickStepVersion<Name extends string>(item: Step<Name>, current: Name, isLast: boolean) {
+function pickStepVersion<Name extends string>(item: Step<Name>, isLast: boolean, IsFailed: boolean) {
   const [step, type]: [StepContent<Name>, StepType] =
-    item.failed?.name === current ? [item.failed, 'failure'] : [item.default, isLast ? 'success' : 'neutral']
+    item.failed && IsFailed ? [item.failed, 'failure'] : [item.default, isLast ? 'success' : 'neutral']
   return { step, type }
 }
 
@@ -194,7 +191,7 @@ const StepperBullet = styled.div<DisplayTypeProps>`
       case 'current':
         switch (type) {
           case 'neutral':
-            return Colors.GreenDark
+            return Colors.BlueDark
           case 'failure':
             return Colors.Red
           case 'success':
@@ -203,9 +200,6 @@ const StepperBullet = styled.div<DisplayTypeProps>`
         break
       case 'completed':
         return Colors.GreenDark
-
-      default:
-        return Colors.BlueDark
     }
   }};
 

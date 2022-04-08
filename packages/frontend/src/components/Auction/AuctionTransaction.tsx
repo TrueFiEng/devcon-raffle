@@ -8,6 +8,7 @@ import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
 import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
+import { isTxFailed } from 'src/utils/transactions/isTxFailed'
 import styled from 'styled-components'
 
 export const heading = {
@@ -26,6 +27,7 @@ interface AuctionTransactionProps {
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
   const [txHash, setTxHash] = useState('')
+  const isFailed = isTxFailed(action.state)
 
   return (
     <Transaction>
@@ -50,7 +52,8 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
       </TransactionWrapper>
       <TransactionStepper
         action={action.type}
-        current={view === TxFlowSteps.Confirmation ? 'Finalized' : `${heading[action.type]}`}
+        current={view === TxFlowSteps.Confirmation || isFailed ? 'Finalized' : `${heading[action.type]}`}
+        isFailed={isFailed}
       />
     </Transaction>
   )
