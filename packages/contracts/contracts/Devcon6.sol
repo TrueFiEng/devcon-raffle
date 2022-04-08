@@ -37,6 +37,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
 
+    uint256[] _tempWinners; // temp array for sorting auction winners used by settleAuction method
+
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
     event NewAuctionWinner(uint256 bidderID);
     event NewRaffleWinner(uint256 bidderID);
@@ -105,8 +107,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
-
-    uint256[] _tempWinners; // temp array for sorting auction winners
 
     function settleAuction() external onlyOwner onlyInState(State.BIDDING_CLOSED) {
         _settleState = SettleState.AUCTION_SETTLED;
