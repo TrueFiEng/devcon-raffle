@@ -37,6 +37,11 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
 
+    event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
+    event NewAuctionWinner(uint256 bidderID);
+    event NewRaffleWinner(uint256 bidderID);
+    event NewGoldenTicketWinner(uint256 bidderID);
+
     modifier onlyInState(State requiredState) {
         require(getState() == requiredState, "Devcon6: is in invalid state");
         _;
@@ -72,11 +77,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             Ownable.transferOwnership(initialOwner);
         }
     }
-
-    event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
-    event NewAuctionWinner(uint256 bidderID);
-    event NewRaffleWinner(uint256 bidderID);
-    event NewGoldenTicketWinner(uint256 bidderID);
 
     receive() external payable {
         revert("Devcon6: contract accepts ether transfers only by bid method");
