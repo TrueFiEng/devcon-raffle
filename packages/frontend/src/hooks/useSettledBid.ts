@@ -1,10 +1,9 @@
 import { useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
-import { SettledBid } from 'src/models/Bid'
 
 import { useDevconContract } from './contract'
 
-export function useSettledBid(): SettledBid | undefined {
+export function useSettledBid() {
   const devconContract = useDevconContract()
   const { account } = useEthers()
 
