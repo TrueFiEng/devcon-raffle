@@ -57,12 +57,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button
-        view="primary"
-        disabled={action.state.status === 'PendingSignature' || action.state.status === 'Mining'}
-        isLoading={isPending}
-        onClick={() => action.send()}
-      >
+      <Button view="primary" isLoading={isPending} onClick={() => action.send()}>
         {heading[action.type]}
       </Button>
     </FormNarrow>
