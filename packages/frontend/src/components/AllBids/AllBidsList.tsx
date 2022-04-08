@@ -24,11 +24,11 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
     raffleBidsOffset >= AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT : raffleBidsOffset
 
   const auctionBids = useMemo(() => {
-    const sectionBids = bids.length <= RAFFLE_PARTICIPANTS_COUNT ? [] : bids.slice(0, firstRaffleBidIndex)
+    const sectionBids = bids.slice(0, firstRaffleBidIndex)
     return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids, searchBid, firstRaffleBidIndex])
   const raffleBids = useMemo(() => {
-    const sectionBids = bids.length > RAFFLE_PARTICIPANTS_COUNT ? bids.slice(firstRaffleBidIndex) : bids
+    const sectionBids = bids.slice(firstRaffleBidIndex)
     return search ? searchBid(sectionBids) : sectionBids
   }, [search, bids, searchBid]) // eslint-disable-line react-hooks/exhaustive-deps
 
