@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
-import "./utils/MaxHeap.sol";
+import "./libs/MaxHeap.sol";
 
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
