@@ -27,7 +27,7 @@ describe('UI: BumpBidForm', () => {
     render(
       <BumpBidForm
         userBid={mockBids[4]}
-        newBid={newAmount}
+        newBidAmount={newAmount}
         bumpAmount={minimumIncrement}
         minimumIncrement={minimumIncrement}
         setBumpAmount={() => undefined}

@@ -6,14 +6,14 @@ import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import type { BidWithPlace } from 'src/models/Bid'
+import type { Bid, BidWithPlace } from 'src/models/Bid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
-import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
+import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
 import styled from 'styled-components'
 
 interface BumpBidProps {
   userBid: BidWithPlace
-  newBid: BigNumber
+  newBidAmount: BigNumber
   bumpAmount: BigNumber
   minimumIncrement: BigNumber
   setBumpAmount: (val: BigNumber) => void
@@ -23,7 +23,7 @@ interface BumpBidProps {
 
 export const BumpBidForm = ({
   userBid,
-  newBid,
+  newBidAmount,
   bumpAmount,
   minimumIncrement,
   setBumpAmount,
@@ -34,6 +34,12 @@ export const BumpBidForm = ({
   const userBalance = useEtherBalance(account)
   const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
   const bidTooLow = bumpAmount.lt(minimumIncrement)
+
+  const newUserBid: Bid = {
+    bidderID: userBid.bidderID,
+    bidderAddress: userBid.bidderAddress,
+    amount: newBidAmount,
+  }
 
   return (
     <BumpFormWrapper>
@@ -60,11 +66,11 @@ export const BumpBidForm = ({
         <Separator />
         <FormRow>
           <span>Your bid after the bump</span>
-          <span>{formatEtherAmount(newBid)} ETH</span>
+          <span>{formatEtherAmount(newBidAmount)} ETH</span>
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {bidTooLow ? userBid.place : getPositionAfterBid(newBid, bids)}</span>
+          <span>No. {bidTooLow ? userBid.place : getPositionAfterBump(newUserBid, bids)}</span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}
