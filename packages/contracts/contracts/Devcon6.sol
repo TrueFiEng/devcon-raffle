@@ -106,63 +106,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
-    function getKey(uint256 bidderID, uint256 amount) internal pure returns (uint256) {
-        return (amount << 16) | (_bidderMask - bidderID);
-    }
-
-    function extractBidderID(uint256 key) internal pure returns (uint256) {
-        return _bidderMask - (key & _bidderMask);
-    }
-
-    function updateMinKey() internal {
-        (_minKeyIndex, _minKeyValue) = _heap.findMin();
-    }
-
-    function addBidToHeap(uint256 bidderID, uint256 amount) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
-        uint256 key = getKey(bidderID, amount);
-        uint256 minKeyValue = _minKeyValue;
-
-        if (isHeapFull) {
-            if (key <= minKeyValue) {
-                return;
-            }
-            _heap.increaseKey(minKeyValue, key);
-            updateMinKey();
-        } else {
-            _heap.insert(key);
-            if (key <= minKeyValue) {
-                _minKeyIndex = _heap.length - 1;
-                _minKeyValue = key;
-                return;
-            }
-            updateMinKey();
-        }
-    }
-
-    function updateHeapBid(
-        uint256 bidderID,
-        uint256 oldAmount,
-        uint256 newAmount
-    ) private {
-        bool isHeapFull = getBiddersCount() >= _auctionWinnersCount;
-        uint256 key = getKey(bidderID, newAmount);
-        uint256 minKeyValue = _minKeyValue;
-
-        bool shouldUpdateHeap = key > minKeyValue;
-        if (isHeapFull && !shouldUpdateHeap) {
-            return;
-        }
-        uint256 oldKey = getKey(bidderID, oldAmount);
-        bool updatingMinKey = oldKey <= minKeyValue;
-        if (updatingMinKey) {
-            _heap.increaseKeyAt(_minKeyIndex, key);
-            updateMinKey();
-            return;
-        }
-        _heap.increaseKey(oldKey, key);
-    }
-
     uint256[] _tempWinners; // temp array for sorting auction winners
 
     function settleAuction() external onlyOwner onlyInState(State.BIDDING_CLOSED) {
@@ -196,24 +139,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
     }
 
-    function addAuctionWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.AUCTION);
-        _auctionWinners.push(bidderID);
-        emit NewAuctionWinner(bidderID);
-    }
-
-    function addRaffleWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.RAFFLE);
-        _raffleWinners.push(bidderID);
-        emit NewRaffleWinner(bidderID);
-    }
-
-    function addGoldenTicketWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
-        _raffleWinners.push(bidderID);
-        emit NewGoldenTicketWinner(bidderID);
-    }
-
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
         require(randomNumbers.length > 0, "Devcon6: there must be at least one random number passed");
 
@@ -235,74 +160,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         require(randomNumbers.length == raffleWinnersCount / 8, "Devcon6: passed incorrect number of random numbers");
 
         selectRaffleWinners(participantsLength, randomNumbers);
-    }
-
-    function setBidWinType(uint256 bidderID, WinType winType) private {
-        address bidderAddress = getBidderAddress(bidderID);
-        _bids[bidderAddress].winType = winType;
-    }
-
-    function selectGoldenTicketWinner(uint256 participantsLength, uint256 randomNumber)
-        private
-        returns (uint256, uint256)
-    {
-        uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
-
-        uint256 bidderID = _raffleParticipants[winnerIndex];
-        addGoldenTicketWinner(bidderID);
-
-        removeRaffleParticipant(winnerIndex);
-        return (participantsLength - 1, randomNumber >> 32);
-    }
-
-    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
-        for (uint256 i = 0; i < participantsLength; ++i) {
-            uint256 bidderID = _raffleParticipants[i];
-            addRaffleWinner(bidderID);
-        }
-        delete _raffleParticipants;
-    }
-
-    function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
-        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
-        for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
-        }
-    }
-
-    function selectRandomRaffleWinners(
-        uint256 participantsLength,
-        uint256 randomNumber,
-        uint256 winnersCount
-    ) private returns (uint256) {
-        for (uint256 i = 0; i < winnersCount; ++i) {
-            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
-
-            uint256 bidderID = _raffleParticipants[winnerIndex];
-            addRaffleWinner(bidderID);
-
-            removeRaffleParticipant(winnerIndex);
-            --participantsLength;
-            randomNumber = randomNumber >> 32;
-        }
-
-        return participantsLength;
-    }
-
-    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
-        private
-        pure
-        returns (uint256)
-    {
-        uint256 smallRandom = randomNumber & _randomMask;
-        return smallRandom % participantsLength;
-    }
-
-    function removeRaffleParticipant(uint256 index) private {
-        uint256 participantsLength = _raffleParticipants.length;
-        require(index < participantsLength, "Devcon6: invalid raffle participant index");
-        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
-        _raffleParticipants.pop();
     }
 
     function claim(uint256 bidderID) external onlyInState(State.RAFFLE_SETTLED) {
@@ -387,6 +244,167 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         token.transfer(owner(), balance);
     }
 
+    function getBid(address bidder) external view returns (Bid memory) {
+        Bid storage bid_ = _bids[bidder];
+        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
+        return bid_;
+    }
+
+    function getRaffleParticipants() external view returns (uint256[] memory) {
+        return _raffleParticipants;
+    }
+
+    function getAuctionWinners() external view returns (uint256[] memory) {
+        return _auctionWinners;
+    }
+
+    function getRaffleWinners() external view returns (uint256[] memory) {
+        return _raffleWinners;
+    }
+
+    function getKey(uint256 bidderID, uint256 amount) internal pure returns (uint256) {
+        return (amount << 16) | (_bidderMask - bidderID);
+    }
+
+    function extractBidderID(uint256 key) internal pure returns (uint256) {
+        return _bidderMask - (key & _bidderMask);
+    }
+
+    function updateMinKey() internal {
+        (_minKeyIndex, _minKeyValue) = _heap.findMin();
+    }
+
+    function addBidToHeap(uint256 bidderID, uint256 amount) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
+        uint256 key = getKey(bidderID, amount);
+        uint256 minKeyValue = _minKeyValue;
+
+        if (isHeapFull) {
+            if (key <= minKeyValue) {
+                return;
+            }
+            _heap.increaseKey(minKeyValue, key);
+            updateMinKey();
+        } else {
+            _heap.insert(key);
+            if (key <= minKeyValue) {
+                _minKeyIndex = _heap.length - 1;
+                _minKeyValue = key;
+                return;
+            }
+            updateMinKey();
+        }
+    }
+
+    function updateHeapBid(
+        uint256 bidderID,
+        uint256 oldAmount,
+        uint256 newAmount
+    ) private {
+        bool isHeapFull = getBiddersCount() >= _auctionWinnersCount;
+        uint256 key = getKey(bidderID, newAmount);
+        uint256 minKeyValue = _minKeyValue;
+
+        bool shouldUpdateHeap = key > minKeyValue;
+        if (isHeapFull && !shouldUpdateHeap) {
+            return;
+        }
+        uint256 oldKey = getKey(bidderID, oldAmount);
+        bool updatingMinKey = oldKey <= minKeyValue;
+        if (updatingMinKey) {
+            _heap.increaseKeyAt(_minKeyIndex, key);
+            updateMinKey();
+            return;
+        }
+        _heap.increaseKey(oldKey, key);
+    }
+
+    function addAuctionWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.AUCTION);
+        _auctionWinners.push(bidderID);
+        emit NewAuctionWinner(bidderID);
+    }
+
+    function addRaffleWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.RAFFLE);
+        _raffleWinners.push(bidderID);
+        emit NewRaffleWinner(bidderID);
+    }
+
+    function addGoldenTicketWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
+        _raffleWinners.push(bidderID);
+        emit NewGoldenTicketWinner(bidderID);
+    }
+
+    function setBidWinType(uint256 bidderID, WinType winType) private {
+        address bidderAddress = getBidderAddress(bidderID);
+        _bids[bidderAddress].winType = winType;
+    }
+
+    function selectGoldenTicketWinner(uint256 participantsLength, uint256 randomNumber)
+        private
+        returns (uint256, uint256)
+    {
+        uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
+
+        uint256 bidderID = _raffleParticipants[winnerIndex];
+        addGoldenTicketWinner(bidderID);
+
+        removeRaffleParticipant(winnerIndex);
+        return (participantsLength - 1, randomNumber >> 32);
+    }
+
+    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
+        for (uint256 i = 0; i < participantsLength; ++i) {
+            uint256 bidderID = _raffleParticipants[i];
+            addRaffleWinner(bidderID);
+        }
+        delete _raffleParticipants;
+    }
+
+    function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
+        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
+        for (uint256 i = 1; i < randomNumbers.length; ++i) {
+            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
+        }
+    }
+
+    function selectRandomRaffleWinners(
+        uint256 participantsLength,
+        uint256 randomNumber,
+        uint256 winnersCount
+    ) private returns (uint256) {
+        for (uint256 i = 0; i < winnersCount; ++i) {
+            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
+
+            uint256 bidderID = _raffleParticipants[winnerIndex];
+            addRaffleWinner(bidderID);
+
+            removeRaffleParticipant(winnerIndex);
+            --participantsLength;
+            randomNumber = randomNumber >> 32;
+        }
+
+        return participantsLength;
+    }
+
+    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
+        private
+        pure
+        returns (uint256)
+    {
+        uint256 smallRandom = randomNumber & _randomMask;
+        return smallRandom % participantsLength;
+    }
+
+    function removeRaffleParticipant(uint256 index) private {
+        uint256 participantsLength = _raffleParticipants.length;
+        require(index < participantsLength, "Devcon6: invalid raffle participant index");
+        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
+        _raffleParticipants.pop();
+    }
+
     function getState() public view returns (State) {
         if (block.timestamp >= _claimingEndTime) {
             return State.CLAIMING_CLOSED;
@@ -406,12 +424,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return State.AWAITING_BIDDING;
     }
 
-    function getBid(address bidder) external view returns (Bid memory) {
-        Bid storage bid_ = _bids[bidder];
-        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
-        return bid_;
-    }
-
     function getBidderAddress(uint256 bidderID) public view returns (address payable) {
         address payable bidderAddress = _bidders[bidderID];
         require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
@@ -420,17 +432,5 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getBiddersCount() public view returns (uint256) {
         return _nextBidderID - 1;
-    }
-
-    function getRaffleParticipants() external view returns (uint256[] memory) {
-        return _raffleParticipants;
-    }
-
-    function getAuctionWinners() external view returns (uint256[] memory) {
-        return _auctionWinners;
-    }
-
-    function getRaffleWinners() external view returns (uint256[] memory) {
-        return _raffleWinners;
     }
 }
