@@ -4,6 +4,7 @@ import { Button } from 'src/components/Buttons/Button'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
+import { SettledBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
@@ -22,39 +23,28 @@ const withdrawText = {
 }
 
 interface WinBidFormProps {
-  win: WinOptions
+  userBid: SettledBid
   bid: BigNumber
-  withdrawnBid: boolean
-  setWithdrawnBid: (val: boolean) => void
   setView: (state: TxFlowSteps) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
 
-export const WinBidForm = ({
-  win,
-  bid,
-  withdrawnBid,
-  setWithdrawnBid,
-  setView,
-  voucher,
-  setVoucher,
-}: WinBidFormProps) => {
-  const noLuck = win === WinOptions.Loss
+export const WinBidForm = ({ userBid, bid, setView, voucher, setVoucher }: WinBidFormProps) => {
+  const noLuck = userBid.winType === WinOptions.Loss
   const { claimingEndTime } = useClaimingEndTime()
 
   return (
     <Form>
       <WinFormHeading voucher={voucher}>{noLuck ? 'No luck 😔' : 'Congratulations 🎉 '}</WinFormHeading>
-      <FormText>{winText[win]}</FormText>
-      {!withdrawnBid && win !== WinOptions.Auction && (
+      <FormText>{winText[userBid.winType]}</FormText>
+      {!userBid.claimed && userBid.winType !== WinOptions.Auction && (
         <WinOption>
-          <span>{withdrawText[win]}</span>
+          <span>{withdrawText[userBid.winType]}</span>
           <Button
             view="primary"
             onClick={() => {
               setView(TxFlowSteps.Review)
-              setWithdrawnBid(true)
             }}
           >
             <span>Withdraw {formatEtherAmount(bid)} ETH</span>
@@ -71,7 +61,7 @@ export const WinBidForm = ({
         </WinOption>
       )}
 
-      {noLuck && !withdrawnBid && (
+      {noLuck && !userBid.claimed && (
         <WinOption>
           <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>

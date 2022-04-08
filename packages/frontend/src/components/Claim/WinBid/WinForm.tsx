@@ -2,58 +2,40 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
-import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { FormWrapper } from 'src/components/Form/Form'
+import { SettledBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface WinFormProps {
-  win: WinOptions
+  userBid: SettledBid
   bid: BigNumber
   setView: (state: TxFlowSteps) => void
-  withdrawnBid: boolean
-  setWithdrawnBid: (val: boolean) => void
   voucher: boolean
   setVoucher: (val: boolean) => void
 }
 
-export const WinForm = ({ win, bid, setView, withdrawnBid, setWithdrawnBid, voucher, setVoucher }: WinFormProps) => {
+export const WinForm = ({ userBid, bid, setView, voucher, setVoucher }: WinFormProps) => {
   return (
     <>
       {voucher ? (
-        withdrawnBid ? (
+        userBid.claimed ? (
           <Wrapper>
-            <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />{' '}
+            <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={userBid.claimed} />{' '}
           </Wrapper>
         ) : (
           <WrapperRow>
             <WinFormWrapper>
-              <WinBidForm
-                bid={bid}
-                setView={setView}
-                win={win}
-                withdrawnBid={withdrawnBid}
-                setWithdrawnBid={setWithdrawnBid}
-                voucher={voucher}
-                setVoucher={setVoucher}
-              />
+              <WinBidForm bid={bid} setView={setView} userBid={userBid} voucher={voucher} setVoucher={setVoucher} />
             </WinFormWrapper>
             <VoucherFormWrapper>
-              <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={withdrawnBid} />
+              <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={userBid.claimed} />
             </VoucherFormWrapper>
           </WrapperRow>
         )
       ) : (
         <Wrapper>
-          <WinBidForm
-            bid={bid}
-            setView={setView}
-            win={win}
-            withdrawnBid={withdrawnBid}
-            setWithdrawnBid={setWithdrawnBid}
-            voucher={voucher}
-            setVoucher={setVoucher}
-          />
+          <WinBidForm bid={bid} setView={setView} userBid={userBid} voucher={voucher} setVoucher={setVoucher} />
         </Wrapper>
       )}
     </>
