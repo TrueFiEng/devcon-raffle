@@ -51,7 +51,7 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
         )}
       </TransactionWrapper>
       <TransactionStepper
-        action={action}
+        action={action.type}
         current={view === TxFlowSteps.Confirmation || IsFailed ? 'Finalized' : `${heading[action.type]}`}
         IsFailed={IsFailed}
       />

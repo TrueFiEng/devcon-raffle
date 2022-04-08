@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { heading } from 'src/components/Auction/AuctionTransaction'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
-import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -53,12 +52,12 @@ export interface Step<StepName extends string> {
 
 export interface StepperProps<StepName extends string> {
   current: StepName
-  action: TransactionAction
+  action: Transactions
   IsFailed: boolean
 }
 
 export const TransactionStepper = <StepName extends string>({ current, action, IsFailed }: StepperProps<StepName>) => {
-  const steps = transactionSteps(action.type)
+  const steps = transactionSteps(action)
   const currentStepIndex = useMemo(
     () => steps.findIndex((step) => [step.default.name, step.failed?.name].includes(current)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +65,7 @@ export const TransactionStepper = <StepName extends string>({ current, action, I
   )
   return (
     <StepperContainer>
-      <StepperHeader>Finalize {header[action.type]}</StepperHeader>
+      <StepperHeader>Finalize {header[action]}</StepperHeader>
       <StepperList>
         {steps.map((item, index) => {
           const status = index === currentStepIndex ? 'current' : index < currentStepIndex ? 'completed' : 'next'
