@@ -16,8 +16,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using MaxHeap for uint256[];
     uint256[] _heap;
 
-    // TODO document that using such mask introduces assumption on max number of participants (no more than 2^32)
-    uint256 constant _randomMask = 0xffffffff; // 4 bytes (32 bits) to construct new random numbers
+    // The use of _randomMask introduces an assumption on max number of participants
+    // 2^32 in this case which is totally enough
+    uint256 constant _randomMask = 0xffffffff;
     uint256 constant _bidderMask = 0xffff;
     uint256 _minKeyIndex;
     uint256 _minKeyValue = type(uint256).max;
@@ -68,7 +69,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     modifier onlyExternalTransactions() {
         require(msg.sender == tx.origin, "Devcon6: internal transactions are forbidden");
-
         _;
     }
 
