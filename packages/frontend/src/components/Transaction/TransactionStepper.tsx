@@ -54,14 +54,10 @@ export interface Step<StepName extends string> {
 export interface StepperProps<StepName extends string> {
   current: StepName
   action: TransactionAction
-  failedTransaction: boolean
+  IsFailed: boolean
 }
 
-export const TransactionStepper = <StepName extends string>({
-  current,
-  action,
-  failedTransaction,
-}: StepperProps<StepName>) => {
+export const TransactionStepper = <StepName extends string>({ current, action, IsFailed }: StepperProps<StepName>) => {
   const steps = transactionSteps(action.type)
   const currentStepIndex = useMemo(
     () => steps.findIndex((step) => [step.default.name, step.failed?.name].includes(current)),
@@ -75,7 +71,7 @@ export const TransactionStepper = <StepName extends string>({
         {steps.map((item, index) => {
           const status = index === currentStepIndex ? 'current' : index < currentStepIndex ? 'completed' : 'next'
           const isLast = index === steps.length - 1
-          const { step, type } = pickStepVersion(item, isLast, failedTransaction)
+          const { step, type } = pickStepVersion(item, isLast, IsFailed)
           return <StepperListItem key={index} step={step} status={status} type={isLast ? type : 'success'} />
         })}
       </StepperList>
@@ -83,9 +79,9 @@ export const TransactionStepper = <StepName extends string>({
   )
 }
 
-function pickStepVersion<Name extends string>(item: Step<Name>, isLast: boolean, failedTransaction: boolean) {
+function pickStepVersion<Name extends string>(item: Step<Name>, isLast: boolean, IsFailed: boolean) {
   const [step, type]: [StepContent<Name>, StepType] =
-    item.failed && failedTransaction ? [item.failed, 'failure'] : [item.default, isLast ? 'neutral' : 'success']
+    item.failed && IsFailed ? [item.failed, 'failure'] : [item.default, isLast ? 'neutral' : 'success']
   return { step, type }
 }
 
