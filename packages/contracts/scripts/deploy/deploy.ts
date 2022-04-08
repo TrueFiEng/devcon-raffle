@@ -3,6 +3,7 @@ import { Signer, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HOUR, YEAR } from 'scripts/utils/consts'
+import { heapArtifactName } from 'scripts/utils/devcon'
 
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
@@ -39,8 +40,8 @@ export async function deployTestnetDevcon(biddingStartTime: number, heapLibraryA
   const claimingEndTime = biddingEndTime + HOUR
 
   const libraryLink = {
-    'contracts/utils/MaxHeap.sol:MaxHeap': heapLibraryAddress,
-    __$f92e1b546cb81b0df9056e27145904c2f5$__: heapLibraryAddress,
+    [heapArtifactName]: heapLibraryAddress,
+    __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibraryAddress,
   }
   return new Devcon6__factory(libraryLink, deployer).deploy(
     deployer.address,
@@ -57,9 +58,10 @@ export async function deployTestnetDevcon(biddingStartTime: number, heapLibraryA
 export async function deployMaxHeap(deployer: Signer, hre: HardhatRuntimeEnvironment) {
   const heapLibraryFactory = await hre.ethers.getContractFactory('MaxHeap')
   const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
+  console.log('\nMaxHeap address: ', heapLibrary.address)
 
   return {
-    'contracts/utils/MaxHeap.sol:MaxHeap': heapLibrary.address,
+    [heapArtifactName]: heapLibrary.address,
     __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibrary.address,
   }
 }
