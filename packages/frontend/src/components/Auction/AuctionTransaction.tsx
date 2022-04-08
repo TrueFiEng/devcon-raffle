@@ -27,7 +27,7 @@ interface AuctionTransactionProps {
 
 export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
   const [txHash, setTxHash] = useState('')
-  const IsFailed = isTxFailed(action.state)
+  const isFailed = isTxFailed(action.state)
 
   return (
     <Transaction>
@@ -52,8 +52,8 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
       </TransactionWrapper>
       <TransactionStepper
         action={action.type}
-        current={view === TxFlowSteps.Confirmation || IsFailed ? 'Finalized' : `${heading[action.type]}`}
-        IsFailed={IsFailed}
+        current={view === TxFlowSteps.Confirmation || isFailed ? 'Finalized' : `${heading[action.type]}`}
+        isFailed={isFailed}
       />
     </Transaction>
   )

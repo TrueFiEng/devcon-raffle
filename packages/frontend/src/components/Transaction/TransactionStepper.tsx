@@ -53,10 +53,10 @@ export interface Step<StepName extends string> {
 export interface StepperProps<StepName extends string> {
   current: StepName
   action: Transactions
-  IsFailed: boolean
+  isFailed: boolean
 }
 
-export const TransactionStepper = <StepName extends string>({ current, action, IsFailed }: StepperProps<StepName>) => {
+export const TransactionStepper = <StepName extends string>({ current, action, isFailed }: StepperProps<StepName>) => {
   const steps = transactionSteps(action)
   const currentStepIndex = useMemo(
     () => steps.findIndex((step) => [step.default.name, step.failed?.name].includes(current)),
@@ -70,7 +70,7 @@ export const TransactionStepper = <StepName extends string>({ current, action, I
         {steps.map((item, index) => {
           const status = index === currentStepIndex ? 'current' : index < currentStepIndex ? 'completed' : 'next'
           const isLast = index === steps.length - 1
-          const { step, type } = pickStepVersion(item, isLast, IsFailed)
+          const { step, type } = pickStepVersion(item, isLast, isFailed)
           return <StepperListItem key={index} step={step} status={status} type={isLast ? type : 'success'} />
         })}
       </StepperList>
