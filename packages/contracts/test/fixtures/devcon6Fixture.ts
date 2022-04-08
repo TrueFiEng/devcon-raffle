@@ -1,4 +1,4 @@
-import { Devcon6__factory, ExampleToken__factory } from 'contracts'
+import { Devcon6Mock__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -39,7 +39,7 @@ export function configuredDevcon6Fixture(params: devcon6Params) {
     params = setDevcon6ParamsDefaults(owner, currentBlockTimestamp, params)
 
     const libraryLink = await deployMaxHeap(deployer)
-    const devcon = await new Devcon6__factory(libraryLink, deployer).deploy(
+    const devcon = await new Devcon6Mock__factory(libraryLink, deployer).deploy(
       params.initialOwner,
       params.biddingStartTime,
       params.biddingEndTime,
