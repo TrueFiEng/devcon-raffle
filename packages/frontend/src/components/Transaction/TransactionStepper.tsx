@@ -32,7 +32,7 @@ const transactionSteps = (action: Transactions) => {
       },
       failed: {
         name: 'Failed',
-        description: 'The process is incompleted.',
+        description: 'The process is uncompleted.',
       },
     },
   ]
