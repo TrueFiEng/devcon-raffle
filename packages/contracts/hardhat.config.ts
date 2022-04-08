@@ -5,6 +5,7 @@ import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
 import 'scripts/tasks'
 import 'scripts/testnetTasks'
+import { constants } from 'ethers'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
@@ -33,7 +34,7 @@ module.exports = {
     },
     rinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',
-      accounts: [process.env.DEPLOYER]
+      accounts: [process.env.DEPLOYER || constants.AddressZero]
     }
   },
   typechain: {
