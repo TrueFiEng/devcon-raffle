@@ -181,9 +181,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 key = _heap.removeMax();
             uint256 bidderID = extractBidderID(key);
-            _auctionWinners.push(bidderID);
+            addAuctionWinner(bidderID);
             _tempWinners.insert(bidderID);
-            emit NewAuctionWinner(bidderID);
         }
 
         delete _heap;
@@ -192,9 +191,14 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 bidderID = _tempWinners.removeMax();
-            setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
         }
+    }
+
+    function addAuctionWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.AUCTION);
+        _auctionWinners.push(bidderID);
+        emit NewAuctionWinner(bidderID);
     }
 
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
