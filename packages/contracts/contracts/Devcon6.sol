@@ -37,6 +37,16 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
 
+    modifier onlyInState(State requiredState) {
+        require(getState() == requiredState, "Devcon6: is in invalid state");
+        _;
+    }
+
+    modifier onlyExternalTransactions() {
+        require(msg.sender == tx.origin, "Devcon6: internal transactions are forbidden");
+        _;
+    }
+
     constructor(
         address initialOwner,
         uint256 biddingStartTime,
@@ -61,16 +71,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
         }
-    }
-
-    modifier onlyInState(State requiredState) {
-        require(getState() == requiredState, "Devcon6: is in invalid state");
-        _;
-    }
-
-    modifier onlyExternalTransactions() {
-        require(msg.sender == tx.origin, "Devcon6: internal transactions are forbidden");
-        _;
     }
 
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
