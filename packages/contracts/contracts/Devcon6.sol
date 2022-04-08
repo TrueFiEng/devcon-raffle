@@ -25,7 +25,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
 
-    uint256[] _auctionWinners; // TODO pass by param to claimProceeds to save gas
+    uint256[] _auctionWinners;
+    uint256[] _raffleWinners;
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
 
@@ -180,9 +181,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 key = _heap.removeMax();
             uint256 bidderID = extractBidderID(key);
-            _auctionWinners.push(bidderID);
+            addAuctionWinner(bidderID);
             _tempWinners.insert(bidderID);
-            emit NewAuctionWinner(bidderID);
         }
 
         delete _heap;
@@ -191,9 +191,26 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         for (uint256 i = 0; i < winnersLength; ++i) {
             uint256 bidderID = _tempWinners.removeMax();
-            setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
         }
+    }
+
+    function addAuctionWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.AUCTION);
+        _auctionWinners.push(bidderID);
+        emit NewAuctionWinner(bidderID);
+    }
+
+    function addRaffleWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.RAFFLE);
+        _raffleWinners.push(bidderID);
+        emit NewRaffleWinner(bidderID);
+    }
+
+    function addGoldenTicketWinner(uint256 bidderID) private {
+        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
+        _raffleWinners.push(bidderID);
+        emit NewGoldenTicketWinner(bidderID);
     }
 
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
@@ -231,8 +248,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
         uint256 bidderID = _raffleParticipants[winnerIndex];
-        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
-        emit NewGoldenTicketWinner(bidderID);
+        addGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
         return (participantsLength - 1, randomNumber >> 32);
@@ -241,8 +257,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
         for (uint256 i = 0; i < participantsLength; ++i) {
             uint256 bidderID = _raffleParticipants[i];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
+            addRaffleWinner(bidderID);
         }
         delete _raffleParticipants;
     }
@@ -263,8 +278,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
 
             uint256 bidderID = _raffleParticipants[winnerIndex];
-            setBidWinType(bidderID, WinType.RAFFLE);
-            emit NewRaffleWinner(bidderID);
+            addRaffleWinner(bidderID);
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
@@ -413,5 +427,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
+    }
+
+    function getRaffleWinners() external view returns (uint256[] memory) {
+        return _raffleWinners;
     }
 }

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// solhint-disable avoid-low-level-calls
 pragma solidity 0.8.10;
 pragma experimental ABIEncoderV2;
 
