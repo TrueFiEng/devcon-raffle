@@ -1,8 +1,8 @@
 import { task, types } from 'hardhat/config'
 import { deployTestnetDevcon } from 'scripts/deploy/deploy'
-import { Devcon6__factory } from 'contracts'
-import { BigNumberish, constants, Signer, utils, Wallet } from 'ethers'
+import { BigNumberish, constants, Contract, Signer, utils, Wallet } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import { connectToDevcon } from 'scripts/utils/devcon'
 
 const testnetDevconAddress = '0x0cD6783fca8D1a9DbAa6404B759b0C2110f3C2A0'
 const testnetHeapAddress = '0xc1D8b72838Cb3F1c52651d76ea186Df457817aD6'
@@ -26,10 +26,12 @@ task('init-bids', 'Places initial bids')
     const initialBidAmount = utils.parseUnits('0.20', 9)
     const bidIncrement = utils.parseUnits('0.02', 9)
 
+    const devcon = await connectToDevcon(hre, testnetDevconAddress, testnetHeapAddress)
+
     const privateKeys: string[] = JSON.parse(process.env.PRIVATE_KEYS)
     for (let i = 0; i < privateKeys.length; i++) {
       const wallet = new Wallet(privateKeys[i], hre.ethers.provider)
-      await bidAs(wallet, initialBidAmount.add(bidIncrement.mul(i)))
+      await bidAs(devcon, wallet, initialBidAmount.add(bidIncrement.mul(i)))
     }
   })
 
@@ -51,9 +53,9 @@ task('transfer-ether', 'Transfers ether')
     }
   })
 
-export async function bidAs(signer: Signer, value: BigNumberish) {
-  const devcon = Devcon6__factory.connect(testnetDevconAddress, signer)
-  const tx = await devcon.bid({ value })
+export async function bidAs(devcon: Contract, signer: Signer, value: BigNumberish) {
+  const devconAsSigner = devcon.connect(signer)
+  const tx = await devconAsSigner.bid({ value })
   const { gasUsed } = await tx.wait()
   console.log(`Bid ${value.toString()} wei as ${await signer.getAddress()}, gasUsed: ${gasUsed.toString()}`)
 }

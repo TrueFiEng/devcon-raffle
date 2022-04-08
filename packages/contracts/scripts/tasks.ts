@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { devconAddress, devconArtifactName, devconLibraries } from 'scripts/utils/devcon'
+import { connectToDevcon, devconAddress, heapAddress } from 'scripts/utils/devcon'
 import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -24,11 +24,11 @@ task('bid', 'Places bid for given account with provided amount')
     hre,
   ) => {
     const signer = await hre.ethers.getSigner(address)
-    const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: devconLibraries })
-    const devcon = devconFactory.attach(devconAddress).connect(signer)
+    const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
+    const devconAsSigner = devcon.connect(signer)
 
     const ethAmount = parseEther(amount)
-    await devcon.bid({ value: ethAmount })
+    await devconAsSigner.bid({ value: ethAmount })
     logBid(address, ethAmount)
   })
 
@@ -70,8 +70,8 @@ function formatEther(amount: BigNumberish): string {
 
 async function devconAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const owner = await getDevconOwner(hre)
-  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: devconLibraries })
-  return devconFactory.attach(devconAddress).connect(owner)
+  const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
+  return devcon.connect(owner)
 }
 
 async function getDevconOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress> {
