@@ -100,7 +100,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
 
-            addToHeap(bidder.bidderID, bidder.amount);
+            addBidToHeap(bidder.bidderID, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
@@ -117,8 +117,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
-    function addToHeap(uint256 bidderID, uint256 amount) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+    function addBidToHeap(uint256 bidderID, uint256 amount) private {
+        bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
         uint256 minKeyValue = _minKeyValue;
 
@@ -144,33 +144,22 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 oldAmount,
         uint256 newAmount
     ) private {
-        bool isHeapFull = getBiddersCount() > _auctionWinnersCount;
+        bool isHeapFull = getBiddersCount() >= _auctionWinnersCount;
         uint256 key = getKey(bidderID, newAmount);
         uint256 minKeyValue = _minKeyValue;
 
-        if (isHeapFull) {
-            bool shouldUpdateHeap = key > minKeyValue;
-            if (!shouldUpdateHeap) {
-                return;
-            }
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = oldKey <= minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
-        } else {
-            uint256 oldKey = getKey(bidderID, oldAmount);
-            bool updatingMinKey = key <= minKeyValue || oldKey == minKeyValue;
-            if (updatingMinKey) {
-                _heap.increaseKeyAt(_minKeyIndex, key);
-                updateMinKey();
-                return;
-            }
-            _heap.increaseKey(oldKey, key);
+        bool shouldUpdateHeap = key > minKeyValue;
+        if (isHeapFull && !shouldUpdateHeap) {
+            return;
         }
+        uint256 oldKey = getKey(bidderID, oldAmount);
+        bool updatingMinKey = oldKey <= minKeyValue;
+        if (updatingMinKey) {
+            _heap.increaseKeyAt(_minKeyIndex, key);
+            updateMinKey();
+            return;
+        }
+        _heap.increaseKey(oldKey, key);
     }
 
     uint256[] _tempWinners; // temp array for sorting auction winners
@@ -194,8 +183,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = extractBidderID(key);
             _auctionWinners.push(bidderID);
             _tempWinners.insert(bidderID);
+            emit NewAuctionWinner(bidderID);
         }
 
+        delete _heap;
         delete _minKeyIndex;
         delete _minKeyValue;
 
@@ -203,7 +194,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             uint256 bidderID = _tempWinners.removeMax();
             setBidWinType(bidderID, WinType.AUCTION);
             removeRaffleParticipant(bidderID - 1);
-            emit NewAuctionWinner(bidderID);
         }
     }
 

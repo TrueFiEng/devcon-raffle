@@ -7,7 +7,7 @@ import { setTimeoutImmediately } from 'src/utils/setTimeoutImmediately'
 import styled from 'styled-components'
 
 export const TimeLeft = () => {
-  const { timestamp } = useAuctionTime()
+  const timestamp = useAuctionTime()
   const state = useAuctionState()
 
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))

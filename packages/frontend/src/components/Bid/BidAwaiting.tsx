@@ -4,7 +4,7 @@ import { formatEndDateText } from 'src/utils/formatters/formatEndDateText'
 import styled from 'styled-components'
 
 export const BidAwaiting = () => {
-  const { timestamp } = useAuctionTime()
+  const timestamp = useAuctionTime()
   if (!timestamp) {
     return <></>
   }

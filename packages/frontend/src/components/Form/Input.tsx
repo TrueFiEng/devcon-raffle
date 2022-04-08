@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { useUserBid } from 'src/hooks/useUserBid'
@@ -12,7 +12,7 @@ import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
-  amount: BigNumber
+  initialAmount: BigNumber
   setAmount: (val: BigNumber) => void
   notEnoughBalance: boolean
   bidTooLow: boolean
@@ -20,13 +20,18 @@ interface InputProps {
 
 const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
-export const Input = ({ amount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
+export function formatInputValue(value: BigNumber) {
+  return value.isZero() ? '' : formatEther(value)
+}
+
+export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
   const userBid = useUserBid()
 
-  const initialInputValue = amount.isZero() ? '' : formatEther(amount)
-  const [inputValue, setInputValue] = useState(initialInputValue)
+  const [inputValue, setInputValue] = useState(formatInputValue(initialAmount))
+
+  useEffect(() => setInputValue(formatInputValue(initialAmount)), [initialAmount])
 
   const onChange = (value: string) => {
     if (!numberInputRegex.test(value)) {
