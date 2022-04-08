@@ -291,15 +291,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return State.AWAITING_BIDDING;
     }
 
-    function getKey(uint256 bidderID, uint256 amount) internal pure returns (uint256) {
+    function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
         return (amount << 16) | (_bidderMask - bidderID);
     }
 
-    function extractBidderID(uint256 key) internal pure returns (uint256) {
+    function extractBidderID(uint256 key) private pure returns (uint256) {
         return _bidderMask - (key & _bidderMask);
     }
 
-    function updateMinKey() internal {
+    function updateMinKey() private {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
