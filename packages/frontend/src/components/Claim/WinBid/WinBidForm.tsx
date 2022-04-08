@@ -8,21 +8,21 @@ import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
 
-import { FEE } from './WinBidFlow'
-
 const winText = {
+  [WinOptions.Loss]: 'We are sorry, but you did not qualify for the Raffle.',
   [WinOptions.Ticket]: 'You won the Golden Ticket!',
   [WinOptions.Auction]: 'You bid was in the top 20, so you win a ticket to Devcon 6!',
   [WinOptions.Raffle]: 'You were chosen in the raffle!',
 }
 
 const withdrawText = {
+  [WinOptions.Loss]: `You can withdraw your bid amount minus 2% fee.`,
   [WinOptions.Ticket]: 'This means your ticket is free, so you can withdraw all your funds.',
   [WinOptions.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price.',
 }
 
 interface WinBidFormProps {
-  win?: WinOptions
+  win: WinOptions
   bid: BigNumber
   withdrawnBid: boolean
   setWithdrawnBid: (val: boolean) => void
@@ -40,16 +40,16 @@ export const WinBidForm = ({
   voucher,
   setVoucher,
 }: WinBidFormProps) => {
-  const luck = win !== undefined
+  const noLuck = win === WinOptions.Loss
   const { claimingEndTime } = useClaimingEndTime()
 
   return (
     <Form>
-      <WinFormHeading voucher={voucher}>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
-      <FormText>{luck ? winText[win] : 'We are sorry, but you did not qualify for the Raffle.'}</FormText>
+      <WinFormHeading voucher={voucher}>{noLuck ? 'No luck 😔' : 'Congratulations 🎉 '}</WinFormHeading>
+      <FormText>{winText[win]}</FormText>
       {!withdrawnBid && win !== WinOptions.Auction && (
         <WinOption>
-          <span>{luck ? withdrawText[win] : `You can withdraw your bid amount minus ${FEE}% fee.`}</span>
+          <span>{withdrawText[win]}</span>
           <Button
             view="primary"
             onClick={() => {
@@ -62,7 +62,7 @@ export const WinBidForm = ({
         </WinOption>
       )}
 
-      {!voucher && luck && (
+      {!voucher && !noLuck && (
         <WinOption>
           <span>Claim your voucher code now!</span>
           <Button view="primary" onClick={() => setVoucher(true)}>
@@ -71,7 +71,7 @@ export const WinBidForm = ({
         </WinOption>
       )}
 
-      {!luck && !withdrawnBid && (
+      {noLuck && !withdrawnBid && (
         <WinOption>
           <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>

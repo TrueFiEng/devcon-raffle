@@ -8,7 +8,7 @@ import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface WinFormProps {
-  win?: WinOptions
+  win: WinOptions
   bid: BigNumber
   setView: (state: TxFlowSteps) => void
   withdrawnBid: boolean
