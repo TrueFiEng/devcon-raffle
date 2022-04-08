@@ -291,10 +291,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return State.AWAITING_BIDDING;
     }
 
-    function updateMinKey() private {
-        (_minKeyIndex, _minKeyValue) = _heap.findMin();
-    }
-
     function addBidToHeap(uint256 bidderID, uint256 amount) private {
         bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
@@ -338,6 +334,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
         _heap.increaseKey(oldKey, key);
+    }
+
+    function updateMinKey() private {
+        (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
     function addAuctionWinner(uint256 bidderID) private {
