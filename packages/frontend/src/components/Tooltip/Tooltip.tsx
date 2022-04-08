@@ -13,12 +13,7 @@ interface TooltipProps {
 export const Tooltip = ({ side = 'bottom', tooltip, children, onOpenChange }: TooltipProps) => {
   return (
     <TooltipPrimitive.Root delayDuration={250} onOpenChange={onOpenChange}>
-      <TooltipPrimitive.Trigger
-        asChild
-        role="tooltip"
-        onClick={(e) => e.preventDefault()}
-        onMouseDown={(e) => e.preventDefault()}
-      >
+      <TooltipPrimitive.Trigger asChild role="tooltip" onMouseDown={(e) => e.preventDefault()}>
         <TooltipTriggerContainer>{children}</TooltipTriggerContainer>
       </TooltipPrimitive.Trigger>
       <TooltipContent side={side} sideOffset={side === 'top' || side === 'bottom' ? 4 : 8}>
