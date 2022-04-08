@@ -244,12 +244,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         token.transfer(owner(), balance);
     }
 
-    function getBid(address bidder) external view returns (Bid memory) {
-        Bid storage bid_ = _bids[bidder];
-        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
-        return bid_;
-    }
-
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
     }
@@ -260,6 +254,41 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getRaffleWinners() external view returns (uint256[] memory) {
         return _raffleWinners;
+    }
+
+    function getBid(address bidder) external view returns (Bid memory) {
+        Bid storage bid_ = _bids[bidder];
+        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
+        return bid_;
+    }
+
+    function getBidderAddress(uint256 bidderID) public view returns (address payable) {
+        address payable bidderAddress = _bidders[bidderID];
+        require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
+        return bidderAddress;
+    }
+
+    function getBiddersCount() public view returns (uint256) {
+        return _nextBidderID - 1;
+    }
+
+    function getState() public view returns (State) {
+        if (block.timestamp >= _claimingEndTime) {
+            return State.CLAIMING_CLOSED;
+        }
+        if (_settleState == SettleState.RAFFLE_SETTLED) {
+            return State.RAFFLE_SETTLED;
+        }
+        if (_settleState == SettleState.AUCTION_SETTLED) {
+            return State.AUCTION_SETTLED;
+        }
+        if (block.timestamp >= _biddingEndTime) {
+            return State.BIDDING_CLOSED;
+        }
+        if (block.timestamp >= _biddingStartTime) {
+            return State.BIDDING_OPEN;
+        }
+        return State.AWAITING_BIDDING;
     }
 
     function getKey(uint256 bidderID, uint256 amount) internal pure returns (uint256) {
@@ -403,34 +432,5 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         require(index < participantsLength, "Devcon6: invalid raffle participant index");
         _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
         _raffleParticipants.pop();
-    }
-
-    function getState() public view returns (State) {
-        if (block.timestamp >= _claimingEndTime) {
-            return State.CLAIMING_CLOSED;
-        }
-        if (_settleState == SettleState.RAFFLE_SETTLED) {
-            return State.RAFFLE_SETTLED;
-        }
-        if (_settleState == SettleState.AUCTION_SETTLED) {
-            return State.AUCTION_SETTLED;
-        }
-        if (block.timestamp >= _biddingEndTime) {
-            return State.BIDDING_CLOSED;
-        }
-        if (block.timestamp >= _biddingStartTime) {
-            return State.BIDDING_OPEN;
-        }
-        return State.AWAITING_BIDDING;
-    }
-
-    function getBidderAddress(uint256 bidderID) public view returns (address payable) {
-        address payable bidderAddress = _bidders[bidderID];
-        require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
-        return bidderAddress;
-    }
-
-    function getBiddersCount() public view returns (uint256) {
-        return _nextBidderID - 1;
     }
 }
