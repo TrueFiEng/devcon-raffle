@@ -2,9 +2,9 @@ import { useCallback, useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
-import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
-import { RAFFLE_PARTICIPANTS_COUNT } from 'src/constants/raffleParticipantsCount'
+import { useAuctionParticipants } from 'src/hooks/useAuctionParticipants'
 import { useBids } from 'src/hooks/useBids'
+import { useRaffleParticipants } from 'src/hooks/useRaffleParticipants'
 import { BidWithPlace } from 'src/models/Bid'
 
 interface AllBidsListProps {
@@ -13,15 +13,16 @@ interface AllBidsListProps {
 
 export const AllBidsList = ({ search }: AllBidsListProps) => {
   const { bids } = useBids()
+  const raffleParticipants = useRaffleParticipants()
+  const auctionParticipants = useAuctionParticipants()
 
   const searchBid = useCallback(
     (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
     [search]
   )
 
-  const raffleBidsOffset = Math.max(0, bids.length - RAFFLE_PARTICIPANTS_COUNT)
-  const firstRaffleBidIndex =
-    raffleBidsOffset >= AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT : raffleBidsOffset
+  const raffleBidsOffset = Math.max(0, bids.length - raffleParticipants)
+  const firstRaffleBidIndex = raffleBidsOffset >= auctionParticipants ? auctionParticipants : raffleBidsOffset
 
   const auctionBids = useMemo(() => {
     const sectionBids = bids.slice(0, firstRaffleBidIndex)

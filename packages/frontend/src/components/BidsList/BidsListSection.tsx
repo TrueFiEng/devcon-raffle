@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { BidsList } from 'src/components/BidsList/BidsList'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { Button } from 'src/components/Buttons/Button'
-import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
+import { useAuctionParticipants } from 'src/hooks/useAuctionParticipants'
 import { useBids } from 'src/hooks/useBids'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
@@ -16,6 +16,7 @@ export const BidsListSection = () => {
   const { bids } = useBids()
   const navigate = useNavigate()
   const userBid = useUserBid()
+  const auctionParticipants = useAuctionParticipants()
 
   const { auctionBidsSlice } = useMemo(() => {
     if (bids.length <= bidsMaxCount) {
@@ -24,16 +25,15 @@ export const BidsListSection = () => {
       }
     }
     const topAuctionBids = bids.slice(0, topAuctionBidsCount)
-    const lastAuctionBid =
-      bids[bids.length > AUCTION_PARTICIPANTS_COUNT ? AUCTION_PARTICIPANTS_COUNT - 1 : bids.length - 1]
+    const lastAuctionBid = bids[bids.length > auctionParticipants ? auctionParticipants - 1 : bids.length - 1]
     return {
       auctionBidsSlice:
-        userBid && within(bidsMaxCount, AUCTION_PARTICIPANTS_COUNT - 1, userBid.place)
+        userBid && within(bidsMaxCount, auctionParticipants - 1, userBid.place)
           ? topAuctionBids.concat([userBid, lastAuctionBid])
           : topAuctionBids.concat([lastAuctionBid]),
-      userRaffleBid: userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined,
+      userRaffleBid: userBid && userBid.place > auctionParticipants ? userBid : undefined,
     }
-  }, [bids, userBid])
+  }, [bids, userBid, auctionParticipants])
 
   return (
     <BidsListContainer>
