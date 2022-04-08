@@ -5,12 +5,13 @@ import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
 import 'scripts/tasks'
 import 'scripts/testnetTasks'
-import { constants } from 'ethers'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
 
 require('dotenv').config({ path: '../../.env' })
+
+const zeroPrivateKey = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 module.exports = {
   paths: {
@@ -34,7 +35,7 @@ module.exports = {
     },
     rinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',
-      accounts: [process.env.DEPLOYER || constants.AddressZero]
+      accounts: [process.env.DEPLOYER || zeroPrivateKey]
     }
   },
   typechain: {
