@@ -30,7 +30,7 @@ export const AllBidsList = ({ search }: AllBidsListProps) => {
   const raffleBids = useMemo(() => {
     const sectionBids = bids.length > RAFFLE_PARTICIPANTS_COUNT ? bids.slice(firstRaffleBidIndex) : bids
     return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid, firstRaffleBidIndex])
+  }, [search, bids, searchBid]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 
