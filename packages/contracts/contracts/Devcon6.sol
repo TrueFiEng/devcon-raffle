@@ -14,27 +14,28 @@ import "./libs/MaxHeap.sol";
 contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
-    uint256[] _heap;
 
     // The use of _randomMask introduces an assumption on max number of participants
     // 2^32 in this case which is totally enough
     uint256 constant _randomMask = 0xffffffff;
     uint256 constant _bidderMask = 0xffff;
+
+    mapping(address => Bid) _bids; // bidder address -> Bid
+    mapping(uint256 => address payable) _bidders; // bidderID -> bidder address
+    uint256 _nextBidderID = 1;
+
+    uint256[] _heap;
     uint256 _minKeyIndex;
     uint256 _minKeyValue = type(uint256).max;
 
-    uint256[] _raffleParticipants;
     SettleState _settleState = SettleState.AWAITING_SETTLING;
+    uint256[] _raffleParticipants;
 
     uint256[] _auctionWinners;
     uint256[] _raffleWinners;
+
     bool _proceedsClaimed;
     uint256 _claimedFeesIndex;
-
-    mapping(address => Bid) _bids;
-    // bidderID -> address
-    mapping(uint256 => address payable) _bidders;
-    uint256 _nextBidderID = 1;
 
     constructor(
         address initialOwner,
