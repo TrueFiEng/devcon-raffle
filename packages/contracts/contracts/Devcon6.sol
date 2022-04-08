@@ -291,14 +291,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return State.AWAITING_BIDDING;
     }
 
-    function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
-        return (amount << 16) | (_bidderMask - bidderID);
-    }
-
-    function extractBidderID(uint256 key) private pure returns (uint256) {
-        return _bidderMask - (key & _bidderMask);
-    }
-
     function updateMinKey() private {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
@@ -418,6 +410,21 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return participantsLength;
     }
 
+    function removeRaffleParticipant(uint256 index) private {
+        uint256 participantsLength = _raffleParticipants.length;
+        require(index < participantsLength, "Devcon6: invalid raffle participant index");
+        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
+        _raffleParticipants.pop();
+    }
+
+    function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
+        return (amount << 16) | (_bidderMask - bidderID);
+    }
+
+    function extractBidderID(uint256 key) private pure returns (uint256) {
+        return _bidderMask - (key & _bidderMask);
+    }
+
     function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
         private
         pure
@@ -425,12 +432,5 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     {
         uint256 smallRandom = randomNumber & _randomMask;
         return smallRandom % participantsLength;
-    }
-
-    function removeRaffleParticipant(uint256 index) private {
-        uint256 participantsLength = _raffleParticipants.length;
-        require(index < participantsLength, "Devcon6: invalid raffle participant index");
-        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
-        _raffleParticipants.pop();
     }
 }
