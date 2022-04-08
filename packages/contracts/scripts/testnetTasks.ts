@@ -15,7 +15,7 @@ task('deploy', 'Deploys devcon')
     console.log('Deploying contracts...')
     const now = Math.floor(Date.now() / 1000)
     const biddingStartTime = now + delay
-    const devcon = await deployTestnetDevcon(biddingStartTime, testnetHeapAddress, deployer)
+    const devcon = await deployTestnetDevcon(biddingStartTime, testnetHeapAddress, deployer, hre)
     console.log('Devcon6 address: ', devcon.address)
     console.log('Contracts deployed\n')
   })

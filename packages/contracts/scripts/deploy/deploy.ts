@@ -1,16 +1,17 @@
-import { Devcon6, Devcon6__factory, Multicall2__factory } from 'contracts'
-import { Signer, utils } from 'ethers'
+import { Contract, Signer, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HOUR, YEAR } from 'scripts/utils/consts'
-import { heapArtifactName } from 'scripts/utils/devcon'
+import { devconArtifactName, getDevconLibraries, multicallArtifactName } from 'scripts/utils/devcon'
 
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
 
-export async function deploy(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Devcon6> {
+export async function deploy(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const devcon = await deployDevcon(biddingStartTime, deployer, hre)
-  const multicall = await new Multicall2__factory(deployer).deploy()
+
+  const multicallFactory = await hre.ethers.getContractFactory(multicallArtifactName)
+  const multicall = await multicallFactory.connect(deployer).deploy()
 
   console.log('\nDevcon6 address: ', devcon.address)
   console.log('\nMulticall address: ', multicall.address)
@@ -18,12 +19,13 @@ export async function deploy(biddingStartTime: number, deployer: SignerWithAddre
   return devcon
 }
 
-export async function deployDevcon(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Devcon6> {
+export async function deployDevcon(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const biddingEndTime = biddingStartTime + HOUR
   const claimingEndTime = biddingEndTime + HOUR
 
   const libraryLink = await deployMaxHeap(deployer, hre)
-  return new Devcon6__factory(libraryLink, deployer).deploy(
+  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: libraryLink })
+  return devconFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
     biddingEndTime,
@@ -35,15 +37,12 @@ export async function deployDevcon(biddingStartTime: number, deployer: SignerWit
   )
 }
 
-export async function deployTestnetDevcon(biddingStartTime: number, heapLibraryAddress: string, deployer: SignerWithAddress) {
+export async function deployTestnetDevcon(biddingStartTime: number, heapLibraryAddress: string, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
   const biddingEndTime = biddingStartTime + YEAR
   const claimingEndTime = biddingEndTime + HOUR
 
-  const libraryLink = {
-    [heapArtifactName]: heapLibraryAddress,
-    __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibraryAddress,
-  }
-  return new Devcon6__factory(libraryLink, deployer).deploy(
+  const devconFactory = await hre.ethers.getContractFactory(devconArtifactName, { libraries: getDevconLibraries(heapLibraryAddress) })
+  return devconFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
     biddingEndTime,
@@ -60,8 +59,5 @@ export async function deployMaxHeap(deployer: Signer, hre: HardhatRuntimeEnviron
   const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
   console.log('\nMaxHeap address: ', heapLibrary.address)
 
-  return {
-    [heapArtifactName]: heapLibrary.address,
-    __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibrary.address,
-  }
+  return getDevconLibraries(heapLibrary.address)
 }
