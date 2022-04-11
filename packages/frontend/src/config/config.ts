@@ -36,8 +36,9 @@ function getProdConfig(): Config {
   }
 }
 
-const commonUseDAppConfig = {
+const commonUseDAppConfig: UseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
+  multicallVersion: 2,
   readOnlyUrls: NODE_URLS,
 }
 
