@@ -31,12 +31,12 @@ interface WinBidFormProps {
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
-  const luck = userBid.winType !== WinType.Loss
+  const isWinningBid = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
 
   return (
     <Form>
-      <WinFormHeading voucher={voucher}>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
+      <WinFormHeading voucher={voucher}>{isWinningBid ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
       <FormText>{winText[userBid.winType]}</FormText>
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
@@ -52,7 +52,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
         </WinOption>
       )}
 
-      {!voucher && luck && (
+      {!voucher && isWinningBid && (
         <WinOption>
           <span>Claim your voucher code now!</span>
           <Button view="primary" onClick={() => setVoucher(true)}>
@@ -61,7 +61,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
         </WinOption>
       )}
 
-      {!luck && !userBid.claimed && (
+      {!isWinningBid && !userBid.claimed && (
         <WinOption>
           <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>
