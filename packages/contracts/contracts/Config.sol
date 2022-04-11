@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-contract Config {
+abstract contract Config {
     uint256 public immutable _biddingStartTime;
     uint256 public immutable _biddingEndTime;
     uint256 public immutable _claimingEndTime;
