@@ -1,4 +1,4 @@
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 
 interface Props {
-  bid: BidWithPlace
+  bid: Bid
   isUser?: boolean
   view?: 'short' | 'full'
 }

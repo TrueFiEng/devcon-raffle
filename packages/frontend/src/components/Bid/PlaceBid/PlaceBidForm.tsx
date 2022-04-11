@@ -5,14 +5,14 @@ import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 
 interface PlaceBidFormProps {
   bid: BigNumber
   setBid: (val: BigNumber) => void
   minimumBid: BigNumber
-  bids: BidWithPlace[]
+  bids: Bid[]
   setView: (state: TxFlowSteps) => void
 }
 

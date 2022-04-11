@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
-export const getPositionAfterBid = (newAmount: BigNumber, bids: BidWithPlace[]) =>
+export const getPositionAfterBid = (newAmount: BigNumber, bids: Bid[]) =>
   bids.findIndex((bid) => bid.amount.lt(newAmount)) + 1 || bids.length + 1

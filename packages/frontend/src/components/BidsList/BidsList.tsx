@@ -5,12 +5,12 @@ import { Separator } from 'src/components/common/Separator'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { emptyBids } from 'src/constants/emptyBids'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface Props {
-  bids: BidWithPlace[]
+  bids: Bid[]
   view?: 'short' | 'full'
 }
 

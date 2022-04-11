@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
-export const getPositionAfterBump = (newAmount: BigNumber, bidderID: BigNumber, bids: BidWithPlace[]) =>
+export const getPositionAfterBump = (newAmount: BigNumber, bidderID: BigNumber, bids: Bid[]) =>
   bids.findIndex((bid) => {
     if (bid.amount.eq(newAmount)) {
       return bid.bidderID.gt(bidderID)

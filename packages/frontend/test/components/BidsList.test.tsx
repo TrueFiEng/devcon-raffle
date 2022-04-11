@@ -4,7 +4,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { BidsListSection } from 'src/components/BidsList/BidsListSection'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { BidsContext } from 'src/providers/Bids'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
@@ -90,20 +90,20 @@ describe('UI: BidsListSection', () => {
     })
   })
 
-  const testDisplayedBid = (bid: BidWithPlace) => {
+  const testDisplayedBid = (bid: Bid) => {
     const place = screen.getByText(bid.place + '.')
     // eslint-disable-next-line testing-library/no-node-access
     expect(place.parentElement).toHaveTextContent(
       `${bid.place}.${formatEtherAmount(bid.amount)} ETH ${shortenEthAddress(bid.bidderAddress)}`
     )
   }
-  const testHiddenBid = (bid: BidWithPlace) => {
+  const testHiddenBid = (bid: Bid) => {
     expect(screen.queryAllByText(bid.place + '.')).toHaveLength(0)
     expect(screen.queryAllByText(`${formatEtherAmount(bid.amount)} ETH`)).toHaveLength(0)
     expect(screen.queryAllByText(shortenEthAddress(bid.bidderAddress))).toHaveLength(0)
   }
 
-  const renderComponent = (bids: BidWithPlace[]) =>
+  const renderComponent = (bids: Bid[]) =>
     render(
       <BidsContext.Provider value={{ bids }}>
         <MemoryRouter>

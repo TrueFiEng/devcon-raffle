@@ -2,7 +2,7 @@ import { Interface } from '@ethersproject/abi'
 import { BigNumber } from '@ethersproject/bignumber'
 import { ReactNode, useMemo } from 'react'
 import { DEVCON6_ABI } from 'src/constants/abis'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { useBidEvents } from 'src/providers/Bids/useBidEvents'
 
 import { BidsContext } from './context'
@@ -19,7 +19,7 @@ interface BidEventDetails {
 export const BidsProvider = ({ children }: Props) => {
   const bidsEvents = useBidEvents()
 
-  const bids: BidWithPlace[] = useMemo(() => {
+  const bids: Bid[] = useMemo(() => {
     const abi = new Interface(DEVCON6_ABI)
     const addressToBidMap = bidsEvents.reduce<Record<string, BidEventDetails>>((dict, log) => {
       const event = abi.parseLog(log)
