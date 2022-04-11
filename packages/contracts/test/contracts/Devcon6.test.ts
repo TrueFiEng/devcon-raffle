@@ -1120,7 +1120,7 @@ describe('Devcon6', function () {
   }
 
   function heapKey(bidderID: BigNumberish, amount: BigNumberish) {
-    const bidderMask = BigNumber.from('0xffff')
-    return BigNumber.from(amount).shl(16).or(bidderMask.sub(bidderID))
+    const bidderMask = BigNumber.from('0xffffffff')
+    return BigNumber.from(amount).shl(32).or(bidderMask.sub(bidderID))
   }
 })

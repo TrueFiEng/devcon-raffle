@@ -19,8 +19,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // 2^32 in this case which is totally enough
     uint256 constant _randomMask = 0xffffffff;
     uint256 constant _randomMaskLength = 32;
-    uint256 constant _bidderMask = 0xffff;
-    uint256 constant _bidderMaskLength = 16;
+    uint256 constant _bidderMask = 0xffffffff;
+    uint256 constant _bidderMaskLength = 32;
 
     mapping(address => Bid) _bids; // bidder address -> Bid
     mapping(uint256 => address payable) _bidders; // bidderID -> bidder address
