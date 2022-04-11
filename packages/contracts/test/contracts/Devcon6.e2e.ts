@@ -1,8 +1,8 @@
 import { setupFixtureLoader } from '../setup'
-import { devcon6E2EFixture, reservePrice } from 'fixtures/devcon6Fixture'
+import { devcon6E2EFixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
 import { Devcon6Mock } from 'contracts'
 import { Provider } from '@ethersproject/providers'
-import { BigNumber, Wallet } from 'ethers'
+import { BigNumber, constants, Wallet } from 'ethers'
 import { randomBigNumbers } from 'scripts/utils/random'
 import { expect } from 'chai'
 import { heapKey } from 'utils/heapKey'
@@ -13,6 +13,7 @@ import { compareBids } from 'utils/compareBids'
 interface Bid {
   bidderID: number,
   amount: BigNumber,
+  bumpAmount: BigNumber,
   wallet: Wallet,
 }
 
@@ -36,6 +37,7 @@ describe('Devcon6 - E2E', function () {
     bids = randomBigNumbers(120).map((bn, index): Bid => ({
       bidderID: index + 1,
       amount: bn.shr(192).add(reservePrice),
+      bumpAmount: index % 2 === 0 ? bn.shr(240).add(minBidIncrement) : constants.Zero,
       wallet: wallets[index],
     }),
     )
@@ -49,7 +51,7 @@ describe('Devcon6 - E2E', function () {
   })
 
   it('lets 120 participants place bids', async function () {
-    for (const { amount, wallet } of bids) {
+    for (const { wallet, amount } of bids) {
       await devcon.connect(wallet).bid({ value: amount })
     }
 
@@ -57,6 +59,16 @@ describe('Devcon6 - E2E', function () {
     expect(await devcon.getHeap()).to.have.lengthOf(20)
     const lastAuctionBid = sortedBids[19]
     expect(await devcon.getMinKeyValue()).to.eq(heapKey(lastAuctionBid.bidderID, lastAuctionBid.amount))
+  })
+
+  it('lets some participants bump bids', async function () {
+    for (const { wallet, bumpAmount } of bids) {
+      if (!bumpAmount.isZero()) {
+        await devcon.connect(wallet).bid({ value: bumpAmount })
+      }
+    }
+
+    sortedBids = bids.map(bid => ({ ...bid, amount: bid.amount.add(bid.bumpAmount) })).sort(compareBids)
   })
 
   it('lets the owner settle the auction', async function () {
