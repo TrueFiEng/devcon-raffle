@@ -13,10 +13,10 @@ import { compareBids } from 'utils/compareBids'
 interface Bid {
   bidderID: number,
   amount: BigNumber,
-  wallet: Wallet
+  wallet: Wallet,
 }
 
-describe('Devcon6 - E2E', function() {
+describe('Devcon6 - E2E', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
@@ -27,29 +27,29 @@ describe('Devcon6 - E2E', function() {
   let bids: Bid[]
   let sortedBids: Bid[]
 
-  before('prepare contracts', async function() {
+  before('prepare contracts', async function () {
     ({ provider, devcon, wallets } = await loadFixture(devcon6E2EFixture))
     devconAsOwner = devcon.connect(owner())
   })
 
-  before('prepare bids', function() {
+  before('prepare bids', function () {
     bids = randomBigNumbers(30).map((bn, index): Bid => ({
-        bidderID: index + 1,
-        amount: bn.shr(192).add(reservePrice),
-        wallet: wallets[index],
-      }),
+      bidderID: index + 1,
+      amount: bn.shr(192).add(reservePrice),
+      wallet: wallets[index],
+    }),
     )
 
     // introduce some duplicate amounts
     for (let i = 0; i < 15; i += 3) {
-      bids[i].amount = bids[i+2].amount
+      bids[i].amount = bids[i + 2].amount
     }
 
     sortedBids = bids.slice().sort(compareBids)
   })
 
-  it('lets 30 participants place bids', async function() {
-    for (let { amount, wallet } of bids) {
+  it('lets 30 participants place bids', async function () {
+    for (const { amount, wallet } of bids) {
       await devcon.connect(wallet).bid({ value: amount, gasLimit: 800_000 })
     }
 
@@ -59,7 +59,7 @@ describe('Devcon6 - E2E', function() {
     expect(await devcon.getMinKeyValue()).to.eq(heapKey(tenthBid.bidderID, tenthBid.amount))
   })
 
-  it('lets the owner settle the auction', async function() {
+  it('lets the owner settle the auction', async function () {
     await endBidding(devconAsOwner)
     await devconAsOwner.settleAuction()
 
@@ -70,14 +70,14 @@ describe('Devcon6 - E2E', function() {
     expect(await devcon.getRaffleParticipants()).to.have.lengthOf(20)
   })
 
-  it('lets the owner settle the raffle', async function() {
+  it('lets the owner settle the raffle', async function () {
     await devconAsOwner.settleRaffle(randomBigNumbers(2))
 
     expect(await devcon.getRaffleWinners()).to.have.lengthOf(16)
     expect(await devcon.getRaffleParticipants()).to.have.lengthOf(4)
   })
 
-  it('lets everyone claim their funds', async function() {
+  it('lets everyone claim their funds', async function () {
     const nonAuctionBids = sortedBids.slice(10)
 
     for (const { wallet, bidderID } of nonAuctionBids.slice(0, 10)) {
@@ -94,15 +94,15 @@ describe('Devcon6 - E2E', function() {
     expect(await provider.getBalance(devcon.address)).to.eq(0)
   })
 
-  it('divides bidders into 3 disjoint sets', async function() {
+  it('divides bidders into 3 disjoint sets', async function () {
     const bidders = [
       ...await devcon.getAuctionWinners(),
       ...await devcon.getRaffleWinners(),
-      ...await devcon.getRaffleParticipants()
+      ...await devcon.getRaffleParticipants(),
     ]
 
     let bids = []
-    for (let bidder of bidders) {
+    for (const bidder of bidders) {
       bids.push(await devcon.getBidByID(bidder))
     }
     bids = bids.sort(compareBids).map(bid => ({
@@ -110,7 +110,7 @@ describe('Devcon6 - E2E', function() {
       amount: bid.amount,
     }))
 
-    const expectedBids = sortedBids.map(({ bidderID, amount}) => ({bidderID, amount}))
+    const expectedBids = sortedBids.map(({ bidderID, amount }) => ({ bidderID, amount }))
     expect(bids).to.deep.eq(expectedBids)
   })
 

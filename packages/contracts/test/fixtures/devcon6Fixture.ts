@@ -36,7 +36,7 @@ export async function devcon6FixtureWithToken(wallets: Wallet[], provider: MockP
 export async function devcon6E2EFixture(wallets: Wallet[], provider: MockProvider) {
   return configuredDevcon6Fixture({
     auctionWinnersCount: 10,
-    raffleWinnersCount: 16
+    raffleWinnersCount: 16,
   })(wallets, provider)
 }
 
