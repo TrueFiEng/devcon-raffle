@@ -11,10 +11,10 @@ import { useMinimumBid } from 'src/hooks/useMinimumBid'
 import { ZERO } from '../../../constants/bigNumber'
 
 interface PlaceBidFlowProps {
-  setFirstBidding: (val: boolean) => void
+  endInitialBidding: () => void
 }
 
-export const PlaceBidFlow = ({ setFirstBidding }: PlaceBidFlowProps) => {
+export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
   const [bid, setBid] = useState(ZERO)
@@ -42,7 +42,7 @@ export const PlaceBidFlow = ({ setFirstBidding }: PlaceBidFlowProps) => {
           amount={bid}
           view={view}
           setView={setView}
-          setFirstBidding={setFirstBidding}
+          endInitialBidding={endInitialBidding}
         />
       )}
     </>

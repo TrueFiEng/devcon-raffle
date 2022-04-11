@@ -14,16 +14,16 @@ interface Props {
   txHash: string
   action: Transactions
   setView: (state: TxFlowSteps) => void
-  setFirstBidding?: (val: boolean) => void
+  endInitialBidding?: () => void
 }
 
-export const TransactionSuccess = ({ txHash, action, setView, setFirstBidding }: Props) => {
+export const TransactionSuccess = ({ txHash, action, setView, endInitialBidding }: Props) => {
   const chainId = useChainId()
   const transactionLink = getArbiscanTxLink(chainId, txHash)
 
   const goHome = () => {
     setView(0)
-    setFirstBidding && setFirstBidding(false)
+    endInitialBidding && endInitialBidding()
   }
 
   return (
