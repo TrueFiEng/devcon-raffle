@@ -18,7 +18,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     // The use of _randomMask introduces an assumption on max number of participants
     // 2^32 in this case which is totally enough
     uint256 constant _randomMask = 0xffffffff;
+    uint256 constant _randomMaskLength = 32;
     uint256 constant _bidderMask = 0xffff;
+    uint256 constant _bidderMaskLength = 16;
 
     mapping(address => Bid) _bids; // bidder address -> Bid
     mapping(uint256 => address payable) _bidders; // bidderID -> bidder address
@@ -378,7 +380,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         addGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
-        return (participantsLength - 1, randomNumber >> 32);
+        return (participantsLength - 1, randomNumber >> _randomMaskLength);
     }
 
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
@@ -409,7 +411,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
-            randomNumber = randomNumber >> 32;
+            randomNumber = randomNumber >> _randomMaskLength;
         }
 
         return participantsLength;
@@ -423,7 +425,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
-        return (amount << 16) | (_bidderMask - bidderID);
+        return (amount << _bidderMaskLength) | (_bidderMask - bidderID);
     }
 
     function extractBidderID(uint256 key) private pure returns (uint256) {
