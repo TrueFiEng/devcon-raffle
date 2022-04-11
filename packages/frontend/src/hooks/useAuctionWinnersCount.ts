@@ -1,6 +1,6 @@
 import { useDevconParam } from './useDevconParam'
 
-export function useAuctionParticipants() {
+export function useAuctionWinnersCount() {
   const { devconValue } = useDevconParam('auctionWinnersCount')
   return devconValue ? devconValue.toNumber() : 0
 }

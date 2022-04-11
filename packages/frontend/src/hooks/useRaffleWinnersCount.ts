@@ -1,6 +1,6 @@
 import { useDevconParam } from './useDevconParam'
 
-export function useRaffleParticipants() {
+export function useRaffleWinnersCount() {
   const { devconValue } = useDevconParam('raffleWinnersCount')
   return devconValue ? devconValue.toNumber() : 0
 }

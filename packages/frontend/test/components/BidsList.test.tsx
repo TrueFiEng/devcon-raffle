@@ -17,8 +17,8 @@ jest.mock('@usedapp/core', () => ({
   addressEqual: jest.requireActual('@usedapp/core').addressEqual,
 }))
 
-jest.mock('src/hooks/useAuctionParticipants', () => ({
-  useAuctionParticipants: () => 10,
+jest.mock('src/hooks/useAuctionWinnersCount', () => ({
+  useAuctionWinnersCount: () => 10,
 }))
 
 describe('UI: BidsListSection', () => {
