@@ -7,21 +7,18 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
-import type { BidWithPlace } from 'src/models/Bid'
+import { useUserBid } from 'src/hooks/useUserBid'
 
-interface BumpBidFlowProps {
-  userBid: BidWithPlace
-}
-
-export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
+export const BumpBidFlow = () => {
+  const userBid = useUserBid()
   const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
   const newBidAmount = useMemo(() => {
-    return userBid.amount.add(bumpAmount)
-  }, [bumpAmount, userBid.amount])
+    return userBid && userBid.amount.add(bumpAmount)
+  }, [bumpAmount, userBid])
 
   useEffect(() => setBumpAmount(minimumIncrement), [minimumIncrement, setBumpAmount])
 
@@ -36,7 +33,7 @@ export const BumpBidFlow = ({ userBid }: BumpBidFlowProps) => {
 
   return (
     <>
-      {view === TxFlowSteps.Placing ? (
+      {view === TxFlowSteps.Placing && userBid && newBidAmount ? (
         <BumpBidForm
           userBid={userBid}
           newBidAmount={newBidAmount}

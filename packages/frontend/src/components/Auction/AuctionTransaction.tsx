@@ -8,6 +8,7 @@ import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionStepper } from 'src/components/Transaction/TransactionStepper'
 import { TransactionSuccess } from 'src/components/Transaction/TransactionSuccess'
+import { isTxFailed } from 'src/utils/transactions/isTxFailed'
 import styled from 'styled-components'
 
 export const heading = {
@@ -22,10 +23,19 @@ interface AuctionTransactionProps {
   impact?: BigNumber
   view: TxFlowSteps
   setView: (state: TxFlowSteps) => void
+  endInitialBidding?: () => void
 }
 
-export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
+export const AuctionTransaction = ({
+  action,
+  amount,
+  impact,
+  view,
+  setView,
+  endInitialBidding,
+}: AuctionTransactionProps) => {
   const [txHash, setTxHash] = useState('')
+  const isFailed = isTxFailed(action.state)
 
   return (
     <Transaction>
@@ -45,12 +55,18 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           />
         )}
         {view === TxFlowSteps.Confirmation && (
-          <TransactionSuccess action={action.type} txHash={txHash} setView={setView} />
+          <TransactionSuccess
+            action={action.type}
+            txHash={txHash}
+            setView={setView}
+            endInitialBidding={endInitialBidding}
+          />
         )}
       </TransactionWrapper>
       <TransactionStepper
         action={action.type}
-        current={view === TxFlowSteps.Confirmation ? 'Finalized' : `${heading[action.type]}`}
+        current={view === TxFlowSteps.Confirmation || isFailed ? 'Finalized' : `${heading[action.type]}`}
+        isFailed={isFailed}
       />
     </Transaction>
   )
