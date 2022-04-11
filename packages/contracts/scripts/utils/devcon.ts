@@ -3,5 +3,5 @@ export const devconAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
 export const devconArtifactName = 'contracts/Devcon6.sol:Devcon6'
 
 export const devconLibraries = {
-  'contracts/utils/MaxHeap.sol:MaxHeap': heapAddress,
+  'contracts/libs/MaxHeap.sol:MaxHeap': heapAddress,
 }
