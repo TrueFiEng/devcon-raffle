@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 
 export interface Bid {
   bidderID: BigNumber
@@ -8,4 +9,9 @@ export interface Bid {
 
 export interface BidWithPlace extends Bid {
   place: number
+}
+
+export interface SettledBid extends Bid {
+  winType: WinType
+  claimed: boolean
 }
