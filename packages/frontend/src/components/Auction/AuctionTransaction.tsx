@@ -23,9 +23,17 @@ interface AuctionTransactionProps {
   impact?: BigNumber
   view: TxFlowSteps
   setView: (state: TxFlowSteps) => void
+  endInitialBidding?: () => void
 }
 
-export const AuctionTransaction = ({ action, amount, impact, view, setView }: AuctionTransactionProps) => {
+export const AuctionTransaction = ({
+  action,
+  amount,
+  impact,
+  view,
+  setView,
+  endInitialBidding,
+}: AuctionTransactionProps) => {
   const [txHash, setTxHash] = useState('')
   const isFailed = isTxFailed(action.state)
 
@@ -47,7 +55,12 @@ export const AuctionTransaction = ({ action, amount, impact, view, setView }: Au
           />
         )}
         {view === TxFlowSteps.Confirmation && (
-          <TransactionSuccess action={action.type} txHash={txHash} setView={setView} />
+          <TransactionSuccess
+            action={action.type}
+            txHash={txHash}
+            setView={setView}
+            endInitialBidding={endInitialBidding}
+          />
         )}
       </TransactionWrapper>
       <TransactionStepper
