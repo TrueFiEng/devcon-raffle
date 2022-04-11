@@ -86,7 +86,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount == 0) {
-            require(msg.value >= _reservePrice, "Devcon6: bidding amount is below reserve price");
+            require(msg.value >= _reservePrice, "Devcon6: bid amount is below reserve price");
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);

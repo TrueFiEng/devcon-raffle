@@ -66,9 +66,9 @@ describe('Devcon6', function () {
       expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
     })
 
-    it('reverts if bidding amount is below reserve price', async function () {
+    it('reverts if bid amount is below reserve price', async function () {
       await expect(devcon.bid({ value: reservePrice.sub(100) }))
-        .to.be.revertedWith('Devcon6: bidding amount is below reserve price')
+        .to.be.revertedWith('Devcon6: bid amount is below reserve price')
     })
 
     it('saves bid', async function () {
