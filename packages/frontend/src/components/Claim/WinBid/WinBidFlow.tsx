@@ -19,7 +19,6 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const minimumBid = useMinimumBid()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [voucher, setVoucher] = useState(false)
-  const bidderId = BigNumber.from(1)
   const { claimFunds, state, resetState } = useClaimFunds()
 
   const withdrawalAmount = useMemo(() => calculateWithdrawalAmount(userBid, minimumBid), [userBid, minimumBid])
@@ -27,7 +26,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
     send: async () => {
-      await claimFunds(bidderId)
+      await claimFunds(userBid.bidderID)
     },
     state: state,
     resetState: resetState,
