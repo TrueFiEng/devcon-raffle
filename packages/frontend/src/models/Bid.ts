@@ -11,7 +11,7 @@ export interface BidWithPlace extends Bid {
   place: number
 }
 
-export interface SettledBid extends Bid {
+export interface SettledBid extends BidWithPlace {
   winType: WinType
   claimed: boolean
 }
