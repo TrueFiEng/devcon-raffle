@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
+import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { WinForm } from 'src/components/Claim/WinBid/WinForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -21,10 +22,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const bidderId = BigNumber.from(1)
   const { claimFunds, state, resetState } = useClaimFunds()
 
-  const withdrawalAmount = useMemo(
-    () => calculateWithdrawalAmount(win, userBid, minimumBid),
-    [userBid, win, minimumBid]
-  )
+  const withdrawalAmount = useMemo(() => calculateWithdrawalAmount(userBid, minimumBid), [userBid, minimumBid])
 
   const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
@@ -52,8 +50,8 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   )
 }
 
-function calculateWithdrawalAmount(win: WinOptions | undefined, userBid: Bid, minimumBid: BigNumber) {
-  switch (win) {
+function calculateWithdrawalAmount(userBid: SettledBid, minimumBid: BigNumber) {
+  switch (userBid.winType) {
     case WinOptions.Auction:
       return ZERO
     case WinOptions.Ticket:

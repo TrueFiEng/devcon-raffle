@@ -18,13 +18,14 @@ export function useSettledBid() {
     ) ?? {}
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const bidSettled = useMemo(() => value && value[0], [JSON.stringify(value)])
-  return bidSettled && account
+  const settledBid = useMemo(() => value && value[0], [JSON.stringify(value)])
+  return settledBid && account
     ? {
+        bidderID: settledBid.bidderID,
         bidderAddress: account,
-        amount: bidSettled.amount,
-        winType: bidSettled.winType,
-        claimed: bidSettled.claimed,
+        amount: settledBid.amount,
+        winType: settledBid.winType,
+        claimed: settledBid.claimed,
       }
     : undefined
 }
