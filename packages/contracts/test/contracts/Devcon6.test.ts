@@ -985,10 +985,33 @@ describe('Devcon6', function () {
 
     it('returns bid details', async function () {
       await bid(1)
-      const { bidderID, amount, winType } = await devcon.getBid(wallets[0].address)
+      const { bidderID, amount, winType, claimed } = await devcon.getBid(wallets[0].address)
       expect(bidderID).to.eq(1)
       expect(amount).to.eq(reservePrice)
       expect(winType).to.eq(0)
+      expect(claimed).to.be.false
+    })
+  })
+
+  describe('getBidByID', function () {
+    it('reverts for zero bidder ID', async function () {
+      await expect(devcon.getBidByID(0))
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+    })
+
+    it('reverts for invalid bidder ID', async function () {
+      await bid(1)
+      await expect(devcon.getBidByID(2))
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+    })
+
+    it('returns bidder address', async function () {
+      await bid(1)
+      const { bidderID, amount, winType, claimed } = await devcon.getBidByID(1)
+      expect(bidderID).to.eq(1)
+      expect(amount).to.eq(reservePrice)
+      expect(winType).to.eq(0)
+      expect(claimed).to.be.false
     })
   })
 

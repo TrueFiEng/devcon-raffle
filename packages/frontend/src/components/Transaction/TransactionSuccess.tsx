@@ -14,11 +14,17 @@ interface Props {
   txHash: string
   action: Transactions
   setView: (state: TxFlowSteps) => void
+  endInitialBidding?: () => void
 }
 
-export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
+export const TransactionSuccess = ({ txHash, action, setView, endInitialBidding }: Props) => {
   const chainId = useChainId()
   const transactionLink = getArbiscanTxLink(chainId, txHash)
+
+  const goHome = () => {
+    setView(0)
+    endInitialBidding && endInitialBidding()
+  }
 
   return (
     <Container>
@@ -31,7 +37,7 @@ export const TransactionSuccess = ({ txHash, action, setView }: Props) => {
           <RedirectButton link={transactionLink} side="top" tooltip="View on Arbiscan" />
         </TransactionIdBox>
       </TransactionIdWrapper>
-      <Button view="primary" onClick={() => setView(0)}>
+      <Button view="primary" onClick={goHome}>
         Back to home
       </Button>
     </Container>

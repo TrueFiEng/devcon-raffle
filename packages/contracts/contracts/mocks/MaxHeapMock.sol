@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.10;
 
-import "../utils/MaxHeap.sol";
+import "../libs/MaxHeap.sol";
 
 contract MaxHeapMock {
     using MaxHeap for uint256[];
