@@ -8,7 +8,7 @@ export interface Bid {
   place: number
 }
 
-export interface SettledBid extends Bid {
+export interface UserBid extends Bid {
   winType: WinType
   claimed: boolean
 }

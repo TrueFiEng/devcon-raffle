@@ -6,13 +6,13 @@ import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
-import type { Bid, SettledBid } from 'src/models/Bid'
+import type { Bid, UserBid } from 'src/models/Bid'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
 import styled from 'styled-components'
 
 interface BumpBidProps {
-  userBid: SettledBid
+  userBid: UserBid
   newBidAmount: BigNumber
   bumpAmount: BigNumber
   minimumIncrement: BigNumber
