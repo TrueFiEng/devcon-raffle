@@ -16,7 +16,7 @@ export const BumpBidFlow = () => {
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
-  const newBid = useMemo(() => {
+  const newBidAmount = useMemo(() => {
     return userBid && userBid.amount.add(bumpAmount)
   }, [bumpAmount, userBid])
 
@@ -33,10 +33,10 @@ export const BumpBidFlow = () => {
 
   return (
     <>
-      {view === TxFlowSteps.Placing && userBid && newBid ? (
+      {view === TxFlowSteps.Placing && userBid && newBidAmount ? (
         <BumpBidForm
           userBid={userBid}
-          newBid={newBid}
+          newBidAmount={newBidAmount}
           bumpAmount={bumpAmount}
           setBumpAmount={setBumpAmount}
           minimumIncrement={minimumIncrement}
@@ -44,7 +44,13 @@ export const BumpBidFlow = () => {
           bids={bids}
         />
       ) : (
-        <AuctionTransaction action={bumpAction} amount={bumpAmount} impact={newBid} view={view} setView={setView} />
+        <AuctionTransaction
+          action={bumpAction}
+          amount={bumpAmount}
+          impact={newBidAmount}
+          view={view}
+          setView={setView}
+        />
       )}
     </>
   )

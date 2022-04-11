@@ -13,7 +13,7 @@ interface Props {
 
 interface BidEventDetails {
   bidAmount: BigNumber
-  bidID: BigNumber
+  bidderID: BigNumber
 }
 
 export const BidsProvider = ({ children }: Props) => {
@@ -23,23 +23,28 @@ export const BidsProvider = ({ children }: Props) => {
     const abi = new Interface(DEVCON6_ABI)
     const addressToBidMap = bidsEvents.reduce<Record<string, BidEventDetails>>((dict, log) => {
       const event = abi.parseLog(log)
-      const { bidder, bidAmount, bidID } = event.args
+      const { bidder, bidAmount, bidderID } = event.args
       if (!(bidder in dict) || dict[bidder].bidAmount.lt(bidAmount)) {
-        dict[bidder] = { bidAmount, bidID }
+        dict[bidder] = { bidAmount, bidderID }
       }
       return dict
     }, {})
 
     return Object.entries(addressToBidMap)
       .sort(([, a], [, b]) => compareBidEvent(a, b))
-      .map(([bidderAddress, { bidAmount }], index) => ({ bidderAddress, amount: bidAmount, place: index + 1 }))
+      .map(([bidderAddress, event], index) => ({
+        bidderAddress,
+        bidderID: event.bidderID,
+        amount: event.bidAmount,
+        place: index + 1,
+      }))
   }, [bidsEvents])
 
   return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
 }
 
 const compareBidEvent = (a: BidEventDetails, b: BidEventDetails) =>
-  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidID, b.bidID)
+  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidderID, b.bidderID)
 
 function compareBigNumber(a: BigNumber, b: BigNumber) {
   if (a.lt(b)) {
