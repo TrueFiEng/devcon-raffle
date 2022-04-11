@@ -152,7 +152,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        require(randomNumbers.length == raffleWinnersCount / 8, "Devcon6: passed incorrect number of random numbers");
+        require(
+            randomNumbers.length == raffleWinnersCount / _biddersPerRandom,
+            "Devcon6: passed incorrect number of random numbers"
+        );
 
         selectRaffleWinners(participantsLength, randomNumbers);
     }
@@ -385,9 +388,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
-        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
+        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], _biddersPerRandom - 1);
         for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
+            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], _biddersPerRandom);
         }
     }
 

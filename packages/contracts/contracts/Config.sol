@@ -8,6 +8,7 @@ abstract contract Config {
     // Both of these values are fine for our use case.
     uint256 constant _randomMask = 0xffffffff;
     uint256 constant _randomMaskLength = 32;
+    uint256 constant _biddersPerRandom = 256 / _randomMaskLength;
     uint256 constant _bidderMask = _randomMask;
     uint256 constant _bidderMaskLength = _randomMaskLength;
 
@@ -30,7 +31,7 @@ abstract contract Config {
     ) {
         require(auctionWinnersCount_ > 0, "Config: auction winners count must be greater than 0");
         require(raffleWinnersCount_ > 0, "Config: raffle winners count must be greater than 0");
-        require(raffleWinnersCount_ % (256 / _randomMaskLength) == 0, "Config: invalid raffle winners count");
+        require(raffleWinnersCount_ % _biddersPerRandom == 0, "Config: invalid raffle winners count");
         require(biddingStartTime_ < biddingEndTime_, "Config: bidding start time must be before bidding end time");
         require(biddingEndTime_ < claimingEndTime_, "Config: bidding end time must be before claiming end time");
         require(reservePrice_ > 0, "Config: reserve price must be greater than 0");
