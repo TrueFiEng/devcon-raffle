@@ -5,6 +5,7 @@ import { renderHook } from '@testing-library/react-hooks'
 import { useBids } from 'src/hooks/useBids'
 import { BidsProvider } from 'src/providers/Bids'
 import { createMockBidLog } from 'test/mocks/createMockBidLog'
+import { mockBidsAddresses } from 'test/mocks/generateMockBids'
 
 let mockEvents: Log[] = []
 
@@ -20,7 +21,7 @@ describe('useBids', () => {
   }
 
   it('Translates logs to Bids', () => {
-    const address = '0xBcd4042DE499D14e55001CcbB24a551F3b954096'
+    const address = mockBidsAddresses[0]
     mockEvents = [createMockBidLog(1, address, 1, '1.5')]
     const { result } = render()
     expect(result.current).toEqual({
@@ -36,7 +37,7 @@ describe('useBids', () => {
   })
 
   it('Picks the bumped bid', () => {
-    const address = '0xBcd4042DE499D14e55001CcbB24a551F3b954096'
+    const address = mockBidsAddresses[0]
     mockEvents = [createMockBidLog(1, address, 2, '1.5'), createMockBidLog(5, address, 2, '2.4')]
     const { result } = render()
     expect(result.current).toEqual({
@@ -53,28 +54,28 @@ describe('useBids', () => {
 
   it('Sorts bids by amount, highest to lowest', () => {
     mockEvents = [
-      createMockBidLog(5, '0xcd3B766CCDd6AE721141F452C550Ca635964ce71', 1, '1.0'),
-      createMockBidLog(5, '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E', 2, '4.0'),
-      createMockBidLog(5, '0x2546BcD3c84621e976D8185a91A922aE77ECEc30', 3, '1.5'),
+      createMockBidLog(5, mockBidsAddresses[0], 1, '1.0'),
+      createMockBidLog(5, mockBidsAddresses[1], 2, '4.0'),
+      createMockBidLog(5, mockBidsAddresses[2], 3, '1.5'),
     ]
     const { result } = render()
     expect(result.current).toEqual({
       bids: [
         {
           bidderID: BigNumber.from(2),
-          bidderAddress: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+          bidderAddress: mockBidsAddresses[1],
           amount: parseEther('4.0'),
           place: 1,
         },
         {
           bidderID: BigNumber.from(3),
-          bidderAddress: '0x2546BcD3c84621e976D8185a91A922aE77ECEc30',
+          bidderAddress: mockBidsAddresses[2],
           amount: parseEther('1.5'),
           place: 2,
         },
         {
           bidderID: BigNumber.from(1),
-          bidderAddress: '0xcd3B766CCDd6AE721141F452C550Ca635964ce71',
+          bidderAddress: mockBidsAddresses[0],
           amount: parseEther('1.0'),
           place: 3,
         },
@@ -84,28 +85,28 @@ describe('useBids', () => {
 
   it('Sorts same-amount bids oldest to newest', () => {
     mockEvents = [
-      createMockBidLog(5, '0xcd3B766CCDd6AE721141F452C550Ca635964ce71', 2, '1.0'),
-      createMockBidLog(5, '0x2546BcD3c84621e976D8185a91A922aE77ECEc30', 1, '1.0'),
-      createMockBidLog(5, '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E', 3, '1.0'),
+      createMockBidLog(5, mockBidsAddresses[0], 2, '1.0'),
+      createMockBidLog(5, mockBidsAddresses[1], 1, '1.0'),
+      createMockBidLog(5, mockBidsAddresses[2], 3, '1.0'),
     ]
     const { result } = render()
     expect(result.current).toEqual({
       bids: [
         {
           bidderID: BigNumber.from(1),
-          bidderAddress: '0x2546BcD3c84621e976D8185a91A922aE77ECEc30',
+          bidderAddress: mockBidsAddresses[1],
           amount: parseEther('1.0'),
           place: 1,
         },
         {
           bidderID: BigNumber.from(2),
-          bidderAddress: '0xcd3B766CCDd6AE721141F452C550Ca635964ce71',
+          bidderAddress: mockBidsAddresses[0],
           amount: parseEther('1.0'),
           place: 2,
         },
         {
           bidderID: BigNumber.from(3),
-          bidderAddress: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+          bidderAddress: mockBidsAddresses[2],
           amount: parseEther('1.0'),
           place: 3,
         },
@@ -115,35 +116,35 @@ describe('useBids', () => {
 
   it('Sorts bids by amount, highest to lowest, then by bidder ID, oldest to newest', () => {
     mockEvents = [
-      createMockBidLog(5, '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E', 3, '2.0'),
-      createMockBidLog(5, '0xcd3B766CCDd6AE721141F452C550Ca635964ce71', 1, '1.0'),
-      createMockBidLog(5, '0x6e46606aa3860f4EeFa931F092fd65aBCa37417B', 2, '2.0'),
-      createMockBidLog(5, '0x2546BcD3c84621e976D8185a91A922aE77ECEc30', 4, '3.0'),
+      createMockBidLog(5, mockBidsAddresses[0], 3, '2.0'),
+      createMockBidLog(5, mockBidsAddresses[1], 1, '1.0'),
+      createMockBidLog(5, mockBidsAddresses[2], 2, '2.0'),
+      createMockBidLog(5, mockBidsAddresses[3], 4, '3.0'),
     ]
     const { result } = render()
     expect(result.current).toEqual({
       bids: [
         {
           bidderID: BigNumber.from(4),
-          bidderAddress: '0x2546BcD3c84621e976D8185a91A922aE77ECEc30',
+          bidderAddress: mockBidsAddresses[3],
           amount: parseEther('3.0'),
           place: 1,
         },
         {
           bidderID: BigNumber.from(2),
-          bidderAddress: '0x6e46606aa3860f4EeFa931F092fd65aBCa37417B',
+          bidderAddress: mockBidsAddresses[2],
           amount: parseEther('2.0'),
           place: 2,
         },
         {
           bidderID: BigNumber.from(3),
-          bidderAddress: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+          bidderAddress: mockBidsAddresses[0],
           amount: parseEther('2.0'),
           place: 3,
         },
         {
           bidderID: BigNumber.from(1),
-          bidderAddress: '0xcd3B766CCDd6AE721141F452C550Ca635964ce71',
+          bidderAddress: mockBidsAddresses[1],
           amount: parseEther('1.0'),
           place: 4,
         },
