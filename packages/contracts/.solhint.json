@@ -16,6 +16,8 @@
     "reason-string": "off",
     "const-name-snakecase": "off",
     "avoid-tx-origin": "off",
+    "use-forbidden-name": "off",
+    "ordering": "warn",
     "func-visibility": [
       "warn",
       {

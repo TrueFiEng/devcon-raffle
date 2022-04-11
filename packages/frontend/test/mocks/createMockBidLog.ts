@@ -11,7 +11,7 @@ export function createMockBidLog(blockNumber: number, address: string, bidId: nu
     transactionIndex: 0,
     removed: false,
     address: '0x',
-    ...abi.encodeEventLog(EventFragment.from('NewBid(address bidder, uint256 bidID, uint256 bidAmount)'), [
+    ...abi.encodeEventLog(EventFragment.from('NewBid(address bidder, uint256 bidderID, uint256 bidAmount)'), [
       address,
       BigNumber.from(bidId),
       parseEther(amount),

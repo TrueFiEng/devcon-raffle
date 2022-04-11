@@ -9,7 +9,8 @@
     "update": "git submodule update --remote"
   },
   "workspaces": [
-    "packages/*"
+    "packages/contracts",
+    "packages/frontend"
   ],
   "devDependencies": {
     "wsrun": "^5.2.4"

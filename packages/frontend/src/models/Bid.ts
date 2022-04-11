@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
 
 export interface Bid {
+  bidderID: BigNumber
   bidderAddress: string
   amount: BigNumber
 }
