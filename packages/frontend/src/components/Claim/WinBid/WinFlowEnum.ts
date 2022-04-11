@@ -1,6 +1,6 @@
-export enum WinOptions {
+export enum WinType {
   Loss,
-  Ticket,
+  GoldenTicket,
   Auction,
   Raffle,
 }

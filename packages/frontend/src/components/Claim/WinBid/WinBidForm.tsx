@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
-import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
 import { SettledBid } from 'src/models/Bid'
@@ -10,16 +10,16 @@ import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
 
 const winText = {
-  [WinOptions.Loss]: 'We are sorry, but you did not qualify for the Raffle.',
-  [WinOptions.Ticket]: 'You won the Golden Ticket!',
-  [WinOptions.Auction]: 'You bid was in the top 20, so you win a ticket to Devcon 6!',
-  [WinOptions.Raffle]: 'You were chosen in the raffle!',
+  [WinType.Loss]: 'We are sorry, but you did not qualify for the Raffle.',
+  [WinType.GoldenTicket]: 'You won the Golden Ticket!',
+  [WinType.Auction]: 'You bid was in the top 20, so you win a ticket to Devcon 6!',
+  [WinType.Raffle]: 'You were chosen in the raffle!',
 }
 
 const withdrawText = {
-  [WinOptions.Loss]: `You can withdraw your bid amount minus 2% fee.`,
-  [WinOptions.Ticket]: 'This means your ticket is free, so you can withdraw all your funds.',
-  [WinOptions.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price.',
+  [WinType.Loss]: `You can withdraw your bid amount minus 2% fee.`,
+  [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds.',
+  [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price.',
 }
 
 interface WinBidFormProps {
@@ -31,14 +31,14 @@ interface WinBidFormProps {
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
-  const luck = userBid.winType !== WinOptions.Loss
+  const luck = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
 
   return (
     <Form>
       <WinFormHeading voucher={voucher}>{luck ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
       <FormText>{winText[userBid.winType]}</FormText>
-      {!userBid.claimed && userBid.winType !== WinOptions.Auction && (
+      {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
           <span>{withdrawText[userBid.winType]}</span>
           <Button

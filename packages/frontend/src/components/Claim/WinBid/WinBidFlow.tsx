@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
-import { WinOptions } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { WinForm } from 'src/components/Claim/WinBid/WinForm'
 import { TransactionAction } from 'src/components/Transaction/TransactionAction'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
@@ -51,11 +51,11 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
 
 function calculateWithdrawalAmount(userBid: SettledBid, minimumBid: BigNumber) {
   switch (userBid.winType) {
-    case WinOptions.Auction:
+    case WinType.Auction:
       return ZERO
-    case WinOptions.Ticket:
+    case WinType.GoldenTicket:
       return userBid.amount
-    case WinOptions.Raffle:
+    case WinType.Raffle:
       return userBid.amount.sub(minimumBid)
     default:
       return userBid.amount.mul(98).div(100)
