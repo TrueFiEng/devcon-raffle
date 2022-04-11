@@ -4,7 +4,7 @@ import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
-import { useSettledBid } from 'src/hooks/useSettledBid'
+import { useUserBid } from 'src/hooks/useUserBid'
 import { SettledBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
@@ -27,7 +27,7 @@ export function formatInputValue(value: BigNumber) {
 export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const userBid = useSettledBid()
+  const userBid = useUserBid()
 
   const [inputValue, setInputValue] = useState(formatInputValue(initialAmount))
 

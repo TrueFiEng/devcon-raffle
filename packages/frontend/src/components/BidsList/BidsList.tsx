@@ -4,7 +4,7 @@ import { BidListEntry, EmptyBidListEntry } from 'src/components/BidsList/BidList
 import { Separator } from 'src/components/common/Separator'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { emptyBids } from 'src/constants/emptyBids'
-import { useSettledBid } from 'src/hooks/useSettledBid'
+import { useUserBid } from 'src/hooks/useUserBid'
 import { BidWithPlace } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const BidsList = ({ bids, view = 'full' }: Props) => {
-  const userBid = useSettledBid()
+  const userBid = useUserBid()
   const userRaffleBid = useMemo(() => {
     return userBid && userBid.place > AUCTION_PARTICIPANTS_COUNT ? userBid : undefined
   }, [userBid])

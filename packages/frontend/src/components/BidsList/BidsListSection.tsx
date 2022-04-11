@@ -5,7 +5,7 @@ import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { Button } from 'src/components/Buttons/Button'
 import { AUCTION_PARTICIPANTS_COUNT } from 'src/constants/auctionParticipantsCount'
 import { useBids } from 'src/hooks/useBids'
-import { useSettledBid } from 'src/hooks/useSettledBid'
+import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -15,7 +15,7 @@ const bidsMaxCount = topAuctionBidsCount + 1
 export const BidsListSection = () => {
   const { bids } = useBids()
   const navigate = useNavigate()
-  const userBid = useSettledBid()
+  const userBid = useUserBid()
 
   const { auctionBidsSlice } = useMemo(() => {
     if (bids.length <= bidsMaxCount) {

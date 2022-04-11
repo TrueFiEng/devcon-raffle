@@ -7,10 +7,10 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
-import { useSettledBid } from 'src/hooks/useSettledBid'
+import { useUserBid } from 'src/hooks/useUserBid'
 
 export const BumpBidFlow = () => {
-  const userBid = useSettledBid()
+  const userBid = useUserBid()
   const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
