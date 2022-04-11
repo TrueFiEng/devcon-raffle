@@ -39,7 +39,7 @@ export async function deployMaxHeap(deployer: Signer) {
   const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
 
   return {
-    'contracts/utils/MaxHeap.sol:MaxHeap': heapLibrary.address,
+    'contracts/libs/MaxHeap.sol:MaxHeap': heapLibrary.address,
     __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibrary.address,
   }
 }
