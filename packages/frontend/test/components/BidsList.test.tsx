@@ -18,7 +18,7 @@ jest.mock('@usedapp/core', () => ({
 }))
 
 jest.mock('src/hooks/useAuctionParticipants', () => ({
-  useAuctionParticipants: ()=>10,
+  useAuctionParticipants: () => 10,
 }))
 
 describe('UI: BidsListSection', () => {
