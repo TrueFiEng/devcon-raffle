@@ -19,7 +19,7 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
   const auctionWinnersCount = useAuctionWinnersCount()
 
   const userRaffleBid = useMemo(() => {
-    return userBid && userBid.place > auctionWinnersCount ? userBid : undefined
+    return auctionWinnersCount && userBid && userBid.place > auctionWinnersCount ? userBid : undefined
   }, [userBid, auctionWinnersCount])
 
   return (

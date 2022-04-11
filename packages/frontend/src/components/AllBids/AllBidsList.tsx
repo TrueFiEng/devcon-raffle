@@ -2,19 +2,17 @@ import { useCallback, useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
-import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
-import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'
 import { BidWithPlace } from 'src/models/Bid'
 
 interface AllBidsListProps {
   search: string
+  auctionWinnersCount: number
+  raffleWinnersCount: number
 }
 
-export const AllBidsList = ({ search }: AllBidsListProps) => {
+export const AllBidsList = ({ search, auctionWinnersCount, raffleWinnersCount }: AllBidsListProps) => {
   const { bids } = useBids()
-  const raffleWinnersCount = useRaffleWinnersCount()
-  const auctionWinnersCount = useAuctionWinnersCount()
 
   const searchBid = useCallback(
     (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),

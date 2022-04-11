@@ -19,7 +19,7 @@ export const BidsListSection = () => {
   const auctionWinnersCount = useAuctionWinnersCount()
 
   const { auctionBidsSlice } = useMemo(() => {
-    if (bids.length <= bidsMaxCount) {
+    if (bids.length <= bidsMaxCount || auctionWinnersCount === undefined) {
       return {
         auctionBidsSlice: bids,
       }
