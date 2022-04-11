@@ -3,6 +3,13 @@
 pragma solidity 0.8.10;
 
 abstract contract Config {
+    // The use of _randomMask introduces an assumption on max number of participants
+    // 2^32 in this case which is totally enough
+    uint256 constant _randomMask = 0xffffffff;
+    uint256 constant _randomMaskLength = 32;
+    uint256 constant _bidderMask = 0xffffffff;
+    uint256 constant _bidderMaskLength = 32;
+
     uint256 public immutable _biddingStartTime;
     uint256 public immutable _biddingEndTime;
     uint256 public immutable _claimingEndTime;

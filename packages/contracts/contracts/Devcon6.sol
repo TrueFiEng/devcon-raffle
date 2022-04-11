@@ -15,13 +15,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
 
-    // The use of _randomMask introduces an assumption on max number of participants
-    // 2^32 in this case which is totally enough
-    uint256 constant _randomMask = 0xffffffff;
-    uint256 constant _randomMaskLength = 32;
-    uint256 constant _bidderMask = 0xffffffff;
-    uint256 constant _bidderMaskLength = 32;
-
     mapping(address => Bid) _bids; // bidder address -> Bid
     mapping(uint256 => address payable) _bidders; // bidderID -> bidder address
     uint256 _nextBidderID = 1;
