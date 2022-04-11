@@ -33,6 +33,13 @@ export async function devcon6FixtureWithToken(wallets: Wallet[], provider: MockP
   return { provider, devcon, exampleToken }
 }
 
+export async function devcon6E2EFixture(wallets: Wallet[], provider: MockProvider) {
+  return configuredDevcon6Fixture({
+    auctionWinnersCount: 10,
+    raffleWinnersCount: 16
+  })(wallets, provider)
+}
+
 export function configuredDevcon6Fixture(params: devcon6Params) {
   return async ([deployer, owner]: Wallet[], provider: MockProvider) => {
     const currentBlockTimestamp = await getLatestBlockTimestamp(provider)

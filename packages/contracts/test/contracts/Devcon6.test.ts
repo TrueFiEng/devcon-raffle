@@ -21,6 +21,7 @@ import { Bid } from './bid'
 import { parseEther } from 'ethers/lib/utils'
 import { randomBigNumbers } from 'scripts/utils/random'
 import { ZERO } from '@devcon-raffle/frontend/src/constants/bigNumber'
+import { heapKey } from 'utils/heapKey'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -1117,10 +1118,5 @@ describe('Devcon6', function () {
         expect(value).to.be.equal(args[index][j])
       })
     })
-  }
-
-  function heapKey(bidderID: BigNumberish, amount: BigNumberish) {
-    const bidderMask = BigNumber.from('0xffffffff')
-    return BigNumber.from(amount).shl(32).or(bidderMask.sub(bidderID))
   }
 })
