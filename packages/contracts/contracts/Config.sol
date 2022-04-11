@@ -11,8 +11,6 @@ contract Config {
     uint256 public immutable _reservePrice;
     uint256 public immutable _minBidIncrement;
 
-    // TODO check if it makes sense to use smaller types to save on calldata cost
-    // TODO think about edge cases with auctionWinnersCount_, raffleWinnersCount_
     constructor(
         uint256 biddingStartTime_,
         uint256 biddingEndTime_,

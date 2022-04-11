@@ -18,15 +18,6 @@ library MaxHeap {
         increaseKeyAt(heap, index, newValue);
     }
 
-    function findKey(uint256[] storage heap, uint256 value) public view returns (uint256) {
-        for (uint256 i = 0; i < heap.length; ++i) {
-            if (heap[i] == value) {
-                return i;
-            }
-        }
-        revert("MaxHeap: key with given value not found");
-    }
-
     function increaseKeyAt(
         uint256[] storage heap,
         uint256 index,
@@ -62,6 +53,15 @@ library MaxHeap {
             index = biggest;
         }
         return max;
+    }
+
+    function findKey(uint256[] storage heap, uint256 value) public view returns (uint256) {
+        for (uint256 i = 0; i < heap.length; ++i) {
+            if (heap[i] == value) {
+                return i;
+            }
+        }
+        revert("MaxHeap: key with given value not found");
     }
 
     function findMin(uint256[] storage heap) public view returns (uint256 index, uint256 min) {

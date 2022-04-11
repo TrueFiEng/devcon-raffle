@@ -40,6 +40,6 @@ export async function deployMaxHeap(deployer: Signer) {
 
   return {
     'contracts/utils/MaxHeap.sol:MaxHeap': heapLibrary.address,
-    __$f92e1b546cb81b0df9056e27145904c2f5$__: heapLibrary.address,
+    __$3ef75435bd6f8696a9a70764ef1093bd01$__: heapLibrary.address,
   }
 }
