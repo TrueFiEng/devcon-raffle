@@ -241,7 +241,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 balance = token.balanceOf(address(this));
 
         require(balance > 0, "Devcon6: no tokens for given address");
-        token.transfer(owner(), balance);
+        token.safeTransfer(owner(), balance);
     }
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
