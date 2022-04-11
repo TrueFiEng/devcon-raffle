@@ -17,6 +17,10 @@ jest.mock('@usedapp/core', () => ({
   addressEqual: jest.requireActual('@usedapp/core').addressEqual,
 }))
 
+jest.mock('src/hooks/useAuctionParticipants', () => ({
+  useAuctionParticipants: ()=>10,
+}))
+
 describe('UI: BidsListSection', () => {
   it('With less than four bids', () => {
     const bids = generateMockBids(3)
