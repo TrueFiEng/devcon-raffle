@@ -85,13 +85,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
-        if (bidder.amount > 0) {
-            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
-            uint256 oldAmount = bidder.amount;
-            bidder.amount += msg.value;
-
-            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
-        } else {
+        if (bidder.amount == 0) {
             require(msg.value >= _reservePrice, "Devcon6: bidding amount is below reserve price");
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
@@ -99,6 +93,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             _raffleParticipants.push(bidder.bidderID);
 
             addBidToHeap(bidder.bidderID, bidder.amount);
+        } else {
+            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
+            uint256 oldAmount = bidder.amount;
+            bidder.amount += msg.value;
+
+            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
