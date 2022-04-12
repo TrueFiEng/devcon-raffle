@@ -7,19 +7,19 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomBigNumbers } from 'scripts/utils/random'
 
 task('bid', 'Places bid for given account with provided amount')
-  .addParam('address', 'The bidder\'s address')
+  .addParam('account', 'Hardhat account to use')
   .addParam('amount', 'The bid\'s amount in ETH', undefined, types.string)
   .setAction(async (
-    { address, amount }: { address: string, amount: string },
+    { account, amount }: { account: string, amount: string },
     hre,
   ) => {
-    const signer = await hre.ethers.getSigner(address)
+    const signer = await hre.ethers.getSigner(account)
     const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
     const devconAsSigner = devcon.connect(signer)
 
     const ethAmount = parseEther(amount)
     await devconAsSigner.bid({ value: ethAmount })
-    logBid(address, ethAmount)
+    logBid(account, ethAmount)
   })
 
 task('settle-auction', 'Settles auction')
