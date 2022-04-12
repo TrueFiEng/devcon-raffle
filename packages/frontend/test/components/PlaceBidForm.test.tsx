@@ -13,6 +13,10 @@ jest.mock('@usedapp/core', () => ({
   useEtherBalance: () => mockBalance,
 }))
 
+jest.mock('src/hooks/useUserBid', () => ({
+  useUserBid: () => undefined,
+}))
+
 describe('UI: PlaceBidForm', () => {
   const mockBids = generateMockBids(5)
 

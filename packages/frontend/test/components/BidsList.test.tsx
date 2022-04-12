@@ -4,13 +4,15 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { BidsListSection } from 'src/components/BidsList/BidsListSection'
-import { Bid } from 'src/models/Bid'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { Bid, UserBid } from 'src/models/Bid'
 import { BidsContext } from 'src/providers/Bids'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import { generateMockBids } from 'test/mocks/generateMockBids'
 
 const mockUserAddress = '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
+let mockUserBid: UserBid | undefined
 
 jest.mock('@usedapp/core', () => ({
   useEthers: () => ({ account: mockUserAddress }),
@@ -21,7 +23,15 @@ jest.mock('src/constants/auctionParticipantsCount', () => ({
   AUCTION_PARTICIPANTS_COUNT: 10,
 }))
 
+jest.mock('src/hooks/useUserBid', () => ({
+  useUserBid: () => mockUserBid,
+}))
+
 describe('UI: BidsListSection', () => {
+  afterEach(() => {
+    mockUserBid = undefined
+  })
+
   it('With less than four bids', () => {
     const bids = generateMockBids(3)
     renderComponent(bids)
@@ -55,6 +65,7 @@ describe('UI: BidsListSection', () => {
     it('Within the top three bids', () => {
       const bids = generateMockBids(15)
       bids[1].bidderAddress = mockUserAddress
+      setMockUserBid(bids[1])
       renderComponent(bids)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
@@ -62,6 +73,7 @@ describe('UI: BidsListSection', () => {
     it('Within auction bids', () => {
       const bids = generateMockBids(15)
       bids[8].bidderAddress = mockUserAddress
+      setMockUserBid(bids[8])
       renderComponent(bids)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
@@ -69,6 +81,7 @@ describe('UI: BidsListSection', () => {
     it('Within raffle bids', () => {
       const bids = generateMockBids(15)
       bids[13].bidderAddress = mockUserAddress
+      setMockUserBid(bids[13])
       renderComponent(bids)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
@@ -76,6 +89,7 @@ describe('UI: BidsListSection', () => {
     it('User bid is the third (last of the top bids)', () => {
       const bids = generateMockBids(15)
       bids[2].bidderAddress = mockUserAddress
+      setMockUserBid(bids[2])
       renderComponent(bids)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
       expect(screen.queryAllByText(shortenEthAddress(mockUserAddress))).toHaveLength(1)
@@ -84,6 +98,7 @@ describe('UI: BidsListSection', () => {
     it('User bid is the bottom auction bid', () => {
       const bids = generateMockBids(15)
       bids[9].bidderAddress = mockUserAddress
+      setMockUserBid(bids[9])
       renderComponent(bids)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
       expect(screen.queryAllByText(shortenEthAddress(mockUserAddress))).toHaveLength(1)
@@ -112,3 +127,11 @@ describe('UI: BidsListSection', () => {
       </BidsContext.Provider>
     )
 })
+
+function setMockUserBid(bid: Bid) {
+  mockUserBid = {
+    ...bid,
+    winType: WinType.Loss,
+    claimed: false,
+  }
+}
