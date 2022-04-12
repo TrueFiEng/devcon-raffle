@@ -75,7 +75,7 @@ export async function bidAs(devcon: Contract, signer: Signer, value: BigNumberis
 function createDotenv(deployer: string, keys: string[]): string {
   return `DEPLOYER=${deployer}
 PRIVATE_KEYS='[
-${keys.map(key => `  "${key}",`).join('\n')}
+${keys.map(key => `  "${key}"`).join(',\n')}
 ]'
 VITE_NETWORK=ArbitrumRinkeby
 VITE_TESTNET_DEVCON=${testnetDevconAddress}
