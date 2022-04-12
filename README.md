@@ -1,21 +1,27 @@
 # Devcon 6 Ticket Sale System
 
 ## Running Hardhat node
-To run the Hardhat node change directory to `contracts` and then execute:
+Change directory to `packages/contracts` and execute:
 ```shell
 yarn node:run
 ```
-It runs Hardhat node, deploy contracts and place bid for the first twenty accounts.
+This will start a Hardhat node, deploy the contracts and place initial bids using the first twenty auto-generated accounts.
 
-## Interacting with contracts
-To interact with contracts change directory to `contracts`, then use below commands:
-- `yarn node:increase-time --value 100` - increases block time by *value* seconds
-- `yarn node:accounts` - prints list of available accounts
-- `yarn devcon:bid --address 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc --amount 0.6` - bids as *address* with *amount* ETH
-- `yarn devcon:settle-auction` - settles auction
-- `yarn devcon:settle-raffle` - settles raffle
+## Custom tasks
+A number of custom Hardhat tasks were defined to aid testing.
 
-For additional information run below command:
-```shell
-hardhat --network localhost
-```
+### Managing local node
+- `yarn node:increase-time --value <INT>` - increase block time by *value* seconds
+- `yarn node:accounts` - print a list of available accounts
+
+### Interacting with Devcon6 contract
+
+#### Hardhat
+- `yarn hardhat:bid --account <STRING> --amount <STRING>` - using *account* place bid of *amount* ETH
+- `yarn hardhat:settle-auction` - settle auction
+- `yarn hardhat:settle-raffle` - settle raffle using random numbers
+
+#### Arbitrum Rinkeby
+- `yarn rinkeby:deploy [--delay <INT>]` - deploy Devcon6 contract, *delay* in seconds can be set to push back bidding start time
+- `yarn rinkeby:init-bids` - place initial bids using `PRIVATE_KEYS` accounts
+- `yarn rinkeby:transfer-ether` - transfer ether from `DEPLOYER` to `PRIVATE_KEYS` accounts
