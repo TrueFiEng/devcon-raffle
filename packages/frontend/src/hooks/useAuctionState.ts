@@ -1,7 +1,7 @@
-import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
+import { Chain, ChainId, useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
-
-import { ContractState, useContractState } from './useContractState'
+import { CONFIG } from 'src/config/config'
+import { ContractState, useContractState } from 'src/hooks/useContractState'
 
 export type AuctionState =
   | 'AwaitingBidding'
@@ -13,14 +13,14 @@ export type AuctionState =
 
 export function useAuctionState(): AuctionState {
   const { account, chainId } = useEthers()
-  const { networks } = useConfig()
   const { state } = useContractState()
   const [contractState, setContractState] = useState(state)
+  const networks = CONFIG.useDAppConfig.networks
 
   useEffect(() => setContractState(state), [state])
 
   if (contractState === ContractState.AWAITING_BIDDING) {
-    return 'AwaitingBidding'
+    return getStateUsingWallet(account, chainId, networks, 'AwaitingBidding')
   }
 
   if (contractState === ContractState.BIDDING_OPEN) {
@@ -28,7 +28,7 @@ export function useAuctionState(): AuctionState {
   }
 
   if (contractState === ContractState.BIDDING_CLOSED || contractState === ContractState.AUCTION_SETTLED) {
-    return 'AwaitingResults'
+    return getStateUsingWallet(account, chainId, networks, 'AwaitingResults')
   }
 
   if (contractState === ContractState.RAFFLE_SETTLED) {
