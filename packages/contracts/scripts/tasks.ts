@@ -6,16 +6,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { randomBigNumbers } from 'scripts/utils/random'
 
-task('increase-time', 'Increases block time')
-  .addParam('value', 'Time in seconds to increase', undefined, types.int, false)
-  .setAction(async ({ value }: { value: number }, hre) => {
-    const provider = hre.network.provider
-
-    console.log('Increasing time by %d seconds', value)
-    await provider.send('evm_increaseTime', [value])
-    await provider.send('evm_mine')
-  })
-
 task('bid', 'Places bid for given account with provided amount')
   .addParam('address', 'The bidder\'s address')
   .addParam('amount', 'The bid\'s amount in ETH', undefined, types.string)
@@ -49,15 +39,6 @@ task('settle-raffle', 'Settles raffle')
 
     await devcon.settleRaffle(randomBigNumbers(randomNumbersCount))
     console.log('Raffle settled!')
-  })
-
-task('accounts', 'Prints available accounts')
-  .setAction(async (
-    taskArgs,
-    hre,
-  ) => {
-    const signers = await hre.ethers.getSigners()
-    signers.forEach((signer, index) => console.log(`Account #${index} ${signer.address}`))
   })
 
 function logBid(address: string, bidAmount: BigNumberish) {

@@ -4,6 +4,7 @@ import './abi-exporter'
 import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
 import 'scripts/tasks'
+import 'scripts/nodeTasks'
 import 'scripts/testnetTasks'
 
 import mocharc from './.mocharc.json'

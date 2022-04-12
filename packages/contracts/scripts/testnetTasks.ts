@@ -7,7 +7,7 @@ import { connectToDevcon } from 'scripts/utils/devcon'
 const testnetDevconAddress = '0x0cD6783fca8D1a9DbAa6404B759b0C2110f3C2A0'
 const testnetHeapAddress = '0xc1D8b72838Cb3F1c52651d76ea186Df457817aD6'
 
-task('deploy', 'Deploys devcon')
+task('deploy', 'Deploys Devcon 6')
   .addParam('delay', 'Time in seconds to push forward bidding start time', 0, types.int, true)
   .setAction(async ({ delay }: { delay: number }, hre) => {
     const [deployer] = await hre.ethers.getSigners()
