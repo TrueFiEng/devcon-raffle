@@ -1,6 +1,5 @@
-import { Chain, ChainId, useEthers } from '@usedapp/core'
+import { Chain, ChainId, useConfig, useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
-import { CONFIG } from 'src/config/config'
 import { ContractState, useContractState } from 'src/hooks/useContractState'
 
 export type AuctionState =
@@ -13,9 +12,9 @@ export type AuctionState =
 
 export function useAuctionState(): AuctionState {
   const { account, chainId } = useEthers()
+  const { networks } = useConfig()
   const { state } = useContractState()
   const [contractState, setContractState] = useState(state)
-  const networks = CONFIG.useDAppConfig.networks
 
   useEffect(() => setContractState(state), [state])
 
