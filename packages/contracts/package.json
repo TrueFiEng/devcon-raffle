@@ -22,12 +22,12 @@
     "node:run": "hardhat run scripts/deploy/run.ts",
     "node:increase-time": "hardhat --network localhost increase-time",
     "node:accounts": "hardhat --network localhost accounts",
-    "devcon:bid": "hardhat --network localhost bid",
-    "devcon:settle-auction": "hardhat --network localhost settle-auction",
-    "devcon:settle-raffle": "hardhat --network localhost settle-raffle",
-    "arbitrum:deploy": "hardhat --network rinkeby deploy",
-    "arbitrum:init-bids": "hardhat --network rinkeby init-bids",
-    "arbitrum:transfer-ether": "hardhat --network rinkeby transfer-ether"
+    "hardhat:bid": "hardhat --network localhost bid",
+    "hardhat:settle-auction": "hardhat --network localhost settle-auction",
+    "hardhat:settle-raffle": "hardhat --network localhost settle-raffle",
+    "rinkeby:deploy": "hardhat --network rinkeby deploy",
+    "rinkeby:init-bids": "hardhat --network rinkeby init-bids",
+    "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
