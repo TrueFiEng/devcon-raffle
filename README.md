@@ -11,7 +11,7 @@ This will start a Hardhat node, deploy the contracts and place initial bids usin
 A number of custom Hardhat tasks were defined to aid testing.
 
 ### Managing local node
-- `yarn node:increase-time --value <INT>` - increase block time by *value* seconds
+- `yarn node:increase-time [--value <INT>]` - increase block time by *value* seconds, defaults to one hour
 - `yarn node:accounts` - print a list of available accounts
 
 ### Interacting with Devcon6 contract

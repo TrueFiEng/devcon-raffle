@@ -27,7 +27,7 @@
     "hardhat:bid": "hardhat --network localhost bid",
     "hardhat:settle-auction": "hardhat --network localhost settle-auction",
     "hardhat:settle-raffle": "hardhat --network localhost settle-raffle",
-    "hardhat:settle": "yarn node:increase-time --value 3600 && yarn hardhat:settle-auction && yarn hardhat:settle-raffle",
+    "hardhat:settle": "yarn node:increase-time && yarn hardhat:settle-auction && yarn hardhat:settle-raffle",
 
     "rinkeby:generate-dotenv": "hardhat generate-dotenv",
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
