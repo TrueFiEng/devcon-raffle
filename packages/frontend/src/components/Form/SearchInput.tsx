@@ -1,4 +1,4 @@
-import { useDebounce } from '@usedapp/core'
+import { useDebounce } from '@usedapp/core/internal'
 import { useEffect, useState } from 'react'
 import { CloseButton } from 'src/components/Buttons/CloseButton'
 import { SearchIcon } from 'src/components/Icons/SearchIcon'

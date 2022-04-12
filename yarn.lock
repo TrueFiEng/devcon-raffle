@@ -2762,10 +2762,10 @@
   resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.28.tgz#76bb6ec25e76ae6bece9efc11b9b68079b2b9402"
   integrity sha512-MmVeoOd/HlZYOn5NT2mlDoOUYjnZb+3V7aCD5/YwSgsqeDRXZmKfKHafEEhiZoMvXuZdqSBg4L/ythvzAf9cwA==
 
-"@usedapp/core@^0.12.2":
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-0.12.2.tgz#fdf60c0ef4b5337400190f2432b4669d388bb546"
-  integrity sha512-+ZUSi9E61IaR/sGt0Y6pV/GdSDR1rLezWUbYYKa0qmEXRyMMLx4kXyC5FpjkdfVZSyKTmt5wBij141eQMclBzQ==
+"@usedapp/core@^0.12.9":
+  version "0.12.9"
+  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-0.12.9.tgz#d14220b8edf4a48f76be1a509b594621f2ca20b5"
+  integrity sha512-Q/iVgWap58tgBh2R3uJIBw3bZsBiiHw4L+T/5YO9CFUMBPAOXbLskkDo0PEMRF7WVO2jfHNhtunpI0rvyobK8w==
   dependencies:
     "@ethersproject/abi" "5.6.0"
     "@ethersproject/abstract-provider" "5.6.0"
@@ -2779,6 +2779,7 @@
     ethers "^5.5.4"
     fetch-mock "^9.11.0"
     lodash.merge "^4.6.2"
+    lodash.pickby "^4.6.0"
     nanoid "3.1.22"
 
 "@vitejs/plugin-react@^1.0.7":
@@ -9134,6 +9135,11 @@ lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
+
+lodash.pickby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.pickby/-/lodash.pickby-4.6.0.tgz#7dea21d8c18d7703a27c704c15d3b84a67e33aff"
+  integrity sha1-feoh2MGNdwOifHBMFdO4SmfjOv8=
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
