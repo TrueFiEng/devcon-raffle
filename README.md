@@ -22,6 +22,6 @@ A number of custom Hardhat tasks were defined to aid testing.
 - `yarn hardhat:settle-raffle` - settle raffle using random numbers
 
 #### Arbitrum Rinkeby
+- `yarn rinkeby:transfer-ether` - transfer ether from `DEPLOYER` to `PRIVATE_KEYS` accounts
 - `yarn rinkeby:deploy [--delay <INT>]` - deploy Devcon6 contract, *delay* in seconds can be set to push back bidding start time
 - `yarn rinkeby:init-bids` - place initial bids using `PRIVATE_KEYS` accounts
-- `yarn rinkeby:transfer-ether` - transfer ether from `DEPLOYER` to `PRIVATE_KEYS` accounts
