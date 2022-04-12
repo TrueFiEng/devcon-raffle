@@ -4,11 +4,11 @@ import { useEthers } from '@usedapp/core'
 import { useAddresses } from '../useAddresses'
 
 export function useDevconContract(): Devcon6 | undefined {
-  const { devcon } = useAddresses('devcon')
+  const devconAddress = useAddresses('devcon')
   const { library } = useEthers()
 
-  if (!library) {
+  if (!library || !devconAddress) {
     return undefined
   }
-  return Devcon6__factory.connect(devcon, library)
+  return Devcon6__factory.connect(devconAddress.devcon, library)
 }
