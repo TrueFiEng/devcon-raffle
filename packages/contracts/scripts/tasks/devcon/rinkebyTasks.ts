@@ -56,7 +56,7 @@ task('init-bids', 'Places initial bids using PRIVATE_KEYS accounts')
     const initialBidAmount = utils.parseUnits('0.20', 9)
     const bidIncrement = utils.parseUnits('0.02', 9)
 
-    const devcon = await connectToDevcon(hre, testnetDevconAddress, testnetHeapAddress)
+    const devcon = await connectToDevcon(hre, getTestnetDevconAddress(), testnetHeapAddress)
 
     const privateKeys: string[] = JSON.parse(process.env.PRIVATE_KEYS)
     for (let i = 0; i < privateKeys.length; i++) {
@@ -78,4 +78,8 @@ DEPLOYER=${deployer}
 PRIVATE_KEYS='[
 ${keys.map(key => `  "${key}",`).join('\n')}
 ]'`
+}
+
+function getTestnetDevconAddress() {
+  return process.env.VITE_TESTNET_DEVCON || testnetDevconAddress
 }
