@@ -20,6 +20,7 @@ A number of custom Hardhat tasks were defined to aid testing.
 - `yarn hardhat:bid --account <STRING> --amount <STRING>` - using *account* place bid of *amount* ETH
 - `yarn hardhat:settle-auction` - settle auction
 - `yarn hardhat:settle-raffle` - settle raffle using random numbers
+- `yarn hardhat:settle` - increase time, settle auction and raffle
 
 #### Arbitrum Rinkeby
 - `yarn rinkeby:generate-dotenv [--path <STRING>] [--count <INT>]` - generate .env file needed for other tasks, *path* - output path, *count* - number of private keys to generate

@@ -19,12 +19,16 @@
     "test": "mocha 'test/**/*.test.ts'",
     "test:hardhat": "hardhat test",
     "test:gas-reporter": "REPORT_GAS=true hardhat test",
+
     "node:run": "hardhat run scripts/deploy/run.ts",
     "node:increase-time": "hardhat --network localhost increase-time",
     "node:accounts": "hardhat --network localhost accounts",
+
     "hardhat:bid": "hardhat --network localhost bid",
     "hardhat:settle-auction": "hardhat --network localhost settle-auction",
     "hardhat:settle-raffle": "hardhat --network localhost settle-raffle",
+    "hardhat:settle": "yarn node:increase-time --value 3600 && yarn hardhat:settle-auction && yarn hardhat:settle-raffle",
+
     "rinkeby:generate-dotenv": "hardhat generate-dotenv",
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
     "rinkeby:deploy": "hardhat --network rinkeby deploy",
