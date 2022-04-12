@@ -1,15 +1,20 @@
-import { Arbitrum, ArbitrumRinkeby, ChainId, Config as UseDAppConfig, Hardhat } from '@usedapp/core'
+import { Config as UseDAppConfig } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
 import { NODE_URLS } from 'src/constants/nodeUrls'
 
-interface Config {
+import { getLocalConfig } from './config.dev.local'
+import { getTestnetConfig } from './config.dev.testnet'
+import { getProdConfig } from './config.prod'
+import { getStringEnv } from './getEnv'
+
+export interface Config {
   useDAppConfig: UseDAppConfig
   addresses: Record<string, Record<SupportedChainId, string>>
 }
 
-function getConfig(environment: string): Config {
-  switch (environment) {
+function getConfig(mode: string): Config {
+  switch (mode) {
     case 'development':
       return getDevConfig()
     default:
@@ -18,37 +23,17 @@ function getConfig(environment: string): Config {
 }
 
 function getDevConfig(): Config {
-  return {
-    useDAppConfig: {
-      ...commonUseDAppConfig,
-      readOnlyChainId: Hardhat.chainId,
-      networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
-    },
-    addresses: getAddresses(),
+  const network = getStringEnv('VITE_NETWORK')
+
+  switch (network) {
+    case 'ArbitrumRinkeby':
+      return getTestnetConfig()
+    default:
+      return getLocalConfig()
   }
 }
 
-function getProdConfig(): Config {
-  return {
-    useDAppConfig: {
-      ...commonUseDAppConfig,
-      readOnlyChainId: Arbitrum.chainId,
-      networks: [Arbitrum],
-    },
-    addresses: getAddresses(),
-  }
-}
-
-function getAddresses() {
-  const addresses = ADDRESSES
-  const testnetDevconAddress = import.meta.env.VITE_TESTNET_DEVCON as string
-  if (testnetDevconAddress) {
-    addresses['devcon'][ChainId.ArbitrumRinkeby] = testnetDevconAddress
-  }
-  return addresses
-}
-
-const commonUseDAppConfig = {
+export const commonUseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
   readOnlyUrls: NODE_URLS,
 }
