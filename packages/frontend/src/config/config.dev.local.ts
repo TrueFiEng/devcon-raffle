@@ -1,4 +1,4 @@
-import { Arbitrum, ArbitrumRinkeby, ChainId, Hardhat } from '@usedapp/core'
+import { Arbitrum, ArbitrumRinkeby, Hardhat } from '@usedapp/core'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
@@ -13,4 +13,3 @@ export function getLocalConfig() {
     addresses: ADDRESSES,
   }
 }
-
