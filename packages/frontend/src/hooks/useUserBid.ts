@@ -1,11 +1,39 @@
-import { addressEqual, useEthers } from '@usedapp/core'
+import { addressEqual, useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
 
+import { useDevconContract } from './contract'
 import { useBids } from './useBids'
 
 export function useUserBid() {
+  const devconContract = useDevconContract()
   const { account } = useEthers()
   const { bids } = useBids()
 
-  return useMemo(() => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)), [account, bids])
+  const { value } =
+    useCall(
+      devconContract &&
+        account && {
+          contract: devconContract,
+          method: 'getBid',
+          args: [account],
+        }
+    ) ?? {}
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bid = useMemo(() => value && value[0], [JSON.stringify(value)])
+  const bidWithPlace = useMemo(
+    () => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)),
+    [account, bids]
+  )
+
+  return bid && bidWithPlace && account
+    ? {
+        bidderID: bid.bidderID,
+        bidderAddress: account,
+        amount: bid.amount,
+        place: bidWithPlace.place,
+        winType: bid.winType,
+        claimed: bid.claimed,
+      }
+    : undefined
 }
