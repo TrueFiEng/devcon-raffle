@@ -1,1 +1,0 @@
-export const RAFFLE_PARTICIPANTS_COUNT = 80
