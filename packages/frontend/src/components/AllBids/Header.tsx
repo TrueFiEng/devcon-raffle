@@ -1,11 +1,17 @@
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { HeaderBar } from 'src/components/common/Header'
 import { KeyIcon } from 'src/components/Icons/KeyIcon'
+import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
+import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const Header = () => {
+  const auctionWinnersCount = useAuctionWinnersCount()
+  const raffleWinnersCount = useRaffleWinnersCount()
+  const isLoadingParams = auctionWinnersCount === undefined || raffleWinnersCount === undefined
+
   const { bids } = useBids()
   return (
     <StyledHeader>
@@ -13,7 +19,7 @@ export const Header = () => {
       <Wrapper>
         <Title>
           <h2>Number of participants:</h2>
-          <Number>{bids.length}</Number>
+          <Number>{isLoadingParams ? 0 : bids.length}</Number>
         </Title>
       </Wrapper>
       <Key>
