@@ -33,8 +33,9 @@ function getDevConfig(): Config {
   }
 }
 
-export const commonUseDAppConfig = {
+export const commonUseDAppConfig: UseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
+  multicallVersion: 2,
   readOnlyUrls: NODE_URLS,
 }
 

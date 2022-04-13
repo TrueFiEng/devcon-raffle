@@ -9,10 +9,10 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { ZERO } from 'src/constants/bigNumber'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
-import { SettledBid } from 'src/models/Bid'
+import { UserBid } from 'src/models/Bid'
 
 interface WinBidFlowProps {
-  userBid: SettledBid
+  userBid: UserBid
 }
 
 export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
@@ -49,7 +49,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   )
 }
 
-function calculateWithdrawalAmount(userBid: SettledBid, minimumBid: BigNumber) {
+function calculateWithdrawalAmount(userBid: UserBid, minimumBid: BigNumber) {
   switch (userBid.winType) {
     case WinType.Auction:
       return ZERO

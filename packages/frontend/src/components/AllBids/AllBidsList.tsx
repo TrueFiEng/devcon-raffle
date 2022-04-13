@@ -3,7 +3,7 @@ import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useBids } from 'src/hooks/useBids'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
 interface AllBidsListProps {
   search: string
@@ -15,7 +15,7 @@ export const AllBidsList = ({ search, auctionWinnersCount, raffleWinnersCount }:
   const { bids } = useBids()
 
   const searchBid = useCallback(
-    (sectionBids: BidWithPlace[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
+    (sectionBids: Bid[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
     [search]
   )
 
