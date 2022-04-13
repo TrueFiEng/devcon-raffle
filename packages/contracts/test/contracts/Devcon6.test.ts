@@ -1030,14 +1030,21 @@ describe('Devcon6', function () {
 
     it('returns correct bid with bidder address', async function () {
       await bid(1)
-      const { bidder, bid: bid_ } = await devcon.getBidWithAddress(1)
-      console.log(bidder)
-      console.log(bid_)
-      expect(bidder).to.eq(wallets[0].address)
-      expect(bid_.bidderID).to.eq(1)
-      expect(bid_.amount).to.eq(reservePrice)
-      expect(bid_.winType).to.eq(0)
-      expect(bid_.claimed).to.be.false
+      const bidWithAddress = await devcon.getBidWithAddress(1)
+      validateBidsWithAddresses([bidWithAddress])
+    })
+  })
+
+  describe('getBidsWithAddresses', function () {
+    it('returns empty array when there are no bids', async function () {
+      expect(await devcon.getBidsWithAddresses()).to.be.of.length(0)
+    })
+
+    it('returns correct bids with corresponding bidder addresses', async function () {
+      await bid(3)
+      const bids = await devcon.getBidsWithAddresses()
+      expect(bids).to.be.of.length(3)
+      validateBidsWithAddresses(bids)
     })
   })
 
@@ -1061,6 +1068,16 @@ describe('Devcon6', function () {
 
   function owner() {
     return wallets[1]
+  }
+
+  function validateBidsWithAddresses(bids) {
+    bids.forEach(({ bidder, bid: bid_ }, index) => {
+      expect(bidder).to.eq(wallets[index].address)
+      expect(bid_.bidderID).to.eq(index + 1)
+      expect(bid_.amount).to.eq(reservePrice)
+      expect(bid_.winType).to.eq(0)
+      expect(bid_.claimed).to.be.false
+    });
   }
 
   async function bidAndSettleRaffle(bidCount: number, randomNumbers?: BigNumberish[]): Promise<ContractTransaction> {
