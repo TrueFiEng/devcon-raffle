@@ -7,8 +7,8 @@ import { randomBigNumbers } from 'scripts/utils/random'
 import { expect } from 'chai'
 import { heapKey } from 'utils/heapKey'
 import { network } from 'hardhat'
-import { HOUR } from 'utils/consts'
 import { compareBids } from 'utils/compareBids'
+import { HOUR } from 'scripts/utils/consts'
 
 interface Bid {
   bidderID: number,
