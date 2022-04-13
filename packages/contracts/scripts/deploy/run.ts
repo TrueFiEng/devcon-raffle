@@ -1,9 +1,9 @@
 import { deploy, minBidIncrement } from './deploy'
-import { Devcon6 } from 'contracts'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { bidAsSigner } from 'scripts/utils/bid'
 import * as hre from 'hardhat'
 import { parseEther } from 'ethers/lib/utils'
+import { Contract } from 'ethers'
 
 const SECOND = 1000
 
@@ -18,8 +18,8 @@ async function run() {
   const now = Math.floor((new Date()).valueOf() / SECOND)
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
 
-  const owner = signers[0]
-  const devcon = await deploy(now, owner)
+  const deployer = signers[0]
+  const devcon = await deploy(now, deployer, hre)
   console.log('Contracts deployed\n')
 
   await bid(devcon, signers.slice(0, 20))
@@ -27,7 +27,7 @@ async function run() {
   await nodeProcess
 }
 
-async function bid(devcon: Devcon6, signers: SignerWithAddress[]) {
+async function bid(devcon: Contract, signers: SignerWithAddress[]) {
   const initialBidAmount = parseEther('0.20')
   for (let i = 0; i < signers.length; i++) {
     await bidAsSigner(devcon, signers[i], initialBidAmount.add(minBidIncrement.mul(i)))

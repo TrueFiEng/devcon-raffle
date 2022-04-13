@@ -1,6 +1,5 @@
-import { Devcon6 } from 'contracts'
-import { BigNumberish, Signer } from 'ethers'
+import { BigNumberish, Contract, Signer } from 'ethers'
 
-export async function bidAsSigner(devcon: Devcon6, signer: Signer, value: BigNumberish) {
+export async function bidAsSigner(devcon: Contract, signer: Signer, value: BigNumberish) {
   await devcon.connect(signer).bid({ value })
 }

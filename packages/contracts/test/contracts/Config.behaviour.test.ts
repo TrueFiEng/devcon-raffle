@@ -18,7 +18,7 @@ describe('Config', function () {
 
     it('reverts for raffle winners count non-divisible by 8', async function () {
       await expect(loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 7 })))
-        .to.be.revertedWith('Config: raffle winners count must be divisible by 8')
+        .to.be.revertedWith('Config: invalid raffle winners count')
     })
 
     it('reverts for bidding start time after bidding end time', async function () {

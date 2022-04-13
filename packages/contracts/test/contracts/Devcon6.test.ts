@@ -10,7 +10,7 @@ import {
 import { Devcon6Mock, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
-import { HOUR, MINUTE } from 'utils/consts'
+import { HOUR, MINUTE } from 'scripts/utils/consts'
 import { network } from 'hardhat'
 import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
 import { State } from './state'
@@ -21,6 +21,7 @@ import { Bid } from './bid'
 import { parseEther } from 'ethers/lib/utils'
 import { randomBigNumbers } from 'scripts/utils/random'
 import { ZERO } from '@devcon-raffle/frontend/src/constants/bigNumber'
+import { heapKey } from 'utils/heapKey'
 
 describe('Devcon6', function () {
   const loadFixture = setupFixtureLoader()
@@ -66,9 +67,9 @@ describe('Devcon6', function () {
       expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
     })
 
-    it('reverts if bidding amount is below reserve price', async function () {
+    it('reverts if bid amount is below reserve price', async function () {
       await expect(devcon.bid({ value: reservePrice.sub(100) }))
-        .to.be.revertedWith('Devcon6: bidding amount is below reserve price')
+        .to.be.revertedWith('Devcon6: bid amount is below reserve price')
     })
 
     it('saves bid', async function () {
@@ -1117,10 +1118,5 @@ describe('Devcon6', function () {
         expect(value).to.be.equal(args[index][j])
       })
     })
-  }
-
-  function heapKey(bidderID: BigNumberish, amount: BigNumberish) {
-    const bidderMask = BigNumber.from('0xffff')
-    return BigNumber.from(amount).shl(16).or(bidderMask.sub(bidderID))
   }
 })
