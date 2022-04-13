@@ -19,7 +19,10 @@ export const BidsListSection = () => {
   const auctionWinnersCount = useAuctionWinnersCount()
 
   const auctionBidsSlice = useMemo(() => {
-    if (bids.length <= bidsMaxCount || auctionWinnersCount === undefined) {
+    if (auctionWinnersCount === undefined) {
+      return []
+    }
+    if (bids.length <= bidsMaxCount) {
       return bids
     }
     const topAuctionBids = bids.slice(0, topAuctionBidsCount)
@@ -29,15 +32,17 @@ export const BidsListSection = () => {
           : topAuctionBids.concat([lastAuctionBid])
   }, [bids, userBid, auctionWinnersCount])
 
+  const isLoadingParams = auctionWinnersCount === undefined
+
   return (
     <BidsListContainer>
       <ListHeader>
         <h3>Number of participants:</h3>
-        <ColoredNumber>{bids.length}</ColoredNumber>
+        <ColoredNumber>{isLoadingParams ? 0 : bids.length}</ColoredNumber>
       </ListHeader>
       <BidsListHeaders />
       <BidsList bids={auctionBidsSlice} view="short" />
-      {bids.length !== 0 && (
+      {!isLoadingParams && bids.length !== 0 && (
         <Button view="secondary" onClick={() => navigate('/bids')}>
           Show all
         </Button>
