@@ -2,7 +2,16 @@
 
 pragma solidity 0.8.10;
 
-contract Config {
+abstract contract Config {
+    // The use of _randomMask and _bidderMask introduces an assumption on max number of participants: 2^32.
+    // The use of _bidderMask also introduces an assumption on max bid amount: 2^224 wei.
+    // Both of these values are fine for our use case.
+    uint256 constant _randomMask = 0xffffffff;
+    uint256 constant _randomMaskLength = 32;
+    uint256 constant _winnersPerRandom = 256 / _randomMaskLength;
+    uint256 constant _bidderMask = _randomMask;
+    uint256 constant _bidderMaskLength = _randomMaskLength;
+
     uint256 public immutable _biddingStartTime;
     uint256 public immutable _biddingEndTime;
     uint256 public immutable _claimingEndTime;
@@ -22,7 +31,7 @@ contract Config {
     ) {
         require(auctionWinnersCount_ > 0, "Config: auction winners count must be greater than 0");
         require(raffleWinnersCount_ > 0, "Config: raffle winners count must be greater than 0");
-        require(raffleWinnersCount_ % 8 == 0, "Config: raffle winners count must be divisible by 8");
+        require(raffleWinnersCount_ % _winnersPerRandom == 0, "Config: invalid raffle winners count");
         require(biddingStartTime_ < biddingEndTime_, "Config: bidding start time must be before bidding end time");
         require(biddingEndTime_ < claimingEndTime_, "Config: bidding end time must be before claiming end time");
         require(reservePrice_ > 0, "Config: reserve price must be greater than 0");

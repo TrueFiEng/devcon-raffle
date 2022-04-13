@@ -17,6 +17,7 @@
     "build": "hardhat compile && bash ./scripts/indexBuild.sh",
     "build-test": "yarn run build && yarn run test",
     "test": "mocha 'test/**/*.test.ts'",
+    "test:e2e": "mocha 'test/**/*.e2e.ts'",
     "test:hardhat": "hardhat test",
     "test:gas-reporter": "REPORT_GAS=true hardhat test",
 

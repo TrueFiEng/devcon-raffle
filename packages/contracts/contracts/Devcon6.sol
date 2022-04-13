@@ -15,11 +15,6 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
 
-    // The use of _randomMask introduces an assumption on max number of participants
-    // 2^32 in this case which is totally enough
-    uint256 constant _randomMask = 0xffffffff;
-    uint256 constant _bidderMask = 0xffff;
-
     mapping(address => Bid) _bids; // bidder address -> Bid
     mapping(uint256 => address payable) _bidders; // bidderID -> bidder address
     uint256 _nextBidderID = 1;
@@ -90,20 +85,20 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
-        if (bidder.amount > 0) {
-            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
-            uint256 oldAmount = bidder.amount;
-            bidder.amount += msg.value;
-
-            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
-        } else {
-            require(msg.value >= _reservePrice, "Devcon6: bidding amount is below reserve price");
+        if (bidder.amount == 0) {
+            require(msg.value >= _reservePrice, "Devcon6: bid amount is below reserve price");
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);
             _raffleParticipants.push(bidder.bidderID);
 
             addBidToHeap(bidder.bidderID, bidder.amount);
+        } else {
+            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
+            uint256 oldAmount = bidder.amount;
+            bidder.amount += msg.value;
+
+            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
         }
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
@@ -157,7 +152,10 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
             return;
         }
 
-        require(randomNumbers.length == raffleWinnersCount / 8, "Devcon6: passed incorrect number of random numbers");
+        require(
+            randomNumbers.length == raffleWinnersCount / _winnersPerRandom,
+            "Devcon6: passed incorrect number of random numbers"
+        );
 
         selectRaffleWinners(participantsLength, randomNumbers);
     }
@@ -241,7 +239,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         uint256 balance = token.balanceOf(address(this));
 
         require(balance > 0, "Devcon6: no tokens for given address");
-        token.transfer(owner(), balance);
+        token.safeTransfer(owner(), balance);
     }
 
     function getRaffleParticipants() external view returns (uint256[] memory) {
@@ -378,7 +376,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         addGoldenTicketWinner(bidderID);
 
         removeRaffleParticipant(winnerIndex);
-        return (participantsLength - 1, randomNumber >> 32);
+        return (participantsLength - 1, randomNumber >> _randomMaskLength);
     }
 
     function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
@@ -390,9 +388,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
-        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], 7);
+        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], _winnersPerRandom - 1);
         for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], 8);
+            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], _winnersPerRandom);
         }
     }
 
@@ -409,7 +407,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             removeRaffleParticipant(winnerIndex);
             --participantsLength;
-            randomNumber = randomNumber >> 32;
+            randomNumber = randomNumber >> _randomMaskLength;
         }
 
         return participantsLength;
@@ -423,7 +421,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
-        return (amount << 16) | (_bidderMask - bidderID);
+        return (amount << _bidderMaskLength) | (_bidderMask - bidderID);
     }
 
     function extractBidderID(uint256 key) private pure returns (uint256) {
