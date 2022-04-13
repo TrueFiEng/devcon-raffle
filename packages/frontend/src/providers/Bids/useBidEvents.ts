@@ -22,7 +22,9 @@ export function useBidEvents() {
       setTimeout(() => execute(provider, lastQueriedBlock), POLL_INTERVAL)
     }
     if (result) {
-      setEvents((events) => events.concat(result.logs))
+      if (result.logs.length !== 0) {
+        setEvents((events) => events.concat(result.logs))
+      }
       setLastQueriedBlock(result.lastQueriedBlock)
       setTimeout(() => execute(provider, result.lastQueriedBlock), POLL_INTERVAL)
     }
