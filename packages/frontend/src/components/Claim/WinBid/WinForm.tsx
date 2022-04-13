@@ -3,12 +3,12 @@ import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
 import { FormWrapper } from 'src/components/Form/Form'
-import { SettledBid } from 'src/models/Bid'
+import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface WinFormProps {
-  userBid: SettledBid
+  userBid: UserBid
   withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
   voucher: boolean

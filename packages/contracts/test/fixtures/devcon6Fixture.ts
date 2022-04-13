@@ -2,8 +2,8 @@ import { Devcon6Mock__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
-import { WEEK } from 'utils/consts'
-import { deployMaxHeap } from 'scripts/deploy/deploy'
+import { WEEK } from 'scripts/utils/consts'
+import { deployMaxHeap } from 'fixtures/maxHeapMockFixture'
 
 export const auctionWinnersCount = 1
 export const raffleWinnersCount = 8
@@ -31,6 +31,13 @@ export async function devcon6FixtureWithToken(wallets: Wallet[], provider: MockP
   const exampleToken = await new ExampleToken__factory(wallets[1]).deploy(1000)
 
   return { provider, devcon, exampleToken }
+}
+
+export async function devcon6E2EFixture(wallets: Wallet[], provider: MockProvider) {
+  return configuredDevcon6Fixture({
+    auctionWinnersCount: 20,
+    raffleWinnersCount: 80,
+  })(wallets, provider)
 }
 
 export function configuredDevcon6Fixture(params: devcon6Params) {

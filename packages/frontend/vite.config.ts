@@ -10,5 +10,6 @@ export default defineConfig({
       { find: 'src', replacement: path.resolve(__dirname, 'src') },
       { find: 'test', replacement: path.resolve(__dirname, 'test') }
     ]
-  }
+  },
+  envDir: path.resolve(__dirname, "../..")
 })

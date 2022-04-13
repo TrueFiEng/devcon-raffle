@@ -5,13 +5,10 @@ export interface Bid {
   bidderID: BigNumber
   bidderAddress: string
   amount: BigNumber
-}
-
-export interface BidWithPlace extends Bid {
   place: number
 }
 
-export interface SettledBid extends Bid {
+export interface UserBid extends Bid {
   winType: WinType
   claimed: boolean
 }

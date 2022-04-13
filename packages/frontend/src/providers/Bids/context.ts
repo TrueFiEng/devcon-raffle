@@ -1,8 +1,8 @@
 import { createContext } from 'react'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
 interface BidsContext {
-  bids: BidWithPlace[]
+  bids: Bid[]
 }
 
 export const BidsContext = createContext<BidsContext>({
