@@ -1016,6 +1016,31 @@ describe('Devcon6', function () {
     })
   })
 
+  describe('getBidWithAddress', function () {
+    it('reverts for zero bidder ID', async function () {
+      await expect(devcon.getBidWithAddress(0))
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+    })
+
+    it('reverts for invalid bidder ID', async function () {
+      await bid(1)
+      await expect(devcon.getBidWithAddress(2))
+        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+    })
+
+    it('returns correct bid with bidder address', async function () {
+      await bid(1)
+      const { bidder, bid: bid_ } = await devcon.getBidWithAddress(1)
+      console.log(bidder)
+      console.log(bid_)
+      expect(bidder).to.eq(wallets[0].address)
+      expect(bid_.bidderID).to.eq(1)
+      expect(bid_.amount).to.eq(reservePrice)
+      expect(bid_.winType).to.eq(0)
+      expect(bid_.claimed).to.be.false
+    })
+  })
+
   describe('getBidderAddress', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(devcon.getBidderAddress(0))

@@ -265,6 +265,18 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return _bids[bidder];
     }
 
+    function getBidWithAddress(uint256 bidderID) external view returns (BidWithAddress memory) {
+        address bidder = getBidderAddress(bidderID);
+        Bid storage bid_ = _bids[bidder];
+
+        BidWithAddress memory bidWithAddress = BidWithAddress({
+            bidder: bidder,
+            bid: bid_
+        });
+
+        return bidWithAddress;
+    }
+
     function getBidderAddress(uint256 bidderID) public view returns (address payable) {
         address payable bidderAddress = _bidders[bidderID];
         require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
