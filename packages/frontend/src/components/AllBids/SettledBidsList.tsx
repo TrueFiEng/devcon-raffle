@@ -1,13 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
+import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
 import { useBids } from 'src/hooks/useBids'
+import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { BidWithPlace } from 'src/models/Bid'
-
-import { useAuctionWinners } from '../../hooks/useAuctionWinners'
-import { useRaffleWinners } from '../../hooks/useRaffleWinners'
 
 interface SettledBidsListProps {
   search: string
@@ -18,12 +17,20 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   const { auctionWinners } = useAuctionWinners()
   const { raffleWinners } = useRaffleWinners()
 
-  const settledBids = useMemo(() => {
-    console.log('useMemo: divideBids')
-    return divideBids(bids, auctionWinners, raffleWinners)
-  }, [bids, auctionWinners, raffleWinners])
+  const searchFunc = useCallback(
+    (sectionBids: BidWithPlace[]) =>
+      search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids,
+    [search]
+  )
 
-  const nothingFound = search && isEmpty(settledBids)
+  const settledBids = useMemo(
+    () => divideBids(bids, auctionWinners, raffleWinners),
+    [bids, auctionWinners, raffleWinners]
+  )
+
+  const filteredBids = useMemo(() => filterBids(settledBids, searchFunc), [settledBids, searchFunc])
+  const nothingFound = search && isEmpty(filteredBids)
+
   return (
     <>
       {nothingFound ? (
@@ -31,9 +38,9 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
       ) : (
         <>
           <BidsListHeaders />
-          {settledBids.auction.length !== 0 && <BidsSubList bids={settledBids.auction} title="AUCTION" />}
-          {settledBids.raffle.length !== 0 && <BidsSubList bids={settledBids.raffle} title="RAFFLE" />}
-          {settledBids.nonWinning.length !== 0 && <BidsSubList bids={settledBids.nonWinning} title="NON-WINNING" />}
+          {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
+          {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
+          {filteredBids.nonWinning.length !== 0 && <BidsSubList bids={filteredBids.nonWinning} title="NON-WINNING" />}
         </>
       )}
     </>
@@ -80,4 +87,12 @@ function includesBigNumber(array: BigNumber[], searchElement: BigNumber) {
 
 function isEmpty(bids: Bids) {
   return bids.auction.length === 0 && bids.raffle.length === 0 && bids.nonWinning.length === 0
+}
+
+function filterBids(bids: Bids, searchFunc: (sectionBids: BidWithPlace[]) => BidWithPlace[]) {
+  return {
+    auction: searchFunc(bids.auction),
+    raffle: searchFunc(bids.raffle),
+    nonWinning: searchFunc(bids.nonWinning),
+  }
 }
