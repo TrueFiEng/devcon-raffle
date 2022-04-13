@@ -4,17 +4,17 @@ import { useMemo } from 'react'
 import { useDevconContract } from './contract'
 import { useCachedCall } from './useCachedCall'
 
-export function useAuctionWinners() {
+export function useRaffleWinners() {
   const devconContract = useDevconContract()
   const { value, error } =
     useCachedCall(
       devconContract && {
         contract: devconContract,
-        method: 'getAuctionWinners',
+        method: 'getRaffleWinners',
         args: [],
       }
     ) ?? {}
 
-  const auctionWinners = useMemo(() => value && (value[0] as BigNumber[]), [value])
-  return { auctionWinners, error }
+  const raffleWinners = useMemo(() => value && (value[0] as BigNumber[]), [value])
+  return { raffleWinners, error }
 }
