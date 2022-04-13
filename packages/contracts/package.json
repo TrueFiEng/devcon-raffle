@@ -26,6 +26,7 @@
     "node:accounts": "hardhat --network localhost accounts",
 
     "hardhat:bid": "hardhat --network localhost bid",
+    "hardhat:bid-with-random-accounts": "hardhat --network localhost bid-with-random-accounts",
     "hardhat:settle-auction": "hardhat --network localhost settle-auction",
     "hardhat:settle-raffle": "hardhat --network localhost settle-raffle",
     "hardhat:settle": "yarn node:increase-time && yarn hardhat:settle-auction && yarn hardhat:settle-raffle",
