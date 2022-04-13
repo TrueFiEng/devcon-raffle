@@ -1,12 +1,19 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
+import { useSearchBid } from 'src/components/AllBids/useSearchBid'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
 import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { BidWithPlace } from 'src/models/Bid'
+
+interface Bids {
+  auction: BidWithPlace[]
+  raffle: BidWithPlace[]
+  nonWinning: BidWithPlace[]
+}
 
 interface SettledBidsListProps {
   search: string
@@ -16,12 +23,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   const { bids } = useBids()
   const { auctionWinners } = useAuctionWinners()
   const { raffleWinners } = useRaffleWinners()
-
-  const searchFunc = useCallback(
-    (sectionBids: BidWithPlace[]) =>
-      search ? sectionBids.filter((bid) => bid.bidderAddress.includes(search)) : sectionBids,
-    [search]
-  )
+  const searchFunc = useSearchBid(search)
 
   const settledBids = useMemo(
     () => divideBids(bids, auctionWinners, raffleWinners),
@@ -45,12 +47,6 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
       )}
     </>
   )
-}
-
-interface Bids {
-  auction: BidWithPlace[]
-  raffle: BidWithPlace[]
-  nonWinning: BidWithPlace[]
 }
 
 function divideBids(bids: BidWithPlace[], auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
@@ -85,14 +81,14 @@ function includesBigNumber(array: BigNumber[], searchElement: BigNumber) {
   return false
 }
 
-function isEmpty(bids: Bids) {
-  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.nonWinning.length === 0
-}
-
 function filterBids(bids: Bids, searchFunc: (sectionBids: BidWithPlace[]) => BidWithPlace[]) {
   return {
     auction: searchFunc(bids.auction),
     raffle: searchFunc(bids.raffle),
     nonWinning: searchFunc(bids.nonWinning),
   }
+}
+
+function isEmpty(bids: Bids) {
+  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.nonWinning.length === 0
 }
