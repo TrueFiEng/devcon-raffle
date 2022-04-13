@@ -1040,7 +1040,7 @@ describe('Devcon6', function () {
       expect(await devcon.getBidsWithAddresses()).to.be.of.length(0)
     })
 
-    it('returns correct bids with corresponding bidder addresses', async function () {
+    it('returns bids with corresponding bidder addresses', async function () {
       await bid(3)
       const bids = await devcon.getBidsWithAddresses()
       expect(bids).to.be.of.length(3)
