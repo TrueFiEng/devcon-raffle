@@ -28,8 +28,8 @@ export const BidsListSection = () => {
     const topAuctionBids = bids.slice(0, topAuctionBidsCount)
     const lastAuctionBid = bids[bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1]
     return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
-          ? topAuctionBids.concat([userBid, lastAuctionBid])
-          : topAuctionBids.concat([lastAuctionBid])
+      ? topAuctionBids.concat([userBid, lastAuctionBid])
+      : topAuctionBids.concat([lastAuctionBid])
   }, [bids, userBid, auctionWinnersCount])
 
   const isLoadingParams = auctionWinnersCount === undefined
