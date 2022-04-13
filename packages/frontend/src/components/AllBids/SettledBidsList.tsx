@@ -58,18 +58,24 @@ function divideBids(bids: BidWithPlace[], auctionWinners?: BigNumber[], raffleWi
   }
 
   settledBids.nonWinning = bids.filter((bid) => {
-    if (auctionWinners.includes(bid.bidderID)) {
+    if (includesBigNumber(auctionWinners, bid.bidderID)) {
       settledBids.auction.push(bid)
       return false
     }
-    if (raffleWinners.includes(bid.bidderID)) {
+    if (includesBigNumber(raffleWinners, bid.bidderID)) {
       settledBids.raffle.push(bid)
       return false
     }
     return true
   })
-
   return settledBids
+}
+
+function includesBigNumber(array: BigNumber[], searchElement: BigNumber) {
+  for (const element of array) {
+    if (element.eq(searchElement)) return true
+  }
+  return false
 }
 
 function isEmpty(bids: Bids) {
