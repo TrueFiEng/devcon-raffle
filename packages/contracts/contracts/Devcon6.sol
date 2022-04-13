@@ -269,10 +269,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         address bidder = getBidderAddress(bidderID);
         Bid storage bid_ = _bids[bidder];
 
-        BidWithAddress memory bidWithAddress = BidWithAddress({
-            bidder: bidder,
-            bid: bid_
-        });
+        BidWithAddress memory bidWithAddress = BidWithAddress({bidder: bidder, bid: bid_});
 
         return bidWithAddress;
     }
@@ -282,9 +279,9 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         BidWithAddress[] memory bids = new BidWithAddress[](totalBids);
 
-        for(uint256 i=1; i<=totalBids; ++i) {
+        for (uint256 i = 1; i <= totalBids; ++i) {
             BidWithAddress memory bid_ = getBidWithAddress(i);
-            bids[i-1] = bid_;
+            bids[i - 1] = bid_;
         }
 
         return bids;

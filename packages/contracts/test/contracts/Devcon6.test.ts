@@ -1077,7 +1077,7 @@ describe('Devcon6', function () {
       expect(bid_.amount).to.eq(reservePrice)
       expect(bid_.winType).to.eq(0)
       expect(bid_.claimed).to.be.false
-    });
+    })
   }
 
   async function bidAndSettleRaffle(bidCount: number, randomNumbers?: BigNumberish[]): Promise<ContractTransaction> {
