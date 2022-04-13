@@ -275,7 +275,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function getBidsWithAddresses() external view returns (BidWithAddress[] memory) {
-        uint256 totalBids = _nextBidderID - 1;
+        uint256 totalBids = getBiddersCount();
 
         BidWithAddress[] memory bids = new BidWithAddress[](totalBids);
 
