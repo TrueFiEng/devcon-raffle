@@ -18,21 +18,15 @@ export const BidsListSection = () => {
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
 
-  const { auctionBidsSlice } = useMemo(() => {
+  const auctionBidsSlice = useMemo(() => {
     if (bids.length <= bidsMaxCount || auctionWinnersCount === undefined) {
-      return {
-        auctionBidsSlice: bids,
-      }
+      return bids
     }
     const topAuctionBids = bids.slice(0, topAuctionBidsCount)
     const lastAuctionBid = bids[bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1]
-    return {
-      auctionBidsSlice:
-        userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
+    return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
           ? topAuctionBids.concat([userBid, lastAuctionBid])
-          : topAuctionBids.concat([lastAuctionBid]),
-      userRaffleBid: userBid && userBid.place > auctionWinnersCount ? userBid : undefined,
-    }
+          : topAuctionBids.concat([lastAuctionBid])
   }, [bids, userBid, auctionWinnersCount])
 
   return (
