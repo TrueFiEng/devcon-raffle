@@ -7,12 +7,12 @@ import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
 import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
 interface Bids {
-  auction: BidWithPlace[]
-  raffle: BidWithPlace[]
-  nonWinning: BidWithPlace[]
+  auction: Bid[]
+  raffle: Bid[]
+  nonWinning: Bid[]
 }
 
 interface SettledBidsListProps {
@@ -49,7 +49,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 }
 
-function divideBids(bids: BidWithPlace[], auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
+function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
   const settledBids: Bids = {
     auction: [],
     raffle: [],
@@ -81,7 +81,7 @@ function includesBigNumber(array: BigNumber[], searchElement: BigNumber) {
   return false
 }
 
-function filterBids(bids: Bids, searchFunc: (sectionBids: BidWithPlace[]) => BidWithPlace[]) {
+function filterBids(bids: Bids, searchFunc: (sectionBids: Bid[]) => Bid[]) {
   return {
     auction: searchFunc(bids.auction),
     raffle: searchFunc(bids.raffle),
