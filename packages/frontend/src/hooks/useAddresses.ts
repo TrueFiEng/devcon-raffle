@@ -12,7 +12,6 @@ export function useAddresses<SelectedContract extends Contract>(
 
   return useMemo(() => {
     if (!isSupportedChain(chainId)) {
-      console.log('unsupported address')
       return
     }
 
