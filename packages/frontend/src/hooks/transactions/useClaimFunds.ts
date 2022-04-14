@@ -9,7 +9,7 @@ export function useClaimFunds() {
   const { sendTransaction, state, resetState } = useSendTransaction({ transactionName: 'Claim' })
 
   async function claimFunds(bidderId: BigNumber) {
-    if (!devconContract || !account || !chainId) {
+    if (!account || !chainId) {
       return
     }
 

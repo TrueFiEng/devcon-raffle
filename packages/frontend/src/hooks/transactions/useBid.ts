@@ -9,7 +9,7 @@ export function useBid() {
   const { sendTransaction, state, resetState } = useSendTransaction({ transactionName: 'Bid' })
 
   async function placeBid(bidAmount: BigNumber) {
-    if (!devconContract || !account || !chainId) {
+    if (!account || !chainId) {
       return
     }
 

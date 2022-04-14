@@ -14,13 +14,11 @@ export enum ContractState {
 export function useContractState() {
   const devconContract = useDevconContract()
   const { value, error } =
-    useCall(
-      devconContract && {
-        contract: devconContract,
-        method: 'getState',
-        args: [],
-      }
-    ) ?? {}
+    useCall({
+      contract: devconContract,
+      method: 'getState',
+      args: [],
+    }) ?? {}
   const state = value ? value[0] : ContractState.AWAITING_BIDDING
   return { state, error }
 }

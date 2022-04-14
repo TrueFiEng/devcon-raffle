@@ -11,12 +11,11 @@ export function useUserBid() {
 
   const { value } =
     useCall(
-      devconContract &&
-        account && {
-          contract: devconContract,
-          method: 'getBid',
-          args: [account],
-        }
+      account && {
+        contract: devconContract,
+        method: 'getBid',
+        args: [account],
+      }
     ) ?? {}
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

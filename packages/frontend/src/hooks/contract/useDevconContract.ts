@@ -12,7 +12,7 @@ import { useProvider } from './useProvider'
 //    - returns readonly provider connected to `readOnlyChainId` network
 //   - when network listed in `networks` is chosen
 //    - returns injected provider connected to the chosen network
-export function useDevconContract(): Devcon6 | undefined {
+export function useDevconContract(): Devcon6 {
   const { devcon } = useAddresses('devcon')
   const provider = useProvider()
   return Devcon6__factory.connect(devcon, provider)
