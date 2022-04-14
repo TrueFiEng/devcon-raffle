@@ -5,14 +5,15 @@ import { useDevconContract } from './contract'
 import { useCachedCall } from './useCachedCall'
 
 export function useRaffleWinners() {
-  const devconContract = useDevconContract()
+  const { devcon, chainId } = useDevconContract()
   const { value, error } =
     useCachedCall(
-      devconContract && {
-        contract: devconContract,
+      {
+        contract: devcon,
         method: 'getRaffleWinners',
         args: [],
-      }
+      },
+      chainId
     ) ?? {}
 
   const raffleWinners = useMemo(() => value && (value[0] as BigNumber[]), [value])
