@@ -4,7 +4,7 @@ import { useEthers, useSendTransaction } from '@usedapp/core'
 import { useDevconContract } from '../contract'
 
 export function useClaimFunds() {
-  const devconContract = useDevconContract()
+  const { devcon } = useDevconContract()
   const { account, chainId } = useEthers()
   const { sendTransaction, state, resetState } = useSendTransaction({ transactionName: 'Claim' })
 
@@ -13,7 +13,7 @@ export function useClaimFunds() {
       return
     }
 
-    const tx = await devconContract.populateTransaction.claim(bidderId)
+    const tx = await devcon.populateTransaction.claim(bidderId)
     await sendTransaction(tx)
   }
 
