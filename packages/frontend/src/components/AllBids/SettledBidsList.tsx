@@ -12,7 +12,7 @@ import { Bid } from 'src/models/Bid'
 interface Bids {
   auction: Bid[]
   raffle: Bid[]
-  nonWinning: Bid[]
+  others: Bid[]
 }
 
 interface SettledBidsListProps {
@@ -31,18 +31,17 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 
   const filteredBids = useMemo(() => filterBids(settledBids, searchFunc), [settledBids, searchFunc])
-  const nothingFound = search && isEmpty(filteredBids)
 
   return (
     <>
-      {nothingFound ? (
+      {search && isEmpty(filteredBids) ? (
         <NothingFound search={search} />
       ) : (
         <>
           <BidsListHeaders />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
-          {filteredBids.nonWinning.length !== 0 && <BidsSubList bids={filteredBids.nonWinning} title="NON-WINNING" />}
+          {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
         </>
       )}
     </>
@@ -53,14 +52,14 @@ function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: B
   const settledBids: Bids = {
     auction: [],
     raffle: [],
-    nonWinning: [],
+    others: [],
   }
 
   if (!auctionWinners || !raffleWinners) {
     return settledBids
   }
 
-  settledBids.nonWinning = bids.filter((bid) => {
+  settledBids.others = bids.filter((bid) => {
     if (includesBigNumber(auctionWinners, bid.bidderID)) {
       settledBids.auction.push(bid)
       return false
@@ -85,10 +84,10 @@ function filterBids(bids: Bids, searchFunc: (sectionBids: Bid[]) => Bid[]) {
   return {
     auction: searchFunc(bids.auction),
     raffle: searchFunc(bids.raffle),
-    nonWinning: searchFunc(bids.nonWinning),
+    others: searchFunc(bids.others),
   }
 }
 
 function isEmpty(bids: Bids) {
-  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.nonWinning.length === 0
+  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.others.length === 0
 }
