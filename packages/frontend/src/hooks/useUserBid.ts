@@ -5,18 +5,18 @@ import { useDevconContract } from './contract'
 import { useBids } from './useBids'
 
 export function useUserBid() {
-  const devconContract = useDevconContract()
+  const { devcon, chainId } = useDevconContract()
   const { account } = useEthers()
   const { bids } = useBids()
 
   const { value } =
     useCall(
-      devconContract &&
-        account && {
-          contract: devconContract,
-          method: 'getBid',
-          args: [account],
-        }
+      account && {
+        contract: devcon,
+        method: 'getBid',
+        args: [account],
+      },
+      { chainId }
     ) ?? {}
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
