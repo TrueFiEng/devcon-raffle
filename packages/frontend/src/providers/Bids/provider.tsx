@@ -20,9 +20,7 @@ export const BidsProvider = ({ children }: Props) => {
   const bids: BidWithPlace[] = useMemo(() => {
     const addressToBidMap = contractBids.reduce<Record<string, BidDetails>>((dict, bid) => {
       const { bidderID, bidderAddress, amount } = bid
-      if (!(bidderAddress in dict) || dict[bidderAddress].amount.lt(amount)) {
-        dict[bidderAddress] = { bidderID, amount }
-      }
+      dict[bidderAddress] = { bidderID, amount }
       return dict
     }, {})
 
