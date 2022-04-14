@@ -4,7 +4,6 @@ import { useSearchBid } from 'src/components/AllBids/useSearchBid'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useBids } from 'src/hooks/useBids'
-import { Bid } from 'src/models/Bid'
 
 interface AllBidsListProps {
   search: string
