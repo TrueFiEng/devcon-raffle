@@ -1,4 +1,4 @@
-import { Arbitrum, ArbitrumRinkeby, Hardhat } from '@usedapp/core'
+import { Hardhat } from '@usedapp/core'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
@@ -8,7 +8,7 @@ export function getLocalConfig() {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: Hardhat.chainId,
-      networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
+      networks: [Hardhat],
     },
     addresses: ADDRESSES,
   }
