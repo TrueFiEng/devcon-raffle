@@ -21,6 +21,10 @@ jest.mock('src/constants/auctionParticipantsCount', () => ({
   AUCTION_PARTICIPANTS_COUNT: 10,
 }))
 
+jest.mock('src/hooks/useContractBids', () => ({
+  useContractBids: () => [],
+}))
+
 describe('UI: BidsListSection', () => {
   it('With less than four bids', () => {
     const bids = generateMockBids(3)

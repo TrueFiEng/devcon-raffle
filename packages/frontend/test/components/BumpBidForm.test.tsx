@@ -13,6 +13,10 @@ jest.mock('@usedapp/core', () => ({
   useEtherBalance: () => mockBalance,
 }))
 
+jest.mock('src/hooks/useContractBids', () => ({
+  useContractBids: () => [],
+}))
+
 describe('UI: BumpBidForm', () => {
   const mockBids = generateMockBids(5)
 
