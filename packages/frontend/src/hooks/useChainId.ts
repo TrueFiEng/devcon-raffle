@@ -1,7 +1,8 @@
-import { ChainId, useEthers } from '@usedapp/core'
+import { useConfig, useEthers } from '@usedapp/core'
 
 export function useChainId() {
-  const { chainId = ChainId.Arbitrum } = useEthers()
+  const { readOnlyChainId } = useConfig()
+  const { chainId = readOnlyChainId } = useEthers()
 
   return chainId
 }
