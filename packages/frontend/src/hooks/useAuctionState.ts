@@ -15,7 +15,7 @@ export function useAuctionState(): AuctionState {
   const { state } = useContractState()
 
   if (state === ContractState.AWAITING_BIDDING) {
-    return getStateUsingWallet(account, chainId, networks, 'AwaitingBidding')
+    return 'AwaitingBidding'
   }
 
   if (state === ContractState.BIDDING_OPEN) {
@@ -23,7 +23,7 @@ export function useAuctionState(): AuctionState {
   }
 
   if (state === ContractState.BIDDING_CLOSED || state === ContractState.AUCTION_SETTLED) {
-    return getStateUsingWallet(account, chainId, networks, 'AwaitingResults')
+    return 'AwaitingResults'
   }
 
   if (state === ContractState.RAFFLE_SETTLED) {
