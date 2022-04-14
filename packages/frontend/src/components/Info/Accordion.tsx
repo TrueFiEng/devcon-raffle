@@ -70,8 +70,8 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Okay, I got a ticket. What now?" />
           </StyledHeader>
           <StyledContent>
-            You will be asked to sign a message with you wallet at the Devcon 6 event. Be sure to bring a device with the
-            same wallet that holds the ticket token!
+            You will be asked to sign a message with you wallet at the Devcon 6 event. Be sure to bring a device with
+            the same wallet that holds the ticket token!
           </StyledContent>
         </Accordion.Item>
       </Accordion.Root>
