@@ -61,7 +61,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
         </WinOption>
       )}
 
-      {!isWinningBid && !userBid.claimed && (
+      {isWinningBid && !userBid.claimed && (
         <WinOption>
           <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>
