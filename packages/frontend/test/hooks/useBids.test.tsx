@@ -19,7 +19,7 @@ describe('useBids', () => {
     })
   }
 
-  it('Translates logs to Bids', () => {
+  it('Sets correct place', () => {
     mockBids = [createBid(1, '1.5')]
     const { result } = render()
     expect(result.current).toEqual({
@@ -28,21 +28,6 @@ describe('useBids', () => {
           bidderID: BigNumber.from(1),
           bidderAddress: mockBidsAddresses[0],
           amount: parseEther('1.5'),
-          place: 1,
-        },
-      ],
-    })
-  })
-
-  it('Picks the bumped bid', () => {
-    mockBids = [createBid(2, '1.5'), createBid(2, '2.4')]
-    const { result } = render()
-    expect(result.current).toEqual({
-      bids: [
-        {
-          bidderID: BigNumber.from(2),
-          bidderAddress: mockBidsAddresses[1],
-          amount: parseEther('2.4'),
           place: 1,
         },
       ],
@@ -141,6 +126,7 @@ describe('useBids', () => {
       bidderID: BigNumber.from(bidderID),
       amount: parseEther(amount),
       bidderAddress: mockBidsAddresses[bidderID - 1],
+      place: -1,
     }
   }
 })
