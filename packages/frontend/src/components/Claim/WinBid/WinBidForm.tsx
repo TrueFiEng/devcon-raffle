@@ -3,6 +3,7 @@ import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
+import { useNonce } from 'src/hooks/backend/useNonce'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -33,6 +34,7 @@ interface WinBidFormProps {
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
   const isWinningBid = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
+  const { nonce, getNonce } = useNonce()
 
   return (
     <Form>
@@ -55,7 +57,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       {!voucher && isWinningBid && (
         <WinOption>
           <span>Claim your voucher code now!</span>
-          <Button view="primary" onClick={() => setVoucher(true)}>
+          <Button view="primary" onClick={() => getNonce()}>
             Get voucher code
           </Button>
         </WinOption>

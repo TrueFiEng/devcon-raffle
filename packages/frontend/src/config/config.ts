@@ -11,6 +11,7 @@ import { getStringEnv } from './getEnv'
 export interface Config {
   useDAppConfig: UseDAppConfig
   addresses: Record<string, Record<SupportedChainId, string>>
+  backendUrl: string
 }
 
 function getConfig(mode: string): Config {
@@ -24,12 +25,13 @@ function getConfig(mode: string): Config {
 
 function getDevConfig(): Config {
   const network = getStringEnv('VITE_NETWORK')
+  const backendUrl = 'http://localhost:3001'
 
   switch (network) {
     case 'ArbitrumRinkeby':
-      return getTestnetConfig()
+      return { ...getTestnetConfig(), backendUrl }
     default:
-      return getLocalConfig()
+      return { ...getLocalConfig(), backendUrl }
   }
 }
 
