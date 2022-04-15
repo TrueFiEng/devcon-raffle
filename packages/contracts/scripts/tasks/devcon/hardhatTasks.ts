@@ -26,7 +26,7 @@ task('bid', 'Places bid for given account with provided amount')
     logBid(account, ethAmount)
   })
 
-task('bid-with-random-accounts', 'Bids X times using randomly generated accounts')
+task('bid-random', 'Bids X times using randomly generated accounts')
   .addParam('amount', 'Amount of bids', undefined, types.int, false)
   .addParam('account', 'Index of hardhat account to take funds from', 0, types.int)
   .setAction(async (
