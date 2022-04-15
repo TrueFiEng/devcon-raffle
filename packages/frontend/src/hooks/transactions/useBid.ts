@@ -4,16 +4,16 @@ import { useEthers, useSendTransaction } from '@usedapp/core'
 import { useDevconContract } from '../contract'
 
 export function useBid() {
-  const devconContract = useDevconContract()
+  const { devcon } = useDevconContract()
   const { account, chainId } = useEthers()
   const { sendTransaction, state, resetState } = useSendTransaction({ transactionName: 'Bid' })
 
   async function placeBid(bidAmount: BigNumber) {
-    if (!devconContract || !account || !chainId) {
+    if (!account || !chainId) {
       return
     }
 
-    const tx = await devconContract.populateTransaction.bid({ value: bidAmount })
+    const tx = await devcon.populateTransaction.bid({ value: bidAmount })
     await sendTransaction(tx)
   }
 

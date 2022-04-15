@@ -4,7 +4,7 @@ import { Button } from 'src/components/Buttons/Button'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
-import { SettledBid } from 'src/models/Bid'
+import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
@@ -23,7 +23,7 @@ const withdrawText = {
 }
 
 interface WinBidFormProps {
-  userBid: SettledBid
+  userBid: UserBid
   withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
   voucher: boolean

@@ -1,4 +1,4 @@
-import { Arbitrum, ArbitrumRinkeby, ChainId, Hardhat } from '@usedapp/core'
+import { ArbitrumRinkeby, ChainId } from '@usedapp/core'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
@@ -9,7 +9,7 @@ export function getTestnetConfig() {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: ArbitrumRinkeby.chainId,
-      networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
+      networks: [ArbitrumRinkeby],
     },
     addresses: getAddresses(),
   }

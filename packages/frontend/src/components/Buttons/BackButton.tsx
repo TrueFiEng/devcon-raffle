@@ -8,9 +8,10 @@ interface BackButtonProps {
   view?: number
   setView?: (view: number) => void
   url?: string
+  resetState?: () => void
 }
 
-export function BackButton({ view, setView, url }: BackButtonProps) {
+export function BackButton({ view, setView, url, resetState }: BackButtonProps) {
   const navigate = useNavigate()
 
   const goBack = useCallback(() => {
@@ -20,7 +21,10 @@ export function BackButton({ view, setView, url }: BackButtonProps) {
     if (url) {
       navigate(`${url}`)
     }
-  }, [setView, view, navigate, url])
+    if (resetState) {
+      resetState()
+    }
+  }, [setView, view, navigate, url, resetState])
 
   return (
     <BackBtn onClick={goBack}>

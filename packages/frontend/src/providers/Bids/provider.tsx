@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { ReactNode, useMemo } from 'react'
 import { useContractBids } from 'src/hooks/useContractBids'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 
 import { BidsContext } from './context'
 
@@ -17,7 +17,7 @@ interface BidDetails {
 export const BidsProvider = ({ children }: Props) => {
   const contractBids = useContractBids()
 
-  const bids: BidWithPlace[] = useMemo(() => {
+  const bids: Bid[] = useMemo(() => {
     const addressToBidMap = contractBids.reduce<Record<string, BidDetails>>((dict, bid) => {
       const { bidderID, bidderAddress, amount } = bid
       dict[bidderAddress] = { bidderID, amount }

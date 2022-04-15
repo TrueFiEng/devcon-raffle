@@ -1,8 +1,9 @@
 import { ChainId } from '@usedapp/core'
 
-export type SupportedChainId = ChainId.Arbitrum | ChainId.ArbitrumRinkeby | ChainId.Hardhat
-const supportedChains = [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Hardhat]
+const supportedChainIds = [ChainId.Arbitrum, ChainId.ArbitrumRinkeby, ChainId.Hardhat] as const
 
-export function isSupportedChain(chainId: ChainId): chainId is SupportedChainId {
-  return supportedChains.includes(chainId)
+export type SupportedChainId = typeof supportedChainIds[number]
+
+export function isSupportedChainId(chainId: number): chainId is SupportedChainId {
+  return supportedChainIds.includes(chainId)
 }

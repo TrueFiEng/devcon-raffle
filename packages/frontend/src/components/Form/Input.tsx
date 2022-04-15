@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { BidWithPlace } from 'src/models/Bid'
+import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
@@ -87,7 +87,7 @@ const ErrorMessage = ({ message }: { message: string }) => {
   )
 }
 
-const InputWrapper = styled.div<{ userBid: BidWithPlace | undefined }>`
+const InputWrapper = styled.div<{ userBid: UserBid | undefined }>`
   display: flex;
   position: relative;
   flex-direction: column;

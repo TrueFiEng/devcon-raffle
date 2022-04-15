@@ -13,6 +13,10 @@ jest.mock('@usedapp/core', () => ({
   useEtherBalance: () => mockBalance,
 }))
 
+jest.mock('src/hooks/useUserBid', () => ({
+  useUserBid: () => undefined,
+}))
+
 jest.mock('src/hooks/useContractBids', () => ({
   useContractBids: () => [],
 }))
