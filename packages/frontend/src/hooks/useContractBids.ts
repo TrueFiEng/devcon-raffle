@@ -1,42 +1,42 @@
-import { useCall } from '@usedapp/core'
+import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
-import { ZERO } from 'src/constants/bigNumber'
 import { Bid } from 'src/models/Bid'
 
 import { useDevconContract } from './contract'
+import { useCachedCall } from './useCachedCall'
 
-export function useContractBids() {
-  const fetchedBids = useBidsWithAddresses()
-  const totalAmountAsString = fetchedBids.reduce((totalAmount, bid) => totalAmount.add(bid.amount), ZERO).toString()
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => fetchedBids, [totalAmountAsString])
+interface BidWithAddress {
+  bidder: string;
+  bid: {
+    bidderID: BigNumber;
+    amount: BigNumber;
+    winType: number;
+    claimed: boolean;
+  };
 }
 
-function useBidsWithAddresses(): Bid[] {
-  const { devcon } = useDevconContract()
+export function useContractBids(): Bid[] {
+  const { devcon, chainId } = useDevconContract()
 
   const { value } =
-    useCall(
+    useCachedCall(
       devcon && {
         contract: devcon,
         method: 'getBidsWithAddresses',
         args: [],
-      }
+      },
+      chainId
     ) ?? {}
 
-  const bids: Bid[] = []
+  const bids = value && value[0] as BidWithAddress[]
 
-  if (value && value?.[0]?.length > 0) {
-    value[0].forEach((fetchedBid) => {
-      bids.push({
+
+  return useMemo(() => {
+      return bids?.map((fetchedBid: any) => ({
         bidderID: fetchedBid.bid.bidderID,
         bidderAddress: fetchedBid.bidder,
         amount: fetchedBid.bid.amount,
         place: -1,
-      })
-    })
-  }
-
-  return bids
+      })) ?? []
+  }, [bids])
 }
