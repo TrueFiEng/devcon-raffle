@@ -18,20 +18,9 @@ export const BidsProvider = ({ children }: Props) => {
   const contractBids = useContractBids()
 
   const bids: Bid[] = useMemo(() => {
-    const addressToBidMap = contractBids.reduce<Record<string, BidDetails>>((dict, bid) => {
-      const { bidderID, bidderAddress, amount } = bid
-      dict[bidderAddress] = { bidderID, amount }
-      return dict
-    }, {})
-
-    return Object.entries(addressToBidMap)
-      .sort(([, a], [, b]) => compareBidDetails(a, b))
-      .map(([bidderAddress, { bidderID, amount }], index) => ({
-        bidderAddress,
-        bidderID,
-        amount,
-        place: index + 1,
-      }))
+    return contractBids
+      .sort((a, b) => compareBidDetails(a, b))
+      .map((bid, index) => ({ ...bid, place: index + 1 }))
   }, [contractBids])
 
   return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
