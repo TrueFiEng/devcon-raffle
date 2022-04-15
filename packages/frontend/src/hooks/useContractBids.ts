@@ -9,16 +9,17 @@ export function useContractBids() {
   const fetchedBids = useBidsWithAddresses()
   const totalAmountAsString = fetchedBids.reduce((totalAmount, bid) => totalAmount.add(bid.amount), ZERO).toString()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => fetchedBids, [totalAmountAsString])
 }
 
 function useBidsWithAddresses(): Bid[] {
-  const devconContract = useDevconContract()
+  const { devcon } = useDevconContract()
 
   const { value } =
     useCall(
-      devconContract && {
-        contract: devconContract,
+      devcon && {
+        contract: devcon,
         method: 'getBidsWithAddresses',
         args: [],
       }
@@ -32,6 +33,7 @@ function useBidsWithAddresses(): Bid[] {
         bidderID: fetchedBid.bid.bidderID,
         bidderAddress: fetchedBid.bidder,
         amount: fetchedBid.bid.amount,
+        place: -1,
       })
     })
   }
