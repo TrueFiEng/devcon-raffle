@@ -1,5 +1,6 @@
 import { addressEqual, useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 
 import { useDevconContract } from './contract'
 import { useBids } from './useBids'
@@ -26,14 +27,14 @@ export function useUserBid() {
     [account, bids]
   )
 
-  return bid && bidWithPlace && account
+  return bidWithPlace && account
     ? {
-        bidderID: bid.bidderID,
+        bidderID: bidWithPlace.bidderID,
         bidderAddress: account,
-        amount: bid.amount,
+        amount: bid?.amount || bidWithPlace.amount,
         place: bidWithPlace.place,
-        winType: bid.winType,
-        claimed: bid.claimed,
+        winType: bid?.winType || WinType.Loss,
+        claimed: bid?.claimed || false,
       }
     : undefined
 }
