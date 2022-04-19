@@ -9,6 +9,8 @@ import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
 
+type WithdrawType = Exclude<WinType, WinType.Auction>
+
 const winText = {
   [WinType.Loss]: 'We are sorry, but you did not win in auction or raffle.',
   [WinType.GoldenTicket]: 'You won the Golden Ticket!',
@@ -40,9 +42,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       <FormText>{winText[userBid.winType]}</FormText>
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
-          <span>
-            {withdrawText[userBid.winType]} {claimingEndTime}.
-          </span>
+          <span>{getWithdrawText(userBid.winType, claimingEndTime)}</span>
           <Button
             view="primary"
             onClick={() => {
@@ -64,6 +64,10 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       )}
     </Form>
   )
+}
+
+function getWithdrawText(winType: WithdrawType, deadline: string) {
+  return `${withdrawText[winType]} ${deadline}.`
 }
 
 const WinOption = styled.div`
