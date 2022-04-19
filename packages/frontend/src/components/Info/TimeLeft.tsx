@@ -14,7 +14,7 @@ export const TimeLeft = () => {
 
   useEffect(() => {
     const interval = setTimeoutImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
-    return () => clearTimeout(interval)
+    return () => clearInterval(interval)
   }, [timestamp, timeLeft])
 
   return (
