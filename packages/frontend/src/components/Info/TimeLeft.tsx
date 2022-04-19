@@ -3,7 +3,7 @@ import { useAuctionState } from 'src/hooks/useAuctionState'
 import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
-import { setTimeoutImmediately } from 'src/utils/setTimeoutImmediately'
+import { setIntervalImmediately } from 'src/utils/setIntervalImmediately'
 import styled from 'styled-components'
 
 export const TimeLeft = () => {
@@ -13,7 +13,7 @@ export const TimeLeft = () => {
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))
 
   useEffect(() => {
-    const interval = setTimeoutImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
+    const interval = setIntervalImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
     return () => clearInterval(interval)
   }, [timestamp, timeLeft])
 
