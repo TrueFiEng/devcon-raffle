@@ -15,7 +15,7 @@ export const TimeLeft = () => {
   useEffect(() => {
     const interval = setIntervalImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
     return () => clearInterval(interval)
-  }, [timestamp, timeLeft])
+  }, [timestamp])
 
   return (
     <TimeBox>
