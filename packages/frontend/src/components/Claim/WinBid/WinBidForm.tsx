@@ -34,11 +34,11 @@ interface WinBidFormProps {
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
+  const [error, setError] = useState<string>()
   const isWinningBid = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
-  const { nonce, getNonce } = useNonce()
+  const { nonce, getNonce } = useNonce(setError)
   const claimVoucherCode = useClaimVoucher()
-  const [error, setError] = useState<string>()
   useEffect(() => {
     if (nonce) {
       claimVoucherCode(nonce).then((voucherResponse) => {
