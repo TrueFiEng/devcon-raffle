@@ -7,7 +7,6 @@ export const Form = styled.div`
   row-gap: 16px;
   width: 100%;
   max-width: 460px;
-  overflow: hidden;
 `
 
 export const FormNarrow = styled(Form)`
