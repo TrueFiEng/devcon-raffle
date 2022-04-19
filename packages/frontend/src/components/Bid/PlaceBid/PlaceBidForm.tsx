@@ -1,13 +1,13 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther, parseEther } from "@ethersproject/units";
+import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
+import { useMemo } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { Bid } from 'src/models/Bid'
 import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
-import { useMemo } from "react";
 
 interface PlaceBidFormProps {
   bid: string
@@ -32,12 +32,7 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
-        <Input
-          initialAmount={bid}
-          setAmount={setBid}
-          notEnoughBalance={notEnoughBalance}
-          bidTooLow={bidTooLow}
-        />
+        <Input initialAmount={bid} setAmount={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
           <span>No. {getPositionAfterBid(parsedBid, bids)}</span>

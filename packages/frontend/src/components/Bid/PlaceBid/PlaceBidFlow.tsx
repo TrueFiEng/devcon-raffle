@@ -1,5 +1,5 @@
-import { formatEther, parseEther } from "@ethersproject/units";
-import { useEffect, useMemo, useState } from "react";
+import { formatEther, parseEther } from '@ethersproject/units'
+import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
