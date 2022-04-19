@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -39,20 +39,24 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   const { claimingEndTime } = useClaimingEndTime()
   const { nonce, getNonce } = useNonce(setError)
   const claimVoucherCode = useClaimVoucher()
-  useEffect(() => {
+
+  const handleVoucher = useCallback(async () => {
     if (nonce) {
-      claimVoucherCode(nonce).then((voucherResponse) => {
-        if (voucherResponse) {
-          if ('error' in voucherResponse) {
-            setError(voucherResponse.error)
-          } else {
-            setError(undefined)
-            setVoucher(voucherResponse.voucherCode)
-          }
+      const voucherResponse = await claimVoucherCode(nonce)
+      if (voucherResponse) {
+        if ('error' in voucherResponse) {
+          setError(voucherResponse.error)
+        } else {
+          setError(undefined)
+          setVoucher(voucherResponse.voucherCode)
         }
-      })
+      }
     }
   }, [nonce, claimVoucherCode, setVoucher])
+
+  useEffect(() => {
+    handleVoucher()
+  }, [handleVoucher])
 
   return (
     <Form>

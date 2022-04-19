@@ -1,18 +1,19 @@
 import { useCallback, useState } from 'react'
 import { CONFIG } from 'src/config/config'
 
-export function useNonce(setError: (e: string) => void) {
+export function useNonce(setError?: (e: string) => void) {
   const [nonce, setNonce] = useState<string | undefined>()
   const getNonce = useCallback(async () => {
     setNonce(undefined)
-    const response = await fetch(CONFIG.backendUrl + '/nonces', {
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .catch(() => {
-        setError('Could not retrieve message nonce.')
+    try {
+      const rawResponse = await fetch(CONFIG.backendUrl + '/nonces', {
+        method: 'GET',
       })
-    setNonce(response.nonce)
-  }, [setNonce])
+      const response = await rawResponse.json()
+      setNonce(response.nonce)
+    } catch {
+      setError?.('Could not retrieve message nonce.')
+    }
+  }, [setNonce, setError])
   return { nonce, getNonce }
 }
