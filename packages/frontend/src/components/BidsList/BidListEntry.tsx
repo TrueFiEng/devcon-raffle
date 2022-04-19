@@ -22,7 +22,11 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
       <PlaceColumn>{bid.place}.</PlaceColumn>
       <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
-        <AddressLink href={getExplorerAddressLink(chainId, bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+        <AddressLink
+          href={getExplorerAddressLink(chainId, bid.bidderAddress)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
         </AddressLink>
       </AddressColumn>
