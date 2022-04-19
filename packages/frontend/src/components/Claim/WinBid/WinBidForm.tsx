@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -29,8 +29,8 @@ interface WinBidFormProps {
   userBid: UserBid
   withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
-  voucher: boolean
-  setVoucher: (val: boolean) => void
+  voucher: string | undefined
+  setVoucher: (val: string) => void
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
@@ -38,11 +38,21 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   const { claimingEndTime } = useClaimingEndTime()
   const { nonce, getNonce } = useNonce()
   const claimVoucherCode = useClaimVoucher()
+  const [error, setError] = useState<string>()
   useEffect(() => {
     if (nonce) {
-      claimVoucherCode(nonce).then(console.log)
+      claimVoucherCode(nonce).then((voucherResponse) => {
+        if (voucherResponse) {
+          if ('error' in voucherResponse) {
+            setError(voucherResponse.error)
+          } else {
+            setError(undefined)
+            setVoucher(voucherResponse.voucherCode)
+          }
+        }
+      })
     }
-  }, [nonce, claimVoucherCode])
+  }, [nonce, claimVoucherCode, setVoucher])
 
   return (
     <Form>
@@ -64,7 +74,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
 
       {!voucher && isWinningBid && (
         <WinOption>
-          <span>Claim your voucher code now!</span>
+          {!error ? <span>Claim your voucher code now!</span> : <ErrorText>{error}</ErrorText>}
           <Button view="primary" onClick={() => getNonce()}>
             Get voucher code
           </Button>
@@ -87,6 +97,10 @@ const WinOption = styled.div`
   width: 100%;
   color: ${Colors.White};
 `
-const WinFormHeading = styled(FormHeading)<{ voucher: boolean }>`
+const WinFormHeading = styled(FormHeading)<{ voucher?: string }>`
   font-size: ${({ voucher }) => (voucher ? '24px' : '40px')};
+`
+
+const ErrorText = styled.span`
+  color: ${Colors.Red};
 `

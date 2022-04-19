@@ -18,7 +18,6 @@ interface WinBidFlowProps {
 export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   const minimumBid = useMinimumBid()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
-  const [voucher, setVoucher] = useState(false)
   const { claimFunds, state, resetState } = useClaimFunds()
 
   const withdrawalAmount = useMemo(() => calculateWithdrawalAmount(userBid, minimumBid), [userBid, minimumBid])
@@ -35,13 +34,7 @@ export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
   return (
     <>
       {view === TxFlowSteps.Placing ? (
-        <WinForm
-          userBid={userBid}
-          withdrawalAmount={withdrawalAmount}
-          setView={setView}
-          voucher={voucher}
-          setVoucher={setVoucher}
-        />
+        <WinForm userBid={userBid} withdrawalAmount={withdrawalAmount} setView={setView} />
       ) : (
         <AuctionTransaction action={claimAction} amount={withdrawalAmount} view={view} setView={setView} />
       )}

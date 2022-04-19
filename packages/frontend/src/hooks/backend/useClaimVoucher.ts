@@ -14,6 +14,9 @@ export function useClaimVoucher() {
     async (nonce: string) => {
       if (library && account) {
         const signature = await signClaimVoucher(library, account, chainId, nonce)
+        if (!signature) {
+          return { error: 'Could not sign message.' }
+        }
         return await fetchVoucherCode(account, nonce, signature)
       }
     },
@@ -22,7 +25,12 @@ export function useClaimVoucher() {
   return claimVoucher
 }
 
-async function signClaimVoucher(library: JsonRpcProvider, account: string, chainId: SupportedChainId, nonce: string) {
+async function signClaimVoucher(
+  library: JsonRpcProvider,
+  account: string,
+  chainId: SupportedChainId,
+  nonce: string
+): Promise<string | undefined> {
   const data = getMessage(account, nonce, ADDRESSES['devcon'][chainId], chainId)
   try {
     return await library.send('eth_signTypedData', [data, account])
@@ -63,7 +71,7 @@ const getMessage = (signer: string, nonce: string, devcon6Address: string, chain
   {
     name: 'Chain ID',
     type: 'uint256',
-    value: chainId.toString(),
+    value: chainId,
   },
   {
     name: 'Signature nonce',
