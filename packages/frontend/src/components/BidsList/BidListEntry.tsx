@@ -1,8 +1,9 @@
+import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
-import { getArbiscanAddressLink } from 'src/utils/getArbiscanLink'
+import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
 import styled, { css } from 'styled-components'
 
 import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
@@ -14,12 +15,14 @@ interface Props {
 }
 
 export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
+  const chainId = useChainId()
+
   return (
     <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
       <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
       <AddressColumn>
-        <AddressLink href={getArbiscanAddressLink(bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
+        <AddressLink href={getExplorerAddressLink(chainId, bid.bidderAddress)} target="_blank" rel="noopener noreferrer">
           {view === 'short' ? shortenEthAddress(bid.bidderAddress) : bid.bidderAddress}
         </AddressLink>
       </AddressColumn>
