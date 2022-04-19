@@ -1,3 +1,4 @@
+import { formatEther, parseEther } from '@ethersproject/units'
 import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -15,17 +16,18 @@ export const BumpBidFlow = () => {
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
-  const [bumpAmount, setBumpAmount] = useState(minimumIncrement)
+  const [bumpAmount, setBumpAmount] = useState(formatEther(minimumIncrement))
+  const parsedBumpAmount = useMemo(() => parseEther(bumpAmount == '' ? '0' : bumpAmount), [bumpAmount])
   const newBidAmount = useMemo(() => {
-    return userBid && userBid.amount.add(bumpAmount)
-  }, [bumpAmount, userBid])
+    return userBid && userBid.amount.add(parsedBumpAmount)
+  }, [parsedBumpAmount, userBid])
 
-  useEffect(() => setBumpAmount(minimumIncrement), [minimumIncrement, setBumpAmount])
+  useEffect(() => setBumpAmount(formatEther(minimumIncrement)), [minimumIncrement])
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
     send: async () => {
-      await placeBid(bumpAmount)
+      await placeBid(parsedBumpAmount)
     },
     state: state,
     resetState: resetState,
@@ -46,7 +48,7 @@ export const BumpBidFlow = () => {
       ) : (
         <AuctionTransaction
           action={bumpAction}
-          amount={bumpAmount}
+          amount={parsedBumpAmount}
           impact={newBidAmount}
           view={view}
           setView={setView}
