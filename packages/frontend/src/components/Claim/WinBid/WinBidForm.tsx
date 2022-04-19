@@ -41,6 +41,11 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
           <span>{withdrawText[userBid.winType]}</span>
+          {isWinningBid && !userBid.claimed && (
+            <WinOption>
+              <span>You have time until {claimingEndTime} to withdraw your funds.</span>
+            </WinOption>
+          )}
           <Button
             view="primary"
             onClick={() => {
@@ -58,12 +63,6 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
           <Button view="primary" onClick={() => setVoucher(true)}>
             Get voucher code
           </Button>
-        </WinOption>
-      )}
-
-      {isWinningBid && !userBid.claimed && (
-        <WinOption>
-          <span>You have time until {claimingEndTime} to withdraw your funds.</span>
         </WinOption>
       )}
     </Form>
