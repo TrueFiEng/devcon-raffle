@@ -1,22 +1,27 @@
+import { Button } from 'src/components/Buttons'
+import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
+import { useContractState } from 'src/hooks/useContractState'
 import { useSwitchChain } from 'src/hooks/useSwitchChain'
 import { Colors } from 'src/styles/colors'
 import { detectMetaMask } from 'src/utils/detectMetamask'
 import styled from 'styled-components'
 
-import { Button } from '../Buttons'
-import { FormHeading, FormRow, FormWrapper } from '../Form/Form'
+import { getWarningText } from './getWarningText'
 
 export const ChainIdWarning = () => {
   const switchChain = useSwitchChain()
   const isProviderMetamask = detectMetaMask()
+  const { state } = useContractState()
+  const text = getWarningText(state)
+
   return (
     <FormWrapper>
-      <FormHeading>Place bid</FormHeading>
+      <FormHeading>{text.heading}</FormHeading>
       <FormRow>
         <span>You are connected to the wrong network.</span>
       </FormRow>
       <FormRow>
-        <span>To place a bid connect your wallet to the Arbitrum network.</span>
+        <span>To {text.action} connect your wallet to the Arbitrum network.</span>
       </FormRow>
       <FormRow>
         <span>
