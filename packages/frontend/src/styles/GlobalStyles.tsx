@@ -93,10 +93,10 @@ export const GlobalStyles = createGlobalStyle`
 
   body::-webkit-scrollbar {
     width: 6px;
+    height: 6px; 
   }
 
   body::-webkit-scrollbar-thumb {
-    width: 6px;
     border-radius: 0;
     background-color: ${Colors.GreenDark};
   }
