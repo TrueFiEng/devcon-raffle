@@ -11,5 +11,6 @@ export function getLocalConfig() {
       networks: [Hardhat],
     },
     addresses: ADDRESSES,
+    backendUrl: 'http://localhost:3001',
   }
 }

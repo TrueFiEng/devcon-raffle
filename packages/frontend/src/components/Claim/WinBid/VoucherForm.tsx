@@ -1,4 +1,3 @@
-import { shortenTransactionHash } from '@usedapp/core'
 import { Button, CopyButton } from 'src/components/Buttons'
 import { Form, FormHeading } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
@@ -17,7 +16,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
         Here is your voucher code
       </VoucherFormHeading>
       <VoucherIdBox>
-        <VoucherIdText>{shortenTransactionHash(voucher)}</VoucherIdText>
+        <VoucherIdText>{voucher}</VoucherIdText>
         <CopyButton value={voucher} side="top" text="Copy voucher code" />
       </VoucherIdBox>
 

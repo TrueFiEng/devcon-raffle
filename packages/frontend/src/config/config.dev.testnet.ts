@@ -12,6 +12,7 @@ export function getTestnetConfig() {
       networks: [ArbitrumRinkeby],
     },
     addresses: getAddresses(),
+    backendUrl: 'http://localhost:3001',
   }
 }
 
