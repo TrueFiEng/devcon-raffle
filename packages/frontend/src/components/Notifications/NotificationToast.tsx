@@ -42,7 +42,7 @@ export const NotificationToast = ({ notification }: Props) => {
         <NotificationIcon notification={notification} />
       </NotificationIconWrapper>
       <ToastContent>
-        <NotificationTitle>{printNotificationTitle(notification)}</NotificationTitle>
+        <NotificationTitle notification={notification}>{printNotificationTitle(notification)}</NotificationTitle>
         <NotificationDescription>{printNotificationDescription(notification)}</NotificationDescription>
         {notification.type === 'transactionSignError' ||
           (notification.type === 'transactionFailed' && <NotificationActionText>Try Again</NotificationActionText>)}
@@ -120,10 +120,21 @@ const ToastContent = styled.div`
   overflow: hidden;
 `
 
-const NotificationTitle = styled(ToastPrimitive.Title)`
+const NotificationTitle = styled(ToastPrimitive.Title)<Props>`
   margin: 0;
   font-size: 14px;
   line-height: 20px;
+  color: ${({ notification }) => {
+    switch (notification.type) {
+      case 'transactionStarted':
+        return Colors.Blue
+      case 'transactionSucceed':
+        return Colors.GreenDark
+      case 'transactionFailed':
+      case 'transactionSignError':
+        return Colors.Red
+    }
+  }};
 `
 
 const NotificationDescription = styled(ToastPrimitive.Description)`
