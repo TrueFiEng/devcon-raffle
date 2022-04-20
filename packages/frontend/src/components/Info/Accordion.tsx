@@ -10,7 +10,7 @@ export const InfoAccordion = () => {
       <Accordion.Root type="single" defaultValue="item-1" collapsible>
         <Accordion.Item value="item-1">
           <StyledHeader>
-            <AccordionStyledTrigger heading="How to buy a ticket for Devon 6?" />
+            <AccordionStyledTrigger heading="How to buy a ticket for Devcon 6?" />
           </StyledHeader>
           <StyledContent>
             Join the ruffle by submitting your bid. Bid high, to win an action or take your chance in a raffle pool. The
@@ -44,7 +44,7 @@ export const InfoAccordion = () => {
             />
             <Rule
               heading="Golden Ticket: 1"
-              rule="One lucky bidder from raffle pool will get the ticket for Devon 6 totally for free! All funds of the
+              rule="One lucky bidder from raffle pool will get the ticket for Devcon 6 totally for free! All funds of the
               Golden Ticket winner will be claimable after the sale is over."
             />
             <Rule
@@ -61,7 +61,7 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             The ticket is an NFT token held in your wallet. A unique token will be minted in the same moment you make a
-            bid. If your bid will win the auction or the raffle – it becomes a valid Devon 6 ticket.
+            bid. If your bid will win the auction or the raffle – it becomes a valid Devcon 6 ticket.
           </StyledContent>
         </Accordion.Item>
 
@@ -70,8 +70,8 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Okay, I got a ticket. What now?" />
           </StyledHeader>
           <StyledContent>
-            You will be asked to sign a message with you wallet at the Devon 6 event. Be sure to bring a device with the
-            same wallet that holds the ticket token!
+            You will be asked to sign a message with you wallet at the Devcon 6 event. Be sure to bring a device with
+            the same wallet that holds the ticket token!
           </StyledContent>
         </Accordion.Item>
       </Accordion.Root>
