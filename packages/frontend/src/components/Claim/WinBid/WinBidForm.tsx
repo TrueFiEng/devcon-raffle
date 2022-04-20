@@ -1,11 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useCallback, useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
+import { ClaimVoucherSection } from 'src/components/Claim/WinBid/ClaimVoucherSection'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
-import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
-import { useNonce } from 'src/hooks/backend/useNonce'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -34,30 +32,8 @@ interface WinBidFormProps {
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
-  const [error, setError] = useState<string>()
   const isWinningBid = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
-  const { getNonce } = useNonce(setError)
-  const claimVoucherCode = useClaimVoucher()
-
-  const handleVoucher = useCallback(async () => {
-    const nonce = await getNonce()
-    if (!nonce) {
-      return
-    }
-
-    const voucherResponse = await claimVoucherCode(nonce)
-    if (!voucherResponse) {
-      return
-    }
-
-    if ('error' in voucherResponse) {
-      setError(voucherResponse.error)
-    } else {
-      setError(undefined)
-      setVoucher(voucherResponse.voucherCode)
-    }
-  }, [getNonce, claimVoucherCode, setVoucher])
 
   return (
     <Form>
@@ -77,14 +53,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
         </WinOption>
       )}
 
-      {!voucher && isWinningBid && (
-        <WinOption>
-          {!error ? <span>Claim your voucher code now!</span> : <ErrorText>{error}</ErrorText>}
-          <Button view="primary" onClick={handleVoucher}>
-            Get voucher code
-          </Button>
-        </WinOption>
-      )}
+      {!voucher && isWinningBid && <ClaimVoucherSection setVoucher={setVoucher} />}
 
       {!isWinningBid && !userBid.claimed && (
         <WinOption>
@@ -95,7 +64,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   )
 }
 
-const WinOption = styled.div`
+export const WinOption = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 8px;
@@ -104,8 +73,4 @@ const WinOption = styled.div`
 `
 const WinFormHeading = styled(FormHeading)<{ voucher?: string }>`
   font-size: ${({ voucher }) => (voucher ? '24px' : '40px')};
-`
-
-const ErrorText = styled.span`
-  color: ${Colors.Red};
 `
