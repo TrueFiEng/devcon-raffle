@@ -10,17 +10,19 @@ import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
 
+type WithdrawType = Exclude<WinType, WinType.Auction>
+
 const winText = {
   [WinType.Loss]: 'We are sorry, but you did not win in auction or raffle.',
   [WinType.GoldenTicket]: 'You won the Golden Ticket!',
-  [WinType.Auction]: 'You bid was in the top 20, so you win a ticket to Devcon 6!',
+  [WinType.Auction]: 'Your bid was in the top 20, so you win a ticket to Devcon 6!',
   [WinType.Raffle]: 'You were chosen in the raffle!',
 }
 
 const withdrawText = {
-  [WinType.Loss]: `You can withdraw your bid amount minus 2% fee.`,
-  [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds.',
-  [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price.',
+  [WinType.Loss]: `You can withdraw your bid amount minus 2% fee until`,
+  [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds until',
+  [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price until',
 }
 
 interface WinBidFormProps {
@@ -41,7 +43,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       <FormText>{winText[userBid.winType]}</FormText>
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
-          <span>{withdrawText[userBid.winType]}</span>
+          <span>{getWithdrawText(userBid.winType, claimingEndTime)}</span>
           <Button
             view="primary"
             onClick={() => {
@@ -54,14 +56,12 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       )}
 
       {!voucher && isWinningBid && <ClaimVoucherSection setVoucher={setVoucher} />}
-
-      {!isWinningBid && !userBid.claimed && (
-        <WinOption>
-          <span>You have time until {claimingEndTime} to withdraw your funds.</span>
-        </WinOption>
-      )}
     </Form>
   )
+}
+
+function getWithdrawText(winType: WithdrawType, deadline: string) {
+  return `${withdrawText[winType]} ${deadline}.`
 }
 
 export const WinOption = styled.div`

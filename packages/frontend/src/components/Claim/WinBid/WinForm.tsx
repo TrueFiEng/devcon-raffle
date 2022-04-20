@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { FormWrapper } from 'src/components/Form/Form'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
@@ -17,39 +18,43 @@ interface WinFormProps {
 export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) => {
   const [voucher, setVoucher] = useState<string>()
 
-  if (voucher) {
-    return userBid.claimed ? (
+  if (!voucher) {
+    return (
       <Wrapper>
-        <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
+        <WinBidForm
+          userBid={userBid}
+          withdrawalAmount={withdrawalAmount}
+          setView={setView}
+          voucher={voucher}
+          setVoucher={setVoucher}
+        />
       </Wrapper>
-    ) : (
-      <WrapperRow>
-        <WinFormWrapper>
-          <WinBidForm
-            userBid={userBid}
-            withdrawalAmount={withdrawalAmount}
-            setView={setView}
-            voucher={voucher}
-            setVoucher={setVoucher}
-          />
-        </WinFormWrapper>
-        <VoucherFormWrapper>
-          <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
-        </VoucherFormWrapper>
-      </WrapperRow>
     )
   }
 
   return (
-    <Wrapper>
-      <WinBidForm
-        userBid={userBid}
-        withdrawalAmount={withdrawalAmount}
-        setView={setView}
-        voucher={voucher}
-        setVoucher={setVoucher}
-      />
-    </Wrapper>
+    <>
+      {userBid.claimed || userBid.winType === WinType.Auction ? (
+        <Wrapper>
+          <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
+        </Wrapper>
+      ) : (
+        <WrapperRow>
+          <WinFormWrapper>
+            <WinBidForm
+              userBid={userBid}
+              withdrawalAmount={withdrawalAmount}
+              setView={setView}
+              voucher={voucher}
+              setVoucher={setVoucher}
+            />
+          </WinFormWrapper>
+          <VoucherFormWrapper>
+            <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
+          </VoucherFormWrapper>
+        </WrapperRow>
+      )}
+    </>
   )
 }
 
