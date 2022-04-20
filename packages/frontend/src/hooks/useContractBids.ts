@@ -19,8 +19,7 @@ export function useContractBids(): Bid[] {
   const { devcon, chainId } = useDevconContract()
 
   const { value } =
-    useCachedCall(
-      devcon && {
+    useCachedCall({
         contract: devcon,
         method: 'getBidsWithAddresses',
         args: [],
@@ -30,9 +29,8 @@ export function useContractBids(): Bid[] {
 
   const bids = value && value[0] as BidWithAddress[]
 
-
   return useMemo(() => {
-      return bids?.map((fetchedBid: any) => ({
+      return bids?.map((fetchedBid) => ({
         bidderID: fetchedBid.bid.bidderID,
         bidderAddress: fetchedBid.bidder,
         amount: fetchedBid.bid.amount,
