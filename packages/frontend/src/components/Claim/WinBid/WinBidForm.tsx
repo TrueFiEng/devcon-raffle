@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -37,26 +37,27 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   const [error, setError] = useState<string>()
   const isWinningBid = userBid.winType !== WinType.Loss
   const { claimingEndTime } = useClaimingEndTime()
-  const { nonce, getNonce } = useNonce(setError)
+  const { getNonce } = useNonce(setError)
   const claimVoucherCode = useClaimVoucher()
 
   const handleVoucher = useCallback(async () => {
-    if (nonce) {
-      const voucherResponse = await claimVoucherCode(nonce)
-      if (voucherResponse) {
-        if ('error' in voucherResponse) {
-          setError(voucherResponse.error)
-        } else {
-          setError(undefined)
-          setVoucher(voucherResponse.voucherCode)
-        }
-      }
+    const nonce = await getNonce()
+    if (!nonce) {
+      return
     }
-  }, [nonce, claimVoucherCode, setVoucher])
 
-  useEffect(() => {
-    handleVoucher()
-  }, [handleVoucher])
+    const voucherResponse = await claimVoucherCode(nonce)
+    if (!voucherResponse) {
+      return
+    }
+
+    if ('error' in voucherResponse) {
+      setError(voucherResponse.error)
+    } else {
+      setError(undefined)
+      setVoucher(voucherResponse.voucherCode)
+    }
+  }, [getNonce, claimVoucherCode, setVoucher])
 
   return (
     <Form>
@@ -79,7 +80,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       {!voucher && isWinningBid && (
         <WinOption>
           {!error ? <span>Claim your voucher code now!</span> : <ErrorText>{error}</ErrorText>}
-          <Button view="primary" onClick={() => getNonce()}>
+          <Button view="primary" onClick={handleVoucher}>
             Get voucher code
           </Button>
         </WinOption>

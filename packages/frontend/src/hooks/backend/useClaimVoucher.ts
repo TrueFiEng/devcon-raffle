@@ -10,7 +10,7 @@ import { useChainId } from '../chainId/useChainId'
 export function useClaimVoucher() {
   const { account, library } = useEthers()
   const chainId = useChainId()
-  const claimVoucher = useCallback(
+  return useCallback(
     async (nonce: string) => {
       if (library && account) {
         const signature = await signClaimVoucher(library, account, chainId, nonce)
@@ -22,7 +22,6 @@ export function useClaimVoucher() {
     },
     [library, account, chainId]
   )
-  return claimVoucher
 }
 
 async function signClaimVoucher(
