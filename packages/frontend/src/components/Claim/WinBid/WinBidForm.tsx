@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
+import { ClaimVoucherSection } from 'src/components/Claim/WinBid/ClaimVoucherSection'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
@@ -28,8 +29,8 @@ interface WinBidFormProps {
   userBid: UserBid
   withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
-  voucher: boolean
-  setVoucher: (val: boolean) => void
+  voucher: string | undefined
+  setVoucher: (val: string) => void
 }
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
@@ -54,14 +55,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
         </WinOption>
       )}
 
-      {!voucher && isWinningBid && (
-        <WinOption>
-          <span>Claim your voucher code now!</span>
-          <Button view="primary" onClick={() => setVoucher(true)}>
-            Get voucher code
-          </Button>
-        </WinOption>
-      )}
+      {!voucher && isWinningBid && <ClaimVoucherSection setVoucher={setVoucher} />}
     </Form>
   )
 }
@@ -70,13 +64,13 @@ function getWithdrawText(winType: WithdrawType, deadline: string) {
   return `${withdrawText[winType]} ${deadline}.`
 }
 
-const WinOption = styled.div`
+export const WinOption = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 8px;
   width: 100%;
   color: ${Colors.White};
 `
-const WinFormHeading = styled(FormHeading)<{ voucher: boolean }>`
+const WinFormHeading = styled(FormHeading)<{ voucher?: string }>`
   font-size: ${({ voucher }) => (voucher ? '24px' : '40px')};
 `

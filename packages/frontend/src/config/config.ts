@@ -11,6 +11,7 @@ import { getStringEnv } from './getEnv'
 export interface Config {
   useDAppConfig: UseDAppConfig
   addresses: Record<string, Record<SupportedChainId, string>>
+  backendUrl: string
 }
 
 function getConfig(mode: string): Config {

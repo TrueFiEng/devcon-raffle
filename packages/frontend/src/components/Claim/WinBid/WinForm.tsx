@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
@@ -12,11 +13,11 @@ interface WinFormProps {
   userBid: UserBid
   withdrawalAmount: BigNumber
   setView: (state: TxFlowSteps) => void
-  voucher: boolean
-  setVoucher: (val: boolean) => void
 }
 
-export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinFormProps) => {
+export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) => {
+  const [voucher, setVoucher] = useState<string>()
+
   if (!voucher) {
     return (
       <Wrapper>
@@ -35,7 +36,7 @@ export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVouche
     <>
       {userBid.claimed || userBid.winType === WinType.Auction ? (
         <Wrapper>
-          <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={userBid.claimed} />{' '}
+          <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
         </Wrapper>
       ) : (
         <WrapperRow>
@@ -49,7 +50,7 @@ export const WinForm = ({ userBid, withdrawalAmount, setView, voucher, setVouche
             />
           </WinFormWrapper>
           <VoucherFormWrapper>
-            <VoucherForm voucher="0xD69bcE4E8D0929E16" withdrawnBid={userBid.claimed} />
+            <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
           </VoucherFormWrapper>
         </WrapperRow>
       )}
