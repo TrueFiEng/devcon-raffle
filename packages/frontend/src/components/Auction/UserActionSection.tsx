@@ -7,6 +7,7 @@ import { BidAwaiting } from '../Bid/BidAwaiting'
 import { BidFlow } from '../Bid/BidFlow'
 import { ClaimFlow } from '../Claim/ClaimFlow'
 import { ResultsAwaiting } from '../Claim/ResultsAwaiting'
+import { Notifications } from '../Notifications/Notifications'
 
 import { ChainIdWarning } from './ChainIdWarning'
 import { ConnectWalletWarning } from './ConnectWalletWarning'
@@ -26,6 +27,7 @@ export const UserActionSection = () => {
   const Content = UserActions[state]
   return (
     <Wrapper>
+      <Notifications />
       <Content />
     </Wrapper>
   )
