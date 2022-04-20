@@ -21,7 +21,7 @@ export const Notifications = () => {
   )
 }
 
-const NotificationsList = styled(ToastPrimitive.Viewport)`
+export const NotificationsList = styled(ToastPrimitive.Viewport)`
   display: flex;
   flex-direction: column;
   row-gap: 12px;

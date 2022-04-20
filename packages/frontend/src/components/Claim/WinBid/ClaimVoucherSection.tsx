@@ -1,9 +1,10 @@
+import * as ToastPrimitive from '@radix-ui/react-toast'
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
+import { NotificationsList } from 'src/components/Notifications/Notifications'
+import { NotificationToast } from 'src/components/Notifications/NotificationToast'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
-import { Colors } from 'src/styles/colors'
-import styled from 'styled-components'
 
 import { WinOption } from './WinBidForm'
 
@@ -37,14 +38,23 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
 
   return (
     <WinOption>
-      {!error ? <span>Claim your voucher code now!</span> : <ErrorText>{error}</ErrorText>}
+      {error && (
+        <ToastPrimitive.Provider>
+          <NotificationToast
+            notification={{
+              id: error,
+              type: 'transactionSignError',
+              submittedAt: 1,
+              message: error,
+              transactionName: 'Get voucher code',
+            }}
+          />{' '}
+          <NotificationsList />
+        </ToastPrimitive.Provider>
+      )}
       <Button view="primary" onClick={handleVoucher}>
         Get voucher code
       </Button>
     </WinOption>
   )
 }
-
-const ErrorText = styled.span`
-  color: ${Colors.Red};
-`
