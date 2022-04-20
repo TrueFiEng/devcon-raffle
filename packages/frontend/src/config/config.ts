@@ -25,13 +25,12 @@ function getConfig(mode: string): Config {
 
 function getDevConfig(): Config {
   const network = getStringEnv('VITE_NETWORK')
-  const backendUrl = 'http://localhost:3001'
 
   switch (network) {
     case 'ArbitrumRinkeby':
-      return { ...getTestnetConfig(), backendUrl }
+      return getTestnetConfig()
     default:
-      return { ...getLocalConfig(), backendUrl }
+      return getLocalConfig()
   }
 }
 
