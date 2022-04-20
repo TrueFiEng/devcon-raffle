@@ -1,36 +1,46 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
-import { ADDRESSES } from 'src/config/addresses'
 import { CONFIG } from 'src/config/config'
 import { SupportedChainId } from 'src/constants/chainIDs'
 
 import { useChainId } from '../chainId/useChainId'
+import { useAddresses } from '../useAddresses'
 
 export function useClaimVoucher() {
   const { account, library } = useEthers()
+  const { devcon } = useAddresses('devcon')
   const chainId = useChainId()
   return useCallback(
     async (nonce: string) => {
       if (library && account) {
-        const signature = await signClaimVoucher(library, account, chainId, nonce)
+        const signature = await signClaimVoucher({ library, account, devcon, chainId, nonce })
         if (!signature) {
           return { error: 'Could not sign message.' }
         }
         return await fetchVoucherCode(account, nonce, signature)
       }
     },
-    [library, account, chainId]
+    [library, account, devcon, chainId]
   )
 }
 
-async function signClaimVoucher(
-  library: JsonRpcProvider,
-  account: string,
-  chainId: SupportedChainId,
+interface SignClaimVoucherArgs {
+  library: JsonRpcProvider
+  account: string
+  devcon: string
+  chainId: SupportedChainId
   nonce: string
-): Promise<string | undefined> {
-  const data = getMessage(account, nonce, ADDRESSES['devcon'][chainId], chainId)
+}
+
+async function signClaimVoucher({
+  library,
+  account,
+  devcon,
+  chainId,
+  nonce,
+}: SignClaimVoucherArgs): Promise<string | undefined> {
+  const data = getMessage(account, nonce, devcon, chainId)
   try {
     return await library.send('eth_signTypedData', [data, account])
   } catch {
