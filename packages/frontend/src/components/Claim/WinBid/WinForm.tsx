@@ -17,7 +17,7 @@ interface WinFormProps {
 
 export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) => {
   const [voucher, setVoucher] = useState<string>()
-  const withdrawnBid = userBid.claimed || userBid.winType === WinType.Auction
+  const isBidWithdrawn = userBid.claimed || userBid.winType === WinType.Auction
 
   if (!voucher) {
     return (
@@ -35,9 +35,9 @@ export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) =>
 
   return (
     <>
-      {withdrawnBid ? (
+      {isBidWithdrawn ? (
         <VoucherWrapper>
-          <VoucherForm voucher={voucher} withdrawnBid={withdrawnBid} />
+          <VoucherForm voucher={voucher} withdrawnBid={isBidWithdrawn} />
         </VoucherWrapper>
       ) : (
         <WrapperRow>
