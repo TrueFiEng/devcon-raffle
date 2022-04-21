@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther, parseEther } from '@ethersproject/units'
+import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useMemo } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Separator } from 'src/components/common/Separator'
@@ -16,6 +15,7 @@ interface BumpBidProps {
   userBid: Bid
   newBidAmount: BigNumber
   bumpAmount: string
+  parsedBumpAmount: BigNumber
   minimumIncrement: BigNumber
   setBumpAmount: (val: string) => void
   setView: (state: TxFlowSteps) => void
@@ -26,6 +26,7 @@ export const BumpBidForm = ({
   userBid,
   newBidAmount,
   bumpAmount,
+  parsedBumpAmount,
   minimumIncrement,
   setBumpAmount,
   setView,
@@ -33,7 +34,6 @@ export const BumpBidForm = ({
 }: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const parsedBumpAmount = useMemo(() => parseEther(bumpAmount == '' ? '0' : bumpAmount), [bumpAmount])
   const notEnoughBalance = userBalance !== undefined && parsedBumpAmount.gt(userBalance)
   const bidTooLow = parsedBumpAmount.lt(minimumIncrement)
 

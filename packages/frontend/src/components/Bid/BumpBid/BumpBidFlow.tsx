@@ -17,7 +17,7 @@ export const BumpBidFlow = () => {
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [bumpAmount, setBumpAmount] = useState(formatEther(minimumIncrement))
-  const parsedBumpAmount = useMemo(() => parseEther(bumpAmount == '' ? '0' : bumpAmount), [bumpAmount])
+  const parsedBumpAmount = useMemo(() => parseEther(bumpAmount || '0'), [bumpAmount])
   const newBidAmount = useMemo(() => {
     return userBid && userBid.amount.add(parsedBumpAmount)
   }, [parsedBumpAmount, userBid])
@@ -40,6 +40,7 @@ export const BumpBidFlow = () => {
           userBid={userBid}
           newBidAmount={newBidAmount}
           bumpAmount={bumpAmount}
+          parsedBumpAmount={parsedBumpAmount}
           setBumpAmount={setBumpAmount}
           minimumIncrement={minimumIncrement}
           setView={setView}
