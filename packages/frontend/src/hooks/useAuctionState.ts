@@ -8,6 +8,7 @@ export type AuctionState =
   | 'BiddingFlow'
   | 'AwaitingResults'
   | 'ClaimingFlow'
+  | 'ClaimingClosed'
 
 export function useAuctionState(): AuctionState {
   const { account, chainId } = useEthers()
@@ -28,6 +29,10 @@ export function useAuctionState(): AuctionState {
 
   if (state === ContractState.RAFFLE_SETTLED) {
     return getStateUsingWallet(account, chainId, networks, 'ClaimingFlow')
+  }
+
+  if (state === ContractState.CLAIMING_CLOSED) {
+    return 'ClaimingClosed'
   }
 
   throw new Error('unknown state')
