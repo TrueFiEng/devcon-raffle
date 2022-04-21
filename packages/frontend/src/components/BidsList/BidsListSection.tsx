@@ -38,7 +38,7 @@ export const BidsListSection = () => {
     <BidsListContainer>
       {!isLoadingParams && bids.length === 0 ? (
         <EmptyList>
-          <ColoredText>No bidders. Be the first one!</ColoredText>
+          <ColoredText>No bidders yet. Be the first one!</ColoredText>
         </EmptyList>
       ) : (
         <>
