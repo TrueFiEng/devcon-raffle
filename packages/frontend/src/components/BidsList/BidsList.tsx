@@ -12,7 +12,7 @@ import styled from 'styled-components'
 interface Props {
   bids: Bid[]
   view?: 'short' | 'full'
-  isLoadingParams: boolean
+  isLoadingParams?: boolean
 }
 
 export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
