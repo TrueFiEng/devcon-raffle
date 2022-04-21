@@ -44,6 +44,7 @@ const VoucherIdLabel = styled(InputLabel)`
 const VoucherFormHeading = styled(FormHeading)<Props>`
   font-size: ${({ voucher, withdrawnBid }) => (voucher && !withdrawnBid ? '24px' : '40px')};
   line-height: ${({ voucher, withdrawnBid }) => (voucher && !withdrawnBid ? 1 : 1.2)};
+  margin-bottom: 16px;
 `
 
 const VoucherIdBox = styled.div`
