@@ -12,9 +12,10 @@ import styled from 'styled-components'
 interface Props {
   bids: Bid[]
   view?: 'short' | 'full'
+  isLoadingParams: boolean
 }
 
-export const BidsList = ({ bids, view = 'full' }: Props) => {
+export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
 
@@ -24,7 +25,7 @@ export const BidsList = ({ bids, view = 'full' }: Props) => {
 
   return (
     <BidList>
-      {bids.length === 0 ? (
+      {isLoadingParams ? (
         emptyBids.map((emptyBid) => <EmptyBidListEntry key={emptyBid} place={emptyBid} />)
       ) : (
         <>
