@@ -17,6 +17,7 @@ interface WinFormProps {
 
 export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) => {
   const [voucher, setVoucher] = useState<string>()
+  const withdrawnBid = userBid.claimed || userBid.winType === WinType.Auction
 
   if (!voucher) {
     return (
@@ -34,10 +35,10 @@ export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) =>
 
   return (
     <>
-      {userBid.claimed || userBid.winType === WinType.Auction ? (
-        <Wrapper>
-          <VoucherForm voucher={voucher} withdrawnBid={userBid.claimed} />
-        </Wrapper>
+      {withdrawnBid ? (
+        <VoucherWrapper>
+          <VoucherForm voucher={voucher} withdrawnBid={withdrawnBid} />
+        </VoucherWrapper>
       ) : (
         <WrapperRow>
           <WinFormWrapper>
@@ -62,13 +63,17 @@ const Wrapper = styled(FormWrapper)`
   justify-content: center;
 `
 
+const VoucherWrapper = styled(Wrapper)`
+  padding: 0 200px;
+`
+
 const WrapperRow = styled.div`
   display: flex;
   width: 100%;
 `
 const WinFormWrapper = styled(FormWrapper)`
-  justify-content: center;
-  padding: 0 35px;
+  justify-content: flex-end;
+  padding: 0 35px 127px;
 `
 
 const VoucherFormWrapper = styled(WinFormWrapper)`
