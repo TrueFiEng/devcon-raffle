@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
+import { useGetVoucher } from 'src/hooks/backend/useGetVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -14,9 +15,16 @@ interface ClaimVoucherSectionProps {
 export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) => {
   const [error, setError] = useState<string>()
   const { getNonce } = useNonce(setError)
+  const getVoucher = useGetVoucher()
   const claimVoucherCode = useClaimVoucher()
 
   const handleVoucher = useCallback(async () => {
+    const authenticatedVoucher = await getVoucher()
+    if (authenticatedVoucher) {
+      setVoucher(authenticatedVoucher.voucherCode)
+      return
+    }
+
     const nonce = await getNonce()
     if (!nonce) {
       return
@@ -33,7 +41,7 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
       setError(undefined)
       setVoucher(voucherResponse.voucherCode)
     }
-  }, [getNonce, claimVoucherCode, setVoucher])
+  }, [getNonce, claimVoucherCode, setVoucher, getVoucher])
 
   return (
     <WinOption>
