@@ -1,8 +1,6 @@
-import * as ToastPrimitive from '@radix-ui/react-toast'
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
-import { NotificationsList } from 'src/components/Notifications/Notifications'
-import { NotificationToast } from 'src/components/Notifications/NotificationToast'
+import { Notifications } from 'src/components/Notifications/Notifications'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
 
@@ -38,20 +36,7 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
 
   return (
     <WinOption>
-      {error && (
-        <ToastPrimitive.Provider>
-          <NotificationToast
-            notification={{
-              id: error,
-              type: 'transactionSignError',
-              submittedAt: 1,
-              message: error,
-              transactionName: 'Get voucher code',
-            }}
-          />{' '}
-          <NotificationsList />
-        </ToastPrimitive.Provider>
-      )}
+      <Notifications error={error} />
       <Button view="primary" onClick={handleVoucher}>
         Get voucher code
       </Button>

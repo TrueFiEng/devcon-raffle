@@ -4,7 +4,11 @@ import styled from 'styled-components'
 
 import { NotificationToast, TransactionNotification } from './NotificationToast'
 
-export const Notifications = () => {
+interface Props {
+  error?: string
+}
+
+export const Notifications = ({ error }: Props) => {
   const { notifications } = useNotifications()
 
   const transactionNotifications: TransactionNotification[] = [
@@ -16,6 +20,17 @@ export const Notifications = () => {
       {transactionNotifications.map((notification) => (
         <NotificationToast key={notification.id} notification={notification} />
       ))}
+      {error && (
+        <NotificationToast
+          notification={{
+            id: error,
+            type: 'transactionSignError',
+            submittedAt: 1,
+            message: error,
+            transactionName: 'Get voucher code',
+          }}
+        />
+      )}
       <NotificationsList />
     </ToastPrimitive.Provider>
   )
