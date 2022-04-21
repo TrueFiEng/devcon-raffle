@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther, parseEther } from '@ethersproject/units'
+import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
-import { useMemo } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
@@ -11,16 +10,16 @@ import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 
 interface PlaceBidFormProps {
   bid: string
+  parsedBid: BigNumber
   setBid: (val: string) => void
   minimumBid: BigNumber
   bids: Bid[]
   setView: (state: TxFlowSteps) => void
 }
 
-export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
+export const PlaceBidForm = ({ bid, parsedBid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const parsedBid = useMemo(() => parseEther(bid == '' ? '0' : bid), [bid])
   const notEnoughBalance = userBalance !== undefined && parsedBid.gt(userBalance)
   const bidTooLow = parsedBid.lt(minimumBid)
 

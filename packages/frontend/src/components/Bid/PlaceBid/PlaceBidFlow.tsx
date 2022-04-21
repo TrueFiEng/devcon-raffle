@@ -22,7 +22,7 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
 
   useEffect(() => setBid(formatEther(minimumBid)), [minimumBid])
 
-  const parsedBid = useMemo(() => parseEther(bid == '' ? '0' : bid), [bid])
+  const parsedBid = useMemo(() => parseEther(bid || '0'), [bid])
   const bidAction: TransactionAction = {
     type: Transactions.Place,
     send: async () => {
@@ -35,7 +35,14 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
   return (
     <>
       {view === TxFlowSteps.Placing ? (
-        <PlaceBidForm bid={bid} setBid={setBid} setView={setView} minimumBid={minimumBid} bids={bids} />
+        <PlaceBidForm
+          bid={bid}
+          parsedBid={parsedBid}
+          setBid={setBid}
+          setView={setView}
+          minimumBid={minimumBid}
+          bids={bids}
+        />
       ) : (
         <AuctionTransaction
           action={bidAction}
