@@ -1,15 +1,9 @@
-import { FormWrapper } from 'src/components/Form/Form'
-import styled from 'styled-components'
+import { FormSectionWrapper } from 'src/components/Form/Form'
 
 export const ClaimingClosed = () => {
   return (
-    <BidStartWrapper>
+    <FormSectionWrapper>
       <h2>Claiming is closed ⌛️</h2>
-    </BidStartWrapper>
+    </FormSectionWrapper>
   )
 }
-
-const BidStartWrapper = styled(FormWrapper)`
-  padding: 0 0 0 170px;
-  justify-content: center;
-`
