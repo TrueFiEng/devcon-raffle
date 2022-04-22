@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BidsList } from 'src/components/BidsList/BidsList'
-import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
+import { BidsList, BidsListHeaders } from 'src/components/BidsList'
 import { Button } from 'src/components/Buttons/Button'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
