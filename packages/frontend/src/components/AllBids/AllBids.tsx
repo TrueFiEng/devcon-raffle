@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AllBidsList, LoadingBids, NothingFound, SettledBidsList } from 'src/components/AllBids'
-import { SearchInput } from 'src/components/Form/SearchInput'
+import { SearchInput } from 'src/components/Form'
 import { useAuctionState } from 'src/hooks/useAuctionState'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
