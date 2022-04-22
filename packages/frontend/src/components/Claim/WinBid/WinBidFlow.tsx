@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo, useState } from 'react'
 import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
-import { WinType, WinForm } from 'src/components/Claim/WinBid'
+import { WinType, WinForm } from 'src/components/Claim'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
 import { ZERO } from 'src/constants/bigNumber'
 import { useClaimFunds } from 'src/hooks/transactions'

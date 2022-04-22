@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction'
-import { VoucherForm, WinBidForm, WinType } from 'src/components/Claim/WinBid'
+import { VoucherForm, WinBidForm, WinType } from 'src/components/Claim'
 import { FormWrapper } from 'src/components/Form/Form'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'

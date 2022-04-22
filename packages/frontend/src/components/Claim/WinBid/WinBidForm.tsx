@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { TxFlowSteps } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
-import { ClaimVoucherSection, WinType } from 'src/components/Claim/WinBid'
+import { ClaimVoucherSection, WinType } from 'src/components/Claim'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
 import { useClaimingEndTime } from 'src/hooks'
 import { UserBid } from 'src/models/Bid'

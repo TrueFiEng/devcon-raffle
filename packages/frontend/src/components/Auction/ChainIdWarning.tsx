@@ -1,11 +1,10 @@
+import { getWarningText } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { useContractState, useSwitchChain } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import { detectMetaMask } from 'src/utils'
 import styled from 'styled-components'
-
-import { getWarningText } from './getWarningText'
 
 export const ChainIdWarning = () => {
   const switchChain = useSwitchChain()

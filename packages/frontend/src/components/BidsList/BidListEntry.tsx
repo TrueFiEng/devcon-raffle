@@ -1,11 +1,10 @@
+import { AddressColumn, BidColumn, PlaceColumn } from 'src/components/BidsList/BidsColumns'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { getExplorerAddressLink } from 'src/utils'
 import { formatEtherAmount, shortenEthAddress } from 'src/utils/formatters'
 import styled, { css } from 'styled-components'
-
-import { AddressColumn, BidColumn, PlaceColumn } from './BidsColumns'
 
 interface Props {
   bid: Bid
