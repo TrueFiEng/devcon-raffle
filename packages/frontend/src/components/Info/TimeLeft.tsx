@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuctionState, useAuctionTime } from 'src/hooks'
-import { formatEndDate, formatTimeLeft } from 'src/utils/formatters'
 import { setIntervalImmediately } from 'src/utils'
+import { formatEndDate, formatTimeLeft } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 export const TimeLeft = () => {
