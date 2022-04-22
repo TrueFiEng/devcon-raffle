@@ -1,4 +1,4 @@
-import { useDevconParam } from './useDevconParam'
+import { useDevconParam } from 'src/hooks/useDevconParam'
 
 export function useAuctionWinnersCount() {
   const { devconValue } = useDevconParam('auctionWinnersCount')

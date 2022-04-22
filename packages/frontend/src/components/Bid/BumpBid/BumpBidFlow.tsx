@@ -3,10 +3,8 @@ import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
-import { useBid } from 'src/hooks/transactions/useBid'
-import { useBids } from 'src/hooks/useBids'
-import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
-import { useUserBid } from 'src/hooks/useUserBid'
+import { useBids, useMinimumIncrement, useUserBid } from 'src/hooks'
+import { useBid } from 'src/hooks/transactions'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 export const BumpBidFlow = () => {

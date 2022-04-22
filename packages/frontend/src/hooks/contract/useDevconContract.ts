@@ -1,10 +1,9 @@
 import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
+import { useAddresses } from 'src/hooks'
+import { useProvider } from 'src/hooks/contract'
 
 import { SupportedChainId } from '../../constants/chainIDs'
 import { useChainId } from '../chainId/useChainId'
-import { useAddresses } from '../useAddresses'
-
-import { useProvider } from './useProvider'
 
 interface UseDevconContractResult {
   devcon: Devcon6

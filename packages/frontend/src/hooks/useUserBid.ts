@@ -1,9 +1,8 @@
 import { addressEqual, useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
-
-import { useDevconContract } from './contract'
-import { useBids } from './useBids'
+import { useBids } from 'src/hooks'
+import { useDevconContract } from 'src/hooks/contract'
 
 export function useUserBid() {
   const { devcon, chainId } = useDevconContract()

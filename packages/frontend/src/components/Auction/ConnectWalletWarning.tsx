@@ -1,6 +1,6 @@
 import { ConnectWalletButton } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
-import { useContractState } from 'src/hooks/useContractState'
+import { useContractState } from 'src/hooks'
 import styled from 'styled-components'
 
 import { getWarningText } from './getWarningText'

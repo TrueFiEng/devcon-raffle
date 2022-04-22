@@ -1,8 +1,7 @@
 import { Call, useCall, useEthers } from '@usedapp/core'
 import { Falsy, TypedContract } from '@usedapp/core/dist/cjs/src/model/types'
 import { useEffect, useState } from 'react'
-
-import { SupportedChainId } from '../constants/chainIDs'
+import { SupportedChainId } from 'src/constants/chainIDs'
 
 export function useCachedCall<T extends TypedContract>(call: Call<T> | Falsy, chainId?: SupportedChainId) {
   const { library } = useEthers()

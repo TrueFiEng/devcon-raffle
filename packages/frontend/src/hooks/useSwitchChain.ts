@@ -2,10 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
-
-import { SupportedChainId } from '../constants/chainIDs'
-
-import { useChainId } from './chainId/useChainId'
+import { SupportedChainId } from 'src/constants/chainIDs'
+import { useChainId } from 'src/hooks/chainId/useChainId'
 
 interface AddEthereumChainParameter {
   chainId: string

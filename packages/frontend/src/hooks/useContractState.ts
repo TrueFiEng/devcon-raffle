@@ -1,6 +1,5 @@
 import { useCall } from '@usedapp/core'
-
-import { useDevconContract } from './contract'
+import { useDevconContract } from 'src/hooks/contract'
 
 export enum ContractState {
   AWAITING_BIDDING,

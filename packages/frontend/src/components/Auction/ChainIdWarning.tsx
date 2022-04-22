@@ -1,7 +1,6 @@
 import { Button } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
-import { useContractState } from 'src/hooks/useContractState'
-import { useSwitchChain } from 'src/hooks/useSwitchChain'
+import { useContractState, useSwitchChain } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import { detectMetaMask } from 'src/utils/detectMetamask'
 import styled from 'styled-components'

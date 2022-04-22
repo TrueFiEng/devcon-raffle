@@ -4,9 +4,8 @@ import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
-import { useBid } from 'src/hooks/transactions/useBid'
-import { useBids } from 'src/hooks/useBids'
-import { useMinimumBid } from 'src/hooks/useMinimumBid'
+import { useBids, useMinimumBid } from 'src/hooks'
+import { useBid } from 'src/hooks/transactions'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 interface PlaceBidFlowProps {

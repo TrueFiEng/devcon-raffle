@@ -4,7 +4,7 @@ import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
 import { WinType, WinForm } from 'src/components/Claim/WinBid'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
 import { ZERO } from 'src/constants/bigNumber'
-import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
+import { useClaimFunds } from 'src/hooks/transactions'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 import { UserBid } from 'src/models/Bid'
 
