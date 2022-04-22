@@ -1,6 +1,6 @@
 import { useDebounce } from '@usedapp/core/internal'
 import { useEffect, useState } from 'react'
-import { CloseButton } from 'src/components/Buttons/CloseButton'
+import { CloseButton } from 'src/components/Buttons'
 import { SearchIcon } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'

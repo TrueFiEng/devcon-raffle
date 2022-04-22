@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction'
-import { BackButton } from 'src/components/Buttons/BackButton'
+import { BackButton } from 'src/components/Buttons'
 import { FormWrapper, FormSubHeading } from 'src/components/Form/Form'
 import { ReviewForm } from 'src/components/Form/ReviewForm'
 import { TransactionAction, TransactionStepper, TransactionSuccess, Transactions } from 'src/components/Transaction'

@@ -1,4 +1,4 @@
-import { BackButton } from 'src/components/Buttons/BackButton'
+import { BackButton } from 'src/components/Buttons'
 import { HeaderBar } from 'src/components/common/Header'
 import { KeyIcon } from 'src/components/Icons'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
