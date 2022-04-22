@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
+import { TxFlowSteps } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons/Button'
 import { ClaimVoucherSection } from 'src/components/Claim/WinBid/ClaimVoucherSection'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'

@@ -1,7 +1,6 @@
 import { formatEther, parseEther } from '@ethersproject/units'
 import { useMemo, useState, useEffect } from 'react'
-import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
-import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
+import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
 import { useBid } from 'src/hooks/transactions/useBid'
