@@ -2,7 +2,6 @@ import { CloseIcon } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-
 interface CloseButtonProps {
   onClick: () => void
 }
