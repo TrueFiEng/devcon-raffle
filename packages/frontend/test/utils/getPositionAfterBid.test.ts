@@ -1,5 +1,5 @@
 import { parseEther } from '@ethersproject/units'
-import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
+import { getPositionAfterBid } from 'src/utils'
 import { generateMockBids } from 'test/mocks/generateMockBids'
 
 describe('getPositionAfterBid', () => {

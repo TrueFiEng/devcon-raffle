@@ -7,8 +7,8 @@ import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import type { Bid } from 'src/models/Bid'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
-import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
+import { formatEtherAmount } from 'src/utils/formatters'
+import { getPositionAfterBump } from 'src/utils'
 import styled from 'styled-components'
 
 interface BumpBidProps {
