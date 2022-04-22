@@ -1,5 +1,5 @@
 import * as ToastPrimitive from '@radix-ui/react-toast'
-import { Notification, useNotifications } from '@usedapp/core'
+import { Notification, RemoveNotificationPayload, useNotifications } from '@usedapp/core'
 import { useCallback } from 'react'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
 import { useChainId } from 'src/hooks/chainId/useChainId'
@@ -25,15 +25,24 @@ export type TransactionNotification = TransactionStarted | TransactionSucceed | 
 
 interface Props {
   notification: TransactionNotification
+  setError?: (str?: string) => void
 }
 
-export const NotificationToast = ({ notification }: Props) => {
+export const NotificationToast = ({ notification, setError }: Props) => {
   const chainId = useChainId()
   const { removeNotification } = useNotifications()
 
+  const removeNotificationFunc = useCallback(
+    (payload: RemoveNotificationPayload) => {
+      removeNotification(payload)
+      setError && setError(undefined)
+    },
+    [setError, removeNotification]
+  )
+
   const removeNotificationWithDelay = useCallback(
-    () => setTimeout(() => removeNotification({ chainId, notificationId: notification.id }), 500),
-    [chainId, notification.id, removeNotification]
+    () => setTimeout(() => removeNotificationFunc({ chainId, notificationId: notification.id }), 500),
+    [chainId, notification.id, removeNotificationFunc]
   )
 
   return (
@@ -101,7 +110,7 @@ const Toast = styled(ToastPrimitive.Root)`
   border: 1px solid ${Colors.GreyLight};
   border-radius: 4px;
   background-color: ${Colors.White};
-  box-shadow: 0px 12px 32px rgba(6, 20, 57, 0.05), 0px 8px 16px rgba(6, 20, 57, 0.05), 0px 4px 8px rgba(6, 20, 57, 0.03);
+  box-shadow: 0 12px 32px rgba(6, 20, 57, 0.05), 0 8px 16px rgba(6, 20, 57, 0.05), 0 4px 8px rgba(6, 20, 57, 0.03);
 `
 
 const NotificationIconWrapper = styled.div`

@@ -6,9 +6,10 @@ import { NotificationToast, TransactionNotification } from './NotificationToast'
 
 interface Props {
   error?: string
+  setError?: (str?: string) => void
 }
 
-export const Notifications = ({ error }: Props) => {
+export const Notifications = ({ error, setError }: Props) => {
   const { notifications } = useNotifications()
 
   const transactionNotifications: TransactionNotification[] = [
@@ -25,10 +26,11 @@ export const Notifications = ({ error }: Props) => {
           notification={{
             id: error,
             type: 'transactionSignError',
-            submittedAt: 1,
+            submittedAt: Date.now(),
             message: error,
             transactionName: 'Get voucher code',
           }}
+          setError={setError}
         />
       )}
       <NotificationsList />
