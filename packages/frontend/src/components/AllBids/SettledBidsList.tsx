@@ -9,6 +9,8 @@ import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { Bid } from 'src/models/Bid'
 
+import { GoldenTicketWinner } from '../BidsList/GoldenTicketWinner'
+
 interface Bids {
   auction: Bid[]
   raffle: Bid[]
@@ -31,6 +33,10 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 
   const filteredBids = useMemo(() => filterBids(settledBids, searchFunc), [settledBids, searchFunc])
+  const goldenTicketWinner = useMemo(
+    () => raffleWinners?.[0] && bids.find((bid) => bid.bidderID.eq(raffleWinners[0])),
+    [bids, raffleWinners]
+  )
 
   return (
     <>
@@ -39,6 +45,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
       ) : (
         <>
           <BidsListHeaders />
+          <GoldenTicketWinner bidderAddress={goldenTicketWinner?.bidderAddress} />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}

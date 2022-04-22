@@ -4,10 +4,10 @@ import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
 import styled from 'styled-components'
 
 interface Props {
-  bidderAddress: string
+  bidderAddress: string | undefined
 }
 
-export const GoldenTicketWinner = ({ bidderAddress }: Props) => {
+export const GoldenTicketWinner = ({ bidderAddress = '-' }: Props) => {
   const chainId = useChainId()
   return (
     <Container>
