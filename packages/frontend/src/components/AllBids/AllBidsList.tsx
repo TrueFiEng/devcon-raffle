@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
-import { NothingFound } from 'src/components/AllBids/NothingFound'
-import { useMatchBid } from 'src/components/AllBids/useSearchBid'
+import { NothingFound, useMatchBid } from 'src/components/AllBids'
 import { BidsListHeaders, BidsSubList } from 'src/components/BidsList'
 import { useBids } from 'src/hooks/useBids'
 
