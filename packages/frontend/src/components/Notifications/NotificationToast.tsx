@@ -1,31 +1,24 @@
 import * as ToastPrimitive from '@radix-ui/react-toast'
-import { Notification, RemoveNotificationPayload, useNotifications } from '@usedapp/core'
+import { RemoveNotificationPayload, useNotifications } from '@usedapp/core'
 import { useCallback } from 'react'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { CheckIcon } from '../Icons/CheckIcon'
 import { ErrorIcon } from '../Icons/ErrorIcon'
-import { LoadingIcon } from '../Icons/LoadingIcon'
 
-type TransactionStarted = Extract<Notification, { type: 'transactionStarted' }>
-type TransactionSucceed = Extract<Notification, { type: 'transactionSucceed' }>
-type TransactionFailed = Extract<Notification, { type: 'transactionFailed' }>
-type TransactionSignError = {
+type TransactionError = {
   id: string
-  type: 'transactionSignError'
+  type: 'transactionError'
   submittedAt: number
   message: string
   transactionName: string
 }
 
-export type TransactionNotification = TransactionStarted | TransactionSucceed | TransactionFailed | TransactionSignError
-
 interface Props {
-  notification: TransactionNotification
-  setError?: (str?: string) => void
+  notification: TransactionError
+  setError: (str?: string) => void
 }
 
 export const NotificationToast = ({ notification, setError }: Props) => {
@@ -35,7 +28,7 @@ export const NotificationToast = ({ notification, setError }: Props) => {
   const removeNotificationFunc = useCallback(
     (payload: RemoveNotificationPayload) => {
       removeNotification(payload)
-      setError && setError(undefined)
+      setError(undefined)
     },
     [setError, removeNotification]
   )
@@ -46,58 +39,20 @@ export const NotificationToast = ({ notification, setError }: Props) => {
   )
 
   return (
-    <Toast onOpenChange={(open) => open || removeNotificationWithDelay()} duration={50000}>
+    <Toast onOpenChange={(open) => open || removeNotificationWithDelay()} duration={5000}>
       <NotificationIconWrapper>
-        <NotificationIcon notification={notification} />
+        <ErrorIcon color={Colors.Red} size={24} />
       </NotificationIconWrapper>
       <ToastContent>
-        <NotificationTitle notification={notification}>{printNotificationTitle(notification)}</NotificationTitle>
-        <NotificationDescription>{printNotificationDescription(notification)}</NotificationDescription>
-        {notification.type === 'transactionSignError' ||
-          (notification.type === 'transactionFailed' && <NotificationActionText>Try Again</NotificationActionText>)}
+        <NotificationTitle>Error</NotificationTitle>
+        <NotificationDescription>{notification.message}</NotificationDescription>
+        <NotificationActionText>Try Again</NotificationActionText>
       </ToastContent>
       <Close>
         <CrossIcon size={24} color={Colors.Grey} />
       </Close>
     </Toast>
   )
-}
-
-function printNotificationTitle(notification: TransactionNotification) {
-  switch (notification.type) {
-    case 'transactionStarted':
-      return 'Pending Transaction'
-    case 'transactionSucceed':
-      return notification.transactionName
-    case 'transactionFailed':
-    case 'transactionSignError':
-      return 'Error'
-  }
-}
-
-function printNotificationDescription(notification: TransactionNotification) {
-  switch (notification.type) {
-    case 'transactionStarted':
-      return 'Waiting for your transaction to be confirmed'
-    case 'transactionSucceed':
-      return 'Transaction succeeded'
-    case 'transactionFailed':
-      return 'Transaction failed'
-    case 'transactionSignError':
-      return notification.message
-  }
-}
-
-const NotificationIcon = ({ notification }: { notification: TransactionNotification }) => {
-  switch (notification.type) {
-    case 'transactionStarted':
-      return <LoadingIcon color={Colors.Blue} />
-    case 'transactionSucceed':
-      return <CheckIcon color={Colors.GreenDark} />
-    case 'transactionFailed':
-    case 'transactionSignError':
-      return <ErrorIcon color={Colors.Red} size={24} />
-  }
 }
 
 const Toast = styled(ToastPrimitive.Root)`
@@ -129,21 +84,11 @@ const ToastContent = styled.div`
   overflow: hidden;
 `
 
-const NotificationTitle = styled(ToastPrimitive.Title)<Props>`
+const NotificationTitle = styled(ToastPrimitive.Title)`
   margin: 0;
   font-size: 14px;
   line-height: 20px;
-  color: ${({ notification }) => {
-    switch (notification.type) {
-      case 'transactionStarted':
-        return Colors.Blue
-      case 'transactionSucceed':
-        return Colors.GreenDark
-      case 'transactionFailed':
-      case 'transactionSignError':
-        return Colors.Red
-    }
-  }};
+  color: ${Colors.Red};
 `
 
 const NotificationDescription = styled(ToastPrimitive.Description)`
