@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
-import { Notifications } from 'src/components/Notifications/Notifications'
+import { ErrorNotifications } from 'src/components/Notifications/ErrorNotifications'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
 
@@ -36,7 +36,7 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
 
   return (
     <WinOption>
-      <Notifications error={error} setError={setError} />
+      <ErrorNotifications error={error} setError={setError} />
       <Button view="primary" onClick={handleVoucher}>
         Get voucher code
       </Button>
