@@ -1,5 +1,5 @@
 import { AccountButton } from 'src/components/Buttons/AccountButton'
-import { Logo } from 'src/components/Icons/Logo'
+import { Logo } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 

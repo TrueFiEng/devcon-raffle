@@ -1,6 +1,6 @@
 import { BackButton } from 'src/components/Buttons/BackButton'
 import { HeaderBar } from 'src/components/common/Header'
-import { KeyIcon } from 'src/components/Icons/KeyIcon'
+import { KeyIcon } from 'src/components/Icons'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'

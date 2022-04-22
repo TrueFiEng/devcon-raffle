@@ -1,8 +1,8 @@
+import { KeyIcon } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { HeaderBar } from '../common/Header'
-import { KeyIcon } from '../Icons/KeyIcon'
 
 import { TimeLeft } from './TimeLeft'
 
