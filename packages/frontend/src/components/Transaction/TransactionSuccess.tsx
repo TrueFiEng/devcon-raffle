@@ -6,7 +6,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
-import { shortenTxHash } from 'src/utils/formatters/shortenTxHash'
+import { shortenTxHash } from 'src/utils/formatters'
 import { getExplorerTxLink } from 'src/utils/getExplorerLink'
 import styled from 'styled-components'
 

@@ -1,8 +1,7 @@
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
-import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { formatEtherAmount, shortenEthAddress } from 'src/utils/formatters'
 import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
 import styled, { css } from 'styled-components'
 

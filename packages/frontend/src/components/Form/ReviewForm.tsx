@@ -6,7 +6,7 @@ import { heading } from 'src/components/Auction/AuctionTransaction'
 import { Button } from 'src/components/Buttons'
 import { FormRow, FormNarrow } from 'src/components/Form/Form'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { formatEtherAmount } from 'src/utils/formatters'
 import { isTxPending } from 'src/utils/transactions/isTxPending'
 
 const amountLabel = {
