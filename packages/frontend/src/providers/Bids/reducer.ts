@@ -15,14 +15,14 @@ export const getDefaultBidsState = (): BidsState => ({
 export interface BidChanged {
   bidderID: BigNumber
   bidderAddress: string
-  newAmount: BigNumber
+  amount: BigNumber
 }
 
 export function bidsReducer(state: BidsState = getDefaultBidsState(), action: BidChanged) {
   const bidIndex = state.bidders.get(action.bidderAddress)
   if (bidIndex !== undefined) {
     const currentBid = state.bids[bidIndex]
-    if (action.newAmount.gt(currentBid.amount)) {
+    if (action.amount.gt(currentBid.amount)) {
       return state
     }
     return state
@@ -34,20 +34,36 @@ function addNewBid(state: BidsState, action: BidChanged) {
   const newBid: Bid = {
     bidderID: action.bidderID,
     bidderAddress: action.bidderAddress,
-    amount: action.newAmount,
+    amount: action.amount,
     place: -1
+  }
+
+  if (state.bids.length === 0) {
+    newBid.place = 1
+    state.bids.push(newBid)
+    state.bidders.set(newBid.bidderAddress, 0)
+    return state
   }
 
   for (let i = state.bids.length - 1; i >= 0; i--) {
     const currentBid = state.bids[i]
-    const cmp = compareBids(currentBid, newBid)
-    if (cmp > 0 || i == 0) {
-      newBid.place = i + 1
-      state.bids.splice(i, 0, newBid)
+    const cmp = compareBids(newBid, currentBid)
+    //newBid.amount < currentBid.amount
+    if (cmp > 0) {
+      newBid.place = currentBid.place + 1
+      state.bids.splice(i+1, 0, newBid)
+      state.bidders.set(newBid.bidderAddress, i)
       return state
     }
 
-    state.bidders.set(currentBid.bidderAddress, i + 2)
+    currentBid.place += 1
+    state.bidders.set(currentBid.bidderAddress, i + 1)
+
+    if (i === 0) {
+      newBid.place = 1
+      state.bids.splice(0, 0, newBid)
+      state.bidders.set(newBid.bidderAddress, 0)
+    }
   }
   return state
 }
