@@ -18,6 +18,9 @@ export const BidsListSection = () => {
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
 
+  //TODO: weird behavior if bids variable is passed as useMemo dependency
+  const jsonBids = JSON.stringify(bids)
+
   const auctionBidsSlice = useMemo(() => {
     if (auctionWinnersCount === undefined) {
       return []
@@ -30,7 +33,7 @@ export const BidsListSection = () => {
     return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
       ? topAuctionBids.concat([userBid, lastAuctionBid])
       : topAuctionBids.concat([lastAuctionBid])
-  }, [bids, userBid, auctionWinnersCount])
+  }, [jsonBids, userBid, auctionWinnersCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isLoadingParams = auctionWinnersCount === undefined
 
