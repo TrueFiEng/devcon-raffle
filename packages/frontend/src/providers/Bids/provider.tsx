@@ -1,48 +1,48 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { ReactNode, useMemo } from 'react'
+import { Devcon6 } from '@devcon-raffle/contracts'
+import { useBlockNumber } from '@usedapp/core'
+import { Dispatch, ReactNode, useEffect, useReducer } from 'react'
+import { useDevconContract } from 'src/hooks/contract'
 import { useContractBids } from 'src/hooks/useContractBids'
 import { Bid } from 'src/models/Bid'
 
 import { BidsContext } from './context'
-import { BidsState } from './reducer'
+import { BidChanged, bidsReducer, getDefaultBidsState } from './reducer'
 
 interface Props {
   children: ReactNode
 }
 
-interface BidDetails {
-  bidderID: BigNumber
-  amount: BigNumber
-}
-
 export const BidsProvider = ({ children }: Props) => {
   const contractBids = useContractBids()
+  const { devcon } = useDevconContract()
+  const blockNumber = useBlockNumber()
 
-  const bidsState: BidsState = useMemo(() => sortContractBids(contractBids), [contractBids])
+  const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
+  useEffect(() => initBids(contractBids, dispatch), [contractBids, dispatch])
+
+  useEffect(() => {
+    subscribeToNewBids(devcon, blockNumber, dispatch)
+  }, [devcon, blockNumber])
+
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
 
-function sortContractBids(contractBids: Bid[]) {
-  const sortedBids = contractBids.sort((a, b) => compareBidDetails(a, b)).map((bid, index) => ({
-    ...bid,
-    place: index + 1
-  }))
-  const bidsState: BidsState = {
-    bids: sortedBids,
-    bidders: new Map()
-  }
-  sortedBids.forEach(({ bidderAddress }, index) => {
-    bidsState.bidders.set(bidderAddress, index)
-  })
-  return bidsState
+function initBids(contractBids: Bid[], dispatch: Dispatch<BidChanged>) {
+  contractBids.forEach((bid) => dispatch(bid))
 }
 
-const compareBidDetails = (a: BidDetails, b: BidDetails) =>
-  compareBigNumber(b.amount, a.amount) || compareBigNumber(a.bidderID, b.bidderID)
-
-function compareBigNumber(a: BigNumber, b: BigNumber) {
-  if (a.lt(b)) {
-    return -1
+async function subscribeToNewBids(devcon: Devcon6, blockNumber: number | undefined, dispatch: Dispatch<BidChanged>) {
+  if (!blockNumber) {
+    return
   }
-  return a.gt(b) ? 1 : 0
+
+  const eventFilter = devcon.filters.NewBid(null, null, null)
+  const events = await devcon.queryFilter(eventFilter, blockNumber, blockNumber)
+  events.forEach((event) => {
+    dispatch({
+      bidderID: event.args.bidderID,
+      bidderAddress: event.args.bidder,
+      amount: event.args.bidAmount,
+    })
+  })
 }
