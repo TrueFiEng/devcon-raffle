@@ -7,5 +7,5 @@ export interface BidsContext {
 }
 
 export const BidsContext = createContext<BidsContext>({
-  bidsState: getDefaultBidsState()
+  bidsState: getDefaultBidsState(),
 })

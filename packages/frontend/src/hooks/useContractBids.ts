@@ -6,20 +6,21 @@ import { useDevconContract } from './contract'
 import { useCachedCall } from './useCachedCall'
 
 interface BidWithAddress {
-  bidder: string;
+  bidder: string
   bid: {
-    bidderID: BigNumber;
-    amount: BigNumber;
-    winType: number;
-    claimed: boolean;
-  };
+    bidderID: BigNumber
+    amount: BigNumber
+    winType: number
+    claimed: boolean
+  }
 }
 
 export function useContractBids(): Bid[] {
   const { devcon, chainId } = useDevconContract()
 
   const { value } =
-    useCachedCall({
+    useCachedCall(
+      {
         contract: devcon,
         method: 'getBidsWithAddresses',
         args: [],
@@ -27,14 +28,16 @@ export function useContractBids(): Bid[] {
       chainId
     ) ?? {}
 
-  const bids = value && value[0] as BidWithAddress[]
+  const bids = value && (value[0] as BidWithAddress[])
 
   return useMemo(() => {
-      return bids?.map((fetchedBid) => ({
+    return (
+      bids?.map((fetchedBid) => ({
         bidderID: fetchedBid.bid.bidderID,
         bidderAddress: fetchedBid.bidder,
         amount: fetchedBid.bid.amount,
         place: -1,
       })) ?? []
+    )
   }, [bids])
 }

@@ -9,7 +9,7 @@ export interface BidsState {
 
 export const getDefaultBidsState = (): BidsState => ({
   bids: [],
-  bidders: new Map()
+  bidders: new Map(),
 })
 
 export interface BidChanged {
@@ -35,7 +35,7 @@ function addNewBid(state: BidsState, action: BidChanged) {
     bidderID: action.bidderID,
     bidderAddress: action.bidderAddress,
     amount: action.amount,
-    place: -1
+    place: -1,
   }
 
   if (state.bids.length === 0) {
@@ -51,7 +51,7 @@ function addNewBid(state: BidsState, action: BidChanged) {
     //newBid.amount < currentBid.amount
     if (cmp > 0) {
       newBid.place = currentBid.place + 1
-      state.bids.splice(i+1, 0, newBid)
+      state.bids.splice(i + 1, 0, newBid)
       state.bidders.set(newBid.bidderAddress, i)
       return state
     }
