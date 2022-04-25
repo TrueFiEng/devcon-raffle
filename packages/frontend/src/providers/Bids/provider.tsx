@@ -37,7 +37,7 @@ async function subscribeToNewBids(devcon: Devcon6, blockNumber: number | undefin
   }
 
   const eventFilter = devcon.filters.NewBid(null, null, null)
-  const events = await devcon.queryFilter(eventFilter, blockNumber, blockNumber)
+  const events = await devcon.queryFilter(eventFilter, blockNumber, blockNumber) // TODO we may skip blocks here
   events.forEach((event) => {
     dispatch({
       bidderID: event.args.bidderID,
