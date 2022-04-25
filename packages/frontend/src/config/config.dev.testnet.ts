@@ -1,4 +1,5 @@
 import { ArbitrumRinkeby, ChainId } from '@usedapp/core'
+import { ARBITRUM_RINKEBY_NODE_URL } from 'src/constants/nodeUrls'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
@@ -9,6 +10,7 @@ export function getTestnetConfig() {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: ArbitrumRinkeby.chainId,
+      readOnlyUrls: ARBITRUM_RINKEBY_NODE_URL,
       networks: [ArbitrumRinkeby],
     },
     addresses: getAddresses(),
