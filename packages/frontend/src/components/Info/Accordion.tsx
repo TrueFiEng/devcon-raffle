@@ -36,19 +36,21 @@ export const InfoAccordion = () => {
           <StyledContent>
             <RuleText>
               Total number of {totalCount} raffle tickets is devided between auction pool and raffle pool. Auction
-              winners will win a Voucher Code that is redeemable for a Free Devcon ticket. Raffle winners will receive a
-              voucher code that is redeemable for 1 Devcon Ticket at Full Price.
+              winners will win a voucher Code that is redeemable for a free Devcon ticket. Raffle winners will receive a
+              voucher code that is redeemable for 1 Devcon Ticket at full price.
             </RuleText>
             <Rule
               heading={`Auction pool: ${auctionWinnersCount}`}
               rule="Tickets from auction pool will be distributed to the highest bidding participants. The cost of a Devcon
               ticket in that pool is equal to the bid. All proceeds will go towards X Public Good."
-              example={`You bid ${exampleBid * 2.5} ETH and end up in top ${auctionWinnersCount} of bidders. You receive the ticket for 
+              example={`You bid ${
+                exampleBid * 2.5
+              } ETH and end up in top ${auctionWinnersCount} of bidders. You receive the ticket for 
               ${exampleBid * 2.5} ETH.`}
             />
             <Rule
               heading={`Raffle pool: ${raffleWinnersCount}`}
-              rule={`From participants who bid below the price of auction pool, ${raffleWinnersCount} will be randomly given a Voucher Code to buy
+              rule={`From participants who bid below the price of auction pool, ${raffleWinnersCount} will be randomly given a voucher code to buy
               a Devcon ticket at full price, which is ${reservePrice} ETH. All the funds over that price will be refunded to
               bidders.`}
               example={`You bid ${exampleBid} ETH and end up below top ${auctionWinnersCount}. If the raffle selects you, you pay ${reservePrice}
