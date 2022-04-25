@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 const mockBalance = parseEther('100')
 
@@ -22,7 +22,7 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 describe('UI: BumpBidForm', () => {
-  const mockBids = generateMockBids(5)
+  const mockBids = generateMockBidsState(5)
 
   it('Displays current place and place after bump', () => {
     renderComponent(parseEther('4.5'), parseEther('1'))

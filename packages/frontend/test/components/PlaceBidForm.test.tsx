@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 const mockBalance = parseEther('100')
 
@@ -22,7 +22,7 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 describe('UI: PlaceBidForm', () => {
-  const mockBids = generateMockBids(5)
+  const mockBids = generateMockBidsState(5)
 
   it('Displays estimated place after bid', async () => {
     renderComponent(parseEther('4.5'))

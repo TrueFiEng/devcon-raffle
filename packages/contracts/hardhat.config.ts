@@ -32,6 +32,9 @@ module.exports = {
       allowUnlimitedContractSize: true,
       accounts: {
         count: 120
+      },
+      mining: {
+        interval: 1000
       }
     },
     rinkeby: {

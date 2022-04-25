@@ -1,9 +1,9 @@
 import { parseEther } from '@ethersproject/units'
 import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 describe('getPositionAfterBid', () => {
-  const bids = generateMockBids(4)
+  const bids = generateMockBidsState(4)
 
   it('When outbidding everyone', () => {
     expect(getPositionAfterBid(parseEther('10'), bids)).toBe(1)

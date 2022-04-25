@@ -1,6 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
-import type { Bid } from 'src/models/Bid'
+import { bidFactory, bidsStateFactory, ImmutableBidsState } from 'src/providers/Bids/types'
+import { List as ImmutableList } from 'immutable'
+
 
 export const mockBidsAddresses = [
   '0x0537a5C46D9719b8548d72c7175ad1fE30bD84EE',
@@ -25,11 +27,16 @@ export const mockBidsAddresses = [
   '0x795AF44BDBa6e7078A7ee103F572bECB509Ebdff',
 ]
 
-export function generateMockBids(howMany: number): Bid[] {
-  return Array.from({ length: howMany }).map((_, index) => ({
-    bidderID: BigNumber.from(index + 1),
-    bidderAddress: mockBidsAddresses[index],
-    place: index + 1,
-    amount: parseEther(String(howMany - index)),
-  }))
+export function generateMockBidsState(howMany: number): ImmutableBidsState {
+  let bidsState = bidsStateFactory({})
+  for (let i = 0; i < howMany; i++) {
+    bidsState = bidsState.set('bids', bidsState.bids.push(bidFactory({
+      bidderID: BigNumber.from(i + 1),
+      bidderAddress: mockBidsAddresses[i],
+      place: i + 1,
+      amount: parseEther(String(howMany - i)),
+    })))
+    bidsState = bidsState.set('bidders', bidsState.bidders.set(mockBidsAddresses[i], i))
+  }
+  return bidsState
 }
