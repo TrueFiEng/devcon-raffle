@@ -16,7 +16,7 @@ export const NotificationToast = ({ message, setError, onClick }: Props) => {
   const removeNotification = useCallback(() => setError(undefined), [setError])
 
   return (
-    <Toast onOpenChange={(open) => open || removeNotification()} duration={50000}>
+    <Toast onOpenChange={(open) => open || removeNotification()} duration={5000}>
       <NotificationIconWrapper>
         <ErrorIcon color={Colors.Red} size={24} />
       </NotificationIconWrapper>
