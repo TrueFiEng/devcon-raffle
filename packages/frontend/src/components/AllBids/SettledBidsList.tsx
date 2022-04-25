@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
-import { useSearchBid } from 'src/components/AllBids/useSearchBid'
+import { useMatchBid } from 'src/components/AllBids/useSearchBid'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
@@ -26,14 +26,14 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   const { bids } = useBids()
   const { auctionWinners } = useAuctionWinners()
   const { raffleWinners } = useRaffleWinners()
-  const searchFunc = useSearchBid(search)
+  const matchesSearch = useMatchBid(search)
 
   const settledBids = useMemo(
     () => divideBids(bids, auctionWinners, raffleWinners),
     [bids, auctionWinners, raffleWinners]
   )
 
-  const filteredBids = useMemo(() => filterBids(settledBids, searchFunc), [settledBids, searchFunc])
+  const filteredBids = useMemo(() => filterBids(settledBids, matchesSearch), [settledBids, matchesSearch])
 
   return (
     <>
@@ -42,7 +42,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
       ) : (
         <>
           <BidsListHeaders />
-          <GoldenTicketWinner bidderAddress={settledBids.goldenTicket?.bidderAddress} />
+          {filteredBids.goldenTicket && <GoldenTicketWinner bidderAddress={filteredBids.goldenTicket.bidderAddress} />}
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
@@ -88,14 +88,15 @@ function includesBigNumber(array: BigNumber[], searchElement: BigNumber) {
   return false
 }
 
-function filterBids(bids: Bids, searchFunc: (sectionBids: Bid[]) => Bid[]) {
+function filterBids(bids: Bids, matchesSearch: (bid: Bid) => boolean) {
   return {
-    auction: searchFunc(bids.auction),
-    raffle: searchFunc(bids.raffle),
-    others: searchFunc(bids.others),
+    auction: bids.auction.filter(matchesSearch),
+    raffle: bids.raffle.filter(matchesSearch),
+    others: bids.others.filter(matchesSearch),
+    goldenTicket: bids.goldenTicket && matchesSearch(bids.goldenTicket) ? bids.goldenTicket : undefined,
   }
 }
 
 function isEmpty(bids: Bids) {
-  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.others.length === 0
+  return bids.auction.length === 0 && bids.raffle.length === 0 && bids.others.length === 0 && !bids.goldenTicket
 }
