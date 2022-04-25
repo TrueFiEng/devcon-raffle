@@ -7,6 +7,7 @@ import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import type { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
 import styled from 'styled-components'
@@ -18,7 +19,7 @@ interface BumpBidProps {
   minimumIncrement: BigNumber
   setBumpAmount: (val: BigNumber) => void
   setView: (state: TxFlowSteps) => void
-  bids: Bid[]
+  bids: ImmutableBids
 }
 
 export const BumpBidForm = ({

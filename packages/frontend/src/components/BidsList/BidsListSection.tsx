@@ -13,15 +13,13 @@ const topAuctionBidsCount = 3
 const bidsMaxCount = topAuctionBidsCount + 1
 
 export const BidsListSection = () => {
-  const { bids } = useBids()
+  const { bids: immutableBids } = useBids()
   const navigate = useNavigate()
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
 
-  //TODO: weird behavior if bids variable is passed as useMemo dependency
-  const jsonBids = JSON.stringify(bids)
-
   const auctionBidsSlice = useMemo(() => {
+    const bids = immutableBids.toArray().map((bid) => bid.toObject())
     if (auctionWinnersCount === undefined) {
       return []
     }
@@ -33,13 +31,13 @@ export const BidsListSection = () => {
     return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
       ? topAuctionBids.concat([userBid, lastAuctionBid])
       : topAuctionBids.concat([lastAuctionBid])
-  }, [jsonBids, userBid, auctionWinnersCount]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [immutableBids, userBid, auctionWinnersCount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isLoadingParams = auctionWinnersCount === undefined
 
   return (
     <BidsListContainer>
-      {!isLoadingParams && bids.length === 0 ? (
+      {!isLoadingParams && immutableBids.size === 0 ? (
         <EmptyList>
           <ColoredText>No bidders yet. Be the first one!</ColoredText>
         </EmptyList>
@@ -47,13 +45,13 @@ export const BidsListSection = () => {
         <>
           <ListHeader>
             <h3>Number of participants:</h3>
-            <ColoredText>{isLoadingParams ? 0 : bids.length}</ColoredText>
+            <ColoredText>{isLoadingParams ? 0 : immutableBids.size}</ColoredText>
           </ListHeader>
           <BidsListHeaders />
           <BidsList bids={auctionBidsSlice} view="short" isLoadingParams={isLoadingParams} />
         </>
       )}
-      {!isLoadingParams && bids.length !== 0 && (
+      {!isLoadingParams && immutableBids.size !== 0 && (
         <Button view="secondary" onClick={() => navigate('/bids')}>
           Show all
         </Button>

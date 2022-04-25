@@ -1,10 +1,10 @@
-import { Record as ImmutableRecord } from 'immutable'
 import { createContext } from 'react'
 
-import { BidsState, getDefaultBidsState } from './reducer'
+import { getDefaultBidsState } from './reducer'
+import { ImmutableBidsState } from './types'
 
 export interface BidsContext {
-  bidsState: ImmutableRecord<BidsState>
+  bidsState: ImmutableBidsState
 }
 
 export const BidsContext = createContext<BidsContext>({

@@ -23,16 +23,16 @@ export function useUserBid() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const bid = useMemo(() => value && value[0], [JSON.stringify(value)])
   const bidWithPlace = useMemo(
-    () => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)),
+    () => bids.find((bid) => !!account && addressEqual(bid.get('bidderAddress'), account)),
     [account, bids]
   )
 
   return bidWithPlace && account
     ? {
-        bidderID: bidWithPlace.bidderID,
+        bidderID: bidWithPlace.get('bidderID'),
         bidderAddress: account,
-        amount: bid?.amount || bidWithPlace.amount,
-        place: bidWithPlace.place,
+        amount: bid?.amount || bidWithPlace.get('amount'),
+        place: bidWithPlace.get('place'),
         winType: bid?.winType || WinType.Loss,
         claimed: bid?.claimed || false,
       }

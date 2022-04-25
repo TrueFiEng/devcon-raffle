@@ -8,6 +8,7 @@ import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
 import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 
 interface Bids {
   auction: Bid[]
@@ -48,7 +49,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 }
 
-function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
+function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
   const settledBids: Bids = {
     auction: [],
     raffle: [],
@@ -59,16 +60,16 @@ function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: B
     return settledBids
   }
 
-  settledBids.others = bids.filter((bid) => {
-    if (includesBigNumber(auctionWinners, bid.bidderID)) {
-      settledBids.auction.push(bid)
-      return false
+  bids.forEach((bid) => {
+    if (includesBigNumber(auctionWinners, bid.get('bidderID'))) {
+      settledBids.auction.push(bid.toObject())
+      return
     }
-    if (includesBigNumber(raffleWinners, bid.bidderID)) {
-      settledBids.raffle.push(bid)
-      return false
+    if (includesBigNumber(raffleWinners, bid.get('bidderID'))) {
+      settledBids.raffle.push(bid.toObject())
+      return
     }
-    return true
+    settledBids.others.push(bid.toObject())
   })
   return settledBids
 }
