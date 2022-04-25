@@ -1,8 +1,6 @@
 import * as ToastPrimitive from '@radix-ui/react-toast'
-import { RemoveNotificationPayload, useNotifications } from '@usedapp/core'
 import { useCallback } from 'react'
 import { CrossIcon } from 'src/components/Icons/CrossIcon'
-import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -22,24 +20,10 @@ interface Props {
 }
 
 export const NotificationToast = ({ notification, setError }: Props) => {
-  const chainId = useChainId()
-  const { removeNotification } = useNotifications()
-
-  const removeNotificationFunc = useCallback(
-    (payload: RemoveNotificationPayload) => {
-      removeNotification(payload)
-      setError(undefined)
-    },
-    [setError, removeNotification]
-  )
-
-  const removeNotificationWithDelay = useCallback(
-    () => setTimeout(() => removeNotificationFunc({ chainId, notificationId: notification.id }), 500),
-    [chainId, notification.id, removeNotificationFunc]
-  )
+  const removeNotification = useCallback(() => setError(undefined), [setError])
 
   return (
-    <Toast onOpenChange={(open) => open || removeNotificationWithDelay()} duration={5000}>
+    <Toast onOpenChange={(open) => open || removeNotification()} duration={5000}>
       <NotificationIconWrapper>
         <ErrorIcon color={Colors.Red} size={24} />
       </NotificationIconWrapper>
