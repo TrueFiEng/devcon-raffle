@@ -9,20 +9,23 @@ import { ErrorIcon } from '../Icons/ErrorIcon'
 interface Props {
   message: string
   setError: (str?: string) => void
+  onClick: () => Promise<void>
 }
 
-export const NotificationToast = ({ message, setError }: Props) => {
+export const NotificationToast = ({ message, setError, onClick }: Props) => {
   const removeNotification = useCallback(() => setError(undefined), [setError])
 
   return (
-    <Toast onOpenChange={(open) => open || removeNotification()} duration={5000}>
+    <Toast onOpenChange={(open) => open || removeNotification()} duration={50000}>
       <NotificationIconWrapper>
         <ErrorIcon color={Colors.Red} size={24} />
       </NotificationIconWrapper>
       <ToastContent>
         <NotificationTitle>Error</NotificationTitle>
         <NotificationDescription>{message}</NotificationDescription>
-        <NotificationActionText>Try Again</NotificationActionText>
+        <NotificationActionText onClick={onClick} altText="Try Again">
+          Try Again
+        </NotificationActionText>
       </ToastContent>
       <Close>
         <CrossIcon size={24} color={Colors.Grey} />
@@ -74,11 +77,15 @@ const NotificationDescription = styled(ToastPrimitive.Description)`
   color: ${Colors.Grey};
 `
 
-const NotificationActionText = styled(ToastPrimitive.Description)`
+const NotificationActionText = styled(ToastPrimitive.Action)`
   font-weight: 300;
   font-size: 14px;
   line-height: 20px;
   color: ${Colors.Blue};
+  background-color: ${Colors.Transparent};
+  border: none;
+  padding: 0;
+  text-align: left;
 `
 
 const Close = styled(ToastPrimitive.Close)`

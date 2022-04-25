@@ -6,12 +6,13 @@ import { NotificationToast } from './NotificationToast'
 interface Props {
   error: string | undefined
   setError: (str?: string) => void
+  onClick: () => Promise<void>
 }
 
-export const ErrorNotifications = ({ error, setError }: Props) => {
+export const ErrorNotifications = ({ error, setError, onClick }: Props) => {
   return (
     <ToastPrimitive.Provider>
-      {error && <NotificationToast message={error} setError={setError} />}
+      {error && <NotificationToast message={error} setError={setError} onClick={onClick} />}
       <NotificationsList />
     </ToastPrimitive.Provider>
   )
