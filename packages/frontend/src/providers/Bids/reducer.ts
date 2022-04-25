@@ -1,27 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Zero, AddressZero } from '@ethersproject/constants'
-import { Map as ImmutableMap, List as ImmutableList, Record as ImmutableRecord } from 'immutable'
 
-import { Bid } from '../../models/Bid'
+import { bidFactory, bidsStateFactory, ImmutableBid, ImmutableBidsState } from './types'
 
-const bidFactory = ImmutableRecord<Bid>({
-  bidderID: Zero,
-  bidderAddress: AddressZero,
-  amount: Zero,
-  place: 0
-})
-
-const bidsStateFactory = ImmutableRecord({
-  bids: ImmutableList<ImmutableRecord<Bid>>(),
-  bidders: ImmutableMap<string, number>({})
-})
-
-export interface BidsState {
-  bids: ImmutableList<ImmutableRecord<Bid>>
-  bidders: ImmutableMap<string, number>
-}
-
-export const getDefaultBidsState = (): ImmutableRecord<BidsState> => {
+export const getDefaultBidsState = (): ImmutableBidsState => {
   return bidsStateFactory({})
 }
 
@@ -31,7 +12,7 @@ export interface BidChanged {
   amount: BigNumber
 }
 
-export function bidsReducer(state: ImmutableRecord<BidsState>, action: BidChanged) {
+export function bidsReducer(state: ImmutableBidsState, action: BidChanged) {
   const bidIndex = getBidder(state, action.bidderAddress)
   if (bidIndex !== undefined) {
     const currentBid = getBid(state, bidIndex)!
@@ -46,7 +27,7 @@ export function bidsReducer(state: ImmutableRecord<BidsState>, action: BidChange
   return addBid(state, action)
 }
 
-function updateBid(state: ImmutableRecord<BidsState>, currentBid: ImmutableRecord<Bid>, newAmount: BigNumber) {
+function updateBid(state: ImmutableBidsState, currentBid: ImmutableBid, newAmount: BigNumber) {
   currentBid = currentBid.set('amount', newAmount)
 
   const currentPlace = currentBid.get('place')
@@ -56,7 +37,7 @@ function updateBid(state: ImmutableRecord<BidsState>, currentBid: ImmutableRecor
   return iterateBids(state, currentBid, currentPlace - 2)
 }
 
-function addBid(state: ImmutableRecord<BidsState>, action: BidChanged) {
+function addBid(state: ImmutableBidsState, action: BidChanged) {
   const newBid = bidFactory({
     ...action,
     place: -1
@@ -66,7 +47,7 @@ function addBid(state: ImmutableRecord<BidsState>, action: BidChanged) {
   return iterateBids(state, newBid, bidsCount - 1)
 }
 
-function iterateBids(state: ImmutableRecord<BidsState>, currentBid: ImmutableRecord<Bid>, startIndex: number) {
+function iterateBids(state: ImmutableBidsState, currentBid: ImmutableBid, startIndex: number) {
   for (let i = startIndex; i >= 0; i--) {
     const bid = getBid(state, i)!
     const newPlace = bid.get('place') + 1
@@ -80,7 +61,7 @@ function iterateBids(state: ImmutableRecord<BidsState>, currentBid: ImmutableRec
   return assignBidPlace(state, currentBid, 1)
 }
 
-function assignBidPlace(state: ImmutableRecord<BidsState>, bid: ImmutableRecord<Bid>, place: number) {
+function assignBidPlace(state: ImmutableBidsState, bid: ImmutableBid, place: number) {
   bid = bid.set('place', place)
 
   const index = place - 1
@@ -90,7 +71,7 @@ function assignBidPlace(state: ImmutableRecord<BidsState>, bid: ImmutableRecord<
 }
 
 // TODO: import from contracts package
-function compareBids(a: ImmutableRecord<Bid>, b: ImmutableRecord<Bid>) {
+function compareBids(a: ImmutableBid, b: ImmutableBid) {
   const amountCmp = biggerFirst(a.get('amount'), b.get('amount'))
   if (amountCmp !== 0) {
     return amountCmp
@@ -108,21 +89,21 @@ export function biggerFirst(a: BigNumber, b: BigNumber) {
   return 1
 }
 
-function getBid(state: ImmutableRecord<BidsState>, index: number) {
+function getBid(state: ImmutableBidsState, index: number) {
   return state.get('bids').get(index)
 }
 
-function setBid(state: ImmutableRecord<BidsState>, index: number, bid: ImmutableRecord<Bid>) {
+function setBid(state: ImmutableBidsState, index: number, bid: ImmutableBid) {
   let bids = state.get('bids')
   bids = bids.set(index, bid)
   return state.set('bids', bids)
 }
 
-function getBidder(state: ImmutableRecord<BidsState>, bidderAddress: string) {
+function getBidder(state: ImmutableBidsState, bidderAddress: string) {
   return state.get('bidders').get(bidderAddress)
 }
 
-function setBidder(state: ImmutableRecord<BidsState>, bidderAddress: string, index: number) {
+function setBidder(state: ImmutableBidsState, bidderAddress: string, index: number) {
   let bidders = state.get('bidders')
   bidders = bidders.set(bidderAddress, index)
   return state.set('bidders', bidders)
