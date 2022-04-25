@@ -11,18 +11,7 @@ interface Props {
 export const ErrorNotifications = ({ error, setError }: Props) => {
   return (
     <ToastPrimitive.Provider>
-      {error && (
-        <NotificationToast
-          notification={{
-            id: error,
-            type: 'transactionError',
-            submittedAt: Date.now(),
-            message: error,
-            transactionName: 'Get voucher code',
-          }}
-          setError={setError}
-        />
-      )}
+      {error && <NotificationToast message={error} setError={setError} />}
       <NotificationsList />
     </ToastPrimitive.Provider>
   )

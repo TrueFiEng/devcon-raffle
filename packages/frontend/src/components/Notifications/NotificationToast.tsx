@@ -6,20 +6,12 @@ import styled from 'styled-components'
 
 import { ErrorIcon } from '../Icons/ErrorIcon'
 
-type TransactionError = {
-  id: string
-  type: 'transactionError'
-  submittedAt: number
-  message: string
-  transactionName: string
-}
-
 interface Props {
-  notification: TransactionError
+  message: string
   setError: (str?: string) => void
 }
 
-export const NotificationToast = ({ notification, setError }: Props) => {
+export const NotificationToast = ({ message, setError }: Props) => {
   const removeNotification = useCallback(() => setError(undefined), [setError])
 
   return (
@@ -29,7 +21,7 @@ export const NotificationToast = ({ notification, setError }: Props) => {
       </NotificationIconWrapper>
       <ToastContent>
         <NotificationTitle>Error</NotificationTitle>
-        <NotificationDescription>{notification.message}</NotificationDescription>
+        <NotificationDescription>{message}</NotificationDescription>
         <NotificationActionText>Try Again</NotificationActionText>
       </ToastContent>
       <Close>
