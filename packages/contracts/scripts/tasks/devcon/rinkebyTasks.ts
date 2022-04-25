@@ -5,7 +5,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { connectToDevcon } from 'scripts/utils/devcon'
 import writeFileAtomic from 'write-file-atomic'
 
-const testnetDevconAddress = '0x0cD6783fca8D1a9DbAa6404B759b0C2110f3C2A0'
+const testnetDevconAddress = '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F'
 const testnetHeapAddress = '0xc1D8b72838Cb3F1c52651d76ea186Df457817aD6'
 
 task('generate-dotenv', 'Generate .env file needed for other tasks')

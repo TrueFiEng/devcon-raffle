@@ -7,7 +7,6 @@ export const Form = styled.div`
   row-gap: 16px;
   width: 100%;
   max-width: 460px;
-  overflow: hidden;
 `
 
 export const FormNarrow = styled(Form)`
@@ -36,6 +35,11 @@ export const FormWrapper = styled.div`
   row-gap: 16px;
   padding: 82px 115px 82px 170px;
   width: 100%;
+`
+
+export const FormSectionWrapper = styled(FormWrapper)`
+  padding: 0 0 0 170px;
+  justify-content: center;
 `
 
 export const FormText = styled.p`

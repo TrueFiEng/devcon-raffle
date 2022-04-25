@@ -7,7 +7,7 @@ import { TransactionSuccessHeader } from 'src/components/Transaction/Transaction
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { shortenTxHash } from 'src/utils/formatters/shortenTxHash'
-import { getArbiscanTxLink } from 'src/utils/getArbiscanLink'
+import { getExplorerTxLink } from 'src/utils/getExplorerLink'
 import styled from 'styled-components'
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 
 export const TransactionSuccess = ({ txHash, action, setView, endInitialBidding }: Props) => {
   const chainId = useChainId()
-  const transactionLink = getArbiscanTxLink(chainId, txHash)
+  const transactionLink = getExplorerTxLink(chainId, txHash)
 
   const goHome = () => {
     setView(0)

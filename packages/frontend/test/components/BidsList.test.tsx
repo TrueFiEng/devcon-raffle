@@ -12,6 +12,7 @@ import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
 import { generateMockBids } from 'test/mocks/generateMockBids'
 
 const mockUserAddress = '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
+const arbitrumRinkebyChainId = 421611
 let mockUserBid: UserBid | undefined
 
 jest.mock('@usedapp/core', () => ({
@@ -25,6 +26,10 @@ jest.mock('src/hooks/useAuctionWinnersCount', () => ({
 
 jest.mock('src/hooks/useUserBid', () => ({
   useUserBid: () => mockUserBid,
+}))
+
+jest.mock('src/hooks/chainId/useChainId', () => ({
+  useChainId: () => arbitrumRinkebyChainId,
 }))
 
 jest.mock('src/hooks/useContractBids', () => ({
