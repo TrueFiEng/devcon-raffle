@@ -15,6 +15,7 @@ interface Bids {
   auction: Bid[]
   raffle: Bid[]
   others: Bid[]
+  goldenTicket?: Bid
 }
 
 interface SettledBidsListProps {
@@ -33,10 +34,6 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 
   const filteredBids = useMemo(() => filterBids(settledBids, searchFunc), [settledBids, searchFunc])
-  const goldenTicketWinner = useMemo(
-    () => raffleWinners?.[0] && bids.find((bid) => bid.bidderID.eq(raffleWinners[0])),
-    [bids, raffleWinners]
-  )
 
   return (
     <>
@@ -45,7 +42,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
       ) : (
         <>
           <BidsListHeaders />
-          <GoldenTicketWinner bidderAddress={goldenTicketWinner?.bidderAddress} />
+          <GoldenTicketWinner bidderAddress={settledBids.goldenTicket?.bidderAddress} />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
@@ -66,13 +63,17 @@ function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: B
     return settledBids
   }
 
+  settledBids.goldenTicket = bids.find((b) => b.bidderID.eq(raffleWinners[0]))
+
   settledBids.others = bids.filter((bid) => {
     if (includesBigNumber(auctionWinners, bid.bidderID)) {
       settledBids.auction.push(bid)
       return false
     }
     if (includesBigNumber(raffleWinners, bid.bidderID)) {
-      settledBids.raffle.push(bid)
+      if (!settledBids.goldenTicket?.bidderID.eq(bid.bidderID)) {
+        settledBids.raffle.push(bid)
+      }
       return false
     }
     return true
