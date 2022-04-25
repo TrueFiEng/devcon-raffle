@@ -1,10 +1,21 @@
 import * as Accordion from '@radix-ui/react-accordion'
 import { ArrowDownIcon } from 'src/components/Icons/ArrowDownIcon'
 import { Rule, RuleText } from 'src/components/Info/Rules'
+import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
+import { useMinimumBid } from 'src/hooks/useMinimumBid'
+import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'
 import { Colors } from 'src/styles/colors'
+import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import styled from 'styled-components'
 
 export const InfoAccordion = () => {
+  const auctionWinnersCount = useAuctionWinnersCount()
+  const raffleWinnersCount = useRaffleWinnersCount()
+  const totalCount = auctionWinnersCount && raffleWinnersCount && auctionWinnersCount + raffleWinnersCount
+  const minimumBid = useMinimumBid()
+  const reservePrice = Number(formatEtherAmount(minimumBid))
+  const exampleBid = 0.2
+
   return (
     <Wrapper>
       <Accordion.Root type="single" defaultValue="item-1" collapsible>
@@ -13,8 +24,8 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="How to buy a ticket for Devcon 6?" />
           </StyledHeader>
           <StyledContent>
-            Join the ruffle by submitting your bid. Bid high, to win an action or take your chance in a raffle pool. The
-            cost to participate will be at LEAST the cost of a Devcon ticket.
+            Join the ruffle by submitting your bid. Bid high to win an action or take your chance in a raffle pool. The
+            cost to participate will be at least the cost of a Devcon ticket.
           </StyledContent>
         </Accordion.Item>
 
@@ -24,33 +35,35 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <RuleText>
-              Total number of 100 raffle tickets is devided between auction pool and raffle pool. Auction winners will
-              win a Voucher Code that is redeemable for a Free Devcon ticket. Raffle winners will receive a voucher code
-              that is redeemable for 1 Devcon Ticket at Full Price.
+              Total number of {totalCount} raffle tickets is devided between auction pool and raffle pool. Auction
+              winners will win a Voucher Code that is redeemable for a Free Devcon ticket. Raffle winners will receive a
+              voucher code that is redeemable for 1 Devcon Ticket at Full Price.
             </RuleText>
             <Rule
-              heading="Auction pool: 20"
+              heading={`Auction pool: ${auctionWinnersCount}`}
               rule="Tickets from auction pool will be distributed to the highest bidding participants. The cost of a Devcon
               ticket in that pool is equal to the bid. All proceeds will go towards X Public Good."
-              example="You bid 0.5 ETH and end up in top 20 of bidders. You receive the ticket for 0.5 ETH."
+              example={`You bid ${exampleBid * 2.5} ETH and end up in top ${auctionWinnersCount} of bidders. You receive the ticket for 
+              ${exampleBid * 2.5} ETH.`}
             />
             <Rule
-              heading="Raffle pool: 80"
-              rule="From participants who bid below the price of auction pool, 80 will be randomly given a Voucher Code to buy
-              a Devcon ticket at full price, which is 0.15 ETH. All the funds above that price will be refunded to
-              bidders."
-              example="You bid 0.20 ETH and end up below top 200. If the raffle selects you, you pay 0.15
-              ETH for the ticket and get 0.049 ETH back."
+              heading={`Raffle pool: ${raffleWinnersCount}`}
+              rule={`From participants who bid below the price of auction pool, ${raffleWinnersCount} will be randomly given a Voucher Code to buy
+              a Devcon ticket at full price, which is ${reservePrice} ETH. All the funds over that price will be refunded to
+              bidders.`}
+              example={`You bid ${exampleBid} ETH and end up below top ${auctionWinnersCount}. If the raffle selects you, you pay ${reservePrice}
+              ETH for the ticket and get ${(exampleBid - reservePrice).toFixed(2)} ETH back.`}
             />
             <Rule
               heading="Golden Ticket: 1"
               rule="One lucky bidder from raffle pool will get the ticket for Devcon 6 totally for free! All funds of the
-              Golden Ticket winner will be claimable after the sale is over."
+              Golden Ticket winner will be claimable after the raffle is settled."
             />
             <Rule
               heading="No luck?"
-              rule="Didn't win. Your bid (-2% fee) will be claimable after the sale is over."
-              example="You bid 0.20 ETH and end up not winning a ticket. You can get 0.196 ETH back."
+              rule="Didn't win. Your bid (-2% fee) will be claimable after the raffle is settled."
+              example={`You bid ${exampleBid} ETH and end up not winning a ticket. 
+              You can get ${(exampleBid * 98) / 100} ETH back.`}
             />
           </StyledContent>
         </Accordion.Item>
@@ -61,7 +74,7 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             The ticket is an NFT token held in your wallet. A unique token will be minted in the same moment you make a
-            bid. If your bid will win the auction or the raffle – it becomes a valid Devcon 6 ticket.
+            bid. If your bid wins the auction or the raffle – it will become a valid Devcon 6 ticket.
           </StyledContent>
         </Accordion.Item>
 
