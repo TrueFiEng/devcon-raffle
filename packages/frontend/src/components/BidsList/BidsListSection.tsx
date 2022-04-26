@@ -36,12 +36,20 @@ export const BidsListSection = () => {
 
   return (
     <BidsListContainer>
-      <ListHeader>
-        <h3>Number of participants:</h3>
-        <ColoredNumber>{isLoadingParams ? 0 : bids.length}</ColoredNumber>
-      </ListHeader>
-      <BidsListHeaders />
-      <BidsList bids={auctionBidsSlice} view="short" />
+      {!isLoadingParams && bids.length === 0 ? (
+        <EmptyList>
+          <ColoredText>No bidders yet. Be the first one!</ColoredText>
+        </EmptyList>
+      ) : (
+        <>
+          <ListHeader>
+            <h3>Number of participants:</h3>
+            <ColoredText>{isLoadingParams ? 0 : bids.length}</ColoredText>
+          </ListHeader>
+          <BidsListHeaders />
+          <BidsList bids={auctionBidsSlice} view="short" isLoadingParams={isLoadingParams} />
+        </>
+      )}
       {!isLoadingParams && bids.length !== 0 && (
         <Button view="secondary" onClick={() => navigate('/bids')}>
           Show all
@@ -68,6 +76,10 @@ const ListHeader = styled.div`
   margin-bottom: 22px;
   width: 100%;
 `
-const ColoredNumber = styled.h3`
+
+const EmptyList = styled.div`
+  margin: 48px 0;
+`
+const ColoredText = styled.h3`
   color: ${Colors.Blue};
 `
