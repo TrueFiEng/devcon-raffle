@@ -23,8 +23,10 @@ export const BidsProvider = ({ children }: Props) => {
 
   useEffect(() => {
     console.log('on')
-    const listener = (args: any) => {
-      console.log(args)
+    const listener = async (pollID: any, blockNumber: any) => {
+      console.log('pollID: ', pollID, ' blockNumber: ', blockNumber)
+      const lBlockNumber = await library?.getBlockNumber()
+      console.log('lBlockNumber', lBlockNumber)
     }
     library?.on('poll', listener)
     return () => {
