@@ -9,6 +9,7 @@ import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
 import { useUserBid } from 'src/hooks/useUserBid'
+import { prepareAmountForParsing } from "src/utils/prepareAmountForParsing";
 
 export const BumpBidFlow = () => {
   const userBid = useUserBid()
@@ -17,7 +18,7 @@ export const BumpBidFlow = () => {
   const { bids } = useBids()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const [bumpAmount, setBumpAmount] = useState(formatEther(minimumIncrement))
-  const parsedBumpAmount = useMemo(() => parseEther(bumpAmount || '0'), [bumpAmount])
+  const parsedBumpAmount = useMemo(() => parseEther(prepareAmountForParsing(bumpAmount)), [bumpAmount])
   const newBidAmount = useMemo(() => {
     return userBid && userBid.amount.add(parsedBumpAmount)
   }, [parsedBumpAmount, userBid])

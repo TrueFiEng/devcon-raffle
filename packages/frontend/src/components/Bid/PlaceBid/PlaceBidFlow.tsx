@@ -8,6 +8,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
+import { prepareAmountForParsing } from "src/utils/prepareAmountForParsing";
 
 interface PlaceBidFlowProps {
   endInitialBidding: () => void
@@ -26,7 +27,7 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
     }
   }, [minimumBid, state.status])
 
-  const parsedBid = useMemo(() => parseEther(bid || '0'), [bid])
+  const parsedBid = useMemo(() => parseEther(prepareAmountForParsing(bid || '0')), [bid])
   const bidAction: TransactionAction = {
     type: Transactions.Place,
     send: async () => {
