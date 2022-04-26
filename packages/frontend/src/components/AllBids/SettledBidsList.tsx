@@ -63,17 +63,17 @@ function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: B
     return settledBids
   }
 
-  settledBids.goldenTicket = bids.find((b) => b.bidderID.eq(raffleWinners[0]))
-
   settledBids.others = bids.filter((bid) => {
     if (includesBigNumber(auctionWinners, bid.bidderID)) {
       settledBids.auction.push(bid)
       return false
     }
+    if (bid.bidderID.eq(raffleWinners[0])) {
+      settledBids.goldenTicket = bid
+      return false
+    }
     if (includesBigNumber(raffleWinners, bid.bidderID)) {
-      if (!settledBids.goldenTicket?.bidderID.eq(bid.bidderID)) {
-        settledBids.raffle.push(bid)
-      }
+      settledBids.raffle.push(bid)
       return false
     }
     return true
