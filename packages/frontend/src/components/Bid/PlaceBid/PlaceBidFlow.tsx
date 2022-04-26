@@ -20,7 +20,11 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
 
-  useEffect(() => setBid(formatEther(minimumBid)), [minimumBid])
+  useEffect(() => {
+    if (state.status == 'None' || state.status == 'Success') {
+      setBid(formatEther(minimumBid))
+    }
+  }, [minimumBid, state.status])
 
   const parsedBid = useMemo(() => parseEther(bid || '0'), [bid])
   const bidAction: TransactionAction = {
