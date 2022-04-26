@@ -18,6 +18,14 @@ interface InputProps {
 
 const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
+function checkOnChangeLength(value: string) {
+  if (value[0] == '.' && value.length > 19) {
+    return true
+  }
+
+  return value.length > 20
+}
+
 export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
@@ -38,8 +46,11 @@ export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }:
     }
 
     if (value !== '') {
-      const formattedValue = value.replace(',', '.')
-      value = formattedValue[0] == '.' ? `0${formattedValue}` : formattedValue
+      value = value.replace(',', '.')
+    }
+
+    if (checkOnChangeLength(value)) {
+      return
     }
 
     setOnChangeValue(value)
