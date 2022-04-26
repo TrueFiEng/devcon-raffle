@@ -37,8 +37,9 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
   return (
     <WinOption>
       <ErrorNotifications error={error} setError={setError} onClick={handleVoucher} />
+      <span>Get your voucher code now!</span>
       <Button view="primary" onClick={handleVoucher}>
-        Get voucher code
+        Claim voucher code
       </Button>
     </WinOption>
   )
