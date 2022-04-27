@@ -24,10 +24,14 @@ export const BumpBidFlow = () => {
   }, [parsedBumpAmount, userBid])
 
   useEffect(() => {
-    if (state.status == 'None' || state.status == 'Success') {
+    setBumpAmount(formatEther(minimumIncrement))
+  }, [minimumIncrement])
+
+  useEffect(() => {
+    if (state.status == 'Success') {
       setBumpAmount(formatEther(minimumIncrement))
     }
-  }, [minimumIncrement, state.status])
+  }, [state.status])
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
