@@ -1,7 +1,6 @@
 import { Config as UseDAppConfig } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
-import { NODE_URLS } from 'src/constants/nodeUrls'
 
 import { getLocalConfig } from './config.dev.local'
 import { getTestnetConfig } from './config.dev.testnet'
@@ -37,7 +36,6 @@ function getDevConfig(): Config {
 export const commonUseDAppConfig: UseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
   multicallVersion: 2,
-  readOnlyUrls: NODE_URLS,
 }
 
 export const CONFIG = getConfig(import.meta.env.MODE)

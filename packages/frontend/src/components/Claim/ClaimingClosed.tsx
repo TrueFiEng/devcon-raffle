@@ -1,9 +1,9 @@
 import { FormSectionWrapper } from 'src/components/Form/Form'
 
-export const ResultsAwaiting = () => {
+export const ClaimingClosed = () => {
   return (
     <FormSectionWrapper>
-      <h2>Wait for results ⏳</h2>
+      <h2>Claiming is closed ⌛️</h2>
     </FormSectionWrapper>
   )
 }

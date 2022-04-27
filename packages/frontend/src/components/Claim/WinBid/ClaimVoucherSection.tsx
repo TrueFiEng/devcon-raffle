@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
+import { ErrorNotifications } from 'src/components/Notifications/ErrorNotifications'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
 import { useGetVoucher } from 'src/hooks/backend/useGetVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
-import { Colors } from 'src/styles/colors'
-import styled from 'styled-components'
 
 import { WinOption } from './WinBidForm'
 
@@ -45,14 +44,11 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
 
   return (
     <WinOption>
-      {!error ? <span>Claim your voucher code now!</span> : <ErrorText>{error}</ErrorText>}
+      <ErrorNotifications error={error} setError={setError} onClick={handleVoucher} />
+      <span>Get your voucher code now!</span>
       <Button view="primary" onClick={handleVoucher}>
-        Get voucher code
+        Claim voucher code
       </Button>
     </WinOption>
   )
 }
-
-const ErrorText = styled.span`
-  color: ${Colors.Red};
-`
