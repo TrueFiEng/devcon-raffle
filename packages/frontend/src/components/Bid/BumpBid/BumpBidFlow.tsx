@@ -1,3 +1,4 @@
+import { useEthers } from '@usedapp/core'
 import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -8,7 +9,6 @@ import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { useEthers } from '@usedapp/core'
 
 export const BumpBidFlow = () => {
   const { account } = useEthers()

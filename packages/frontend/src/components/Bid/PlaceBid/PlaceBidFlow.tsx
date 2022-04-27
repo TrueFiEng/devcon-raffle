@@ -1,4 +1,4 @@
-import { useEthers } from "@usedapp/core";
+import { useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -16,7 +16,7 @@ interface PlaceBidFlowProps {
 }
 
 export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
-  const { account} = useEthers()
+  const { account } = useEthers()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
   const [bid, setBid] = useState(ZERO)
