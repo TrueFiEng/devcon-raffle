@@ -55,6 +55,7 @@ async function fetchVoucherCode(userAddress: string, nonce: string, signature: s
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ signature, nonce, userAddress }),
+    credentials: 'include',
   })
   if ([200, 403].includes(response.status)) {
     return await response.json()
