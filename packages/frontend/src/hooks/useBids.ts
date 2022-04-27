@@ -5,6 +5,6 @@ export const useBids = () => {
   const { bidsState } = useContext(BidsContext)
   return {
     bids: bidsState.get('bids'),
-    bidders: bidsState.get('bidders')
+    bidders: bidsState.get('bidders'),
   }
 }

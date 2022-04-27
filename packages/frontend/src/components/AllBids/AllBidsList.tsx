@@ -13,7 +13,7 @@ interface AllBidsListProps {
 
 export const AllBidsList = ({ search, auctionWinnersCount, raffleWinnersCount }: AllBidsListProps) => {
   const { bids: immutableBids } = useBids()
-  const bids = useMemo(() => immutableBids.toArray().map((bid)=> bid.toObject()), [immutableBids])
+  const bids = useMemo(() => immutableBids.toArray().map((bid) => bid.toObject()), [immutableBids])
   const searchFunc = useSearchBid(search)
 
   const raffleBidsOffset = Math.max(0, bids.length - raffleWinnersCount)

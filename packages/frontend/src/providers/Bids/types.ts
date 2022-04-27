@@ -16,10 +16,10 @@ export const bidFactory = ImmutableRecord<Bid>({
   bidderID: Zero,
   bidderAddress: AddressZero,
   amount: Zero,
-  place: 0
+  place: 0,
 })
 
 export const bidsStateFactory = ImmutableRecord({
   bids: ImmutableList<ImmutableRecord<Bid>>(),
-  bidders: ImmutableMap<string, number>({})
+  bidders: ImmutableMap<string, number>({}),
 })

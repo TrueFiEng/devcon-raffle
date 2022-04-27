@@ -40,7 +40,7 @@ function updateBid(state: ImmutableBidsState, currentBid: ImmutableBid, newAmoun
 function addBid(state: ImmutableBidsState, action: BidChanged) {
   const newBid = bidFactory({
     ...action,
-    place: -1
+    place: -1,
   })
 
   const bidsCount = state.get('bids').size
@@ -52,7 +52,8 @@ function iterateBids(state: ImmutableBidsState, currentBid: ImmutableBid, startI
     const bid = getBid(state, i)!
     const newPlace = bid.get('place') + 1
     const cmp = compareBids(bid, currentBid)
-    if (cmp < 0) { // bid.amount > currentBid.amount
+    if (cmp < 0) {
+      // bid.amount > currentBid.amount
       return assignBidPlace(state, currentBid, newPlace)
     }
 
