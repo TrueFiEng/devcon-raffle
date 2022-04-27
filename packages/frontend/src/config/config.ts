@@ -2,9 +2,10 @@ import { Config as UseDAppConfig } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
 
-import { getLocalConfig } from './config.dev.local'
-import { getTestnetConfig } from './config.dev.testnet'
-import { getProdConfig } from './config.prod'
+import { getLocalDevConfig } from './config.dev.local'
+import { getTestnetDevConfig } from './config.dev.testnet'
+import { getMainnetProdConfig } from './config.prod.mainnet'
+import { getTestnetProdConfig } from './config.prod.testnet'
 import { getStringEnv } from './getEnv'
 
 export interface Config {
@@ -14,22 +15,31 @@ export interface Config {
 }
 
 function getConfig(mode: string): Config {
+  const network = getStringEnv('VITE_NETWORK')
+
   switch (mode) {
     case 'development':
-      return getDevConfig()
+      return getDevConfig(network)
     default:
-      return getProdConfig()
+      return getProdConfig(network)
   }
 }
 
-function getDevConfig(): Config {
-  const network = getStringEnv('VITE_NETWORK')
-
+function getDevConfig(network: string | undefined): Config {
   switch (network) {
     case 'ArbitrumRinkeby':
-      return getTestnetConfig()
+      return getTestnetDevConfig()
     default:
-      return getLocalConfig()
+      return getLocalDevConfig()
+  }
+}
+
+function getProdConfig(network: string | undefined): Config {
+  switch (network) {
+    case 'ArbitrumRinkeby':
+      return getTestnetProdConfig()
+    default:
+      return getMainnetProdConfig()
   }
 }
 
