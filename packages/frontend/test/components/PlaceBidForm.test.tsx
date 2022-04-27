@@ -40,6 +40,7 @@ describe('UI: PlaceBidForm', () => {
     render(
       <PlaceBidForm
         bid={bid}
+        parsedBid={parseEther(bid)}
         setBid={() => undefined}
         minimumBid={parseEther('0.15')}
         bids={mockBids}
