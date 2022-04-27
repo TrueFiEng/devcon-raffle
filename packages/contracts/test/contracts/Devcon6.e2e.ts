@@ -28,6 +28,9 @@ describe('Devcon6 - E2E', function () {
   let bids: Bid[]
   let sortedBids: Bid[]
 
+  // Increases timeout to 60s to make sure all tests are passing without a timeout
+  this.timeout(60_000)
+
   before('prepare contracts', async function () {
     ({ provider, devcon, wallets } = await loadFixture(devcon6E2EFixture))
     devconAsOwner = devcon.connect(owner())
