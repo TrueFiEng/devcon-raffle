@@ -1,9 +1,9 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { NothingFound } from 'src/components/AllBids/NothingFound'
+import { useMatchBid } from 'src/components/AllBids/useSearchBid'
 import { BidsListHeaders } from 'src/components/BidsList/BidsListHeaders'
 import { BidsSubList } from 'src/components/BidsList/BidsSubList'
 import { useBids } from 'src/hooks/useBids'
-import { Bid } from 'src/models/Bid'
 
 interface AllBidsListProps {
   search: string
@@ -13,23 +13,19 @@ interface AllBidsListProps {
 
 export const AllBidsList = ({ search, auctionWinnersCount, raffleWinnersCount }: AllBidsListProps) => {
   const { bids } = useBids()
-
-  const searchBid = useCallback(
-    (sectionBids: Bid[]) => sectionBids.filter((bid) => bid.bidderAddress.includes(search)),
-    [search]
-  )
+  const matchesSearch = useMatchBid(search)
 
   const raffleBidsOffset = Math.max(0, bids.length - raffleWinnersCount)
   const firstRaffleBidIndex = raffleBidsOffset >= auctionWinnersCount ? auctionWinnersCount : raffleBidsOffset
 
   const auctionBids = useMemo(() => {
     const sectionBids = bids.slice(0, firstRaffleBidIndex)
-    return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid]) // eslint-disable-line react-hooks/exhaustive-deps
+    return sectionBids.filter(matchesSearch)
+  }, [bids, matchesSearch]) // eslint-disable-line react-hooks/exhaustive-deps
   const raffleBids = useMemo(() => {
     const sectionBids = bids.slice(firstRaffleBidIndex)
-    return search ? searchBid(sectionBids) : sectionBids
-  }, [search, bids, searchBid]) // eslint-disable-line react-hooks/exhaustive-deps
+    return sectionBids.filter(matchesSearch)
+  }, [bids, matchesSearch]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const nothingFound = search && auctionBids.length === 0 && raffleBids.length === 0
 

@@ -6,6 +6,7 @@ import { Colors } from '../../styles/colors'
 import { BidAwaiting } from '../Bid/BidAwaiting'
 import { BidFlow } from '../Bid/BidFlow'
 import { ClaimFlow } from '../Claim/ClaimFlow'
+import { ClaimingClosed } from '../Claim/ClaimingClosed'
 import { ResultsAwaiting } from '../Claim/ResultsAwaiting'
 
 import { ChainIdWarning } from './ChainIdWarning'
@@ -18,6 +19,7 @@ const UserActions: Record<AuctionState, () => ReactElement> = {
   BiddingFlow: BidFlow,
   AwaitingResults: ResultsAwaiting,
   ClaimingFlow: ClaimFlow,
+  ClaimingClosed: ClaimingClosed,
 }
 
 export const UserActionSection = () => {
