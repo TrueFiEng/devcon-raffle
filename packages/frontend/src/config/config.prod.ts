@@ -1,5 +1,5 @@
 import { Arbitrum } from '@usedapp/core'
-import { ARBITRUM_NODE_URL } from 'src/constants/nodeUrls'
+import { providerWithInterval } from 'src/constants/nodeUrls'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
@@ -11,7 +11,7 @@ export function getProdConfig(): Config {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: Arbitrum.chainId,
-      readOnlyUrls: ARBITRUM_NODE_URL,
+      readOnlyUrls: providerWithInterval(Arbitrum.chainId),
       networks: [Arbitrum],
     },
     addresses: ADDRESSES,

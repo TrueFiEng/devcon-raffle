@@ -1,5 +1,5 @@
 import { Hardhat } from '@usedapp/core'
-import { HARDHAT_NODE_URL } from 'src/constants/nodeUrls'
+import { providerWithInterval } from 'src/constants/nodeUrls'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
@@ -9,9 +9,9 @@ export function getLocalConfig(): Config {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: Hardhat.chainId,
-      readOnlyUrls: HARDHAT_NODE_URL,
+      readOnlyUrls: providerWithInterval(Hardhat.chainId),
       networks: [Hardhat],
-      pollingInterval: 1000
+      pollingInterval: 1000,
     },
     addresses: ADDRESSES,
     backendUrl: 'http://localhost:3001',
