@@ -1,3 +1,4 @@
+import { useEthers } from "@usedapp/core";
 import { useEffect, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -9,7 +10,6 @@ import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 
 import { ZERO } from '../../../constants/bigNumber'
-import { useEthers } from "@usedapp/core";
 
 interface PlaceBidFlowProps {
   endInitialBidding: () => void
