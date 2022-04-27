@@ -8,7 +8,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
-import { prepareAmountForParsing } from "src/utils/prepareAmountForParsing";
+import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 interface PlaceBidFlowProps {
   endInitialBidding: () => void

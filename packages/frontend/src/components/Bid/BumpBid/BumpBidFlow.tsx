@@ -9,7 +9,7 @@ import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { prepareAmountForParsing } from "src/utils/prepareAmountForParsing";
+import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 export const BumpBidFlow = () => {
   const userBid = useUserBid()
