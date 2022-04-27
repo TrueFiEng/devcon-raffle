@@ -1,5 +1,5 @@
 import { Devcon6 } from '@devcon-raffle/contracts'
-import { useBlockNumber, useEthers } from '@usedapp/core'
+import { useBlockNumber } from '@usedapp/core'
 import { Dispatch, ReactNode, useEffect, useReducer } from 'react'
 import { useDevconContract } from 'src/hooks/contract'
 import { useContractBids } from 'src/hooks/useContractBids'
@@ -16,29 +16,9 @@ export const BidsProvider = ({ children }: Props) => {
   const contractBids = useContractBids()
   const { devcon } = useDevconContract()
   const blockNumber = useBlockNumber()
-  const {library} = useEthers()
 
   const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
   useEffect(() => initBids(contractBids, dispatch), [contractBids, dispatch])
-
-  useEffect(() => {
-    console.log('on')
-    const listener = async (pollID: any, blockNumber: any) => {
-      console.log('pollID: ', pollID, ' blockNumber: ', blockNumber)
-      const lBlockNumber = await library?.getBlockNumber()
-      console.log('lBlockNumber', lBlockNumber)
-    }
-    library?.on('poll', listener)
-    return () => {
-      console.log('off')
-      library?.off('poll', listener)
-    }
-  }, [library])
-
-  useEffect(() => {
-    console.log('interval: ', library?.pollingInterval)
-    console.log('block number use effect, block number: ', blockNumber)
-  }, [library, blockNumber])
 
   useEffect(() => {
     subscribeToNewBids(devcon, blockNumber, dispatch)
