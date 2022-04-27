@@ -9,17 +9,21 @@ import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 
 import { ZERO } from '../../../constants/bigNumber'
+import { useEthers } from "@usedapp/core";
 
 interface PlaceBidFlowProps {
   endInitialBidding: () => void
 }
 
 export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
+  const { account} = useEthers()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
   const [bid, setBid] = useState(ZERO)
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
+
+  useEffect(() => setView(TxFlowSteps.Placing), [account])
 
   useEffect(() => setBid(minimumBid), [minimumBid])
 
