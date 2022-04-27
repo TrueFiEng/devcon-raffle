@@ -3,7 +3,7 @@ import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 describe('getPositionAfterBid', () => {
-  const bids = generateMockBidsState(4)
+  const bids = generateMockBidsState(4).get('bids')
 
   it('When outbidding everyone', () => {
     expect(getPositionAfterBid(parseEther('10'), bids)).toBe(1)

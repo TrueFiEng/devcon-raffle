@@ -4,7 +4,7 @@ import { getPositionAfterBump } from 'src/utils/getPositionAfterBump'
 import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 describe('getPositionAfterBump', () => {
-  const bids = generateMockBidsState(4)
+  const bids = generateMockBidsState(4).get('bids')
 
   it('When outbidding everyone', () => {
     expect(getPositionAfterBump(parseEther('10'), BigNumber.from(10), bids)).toBe(1)
