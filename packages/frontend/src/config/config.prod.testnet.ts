@@ -3,8 +3,9 @@ import { ARBITRUM_RINKEBY_NODE_URL } from 'src/constants/nodeUrls'
 
 import { getAddresses } from './addresses'
 import { commonUseDAppConfig } from './config'
+import { getStringEnv } from './getEnv'
 
-export function getTestnetDevConfig() {
+export function getTestnetProdConfig() {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
@@ -13,6 +14,6 @@ export function getTestnetDevConfig() {
       networks: [ArbitrumRinkeby],
     },
     addresses: getAddresses(),
-    backendUrl: 'http://localhost:3001',
+    backendUrl: getStringEnv('BACKEND_URL') || '',
   }
 }
