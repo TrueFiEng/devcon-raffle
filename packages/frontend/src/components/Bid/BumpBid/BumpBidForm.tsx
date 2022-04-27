@@ -14,9 +14,10 @@ import styled from 'styled-components'
 interface BumpBidProps {
   userBid: Bid
   newBidAmount: BigNumber
-  bumpAmount: BigNumber
+  bumpAmount: string
+  parsedBumpAmount: BigNumber
   minimumIncrement: BigNumber
-  setBumpAmount: (val: BigNumber) => void
+  setBumpAmount: (val: string) => void
   setView: (state: TxFlowSteps) => void
   bids: Bid[]
 }
@@ -25,6 +26,7 @@ export const BumpBidForm = ({
   userBid,
   newBidAmount,
   bumpAmount,
+  parsedBumpAmount,
   minimumIncrement,
   setBumpAmount,
   setView,
@@ -32,8 +34,8 @@ export const BumpBidForm = ({
 }: BumpBidProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const notEnoughBalance = userBalance !== undefined && bumpAmount.gt(userBalance)
-  const bidTooLow = bumpAmount.lt(minimumIncrement)
+  const notEnoughBalance = userBalance !== undefined && parsedBumpAmount.gt(userBalance)
+  const bidTooLow = parsedBumpAmount.lt(minimumIncrement)
 
   return (
     <BumpFormWrapper>
@@ -48,7 +50,7 @@ export const BumpBidForm = ({
           <span>No. {userBid.place}</span>
         </FormRow>
         <Input
-          initialAmount={minimumIncrement}
+          initialAmount={bumpAmount}
           setAmount={setBumpAmount}
           notEnoughBalance={notEnoughBalance}
           bidTooLow={bidTooLow}
