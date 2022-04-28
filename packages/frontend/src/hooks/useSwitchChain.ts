@@ -19,7 +19,7 @@ interface SwitchEthereumChainParameter {
   chainId: string
 }
 
-const toHex = (value: number) => BigNumber.from(value).toHexString()
+const toHex = (value: number) => unpadHexString(BigNumber.from(value).toHexString())
 const arbitrumChainId = toHex(ChainId.Arbitrum)
 const errChainNotAddedYet = 4902
 
@@ -29,9 +29,7 @@ const addArbitrumChain: AddEthereumChainParameter = {
   rpcUrls: ['https://arb1.arbitrum.io/rpc'],
   blockExplorerUrls: ['https://arbiscan.io'],
 }
-const getSwitchChainParam = (chainId: SupportedChainId): SwitchEthereumChainParameter => ({
-  chainId: unpadHexString(toHex(chainId)),
-})
+const getSwitchChainParam = (chainId: SupportedChainId): SwitchEthereumChainParameter => ({ chainId: toHex(chainId) })
 
 export function useSwitchChain() {
   const { library } = useEthers()
