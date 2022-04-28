@@ -22,7 +22,7 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 describe('UI: PlaceBidForm', () => {
-  const mockBids = generateMockBidsState(5)
+  const mockBids = generateMockBidsState(5).get('bids')
 
   it('Displays estimated place after bid', async () => {
     renderComponent(parseEther('4.5'))

@@ -22,7 +22,7 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 describe('UI: BumpBidForm', () => {
-  const mockBids = generateMockBidsState(5)
+  const mockBids = generateMockBidsState(5).get('bids')
 
   it('Displays current place and place after bump', () => {
     renderComponent(parseEther('4.5'), parseEther('1'))
@@ -34,7 +34,7 @@ describe('UI: BumpBidForm', () => {
   const renderComponent = (newAmount: BigNumber, minimumIncrement: BigNumber) =>
     render(
       <BumpBidForm
-        userBid={mockBids[4]}
+        userBid={mockBids.get(4)!.toObject()}
         newBidAmount={newAmount}
         bumpAmount={minimumIncrement}
         minimumIncrement={minimumIncrement}
