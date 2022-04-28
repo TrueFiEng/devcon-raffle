@@ -7,7 +7,7 @@ export const BidFlow = () => {
   const userBid = useUserBid()
   const [isTransactionViewLock, setTransactionViewLock] = useState(false)
 
-  const [isInitialBid, setIsInitialBid] = useState<boolean>(true)
+  const [isInitialBid, setIsInitialBid] = useState<boolean>(!userBid)
   useEffect(() => {
     if (!isTransactionViewLock) {
       setIsInitialBid(!userBid)
