@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
+import { unpadHexString } from 'src/utils/formatters/unpadHexString'
 
 import { SupportedChainId } from '../constants/chainIDs'
 
@@ -28,7 +29,9 @@ const addArbitrumChain: AddEthereumChainParameter = {
   rpcUrls: ['https://arb1.arbitrum.io/rpc'],
   blockExplorerUrls: ['https://arbiscan.io'],
 }
-const getSwitchChainParam = (chainId: SupportedChainId): SwitchEthereumChainParameter => ({ chainId: toHex(chainId) })
+const getSwitchChainParam = (chainId: SupportedChainId): SwitchEthereumChainParameter => ({
+  chainId: unpadHexString(toHex(chainId)),
+})
 
 export function useSwitchChain() {
   const { library } = useEthers()
