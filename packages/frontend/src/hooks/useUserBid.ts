@@ -51,7 +51,7 @@ export function useUserBid() {
       amount: bid.amount,
       place: bidWithPlace.place,
       winType: bid.winType,
-      claimed: bid.claimed
+      claimed: bid.claimed,
     }
   }, [account, bid, bidders, bids])
 }

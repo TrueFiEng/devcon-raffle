@@ -20,6 +20,7 @@ jest.mock('src/hooks/contract/useDevconContract', () => ({
   useDevconContract: () => ({
     devcon: {},
     chainId: 1,
+    provider: {},
   }),
 }))
 

@@ -1,4 +1,5 @@
 import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
+import { Provider } from '@ethersproject/providers'
 import { useMemo } from 'react'
 
 import { SupportedChainId } from '../../constants/chainIDs'
@@ -10,6 +11,7 @@ import { useProvider } from './useProvider'
 interface UseDevconContractResult {
   devcon: Devcon6
   chainId: SupportedChainId
+  provider: Provider
 }
 
 // This hook:
@@ -29,5 +31,6 @@ export function useDevconContract(): UseDevconContractResult {
   return {
     chainId,
     devcon: devconContract,
+    provider: provider,
   }
 }
