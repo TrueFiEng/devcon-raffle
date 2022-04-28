@@ -5,12 +5,12 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { BidsListSection } from 'src/components/BidsList/BidsListSection'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
-import { Bid, UserBid } from 'src/models/Bid'
-import { BidsContext } from 'src/providers/Bids'
+import { UserBid } from 'src/models/Bid'
+import { BidsContext } from 'src/providers/Bids/context'
 import { ImmutableBid, ImmutableBidsState } from 'src/providers/Bids/types'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
-import { generateMockBidsState } from 'test/mocks/generateMockBids'
+import { generateMockBidsState, setBidAddress } from 'test/mocks/generateMockBids'
 
 const mockUserAddress = '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
 const arbitrumRinkebyChainId = 421611
@@ -70,43 +70,43 @@ describe('UI: BidsListSection', () => {
     const bids = bidsState.get('bids')
     renderComponent(bidsState)
     bids.slice(0, 3).forEach(testDisplayedBid)
-    testHiddenBid(bids.find(({ place }) => place === 4)!)
-    testHiddenBid(bids.find(({ place }) => place === 15)!)
+    testHiddenBid(bids.find((bid) => bid.get('place') === 4)!)
+    testHiddenBid(bids.find((bid) => bid.get('place') === 15)!)
     testDisplayedBid(bids.get(9)!)
   })
 
   describe('Always displays user bid', () => {
     it('Within the top three bids', () => {
-      const bidsState = generateMockBidsState(15)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 1, mockUserAddress)
       const bids = bidsState.get('bids')
-      bids.get(1)!.bidderAddress = mockUserAddress
       setMockUserBid(bids.get(1)!)
       renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('Within auction bids', () => {
-      const bidsState = generateMockBidsState(15)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 8, mockUserAddress)
       const bids = bidsState.get('bids')
-      bids.get(8)!.bidderAddress = mockUserAddress
       setMockUserBid(bids.get(8)!)
       renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('Within raffle bids', () => {
-      const bidsState = generateMockBidsState(15)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 13, mockUserAddress)
       const bids = bidsState.get('bids')
-      bids.get(13)!.bidderAddress = mockUserAddress
       setMockUserBid(bids.get(13)!)
       renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('User bid is the third (last of the top bids)', () => {
-      const bidsState = generateMockBidsState(15)
+      let bidsState = generateMockBidsState(15)
       const bids = bidsState.get('bids')
-      bids.get(2)!.bidderAddress = mockUserAddress
+      bidsState = setBidAddress(bidsState, 2, mockUserAddress)
       setMockUserBid(bids.get(2)!)
       renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
@@ -114,9 +114,9 @@ describe('UI: BidsListSection', () => {
     })
 
     it('User bid is the bottom auction bid', () => {
-      const bidsState = generateMockBidsState(15)
+      let bidsState = generateMockBidsState(15)
       const bids = bidsState.get('bids')
-      bids.get(9)!.bidderAddress = mockUserAddress
+      bidsState = setBidAddress(bidsState, 9, mockUserAddress)
       setMockUserBid(bids.get(9)!)
       renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
@@ -139,7 +139,7 @@ describe('UI: BidsListSection', () => {
 
   const renderComponent = (bidsState: ImmutableBidsState) =>
     render(
-      <BidsContext.Provider value={{bidsState}}>
+      <BidsContext.Provider value={{ bidsState }}>
         <MemoryRouter>
           <BidsListSection />
         </MemoryRouter>

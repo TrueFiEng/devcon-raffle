@@ -43,3 +43,11 @@ export function generateMockBidsState(howMany: number): ImmutableBidsState {
   }
   return bidsState
 }
+
+export function setBidAddress(state: ImmutableBidsState, index: number, bidderAddress: string) {
+  let bids = state.get('bids')
+  let bid = bids.get(index)
+  bid = bid!.set('bidderAddress', bidderAddress)
+  bids = bids.set(index, bid)
+  return state.set('bids', bids)
+}

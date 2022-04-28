@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { BidsContext } from 'src/providers/Bids'
+import { BidsContext } from 'src/providers/Bids/context'
 
 export const useBids = () => {
   const { bidsState } = useContext(BidsContext)
