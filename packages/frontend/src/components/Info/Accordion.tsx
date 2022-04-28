@@ -24,8 +24,8 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="How to buy a ticket for Devcon 6?" />
           </StyledHeader>
           <StyledContent>
-            Join the ruffle by submitting your bid. Bid high to win an action or take your chance in a raffle pool. The
-            cost to participate will be at least the cost of a Devcon ticket.
+            Join the raffle by submitting your bid. Bid high to win the auction or take your chance in a raffle pool.
+            The cost to participate will be at least the cost of a Devcon ticket.
           </StyledContent>
         </Accordion.Item>
 
@@ -35,9 +35,9 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <RuleText>
-              Total number of {totalCount} raffle tickets is devided between auction pool and raffle pool. Auction
-              winners will win a voucher Code that is redeemable for a free Devcon ticket. Raffle winners will receive a
-              voucher code that is redeemable for 1 Devcon Ticket at full price.
+              Total number of {totalCount} raffle tickets is divided between the auction pool and the raffle pool.
+              Auction winners will receive a voucher Code that is redeemable for a free Devcon ticket. Raffle winners
+              will receive a voucher code that is redeemable for one Devcon Ticket at full price.
             </RuleText>
             <Rule
               heading={`Auction pool: ${auctionWinnersCount}`}
