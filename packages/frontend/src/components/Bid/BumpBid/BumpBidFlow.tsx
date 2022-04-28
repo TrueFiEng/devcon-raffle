@@ -11,7 +11,9 @@ import { useMinimumIncrement } from 'src/hooks/useMinimumIncrement'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
-export const BumpBidFlow = () => {
+import { FlowProps } from '../BidFlow'
+
+export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
   const userBid = useUserBid()
   const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
@@ -62,6 +64,7 @@ export const BumpBidFlow = () => {
           impact={newBidAmount}
           view={view}
           setView={setView}
+          setTransactionViewLock={setTransactionViewLock}
         />
       )}
     </>

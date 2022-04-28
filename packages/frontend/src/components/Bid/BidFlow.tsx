@@ -1,15 +1,27 @@
-import { useEthers } from '@usedapp/core'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BumpBidFlow } from 'src/components/Bid/BumpBid/BumpBidFlow'
 import { PlaceBidFlow } from 'src/components/Bid/PlaceBid/PlaceBidFlow'
 import { useUserBid } from 'src/hooks/useUserBid'
 
 export const BidFlow = () => {
-  const { account } = useEthers()
   const userBid = useUserBid()
-  const [isInitialBid, setIsInitialBid] = useState(!userBid)
-  const endInitialBidding = useCallback(() => setIsInitialBid(false), [setIsInitialBid])
-  useEffect(() => setIsInitialBid(!userBid), [account]) // eslint-disable-line react-hooks/exhaustive-deps
+  const [isTransactionViewLock, setTransactionViewLock] = useState(false)
 
-  return isInitialBid ? <PlaceBidFlow endInitialBidding={endInitialBidding} /> : <BumpBidFlow />
+  const [isInitialBid, setIsInitialBid] = useState<boolean>(true)
+  useEffect(() => {
+    if (!isTransactionViewLock) {
+      setIsInitialBid(!userBid)
+    }
+  }, [isTransactionViewLock, !userBid]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return isInitialBid ? (
+    <PlaceBidFlow setTransactionViewLock={setTransactionViewLock} />
+  ) : (
+    <BumpBidFlow setTransactionViewLock={setTransactionViewLock} />
+  )
 }
+
+export interface FlowProps {
+  setTransactionViewLock: (value: boolean) => void
+}
+type BidFlow = (props: FlowProps) => JSX.Element
