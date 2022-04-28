@@ -24,4 +24,3 @@ export const BidFlow = () => {
 export interface FlowProps {
   setTransactionViewLock: (value: boolean) => void
 }
-type BidFlow = (props: FlowProps) => JSX.Element
