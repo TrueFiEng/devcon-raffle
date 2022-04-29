@@ -9,29 +9,21 @@ import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
+import { UserBid } from '../../models/Bid'
+import { ImmutableBids } from '../../providers/Bids/types'
+
 const topAuctionBidsCount = 3
 const bidsMaxCount = topAuctionBidsCount + 1
 
 export const BidsListSection = () => {
   const { bids: immutableBids } = useBids()
-  const navigate = useNavigate()
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
+  const navigate = useNavigate()
 
-  const auctionBidsSlice = useMemo(() => {
-    const bids = immutableBids.toArray().map((bid) => bid.toObject())
-    if (auctionWinnersCount === undefined) {
-      return []
-    }
-    if (bids.length <= bidsMaxCount) {
-      return bids
-    }
-    const topAuctionBids = bids.slice(0, topAuctionBidsCount)
-    const lastAuctionBid = bids[bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1]
-    return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
-      ? topAuctionBids.concat([userBid, lastAuctionBid])
-      : topAuctionBids.concat([lastAuctionBid])
-  }, [immutableBids, userBid, auctionWinnersCount]) // eslint-disable-line react-hooks/exhaustive-deps
+  const bidsShortlist = useMemo(() => {
+    return selectBids(auctionWinnersCount, immutableBids, userBid)
+  }, [auctionWinnersCount, immutableBids, userBid])
 
   const isLoadingParams = auctionWinnersCount === undefined
 
@@ -48,7 +40,7 @@ export const BidsListSection = () => {
             <ColoredText>{isLoadingParams ? 0 : immutableBids.size}</ColoredText>
           </ListHeader>
           <BidsListHeaders />
-          <BidsList bids={auctionBidsSlice} view="short" isLoadingParams={isLoadingParams} />
+          <BidsList bids={bidsShortlist} view="short" isLoadingParams={isLoadingParams} />
         </>
       )}
       {!isLoadingParams && immutableBids.size !== 0 && (
@@ -58,6 +50,30 @@ export const BidsListSection = () => {
       )}
     </BidsListContainer>
   )
+}
+
+function selectBids(
+  auctionWinnersCount: number | undefined,
+  immutableBids: ImmutableBids,
+  userBid: UserBid | undefined
+) {
+  if (auctionWinnersCount === undefined) {
+    return []
+  }
+
+  const bids = immutableBids.toArray().map((bid) => bid.toObject())
+  if (bids.length <= bidsMaxCount) {
+    return bids
+  }
+
+  const topAuctionBids = bids.slice(0, topAuctionBidsCount)
+
+  const lastAuctionBidIndex = bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1
+  const lastAuctionBid = bids[lastAuctionBidIndex]
+
+  return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
+    ? topAuctionBids.concat([userBid, lastAuctionBid])
+    : topAuctionBids.concat([lastAuctionBid])
 }
 
 const within = (...[lower, higher, value]: number[]) => value >= lower && value <= higher
