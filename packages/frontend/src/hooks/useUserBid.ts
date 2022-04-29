@@ -1,11 +1,12 @@
 import { useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { UserBid } from 'src/models/Bid'
 
 import { useDevconContract } from './contract'
 import { useBids } from './useBids'
 
-export function useUserBid() {
+export function useUserBid(): UserBid | undefined {
   const { devcon, chainId } = useDevconContract()
   const { account } = useEthers()
   const { bids, bidders } = useBids()
@@ -36,22 +37,15 @@ export function useUserBid() {
 
     if (bid === undefined) {
       return {
-        bidderID: bidWithPlace.bidderID,
-        bidderAddress: account,
-        amount: bidWithPlace.amount,
-        place: bidWithPlace.place,
+        ...bidWithPlace,
         winType: WinType.Loss,
         claimed: false,
       }
     }
 
     return {
-      bidderID: bid.bidderID,
-      bidderAddress: account,
-      amount: bid.amount,
-      place: bidWithPlace.place,
-      winType: bid.winType,
-      claimed: bid.claimed,
+      ...bidWithPlace,
+      ...bid,
     }
   }, [account, bid, bidders, bids])
 }
