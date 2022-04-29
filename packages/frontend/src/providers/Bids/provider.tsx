@@ -27,7 +27,7 @@ export const BidsProvider = ({ children }: Props) => {
   }, [provider, setLatestFetchedBlock])
 
   useEffect(() => {
-    subscribeToNewBids(devcon, latestFetchedBlock, setLatestFetchedBlock, blockNumber, dispatch)
+    queryNewBids(devcon, latestFetchedBlock, setLatestFetchedBlock, blockNumber, dispatch)
   }, [devcon, setLatestFetchedBlock, blockNumber]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
@@ -37,7 +37,7 @@ function initBids(contractBids: Bid[], dispatch: Dispatch<BidChanged>) {
   contractBids.forEach((bid) => dispatch(bid))
 }
 
-async function subscribeToNewBids(
+async function queryNewBids(
   devcon: Devcon6,
   latestFetchedBlock: number | undefined,
   setLatestFetchedBlock: (value: number | undefined) => void,
