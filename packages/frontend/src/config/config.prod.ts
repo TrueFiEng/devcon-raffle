@@ -13,6 +13,7 @@ export function getProdConfig(): Config {
       readOnlyChainId: Arbitrum.chainId,
       readOnlyUrls: providerWithInterval(Arbitrum.chainId),
       networks: [Arbitrum],
+      pollingInterval: 1000,
     },
     addresses: ADDRESSES,
     backendUrl,

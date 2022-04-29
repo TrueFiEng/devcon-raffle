@@ -12,6 +12,7 @@ export function getTestnetConfig() {
       readOnlyChainId: ArbitrumRinkeby.chainId,
       readOnlyUrls: providerWithInterval(ArbitrumRinkeby.chainId),
       networks: [ArbitrumRinkeby],
+      pollingInterval: 1000,
     },
     addresses: getAddresses(),
     backendUrl: 'http://localhost:3001',
