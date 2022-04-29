@@ -47,7 +47,7 @@ async function queryNewBids(
   toBlock: number | undefined,
   dispatch: Dispatch<BidChanged>
 ) {
-  if (!latestFetchedBlock || !toBlock) {
+  if (latestFetchedBlock === undefined || toBlock === undefined) {
     return
   }
 
