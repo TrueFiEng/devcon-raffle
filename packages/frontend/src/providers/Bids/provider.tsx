@@ -20,15 +20,18 @@ export const BidsProvider = ({ children }: Props) => {
   const [latestFetchedBlock, setLatestFetchedBlock] = useState(blockNumber)
 
   const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
-  useEffect(() => initBids(contractBids, dispatch), [contractBids, dispatch])
+
+  useEffect(() => {
+    initBids(contractBids, dispatch)
+  }, [contractBids])
 
   useEffect(() => {
     setInitialBlockNumber(provider, setLatestFetchedBlock)
-  }, [provider, setLatestFetchedBlock])
+  }, [provider])
 
   useEffect(() => {
     queryNewBids(devcon, latestFetchedBlock, setLatestFetchedBlock, blockNumber, dispatch)
-  }, [devcon, setLatestFetchedBlock, blockNumber]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [devcon, blockNumber]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
