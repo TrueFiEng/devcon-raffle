@@ -13,6 +13,7 @@ export interface BidChanged {
 }
 
 export function bidsReducer(state: ImmutableBidsState, action: BidChanged) {
+  console.log(`dispatch: bidderID: ${action.bidderID.toNumber()}, amount: ${action.amount.toString()}`)
   const bidIndex = getBidder(state, action.bidderAddress)
   if (bidIndex !== undefined) {
     const currentBid = getBid(state, bidIndex)!

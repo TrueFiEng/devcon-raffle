@@ -1,36 +1,60 @@
 import { Devcon6 } from '@devcon-raffle/contracts'
-import { Provider } from '@ethersproject/providers'
-import { useBlockNumber } from '@usedapp/core'
+import { useBlockNumbers } from '@usedapp/core/internal'
 import { Dispatch, ReactNode, useEffect, useReducer, useState } from 'react'
+import { useChainId } from 'src/hooks/chainId/useChainId'
 import { useDevconContract } from 'src/hooks/contract'
+import { useReadOnlyProvider } from 'src/hooks/contract/useReadOnlyProvider'
 import { useContractBids } from 'src/hooks/useContractBids'
 import { Bid } from 'src/models/Bid'
+import useAsyncEffect from 'use-async-effect'
 
 import { BidsContext } from './context'
 import { BidChanged, bidsReducer, getDefaultBidsState } from './reducer'
+
+// TODO remove console logs
 
 interface Props {
   children: ReactNode
 }
 
 export const BidsProvider = ({ children }: Props) => {
-  const contractBids = useContractBids()
-  const { devcon, provider } = useDevconContract()
-  const blockNumber = useBlockNumber()
-  const [latestFetchedBlock, setLatestFetchedBlock] = useState(blockNumber)
-
   const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
+  const contractBids = useContractBids()
 
   useEffect(() => {
+    console.log(`Init bids, count: ${contractBids.length}`)
     initBids(contractBids, dispatch)
   }, [contractBids])
 
-  useEffect(() => {
-    setInitialBlockNumber(provider, setLatestFetchedBlock)
-  }, [provider])
+  const provider = useReadOnlyProvider()
+  const chainId = useChainId()
+  const [lastFetchedBlock, setLastFetchedBlock] = useState<number | undefined>(undefined)
+
+  useAsyncEffect(
+    async (isActive) => {
+      const blockNumber = await provider.getBlockNumber()
+      if (!isActive()) {
+        return
+      }
+      console.log(`Setting latestFetchedBlock to ${blockNumber - 1}`)
+      setLastFetchedBlock(blockNumber - 1)
+    },
+    () => {
+      console.log('Chain changed, clearing lastFetchedBlock')
+      setLastFetchedBlock(undefined)
+    },
+    [chainId]
+  )
+
+  const { devcon } = useDevconContract()
+  const blockNumber = useBlockNumbers()[chainId]
 
   useEffect(() => {
-    queryNewBids(devcon, latestFetchedBlock, setLatestFetchedBlock, blockNumber, dispatch)
+    // TODO if blockNumber changes faster than queryFilter call returns an
+    //  overlapping block range will be chosen, re-fetching some events unnecessarily.
+    //  I suggest extracting a new reducer that will keep track of lastFetchedBlock
+    //  and query as broad block range as possible.
+    queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch)
   }, [devcon, blockNumber]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
@@ -42,17 +66,24 @@ function initBids(contractBids: Bid[], dispatch: Dispatch<BidChanged>) {
 
 async function queryNewBids(
   devcon: Devcon6,
-  latestFetchedBlock: number | undefined,
-  setLatestFetchedBlock: (value: number | undefined) => void,
-  toBlock: number | undefined,
+  currentBlock: number | undefined,
+  lastFetchedBlock: number | undefined,
+  setLastFetchedBlock: (value: number | undefined) => void,
   dispatch: Dispatch<BidChanged>
 ) {
-  if (latestFetchedBlock === undefined || toBlock === undefined) {
+  if (currentBlock === undefined || lastFetchedBlock === undefined) {
+    console.log('Skipping fetch blocks are undefined')
     return
   }
 
+  if (currentBlock <= lastFetchedBlock) {
+    console.log(`Skipping fetch, currentBlock = ${currentBlock}, lastFetchedBlock = ${lastFetchedBlock}`)
+    return
+  }
+
+  console.log(`Querying range: ${lastFetchedBlock + 1} - ${currentBlock}`)
   const eventFilter = devcon.filters.NewBid(null, null, null)
-  const events = await devcon.queryFilter(eventFilter, latestFetchedBlock + 1, toBlock)
+  const events = await devcon.queryFilter(eventFilter, lastFetchedBlock + 1, currentBlock)
   events.forEach((event) => {
     dispatch({
       bidderID: event.args.bidderID,
@@ -60,10 +91,5 @@ async function queryNewBids(
       amount: event.args.bidAmount,
     })
   })
-  setLatestFetchedBlock(toBlock)
-}
-
-async function setInitialBlockNumber(provider: Provider, setLatestFetchedBlock: (value: number | undefined) => void) {
-  const blockNumber = await provider.getBlockNumber()
-  setLatestFetchedBlock(blockNumber)
+  setLastFetchedBlock(currentBlock)
 }
