@@ -23,9 +23,18 @@ interface ReviewFormProps {
   setTxHash: (hash: string) => void
   view: TxFlowSteps
   setView: (state: TxFlowSteps) => void
+  lockViewOnTransaction?: () => void
 }
 
-export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }: ReviewFormProps) => {
+export const ReviewForm = ({
+  action,
+  amount,
+  impact,
+  setTxHash,
+  view,
+  setView,
+  lockViewOnTransaction,
+}: ReviewFormProps) => {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
   const isPending = isTxPending(action.state)
@@ -40,6 +49,11 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
       action.resetState()
     }
   }, [view, setView, setTxHash, action])
+
+  const sendTransaction = () => {
+    action.send()
+    lockViewOnTransaction?.()
+  }
 
   return (
     <FormNarrow>
@@ -57,7 +71,7 @@ export const ReviewForm = ({ action, amount, impact, setTxHash, view, setView }:
         <span>Wallet Balance</span>
         <span>{etherBalance && formatEtherAmount(etherBalance)} ETH</span>
       </FormRow>
-      <Button view="primary" isLoading={isPending} onClick={() => action.send()}>
+      <Button view="primary" isLoading={isPending} onClick={sendTransaction}>
         {heading[action.type]}
       </Button>
     </FormNarrow>
