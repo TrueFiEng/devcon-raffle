@@ -46,7 +46,7 @@ export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
 
   return (
     <>
-      {view === TxFlowSteps.Placing && userBid && newBidAmount ? (
+      {view === TxFlowSteps.Placing ? (
         <BumpBidForm
           userBid={userBid}
           newBidAmount={newBidAmount}
