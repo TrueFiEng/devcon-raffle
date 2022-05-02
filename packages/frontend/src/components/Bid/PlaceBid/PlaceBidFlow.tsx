@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { formatEther, parseEther } from '@ethersproject/units'
+import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
@@ -7,8 +8,7 @@ import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { useBid } from 'src/hooks/transactions/useBid'
 import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
-
-import { ZERO } from '../../../constants/bigNumber'
+import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 interface PlaceBidFlowProps {
   endInitialBidding: () => void
@@ -17,16 +17,25 @@ interface PlaceBidFlowProps {
 export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
-  const [bid, setBid] = useState(ZERO)
+  const [bid, setBid] = useState('0')
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
 
-  useEffect(() => setBid(minimumBid), [minimumBid])
+  useEffect(() => {
+    setBid(formatEther(minimumBid))
+  }, [minimumBid])
 
+  useEffect(() => {
+    if (state.status == 'Success') {
+      setBid(formatEther(minimumBid))
+    }
+  }, [state.status])
+
+  const parsedBid = useMemo(() => parseEther(prepareAmountForParsing(bid || '0')), [bid])
   const bidAction: TransactionAction = {
     type: Transactions.Place,
     send: async () => {
-      await placeBid(bid)
+      await placeBid(parsedBid)
     },
     state: state,
     resetState: resetState,
@@ -35,11 +44,18 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
   return (
     <>
       {view === TxFlowSteps.Placing ? (
-        <PlaceBidForm bid={bid} setBid={setBid} setView={setView} minimumBid={minimumBid} bids={bids} />
+        <PlaceBidForm
+          bid={bid}
+          parsedBid={parsedBid}
+          setBid={setBid}
+          setView={setView}
+          minimumBid={minimumBid}
+          bids={bids}
+        />
       ) : (
         <AuctionTransaction
           action={bidAction}
-          amount={bid}
+          amount={parsedBid}
           view={view}
           setView={setView}
           endInitialBidding={endInitialBidding}

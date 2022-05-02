@@ -4,7 +4,7 @@ import { HARDHAT_NODE_URL } from 'src/constants/nodeUrls'
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
 
-export function getLocalConfig() {
+export function getLocalDevConfig() {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
