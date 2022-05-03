@@ -13,7 +13,6 @@ export interface BidChanged {
 }
 
 export function bidsReducer(state: ImmutableBidsState, action: BidChanged) {
-  console.log(`dispatch: bidderID: ${action.bidderID.toNumber()}, amount: ${action.amount.toString()}`)
   const bidIndex = getBidder(state, action.bidderAddress)
   if (bidIndex !== undefined) {
     const currentBid = getBid(state, bidIndex)!
@@ -72,7 +71,6 @@ function assignBidPlace(state: ImmutableBidsState, bid: ImmutableBid, place: num
   return state
 }
 
-// TODO: import from contracts package
 function compareBids(a: ImmutableBid, b: ImmutableBid) {
   const amountCmp = biggerFirst(a.get('amount'), b.get('amount'))
   if (amountCmp !== 0) {

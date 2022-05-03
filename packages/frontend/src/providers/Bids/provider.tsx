@@ -12,8 +12,6 @@ import useAsyncEffect from 'use-async-effect'
 import { BidsContext } from './context'
 import { BidChanged, bidsReducer, getDefaultBidsState } from './reducer'
 
-// TODO remove console logs
-
 interface Props {
   children: ReactNode
 }
@@ -22,10 +20,7 @@ export const BidsProvider = ({ children }: Props) => {
   const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
   const contractBids = useContractBids()
 
-  useEffect(() => {
-    console.log(`Init bids, count: ${contractBids.length}`)
-    initBids(contractBids, dispatch)
-  }, [contractBids])
+  useEffect(() => initBids(contractBids, dispatch), [contractBids])
 
   const provider = useReadOnlyProvider()
   const chainId = useChainId()
@@ -37,13 +32,9 @@ export const BidsProvider = ({ children }: Props) => {
       if (!isActive()) {
         return
       }
-      console.log(`Setting latestFetchedBlock to ${blockNumber - 1}`)
       setLastFetchedBlock(blockNumber - 1)
     },
-    () => {
-      console.log('Chain changed, clearing lastFetchedBlock')
-      setLastFetchedBlock(undefined)
-    },
+    () => setLastFetchedBlock(undefined),
     [chainId]
   )
 
@@ -67,23 +58,20 @@ async function queryNewBids(
   dispatch: Dispatch<BidChanged>
 ) {
   if (currentBlock === undefined || lastFetchedBlock === undefined) {
-    console.log('Skipping fetch blocks are undefined')
     return
   }
 
   if (currentBlock <= lastFetchedBlock) {
-    console.log(`Skipping fetch, currentBlock = ${currentBlock}, lastFetchedBlock = ${lastFetchedBlock}`)
     return
   }
 
-  console.log(`Querying range: ${lastFetchedBlock + 1} - ${currentBlock}`)
   const eventFilter = devcon.filters.NewBid(null, null, null)
   const events = await devcon.queryFilter(eventFilter, lastFetchedBlock + 1, currentBlock)
   events.forEach((event) => {
     dispatch({
       bidderID: event.args.bidderID,
       bidderAddress: event.args.bidder,
-      amount: event.args.bidAmount,
+      amount: event.args.bidAmount
     })
   })
   setLastFetchedBlock(currentBlock)
