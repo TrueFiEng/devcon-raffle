@@ -4,6 +4,7 @@ import { Dispatch, ReactNode, useEffect, useReducer, useState } from 'react'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { useDevconContract } from 'src/hooks/contract'
 import { useReadOnlyProvider } from 'src/hooks/contract/useReadOnlyProvider'
+import { useAsyncInterval } from 'src/hooks/useAsyncInterval'
 import { useContractBids } from 'src/hooks/useContractBids'
 import { Bid } from 'src/models/Bid'
 import useAsyncEffect from 'use-async-effect'
@@ -49,13 +50,7 @@ export const BidsProvider = ({ children }: Props) => {
   const { devcon } = useDevconContract()
   const blockNumber = useBlockNumbers()[chainId]
 
-  useEffect(() => {
-    // TODO if blockNumber changes faster than queryFilter call returns an
-    //  overlapping block range will be chosen, re-fetching some events unnecessarily.
-    //  I suggest extracting a new reducer that will keep track of lastFetchedBlock
-    //  and query as broad block range as possible.
-    queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch)
-  }, [devcon, blockNumber]) // eslint-disable-line react-hooks/exhaustive-deps
+  useAsyncInterval(() => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch), 2000)
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
