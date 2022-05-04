@@ -6,6 +6,7 @@ import { Bid } from 'src/models/Bid'
 import { BidsProvider } from 'src/providers/Bids/provider'
 import { mockBidsAddresses } from 'test/mocks/generateMockBids'
 
+const arbitrumRinkebyChainId = 421611
 let mockBids: Bid[] = []
 
 jest.mock('@usedapp/core', () => ({
@@ -20,7 +21,16 @@ jest.mock('src/hooks/contract/useDevconContract', () => ({
   useDevconContract: () => ({
     devcon: {},
     chainId: 1,
-    provider: {},
+  }),
+}))
+
+jest.mock('src/hooks/chainId/useChainId', () => ({
+  useChainId: () => arbitrumRinkebyChainId,
+}))
+
+jest.mock('src/hooks/contract/useReadOnlyProvider', () => ({
+  useReadOnlyProvider: () => ({
+    getBlockNumber: () => new Promise<number>(() => 10)
   }),
 }))
 
