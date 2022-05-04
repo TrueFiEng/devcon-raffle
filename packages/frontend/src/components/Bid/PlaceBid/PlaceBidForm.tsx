@@ -9,18 +9,19 @@ import { Bid } from 'src/models/Bid'
 import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
 
 interface PlaceBidFormProps {
-  bid: BigNumber
-  setBid: (val: BigNumber) => void
+  bid: string
+  parsedBid: BigNumber
+  setBid: (val: string) => void
   minimumBid: BigNumber
   bids: Bid[]
   setView: (state: TxFlowSteps) => void
 }
 
-export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
+export const PlaceBidForm = ({ bid, parsedBid, setBid, minimumBid, bids, setView }: PlaceBidFormProps) => {
   const { account } = useEthers()
   const userBalance = useEtherBalance(account)
-  const notEnoughBalance = userBalance !== undefined && bid.gt(userBalance)
-  const bidTooLow = bid.lt(minimumBid)
+  const notEnoughBalance = userBalance !== undefined && parsedBid.gt(userBalance)
+  const bidTooLow = parsedBid.lt(minimumBid)
 
   return (
     <FormWrapper>
@@ -30,15 +31,10 @@ export const PlaceBidForm = ({ bid, setBid, minimumBid, bids, setView }: PlaceBi
           <span>Raffle price (min. bid)</span>
           <span>{formatEther(minimumBid)} ETH</span>
         </FormRow>
-        <Input
-          initialAmount={minimumBid}
-          setAmount={setBid}
-          notEnoughBalance={notEnoughBalance}
-          bidTooLow={bidTooLow}
-        />
+        <Input initialAmount={bid} setAmount={setBid} notEnoughBalance={notEnoughBalance} bidTooLow={bidTooLow} />
         <FormRow>
           <span>Your place in the raffle after the bid</span>
-          <span>No. {getPositionAfterBid(bid, bids)}</span>
+          <span>No. {getPositionAfterBid(parsedBid, bids)}</span>
         </FormRow>
         <Button disabled={notEnoughBalance || bidTooLow} onClick={() => setView(TxFlowSteps.Review)}>
           Place bid

@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
+import { unpadHexString } from 'src/utils/formatters/unpadHexString'
 
 import { SupportedChainId } from '../constants/chainIDs'
 
@@ -18,7 +19,7 @@ interface SwitchEthereumChainParameter {
   chainId: string
 }
 
-const toHex = (value: number) => BigNumber.from(value).toHexString()
+const toHex = (value: number) => unpadHexString(BigNumber.from(value).toHexString())
 const arbitrumChainId = toHex(ChainId.Arbitrum)
 const errChainNotAddedYet = 4902
 

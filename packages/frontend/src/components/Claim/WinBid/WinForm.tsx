@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useState } from 'react'
+import { useEthers } from '@usedapp/core'
+import { useEffect, useState } from 'react'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { VoucherForm } from 'src/components/Claim/WinBid/VoucherForm'
 import { WinBidForm } from 'src/components/Claim/WinBid/WinBidForm'
@@ -16,8 +17,13 @@ interface WinFormProps {
 }
 
 export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) => {
+  const { account } = useEthers()
   const [voucher, setVoucher] = useState<string>()
   const isBidWithdrawn = userBid.claimed || userBid.winType === WinType.Auction
+
+  useEffect(() => {
+    setVoucher(undefined)
+  }, [account])
 
   if (!voucher) {
     return (
