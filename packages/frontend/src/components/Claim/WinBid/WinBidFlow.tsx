@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useEffect, useMemo, useState } from "react";
+import { useEthers } from '@usedapp/core'
+import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
@@ -10,7 +11,6 @@ import { ZERO } from 'src/constants/bigNumber'
 import { useClaimFunds } from 'src/hooks/transactions/useClaimFunds'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 import { UserBid } from 'src/models/Bid'
-import { useEthers } from "@usedapp/core";
 
 interface WinBidFlowProps {
   userBid: UserBid
