@@ -5,11 +5,12 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { BidsListSection } from 'src/components/BidsList/BidsListSection'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
-import { Bid, UserBid } from 'src/models/Bid'
-import { BidsContext } from 'src/providers/Bids'
+import { UserBid } from 'src/models/Bid'
+import { BidsContext } from 'src/providers/Bids/context'
+import { ImmutableBid, ImmutableBidsState } from 'src/providers/Bids/types'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState, setBidAddress } from 'test/mocks/generateMockBids'
 
 const mockUserAddress = '0xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
 const arbitrumRinkebyChainId = 421611
@@ -32,100 +33,113 @@ jest.mock('src/hooks/chainId/useChainId', () => ({
   useChainId: () => arbitrumRinkebyChainId,
 }))
 
+jest.mock('src/hooks/useContractBids', () => ({
+  useContractBids: () => [],
+}))
+
 describe('UI: BidsListSection', () => {
   afterEach(() => {
     mockUserBid = undefined
   })
 
   it('With less than four bids', () => {
-    const bids = generateMockBids(3)
-    renderComponent(bids)
+    const bidsState = generateMockBidsState(3)
+    const bids = bidsState.get('bids')
+    renderComponent(bidsState)
     bids.forEach(testDisplayedBid)
   })
 
   it('With four bids', () => {
-    const bids = generateMockBids(4)
-    renderComponent(bids)
+    const bidsState = generateMockBidsState(4)
+    const bids = bidsState.get('bids')
+    renderComponent(bidsState)
     bids.forEach(testDisplayedBid)
   })
 
   it('With more than four bids, less bids than auction tickets', () => {
-    const bids = generateMockBids(7)
-    renderComponent(bids)
+    const bidsState = generateMockBidsState(7)
+    const bids = bidsState.get('bids')
+    renderComponent(bidsState)
     bids.slice(0, 3).forEach(testDisplayedBid)
     bids.slice(3, 6).forEach(testHiddenBid)
-    testDisplayedBid(bids[6])
+    testDisplayedBid(bids.get(6)!)
   })
 
   it('With more bids than auction tickets', () => {
-    const bids = generateMockBids(15)
-    renderComponent(bids)
+    const bidsState = generateMockBidsState(15)
+    const bids = bidsState.get('bids')
+    renderComponent(bidsState)
     bids.slice(0, 3).forEach(testDisplayedBid)
-    testHiddenBid(bids.find(({ place }) => place === 4)!)
-    testHiddenBid(bids.find(({ place }) => place === 15)!)
-    testDisplayedBid(bids[9])
+    testHiddenBid(bids.find((bid) => bid.get('place') === 4)!)
+    testHiddenBid(bids.find((bid) => bid.get('place') === 15)!)
+    testDisplayedBid(bids.get(9)!)
   })
 
   describe('Always displays user bid', () => {
     it('Within the top three bids', () => {
-      const bids = generateMockBids(15)
-      bids[1].bidderAddress = mockUserAddress
-      setMockUserBid(bids[1])
-      renderComponent(bids)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 1, mockUserAddress)
+      const bids = bidsState.get('bids')
+      setMockUserBid(bids.get(1)!)
+      renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('Within auction bids', () => {
-      const bids = generateMockBids(15)
-      bids[8].bidderAddress = mockUserAddress
-      setMockUserBid(bids[8])
-      renderComponent(bids)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 8, mockUserAddress)
+      const bids = bidsState.get('bids')
+      setMockUserBid(bids.get(8)!)
+      renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('Within raffle bids', () => {
-      const bids = generateMockBids(15)
-      bids[13].bidderAddress = mockUserAddress
-      setMockUserBid(bids[13])
-      renderComponent(bids)
+      let bidsState = generateMockBidsState(15)
+      bidsState = setBidAddress(bidsState, 13, mockUserAddress)
+      const bids = bidsState.get('bids')
+      setMockUserBid(bids.get(13)!)
+      renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
     })
 
     it('User bid is the third (last of the top bids)', () => {
-      const bids = generateMockBids(15)
-      bids[2].bidderAddress = mockUserAddress
-      setMockUserBid(bids[2])
-      renderComponent(bids)
+      let bidsState = generateMockBidsState(15)
+      const bids = bidsState.get('bids')
+      bidsState = setBidAddress(bidsState, 2, mockUserAddress)
+      setMockUserBid(bids.get(2)!)
+      renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
       expect(screen.queryAllByText(shortenEthAddress(mockUserAddress))).toHaveLength(1)
     })
 
     it('User bid is the bottom auction bid', () => {
-      const bids = generateMockBids(15)
-      bids[9].bidderAddress = mockUserAddress
-      setMockUserBid(bids[9])
-      renderComponent(bids)
+      let bidsState = generateMockBidsState(15)
+      const bids = bidsState.get('bids')
+      bidsState = setBidAddress(bidsState, 9, mockUserAddress)
+      setMockUserBid(bids.get(9)!)
+      renderComponent(bidsState)
       expect(screen.getByText(shortenEthAddress(mockUserAddress))).toBeDefined()
       expect(screen.queryAllByText(shortenEthAddress(mockUserAddress))).toHaveLength(1)
     })
   })
 
-  const testDisplayedBid = (bid: Bid) => {
-    const place = screen.getByText(bid.place + '.')
+  const testDisplayedBid = (bid: ImmutableBid) => {
+    const place = screen.getByText(bid.get('place') + '.')
     // eslint-disable-next-line testing-library/no-node-access
     expect(place.parentElement).toHaveTextContent(
-      `${bid.place}.${formatEtherAmount(bid.amount)} ETH ${shortenEthAddress(bid.bidderAddress)}`
+      `${bid.get('place')}.${formatEtherAmount(bid.get('amount'))} ETH ${shortenEthAddress(bid.get('bidderAddress'))}`
     )
   }
-  const testHiddenBid = (bid: Bid) => {
-    expect(screen.queryAllByText(bid.place + '.')).toHaveLength(0)
-    expect(screen.queryAllByText(`${formatEtherAmount(bid.amount)} ETH`)).toHaveLength(0)
-    expect(screen.queryAllByText(shortenEthAddress(bid.bidderAddress))).toHaveLength(0)
+  const testHiddenBid = (bid: ImmutableBid) => {
+    expect(screen.queryAllByText(bid.get('place') + '.')).toHaveLength(0)
+    expect(screen.queryAllByText(`${formatEtherAmount(bid.get('amount'))} ETH`)).toHaveLength(0)
+    expect(screen.queryAllByText(shortenEthAddress(bid.get('bidderAddress')))).toHaveLength(0)
   }
 
-  const renderComponent = (bids: Bid[]) =>
+  const renderComponent = (bidsState: ImmutableBidsState) =>
     render(
-      <BidsContext.Provider value={{ bids }}>
+      <BidsContext.Provider value={{ bidsState }}>
         <MemoryRouter>
           <BidsListSection />
         </MemoryRouter>
@@ -133,9 +147,9 @@ describe('UI: BidsListSection', () => {
     )
 })
 
-function setMockUserBid(bid: Bid) {
+function setMockUserBid(bid: ImmutableBid) {
   mockUserBid = {
-    ...bid,
+    ...bid.toObject(),
     winType: WinType.Loss,
     claimed: false,
   }

@@ -4,6 +4,7 @@ import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
 import { SupportedChainId } from 'src/constants/chainIDs'
 import { useChainId } from 'src/hooks/chainId/useChainId'
+import { unpadHexString } from 'src/utils/formatters/unpadHexString'
 
 interface AddEthereumChainParameter {
   chainId: string
@@ -16,7 +17,7 @@ interface SwitchEthereumChainParameter {
   chainId: string
 }
 
-const toHex = (value: number) => BigNumber.from(value).toHexString()
+const toHex = (value: number) => unpadHexString(BigNumber.from(value).toHexString())
 const arbitrumChainId = toHex(ChainId.Arbitrum)
 const errChainNotAddedYet = 4902
 

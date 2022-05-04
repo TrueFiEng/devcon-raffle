@@ -25,7 +25,7 @@ const AllBidsContent = ({ search }: { search: string }) => {
     return <LoadingBids />
   }
 
-  if (bids.length == 0) {
+  if (bids.size == 0) {
     return <NothingFound />
   }
 

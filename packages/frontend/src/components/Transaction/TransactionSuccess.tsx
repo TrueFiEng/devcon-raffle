@@ -14,16 +14,16 @@ interface Props {
   txHash: string
   action: Transactions
   setView: (state: TxFlowSteps) => void
-  endInitialBidding?: () => void
+  unlockViewFromTransaction?: () => void
 }
 
-export const TransactionSuccess = ({ txHash, action, setView, endInitialBidding }: Props) => {
+export const TransactionSuccess = ({ txHash, action, setView, unlockViewFromTransaction }: Props) => {
   const chainId = useChainId()
   const transactionLink = getExplorerTxLink(chainId, txHash)
 
   const goHome = () => {
     setView(0)
-    endInitialBidding && endInitialBidding()
+    unlockViewFromTransaction?.()
   }
 
   return (

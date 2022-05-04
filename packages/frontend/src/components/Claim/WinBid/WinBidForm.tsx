@@ -43,12 +43,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
           <span>{getWithdrawText(userBid.winType, claimingEndTime)}</span>
-          <Button
-            view="primary"
-            onClick={() => {
-              setView(TxFlowSteps.Review)
-            }}
-          >
+          <Button view="primary" onClick={() => setView(TxFlowSteps.Review)}>
             <span>Withdraw {formatEtherAmount(withdrawalAmount)} ETH</span>
           </Button>
         </WinOption>

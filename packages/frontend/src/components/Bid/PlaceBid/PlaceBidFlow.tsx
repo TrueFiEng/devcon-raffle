@@ -1,4 +1,5 @@
 import { formatEther, parseEther } from '@ethersproject/units'
+import { useEthers } from '@usedapp/core'
 import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -8,16 +9,17 @@ import { useBids, useMinimumBid } from 'src/hooks'
 import { useBid } from 'src/hooks/transactions'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
-interface PlaceBidFlowProps {
-  endInitialBidding: () => void
-}
+import { FlowProps } from '../BidFlow'
 
-export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
+export const PlaceBidFlow = ({ setTransactionViewLock }: FlowProps) => {
+  const { account } = useEthers()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
   const [bid, setBid] = useState('0')
   const { placeBid, state, resetState } = useBid()
   const { bids } = useBids()
+
+  useEffect(() => setView(TxFlowSteps.Placing), [account])
 
   useEffect(() => {
     setBid(formatEther(minimumBid))
@@ -56,7 +58,7 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
           amount={parsedBid}
           view={view}
           setView={setView}
-          endInitialBidding={endInitialBidding}
+          setTransactionViewLock={setTransactionViewLock}
         />
       )}
     </>

@@ -20,7 +20,7 @@ interface AuctionTransactionProps {
   impact?: BigNumber
   view: TxFlowSteps
   setView: (state: TxFlowSteps) => void
-  endInitialBidding?: () => void
+  setTransactionViewLock?: (val: boolean) => void
 }
 
 export const AuctionTransaction = ({
@@ -29,10 +29,12 @@ export const AuctionTransaction = ({
   impact,
   view,
   setView,
-  endInitialBidding,
+  setTransactionViewLock: setTransactionViewLock,
 }: AuctionTransactionProps) => {
   const [txHash, setTxHash] = useState('')
   const isFailed = isTxFailed(action.state)
+  const lockViewOnTransaction = () => setTransactionViewLock?.(true)
+  const unlockViewFromTransaction = () => setTransactionViewLock?.(false)
 
   return (
     <Transaction>
@@ -51,6 +53,7 @@ export const AuctionTransaction = ({
             setTxHash={setTxHash}
             view={view}
             setView={setView}
+            lockViewOnTransaction={lockViewOnTransaction}
           />
         )}
         {view === TxFlowSteps.Confirmation && (
@@ -58,7 +61,7 @@ export const AuctionTransaction = ({
             action={action.type}
             txHash={txHash}
             setView={setView}
-            endInitialBidding={endInitialBidding}
+            unlockViewFromTransaction={unlockViewFromTransaction}
           />
         )}
       </TransactionWrapper>

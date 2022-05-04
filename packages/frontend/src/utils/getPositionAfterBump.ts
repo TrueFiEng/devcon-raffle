@@ -1,10 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 
-export const getPositionAfterBump = (newAmount: BigNumber, bidderID: BigNumber, bids: Bid[]) =>
+export const getPositionAfterBump = (newAmount: BigNumber, bidderID: BigNumber, bids: ImmutableBids) =>
   bids.findIndex((bid) => {
-    if (bid.amount.eq(newAmount)) {
-      return bid.bidderID.gt(bidderID)
+    const amount = bid.get('amount')
+    if (amount.eq(newAmount)) {
+      return bid.get('bidderID').gt(bidderID)
     }
-    return bid.amount.lt(newAmount)
-  }) + 1 || bids.length + 1
+    return amount.lt(newAmount)
+  }) + 1 || bids.size + 1

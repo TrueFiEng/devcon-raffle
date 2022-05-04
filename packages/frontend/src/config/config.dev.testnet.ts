@@ -1,5 +1,6 @@
 import { ArbitrumRinkeby } from '@usedapp/core'
-import { ARBITRUM_RINKEBY_NODE_URL } from 'src/constants/nodeUrls'
+import { providerWithInterval } from 'src/constants/nodeUrls'
+import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
 
 import { getAddresses } from './addresses'
 import { commonUseDAppConfig } from './config'
@@ -9,8 +10,9 @@ export function getTestnetDevConfig() {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: ArbitrumRinkeby.chainId,
-      readOnlyUrls: ARBITRUM_RINKEBY_NODE_URL,
+      readOnlyUrls: providerWithInterval(ArbitrumRinkeby.chainId, POLLING_INTERVAL),
       networks: [ArbitrumRinkeby],
+      pollingInterval: POLLING_INTERVAL,
     },
     addresses: getAddresses(),
     backendUrl: 'http://localhost:3001',

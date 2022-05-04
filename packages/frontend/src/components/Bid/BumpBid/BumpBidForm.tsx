@@ -6,25 +6,27 @@ import { Button } from 'src/components/Buttons'
 import { Separator } from 'src/components/common/Separator'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
+import { ZERO } from 'src/constants/bigNumber'
 import type { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 import { getPositionAfterBump } from 'src/utils'
 import { formatEtherAmount } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 interface BumpBidProps {
-  userBid: Bid
-  newBidAmount: BigNumber
+  userBid?: Bid
+  newBidAmount?: BigNumber
   bumpAmount: string
   parsedBumpAmount: BigNumber
   minimumIncrement: BigNumber
   setBumpAmount: (val: string) => void
   setView: (state: TxFlowSteps) => void
-  bids: Bid[]
+  bids: ImmutableBids
 }
 
 export const BumpBidForm = ({
   userBid,
-  newBidAmount,
+  newBidAmount = ZERO,
   bumpAmount,
   parsedBumpAmount,
   minimumIncrement,
@@ -43,11 +45,11 @@ export const BumpBidForm = ({
       <BumpForm>
         <FormRow>
           <span>Your current bid</span>
-          <span>{formatEtherAmount(userBid.amount)} ETH</span>
+          <span>{formatEtherAmount(userBid?.amount ?? ZERO)} ETH</span>
         </FormRow>
         <FormRow>
           <span>Current place in the raffle</span>
-          <span>No. {userBid.place}</span>
+          <span>No. {userBid?.place}</span>
         </FormRow>
         <Input
           initialAmount={bumpAmount}
@@ -66,7 +68,9 @@ export const BumpBidForm = ({
         </FormRow>
         <FormRow>
           <span>Place in the raffle after the bump</span>
-          <span>No. {bidTooLow ? userBid.place : getPositionAfterBump(newBidAmount, userBid.bidderID, bids)}</span>
+          <span>
+            No. {userBid && (bidTooLow ? userBid.place : getPositionAfterBump(newBidAmount, userBid.bidderID, bids))}
+          </span>
         </FormRow>
         <Button
           disabled={notEnoughBalance || bidTooLow}

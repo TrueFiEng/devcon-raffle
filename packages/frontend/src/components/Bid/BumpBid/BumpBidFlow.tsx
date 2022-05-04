@@ -1,4 +1,5 @@
 import { formatEther, parseEther } from '@ethersproject/units'
+import { useEthers } from '@usedapp/core'
 import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
@@ -7,7 +8,10 @@ import { useBids, useMinimumIncrement, useUserBid } from 'src/hooks'
 import { useBid } from 'src/hooks/transactions'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
-export const BumpBidFlow = () => {
+import { FlowProps } from '../BidFlow'
+
+export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
+  const { account } = useEthers()
   const userBid = useUserBid()
   const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
@@ -18,6 +22,8 @@ export const BumpBidFlow = () => {
   const newBidAmount = useMemo(() => {
     return userBid && userBid.amount.add(parsedBumpAmount)
   }, [parsedBumpAmount, userBid])
+
+  useEffect(() => setView(TxFlowSteps.Placing), [account])
 
   useEffect(() => {
     setBumpAmount(formatEther(minimumIncrement))
@@ -40,7 +46,7 @@ export const BumpBidFlow = () => {
 
   return (
     <>
-      {view === TxFlowSteps.Placing && userBid && newBidAmount ? (
+      {view === TxFlowSteps.Placing ? (
         <BumpBidForm
           userBid={userBid}
           newBidAmount={newBidAmount}
@@ -58,6 +64,7 @@ export const BumpBidFlow = () => {
           impact={newBidAmount}
           view={view}
           setView={setView}
+          setTransactionViewLock={setTransactionViewLock}
         />
       )}
     </>

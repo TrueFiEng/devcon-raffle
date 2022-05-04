@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { useMemo, useState } from 'react'
+import { useEthers } from '@usedapp/core'
+import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction, TxFlowSteps } from 'src/components/Auction'
 import { WinType, WinForm } from 'src/components/Claim'
 import { TransactionAction, Transactions } from 'src/components/Transaction'
@@ -13,11 +14,14 @@ interface WinBidFlowProps {
 }
 
 export const WinBidFlow = ({ userBid }: WinBidFlowProps) => {
+  const { account } = useEthers()
   const minimumBid = useMinimumBid()
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const { claimFunds, state, resetState } = useClaimFunds()
 
   const withdrawalAmount = useMemo(() => calculateWithdrawalAmount(userBid, minimumBid), [userBid, minimumBid])
+
+  useEffect(() => setView(TxFlowSteps.Placing), [account])
 
   const claimAction: TransactionAction = {
     type: Transactions.Withdraw,
