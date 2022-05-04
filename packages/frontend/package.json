@@ -35,8 +35,7 @@
     "react-router-dom": "^6.2.2",
     "set-interval-async": "^2.0.3",
     "styled-components": "^5.3.3",
-    "use-async-effect": "^2.2.5",
-    "usehooks-ts": "^2.5.2"
+    "use-async-effect": "^2.2.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.11",
