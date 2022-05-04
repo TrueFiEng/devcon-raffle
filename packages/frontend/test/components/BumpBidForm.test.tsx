@@ -36,7 +36,8 @@ describe('UI: BumpBidForm', () => {
       <BumpBidForm
         userBid={mockBids.get(4)!.toObject()}
         newBidAmount={newAmount}
-        bumpAmount={minimumIncrement}
+        bumpAmount={minimumIncrement.toString()}
+        parsedBumpAmount={minimumIncrement}
         minimumIncrement={minimumIncrement}
         setBumpAmount={() => undefined}
         setView={() => undefined}

@@ -5,8 +5,7 @@ import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
 import { getStringEnv } from './getEnv'
 
-export function getProdConfig(): Config {
-  const backendUrl = getStringEnv('BACKEND_URL') || ''
+export function getMainnetProdConfig(): Config {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
@@ -16,6 +15,6 @@ export function getProdConfig(): Config {
       pollingInterval: 1000,
     },
     addresses: ADDRESSES,
-    backendUrl,
+    backendUrl: getStringEnv('BACKEND_URL') || '',
   }
 }
