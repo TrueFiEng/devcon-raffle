@@ -60,7 +60,7 @@ describe('bidsReducer', () => {
 
   it('updates intermediate bids places on bid bump', () => {
     const bidsState = generateMockBidsState(3)
-    const change = newBidChanged(4, mockBidsAddresses[3], parseEther('10'))
+    const change = newBidChanged(3, mockBidsAddresses[2], parseEther('10'))
     const state = bidsReducer(bidsState, change)
 
     verifyBid(state, change, 1)
@@ -69,7 +69,7 @@ describe('bidsReducer', () => {
 
   it('updates intermediate bids places on new bid', () => {
     const bidsState = generateMockBidsState(3)
-    const change = newBidChanged(5, mockBidsAddresses[4], parseEther('2.5'))
+    const change = newBidChanged(4, mockBidsAddresses[3], parseEther('2.5'))
     const state = bidsReducer(bidsState, change)
 
     verifyBid(state, change, 2)
@@ -82,7 +82,7 @@ describe('bidsReducer', () => {
       const change = newBidChanged(1, mockBidsAddresses[0], parseEther('0.5'))
       const state = bidsReducer(bidsState, change)
 
-      const bids = state.get('bids')
+      const bids = bidsState.get('bids')
       verifyBid(state, bids.get(0)!.toObject(), 1)
     })
   })
