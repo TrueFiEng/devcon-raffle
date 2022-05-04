@@ -4,7 +4,7 @@ import { providerWithInterval } from 'src/constants/nodeUrls'
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
 
-export function getLocalConfig(): Config {
+export function getLocalDevConfig(): Config {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
