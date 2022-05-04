@@ -41,7 +41,7 @@ export const BidsProvider = ({ children }: Props) => {
   const { devcon } = useDevconContract()
   const blockNumber = useBlockNumbers()[chainId]
 
-  useAsyncInterval(() => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch), 2000)
+  useAsyncInterval(() => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch), 1000)
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
