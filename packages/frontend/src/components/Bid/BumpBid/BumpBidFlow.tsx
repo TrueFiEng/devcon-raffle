@@ -1,4 +1,5 @@
 import { formatEther, parseEther } from '@ethersproject/units'
+import { useEthers } from '@usedapp/core'
 import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
@@ -14,6 +15,7 @@ import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 import { FlowProps } from '../BidFlow'
 
 export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
+  const { account } = useEthers()
   const userBid = useUserBid()
   const minimumIncrement = useMinimumIncrement()
   const { placeBid, state, resetState } = useBid()
@@ -24,6 +26,8 @@ export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
   const newBidAmount = useMemo(() => {
     return userBid && userBid.amount.add(parsedBumpAmount)
   }, [parsedBumpAmount, userBid])
+
+  useEffect(() => setView(TxFlowSteps.Placing), [account])
 
   useEffect(() => {
     setBumpAmount(formatEther(minimumIncrement))

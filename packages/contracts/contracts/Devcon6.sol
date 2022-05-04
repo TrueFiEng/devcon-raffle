@@ -265,17 +265,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         return _bids[bidder];
     }
 
-    function getBidWithAddress(uint256 bidderID) public view returns (BidWithAddress memory) {
-        address bidder = getBidderAddress(bidderID);
-        Bid storage bid_ = _bids[bidder];
-
-        BidWithAddress memory bidWithAddress = BidWithAddress({bidder: bidder, bid: bid_});
-
-        return bidWithAddress;
-    }
-
     function getBidsWithAddresses() external view returns (BidWithAddress[] memory) {
-        uint256 totalBids = _nextBidderID - 1;
+        uint256 totalBids = getBiddersCount();
 
         BidWithAddress[] memory bids = new BidWithAddress[](totalBids);
 
@@ -285,6 +276,15 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         }
 
         return bids;
+    }
+
+    function getBidWithAddress(uint256 bidderID) public view returns (BidWithAddress memory) {
+        address bidder = getBidderAddress(bidderID);
+        Bid storage bid_ = _bids[bidder];
+
+        BidWithAddress memory bidWithAddress = BidWithAddress({bidder: bidder, bid: bid_});
+
+        return bidWithAddress;
     }
 
     function getBidderAddress(uint256 bidderID) public view returns (address payable) {
