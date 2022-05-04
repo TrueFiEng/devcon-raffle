@@ -30,7 +30,7 @@ jest.mock('src/hooks/chainId/useChainId', () => ({
 
 jest.mock('src/hooks/contract/useReadOnlyProvider', () => ({
   useReadOnlyProvider: () => ({
-    getBlockNumber: () => new Promise<number>(() => 10)
+    getBlockNumber: () => new Promise<number>(() => 10),
   }),
 }))
 
