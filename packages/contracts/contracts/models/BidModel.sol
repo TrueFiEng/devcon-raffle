@@ -10,6 +10,11 @@ abstract contract BidModel {
         bool claimed;
     }
 
+    struct BidWithAddress {
+        address bidder;
+        Bid bid;
+    }
+
     enum WinType {
         LOSS,
         GOLDEN_TICKET,
