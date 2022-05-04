@@ -32,7 +32,7 @@ module.exports = {
       allowUnlimitedContractSize: true,
       accounts: {
         count: 120
-      }
+      },
     },
     rinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',

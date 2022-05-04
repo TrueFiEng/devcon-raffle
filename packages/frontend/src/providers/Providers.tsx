@@ -2,7 +2,7 @@ import { DAppProvider } from '@usedapp/core'
 import { ReactNode } from 'react'
 import { CONFIG } from 'src/config/config'
 
-import { BidsProvider } from './Bids'
+import { BidsProvider } from './Bids/provider'
 
 interface Props {
   children: ReactNode

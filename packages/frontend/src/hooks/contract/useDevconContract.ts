@@ -1,4 +1,5 @@
 import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
+import { useMemo } from 'react'
 
 import { SupportedChainId } from '../../constants/chainIDs'
 import { useChainId } from '../chainId/useChainId'
@@ -23,8 +24,10 @@ export function useDevconContract(): UseDevconContractResult {
   const chainId = useChainId()
   const { devcon } = useAddresses('devcon')
   const provider = useProvider()
+
+  const devconContract = useMemo(() => Devcon6__factory.connect(devcon, provider), [devcon, provider])
   return {
     chainId,
-    devcon: Devcon6__factory.connect(devcon, provider),
+    devcon: devconContract,
   }
 }

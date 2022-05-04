@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 
-export const getPositionAfterBid = (newAmount: BigNumber, bids: Bid[]) =>
-  bids.findIndex((bid) => bid.amount.lt(newAmount)) + 1 || bids.length + 1
+export const getPositionAfterBid = (newAmount: BigNumber, bids: ImmutableBids) =>
+  bids.findIndex((bid) => bid.get('amount').lt(newAmount)) + 1 || bids.size + 1

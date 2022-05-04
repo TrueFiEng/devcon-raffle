@@ -1,7 +1,7 @@
 import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 const mockBalance = parseEther('100')
 
@@ -16,8 +16,12 @@ jest.mock('src/hooks/useUserBid', () => ({
   useUserBid: () => undefined,
 }))
 
+jest.mock('src/hooks/useContractBids', () => ({
+  useContractBids: () => [],
+}))
+
 describe('UI: PlaceBidForm', () => {
-  const mockBids = generateMockBids(5)
+  const mockBids = generateMockBidsState(5).get('bids')
 
   it('Displays estimated place after bid', async () => {
     renderComponent('4.5')

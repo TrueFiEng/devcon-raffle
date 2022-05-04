@@ -8,6 +8,7 @@ import { useAuctionWinners } from 'src/hooks/useAuctionWinners'
 import { useBids } from 'src/hooks/useBids'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { Bid } from 'src/models/Bid'
+import { ImmutableBids } from 'src/providers/Bids/types'
 
 import { GoldenTicketWinner } from '../BidsList/GoldenTicketWinner'
 
@@ -52,7 +53,7 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 }
 
-function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
+function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
   const settledBids: Bids = {
     auction: [],
     raffle: [],
@@ -63,20 +64,21 @@ function divideBids(bids: Bid[], auctionWinners?: BigNumber[], raffleWinners?: B
     return settledBids
   }
 
-  settledBids.others = bids.filter((bid) => {
-    if (includesBigNumber(auctionWinners, bid.bidderID)) {
-      settledBids.auction.push(bid)
+  bids.forEach((bid) => {
+    const bidderID = bid.get('bidderID')
+    if (includesBigNumber(auctionWinners, bidderID)) {
+      settledBids.auction.push(bid.toObject())
+      return
+    }
+    if (bidderID.eq(raffleWinners[0])) {
+      settledBids.goldenTicket = bid.toObject()
       return false
     }
-    if (bid.bidderID.eq(raffleWinners[0])) {
-      settledBids.goldenTicket = bid
-      return false
+    if (includesBigNumber(raffleWinners, bidderID)) {
+      settledBids.raffle.push(bid.toObject())
+      return
     }
-    if (includesBigNumber(raffleWinners, bid.bidderID)) {
-      settledBids.raffle.push(bid)
-      return false
-    }
-    return true
+    settledBids.others.push(bid.toObject())
   })
   return settledBids
 }
