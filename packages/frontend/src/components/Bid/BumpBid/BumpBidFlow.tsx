@@ -1,5 +1,5 @@
-import { useEthers } from '@usedapp/core'
 import { formatEther, parseEther } from '@ethersproject/units'
+import { useEthers } from '@usedapp/core'
 import { useMemo, useState, useEffect } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
