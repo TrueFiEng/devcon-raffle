@@ -8,8 +8,8 @@ const NODE_URLS: Record<SupportedChainId, string> = {
   [ChainId.Hardhat]: 'http://localhost:8545',
 }
 
-export function providerWithInterval(chainId: SupportedChainId) {
+export function providerWithInterval(chainId: SupportedChainId, pollingInterval: number) {
   const provider = new JsonRpcProvider(NODE_URLS[chainId])
-  provider.pollingInterval = 1_000
+  provider.pollingInterval = pollingInterval
   return { [chainId]: provider }
 }

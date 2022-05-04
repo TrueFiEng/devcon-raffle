@@ -1,6 +1,7 @@
 import { Devcon6 } from '@devcon-raffle/contracts'
 import { useBlockNumbers } from '@usedapp/core/internal'
 import { Dispatch, ReactNode, useEffect, useReducer, useState } from 'react'
+import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { useDevconContract } from 'src/hooks/contract'
 import { useReadOnlyProvider } from 'src/hooks/contract/useReadOnlyProvider'
@@ -41,7 +42,10 @@ export const BidsProvider = ({ children }: Props) => {
   const { devcon } = useDevconContract()
   const blockNumber = useBlockNumbers()[chainId]
 
-  useAsyncInterval(() => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch), 1000)
+  useAsyncInterval(
+    () => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch),
+    POLLING_INTERVAL
+  )
 
   return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
