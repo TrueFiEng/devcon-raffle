@@ -71,7 +71,7 @@ async function queryNewBids(
     dispatch({
       bidderID: event.args.bidderID,
       bidderAddress: event.args.bidder,
-      amount: event.args.bidAmount
+      amount: event.args.bidAmount,
     })
   })
   setLastFetchedBlock(currentBlock)
