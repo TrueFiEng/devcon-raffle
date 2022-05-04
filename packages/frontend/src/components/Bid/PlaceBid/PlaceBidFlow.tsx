@@ -10,11 +10,9 @@ import { useBids } from 'src/hooks/useBids'
 import { useMinimumBid } from 'src/hooks/useMinimumBid'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
-interface PlaceBidFlowProps {
-  endInitialBidding: () => void
-}
+import { FlowProps } from '../BidFlow'
 
-export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
+export const PlaceBidFlow = ({ setTransactionViewLock }: FlowProps) => {
   const [view, setView] = useState<TxFlowSteps>(TxFlowSteps.Placing)
   const minimumBid = useMinimumBid()
   const [bid, setBid] = useState('0')
@@ -58,7 +56,7 @@ export const PlaceBidFlow = ({ endInitialBidding }: PlaceBidFlowProps) => {
           amount={parsedBid}
           view={view}
           setView={setView}
-          endInitialBidding={endInitialBidding}
+          setTransactionViewLock={setTransactionViewLock}
         />
       )}
     </>
