@@ -1,9 +1,8 @@
 import { BigNumber } from 'ethers'
 import { useMemo } from 'react'
+import { useDevconContract } from 'src/hooks/contract'
+import { useCachedCall } from 'src/hooks/useCachedCall'
 import { Bid } from 'src/models/Bid'
-
-import { useDevconContract } from './contract'
-import { useCachedCall } from './useCachedCall'
 
 interface BidWithAddress {
   bidder: string
