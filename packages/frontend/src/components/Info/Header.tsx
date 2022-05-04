@@ -11,10 +11,10 @@ export const Header = () => {
     <StyledHeader>
       <HeaderWrapper>
         <Wrapper>
-          <Title>
-            <h1>Devcon 6</h1>
+          <TitleWrapper>
+            <Title>Devcon 6</Title>
             <SubTitle>Ticket Sale</SubTitle>
-          </Title>
+          </TitleWrapper>
           <TimeLeft />
         </Wrapper>
         <Key>
@@ -46,11 +46,29 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   color: ${Colors.White};
+
+  @media screen and (min-width: 1600px) {
+    justify-content: flex-start;
+    row-gap: 40px;
+  }
 `
 
-const Title = styled.div`
+const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
+  @media screen and (min-width: 1600px) {
+    flex-direction: row;
+    align-items: flex-end;
+    column-gap: 20px;
+    padding-top: 16px;
+  }
+`
+
+const Title = styled.h1`
+  @media screen and (min-width: 1600px) {
+    line-height: 1;
+  }
 `
 
 const SubTitle = styled.h3`

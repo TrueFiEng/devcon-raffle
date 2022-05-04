@@ -1,15 +1,18 @@
-import { Arbitrum, ArbitrumRinkeby, Hardhat } from '@usedapp/core'
+import { Hardhat } from '@usedapp/core'
+import { HARDHAT_NODE_URL } from 'src/constants/nodeUrls'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig } from './config'
 
-export function getLocalConfig() {
+export function getLocalDevConfig() {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: Hardhat.chainId,
-      networks: [Hardhat, ArbitrumRinkeby, Arbitrum],
+      readOnlyUrls: HARDHAT_NODE_URL,
+      networks: [Hardhat],
     },
     addresses: ADDRESSES,
+    backendUrl: 'http://localhost:3001',
   }
 }

@@ -13,6 +13,10 @@ jest.mock('@usedapp/core', () => ({
   useEtherBalance: () => mockBalance,
 }))
 
+jest.mock('src/hooks/useUserBid', () => ({
+  useUserBid: () => undefined,
+}))
+
 describe('UI: BumpBidForm', () => {
   const mockBids = generateMockBids(5)
 
@@ -28,7 +32,8 @@ describe('UI: BumpBidForm', () => {
       <BumpBidForm
         userBid={mockBids[4]}
         newBidAmount={newAmount}
-        bumpAmount={minimumIncrement}
+        bumpAmount={minimumIncrement.toString()}
+        parsedBumpAmount={minimumIncrement}
         minimumIncrement={minimumIncrement}
         setBumpAmount={() => undefined}
         setView={() => undefined}

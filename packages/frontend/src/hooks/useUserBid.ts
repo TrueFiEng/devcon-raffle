@@ -1,11 +1,40 @@
-import { addressEqual, useEthers } from '@usedapp/core'
+import { addressEqual, useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
+import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 
+import { useDevconContract } from './contract'
 import { useBids } from './useBids'
 
 export function useUserBid() {
+  const { devcon, chainId } = useDevconContract()
   const { account } = useEthers()
   const { bids } = useBids()
 
-  return useMemo(() => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)), [account, bids])
+  const { value } =
+    useCall(
+      account && {
+        contract: devcon,
+        method: 'getBid',
+        args: [account],
+      },
+      { chainId }
+    ) ?? {}
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const bid = useMemo(() => value && value[0], [JSON.stringify(value)])
+  const bidWithPlace = useMemo(
+    () => bids.find((bid) => account && addressEqual(bid.bidderAddress, account)),
+    [account, bids]
+  )
+
+  return bidWithPlace && account
+    ? {
+        bidderID: bidWithPlace.bidderID,
+        bidderAddress: account,
+        amount: bid?.amount || bidWithPlace.amount,
+        place: bidWithPlace.place,
+        winType: bid?.winType || WinType.Loss,
+        claimed: bid?.claimed || false,
+      }
+    : undefined
 }

@@ -1,4 +1,4 @@
-import { FormWrapper } from 'src/components/Form/Form'
+import { FormSectionWrapper } from 'src/components/Form/Form'
 import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { formatEndDateText } from 'src/utils/formatters/formatEndDateText'
 import styled from 'styled-components'
@@ -19,7 +19,6 @@ export const BidAwaiting = () => {
   )
 }
 
-const BidStartWrapper = styled(FormWrapper)`
+const BidStartWrapper = styled(FormSectionWrapper)`
   padding: 0 0 0 135px;
-  justify-content: center;
 `

@@ -1,27 +1,29 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatEther, parseEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
 import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
 import { EtherIcon } from 'src/components/Icons/EtherIcon'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { BidWithPlace } from 'src/models/Bid'
+import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
 import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
 import styled from 'styled-components'
 
 interface InputProps {
-  initialAmount: BigNumber
-  setAmount: (val: BigNumber) => void
+  initialAmount: string
+  setAmount: (val: string) => void
   notEnoughBalance: boolean
   bidTooLow: boolean
 }
 
 const numberInputRegex = /^((\d*)|(\d+[.,])|([.,]\d*)|(\d+[.,]\d+))$/
 
-export function formatInputValue(value: BigNumber) {
-  return value.isZero() ? '' : formatEther(value)
+function checkOnChangeLength(value: string) {
+  if (value[0] == '.' && value.length > 19) {
+    return true
+  }
+
+  return value.length > 20
 }
 
 export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }: InputProps) => {
@@ -29,29 +31,35 @@ export const Input = ({ initialAmount, setAmount, notEnoughBalance, bidTooLow }:
   const userBalance = useEtherBalance(account)
   const userBid = useUserBid()
 
-  const [inputValue, setInputValue] = useState(formatInputValue(initialAmount))
+  const [inputValue, setInputValue] = useState(initialAmount)
 
-  useEffect(() => setInputValue(formatInputValue(initialAmount)), [initialAmount])
+  useEffect(() => setInputValue(initialAmount), [initialAmount])
+
+  const setOnChangeValue = (value: string) => {
+    setInputValue(value)
+    setAmount(value)
+  }
 
   const onChange = (value: string) => {
     if (!numberInputRegex.test(value)) {
       return
     }
+
     if (value !== '') {
-      const formattedValue = value.replace(',', '.')
-      setInputValue(formattedValue)
-      setAmount(parseEther(formattedValue))
-    } else {
-      setInputValue('')
-      setAmount(parseEther('0'))
+      value = value.replace(',', '.')
     }
+
+    if (checkOnChangeLength(value)) {
+      return
+    }
+
+    setOnChangeValue(value)
   }
 
   const onBlur = (value: string) => {
     if (value !== '') {
       const formattedValue = formatInputAmount(value)
-      setInputValue(formattedValue)
-      setAmount(parseEther(formattedValue))
+      setOnChangeValue(formattedValue)
     }
   }
 
@@ -87,7 +95,7 @@ const ErrorMessage = ({ message }: { message: string }) => {
   )
 }
 
-const InputWrapper = styled.div<{ userBid: BidWithPlace | undefined }>`
+const InputWrapper = styled.div<{ userBid: UserBid | undefined }>`
   display: flex;
   position: relative;
   flex-direction: column;

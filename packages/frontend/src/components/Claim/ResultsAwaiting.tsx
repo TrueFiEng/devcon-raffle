@@ -1,15 +1,9 @@
-import { FormWrapper } from 'src/components/Form/Form'
-import styled from 'styled-components'
+import { FormSectionWrapper } from 'src/components/Form/Form'
 
 export const ResultsAwaiting = () => {
   return (
-    <BidStartWrapper>
+    <FormSectionWrapper>
       <h2>Wait for results ⏳</h2>
-    </BidStartWrapper>
+    </FormSectionWrapper>
   )
 }
-
-const BidStartWrapper = styled(FormWrapper)`
-  padding: 0 0 0 170px;
-  justify-content: center;
-`

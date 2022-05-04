@@ -1,41 +1,51 @@
 import { Config as UseDAppConfig } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
-import { NODE_URLS } from 'src/constants/nodeUrls'
 
-import { getLocalConfig } from './config.dev.local'
-import { getTestnetConfig } from './config.dev.testnet'
-import { getProdConfig } from './config.prod'
+import { getLocalDevConfig } from './config.dev.local'
+import { getTestnetDevConfig } from './config.dev.testnet'
+import { getMainnetProdConfig } from './config.prod.mainnet'
+import { getTestnetProdConfig } from './config.prod.testnet'
 import { getStringEnv } from './getEnv'
 
 export interface Config {
   useDAppConfig: UseDAppConfig
   addresses: Record<string, Record<SupportedChainId, string>>
+  backendUrl: string
 }
 
 function getConfig(mode: string): Config {
-  switch (mode) {
-    case 'development':
-      return getDevConfig()
-    default:
-      return getProdConfig()
-  }
-}
-
-function getDevConfig(): Config {
   const network = getStringEnv('VITE_NETWORK')
 
-  switch (network) {
-    case 'ArbitrumRinkeby':
-      return getTestnetConfig()
+  switch (mode) {
+    case 'development':
+      return getDevConfig(network)
     default:
-      return getLocalConfig()
+      return getProdConfig(network)
   }
 }
 
-export const commonUseDAppConfig = {
+function getDevConfig(network: string | undefined): Config {
+  switch (network) {
+    case 'ArbitrumRinkeby':
+      return getTestnetDevConfig()
+    default:
+      return getLocalDevConfig()
+  }
+}
+
+function getProdConfig(network: string | undefined): Config {
+  switch (network) {
+    case 'ArbitrumRinkeby':
+      return getTestnetProdConfig()
+    default:
+      return getMainnetProdConfig()
+  }
+}
+
+export const commonUseDAppConfig: UseDAppConfig = {
   multicallAddresses: ADDRESSES.multicall,
-  readOnlyUrls: NODE_URLS,
+  multicallVersion: 2,
 }
 
 export const CONFIG = getConfig(import.meta.env.MODE)

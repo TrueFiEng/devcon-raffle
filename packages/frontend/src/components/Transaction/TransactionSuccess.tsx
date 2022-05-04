@@ -4,26 +4,26 @@ import { FormNarrow } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { TransactionSuccessHeader } from 'src/components/Transaction/TransactionSuccessHeader'
-import { useChainId } from 'src/hooks/useChainId'
+import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { shortenTxHash } from 'src/utils/formatters/shortenTxHash'
-import { getArbiscanTxLink } from 'src/utils/getArbiscanLink'
+import { getExplorerTxLink } from 'src/utils/getExplorerLink'
 import styled from 'styled-components'
 
 interface Props {
   txHash: string
   action: Transactions
   setView: (state: TxFlowSteps) => void
-  endInitialBidding?: () => void
+  unlockViewFromTransaction?: () => void
 }
 
-export const TransactionSuccess = ({ txHash, action, setView, endInitialBidding }: Props) => {
+export const TransactionSuccess = ({ txHash, action, setView, unlockViewFromTransaction }: Props) => {
   const chainId = useChainId()
-  const transactionLink = getArbiscanTxLink(chainId, txHash)
+  const transactionLink = getExplorerTxLink(chainId, txHash)
 
   const goHome = () => {
     setView(0)
-    endInitialBidding && endInitialBidding()
+    unlockViewFromTransaction?.()
   }
 
   return (

@@ -3,7 +3,7 @@ import { useAuctionState } from 'src/hooks/useAuctionState'
 import { useAuctionTime } from 'src/hooks/useAuctionTime'
 import { formatEndDate } from 'src/utils/formatters/formatEndDate'
 import { formatTimeLeft } from 'src/utils/formatters/formatTimeLeft'
-import { setTimeoutImmediately } from 'src/utils/setTimeoutImmediately'
+import { setIntervalImmediately } from 'src/utils/setIntervalImmediately'
 import styled from 'styled-components'
 
 export const TimeLeft = () => {
@@ -13,9 +13,9 @@ export const TimeLeft = () => {
   const [timeLeft, setTimeLeft] = useState(formatTimeLeft(timestamp))
 
   useEffect(() => {
-    const interval = setTimeoutImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
-    return () => clearTimeout(interval)
-  }, [timestamp, timeLeft])
+    const interval = setIntervalImmediately(() => setTimeLeft(formatTimeLeft(timestamp)), 1_000)
+    return () => clearInterval(interval)
+  }, [timestamp])
 
   return (
     <TimeBox>
@@ -35,6 +35,12 @@ const TimeBox = styled.div`
   flex-direction: column;
   row-gap: 4px;
   font-family: 'Space Mono', 'Roboto Mono', monospace;
+
+  @media screen and (min-width: 1600px) {
+    flex-direction: row;
+    align-items: center;
+    column-gap: 40px;
+  }
 `
 const TimeRow = styled.div`
   display: flex;

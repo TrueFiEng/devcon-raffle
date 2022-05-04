@@ -1,10 +1,10 @@
 import { BidsList } from 'src/components/BidsList/BidsList'
-import { BidWithPlace } from 'src/models/Bid'
+import { Bid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface Props {
-  bids: BidWithPlace[]
+  bids: Bid[]
   title: string
 }
 

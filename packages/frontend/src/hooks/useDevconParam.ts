@@ -7,14 +7,15 @@ import { useDevconContract } from './contract'
 import { useCachedCall } from './useCachedCall'
 
 export function useDevconParam(contractMethod: ContractMethodNames<Devcon6>) {
-  const devconContract = useDevconContract()
+  const { devcon, chainId } = useDevconContract()
   const { value, error } =
     useCachedCall(
-      devconContract && {
-        contract: devconContract,
+      {
+        contract: devcon,
         method: contractMethod,
         args: [],
-      }
+      },
+      chainId
     ) ?? {}
 
   const devconValue = useMemo(() => value && BigNumber.from(value[0]), [value])
