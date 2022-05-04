@@ -19,7 +19,7 @@ export const Header = () => {
       <Wrapper>
         <Title>
           <h2>Number of participants:</h2>
-          <Number>{isLoadingParams ? 0 : bids.length}</Number>
+          <Number>{isLoadingParams ? 0 : bids.size}</Number>
         </Title>
       </Wrapper>
       <Key>

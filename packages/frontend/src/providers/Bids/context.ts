@@ -1,10 +1,12 @@
 import { createContext } from 'react'
-import { Bid } from 'src/models/Bid'
 
-interface BidsContext {
-  bids: Bid[]
+import { getDefaultBidsState } from './reducer'
+import { ImmutableBidsState } from './types'
+
+export interface BidsContext {
+  bidsState: ImmutableBidsState
 }
 
 export const BidsContext = createContext<BidsContext>({
-  bids: [],
+  bidsState: getDefaultBidsState(),
 })

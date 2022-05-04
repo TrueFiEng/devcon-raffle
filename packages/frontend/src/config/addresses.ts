@@ -2,6 +2,8 @@ import { ChainId } from '@usedapp/core'
 
 import { SupportedChainId } from '../constants/chainIDs'
 
+import { getStringEnv } from './getEnv'
+
 export const ADDRESSES: Record<string, Record<SupportedChainId, string>> = {
   multicall: {
     [ChainId.Arbitrum]: '0x842eC2c7D803033Edf55E478F461FC547Bc54EB2',
@@ -10,7 +12,16 @@ export const ADDRESSES: Record<string, Record<SupportedChainId, string>> = {
   },
   devcon: {
     [ChainId.Arbitrum]: '',
-    [ChainId.ArbitrumRinkeby]: '0x0cD6783fca8D1a9DbAa6404B759b0C2110f3C2A0',
+    [ChainId.ArbitrumRinkeby]: '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F',
     [ChainId.Hardhat]: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   },
+}
+
+export function getAddresses() {
+  const addresses = ADDRESSES
+  const devcon = getStringEnv('VITE_TESTNET_DEVCON')
+  if (devcon) {
+    addresses['devcon'][ChainId.ArbitrumRinkeby] = devcon
+  }
+  return addresses
 }

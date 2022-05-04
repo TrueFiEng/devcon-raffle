@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseEther } from '@ethersproject/units'
 import { render, screen } from '@testing-library/react'
 import { BumpBidForm } from 'src/components/Bid/BumpBid/BumpBidForm'
-import { generateMockBids } from 'test/mocks/generateMockBids'
+import { generateMockBidsState } from 'test/mocks/generateMockBids'
 
 const mockBalance = parseEther('100')
 
@@ -17,8 +17,12 @@ jest.mock('src/hooks/useUserBid', () => ({
   useUserBid: () => undefined,
 }))
 
+jest.mock('src/hooks/useContractBids', () => ({
+  useContractBids: () => [],
+}))
+
 describe('UI: BumpBidForm', () => {
-  const mockBids = generateMockBids(5)
+  const mockBids = generateMockBidsState(5).get('bids')
 
   it('Displays current place and place after bump', () => {
     renderComponent(parseEther('4.5'), parseEther('1'))
@@ -30,9 +34,10 @@ describe('UI: BumpBidForm', () => {
   const renderComponent = (newAmount: BigNumber, minimumIncrement: BigNumber) =>
     render(
       <BumpBidForm
-        userBid={mockBids[4]}
+        userBid={mockBids.get(4)!.toObject()}
         newBidAmount={newAmount}
-        bumpAmount={minimumIncrement}
+        bumpAmount={minimumIncrement.toString()}
+        parsedBumpAmount={minimumIncrement}
         minimumIncrement={minimumIncrement}
         setBumpAmount={() => undefined}
         setView={() => undefined}

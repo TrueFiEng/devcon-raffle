@@ -18,6 +18,7 @@ A number of custom Hardhat tasks were defined to aid testing.
 
 #### Hardhat
 - `yarn hardhat:bid --account <STRING> --amount <STRING>` - using *account* place bid of *amount* ETH
+- `yarn hardhat:bid-random --amount <INT> [--account <INT>]` - using randomly generated accounts place *amount* of bids using funds from account with index *account* (defaults to `0`)
 - `yarn hardhat:settle-auction` - settle auction
 - `yarn hardhat:settle-raffle` - settle raffle using random numbers
 - `yarn hardhat:settle` - increase time, settle auction and raffle

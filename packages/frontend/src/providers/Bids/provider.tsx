@@ -1,54 +1,82 @@
-import { Interface } from '@ethersproject/abi'
-import { BigNumber } from '@ethersproject/bignumber'
-import { ReactNode, useMemo } from 'react'
-import { DEVCON6_ABI } from 'src/constants/abis'
+import { Devcon6 } from '@devcon-raffle/contracts'
+import { useBlockNumbers } from '@usedapp/core/internal'
+import { Dispatch, ReactNode, useEffect, useReducer, useState } from 'react'
+import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
+import { useChainId } from 'src/hooks/chainId/useChainId'
+import { useDevconContract } from 'src/hooks/contract'
+import { useReadOnlyProvider } from 'src/hooks/contract/useReadOnlyProvider'
+import { useAsyncInterval } from 'src/hooks/useAsyncInterval'
+import { useContractBids } from 'src/hooks/useContractBids'
 import { Bid } from 'src/models/Bid'
-import { useBidEvents } from 'src/providers/Bids/useBidEvents'
+import useAsyncEffect from 'use-async-effect'
 
 import { BidsContext } from './context'
+import { BidChanged, bidsReducer, getDefaultBidsState } from './reducer'
 
 interface Props {
   children: ReactNode
 }
 
-interface BidEventDetails {
-  bidAmount: BigNumber
-  bidderID: BigNumber
-}
-
 export const BidsProvider = ({ children }: Props) => {
-  const bidsEvents = useBidEvents()
+  const [bidsState, dispatch] = useReducer(bidsReducer, getDefaultBidsState())
+  const contractBids = useContractBids()
 
-  const bids: Bid[] = useMemo(() => {
-    const abi = new Interface(DEVCON6_ABI)
-    const addressToBidMap = bidsEvents.reduce<Record<string, BidEventDetails>>((dict, log) => {
-      const event = abi.parseLog(log)
-      const { bidder, bidAmount, bidderID } = event.args
-      if (!(bidder in dict) || dict[bidder].bidAmount.lt(bidAmount)) {
-        dict[bidder] = { bidAmount, bidderID }
+  useEffect(() => initBids(contractBids, dispatch), [contractBids])
+
+  const provider = useReadOnlyProvider()
+  const chainId = useChainId()
+  const [lastFetchedBlock, setLastFetchedBlock] = useState<number | undefined>(undefined)
+
+  useAsyncEffect(
+    async (isActive) => {
+      const blockNumber = await provider.getBlockNumber()
+      if (!isActive()) {
+        return
       }
-      return dict
-    }, {})
+      setLastFetchedBlock(blockNumber - 1)
+    },
+    () => setLastFetchedBlock(undefined),
+    [chainId]
+  )
 
-    return Object.entries(addressToBidMap)
-      .sort(([, a], [, b]) => compareBidEvent(a, b))
-      .map(([bidderAddress, event], index) => ({
-        bidderAddress,
-        bidderID: event.bidderID,
-        amount: event.bidAmount,
-        place: index + 1,
-      }))
-  }, [bidsEvents])
+  const { devcon } = useDevconContract()
+  const blockNumber = useBlockNumbers()[chainId]
 
-  return <BidsContext.Provider value={{ bids }}>{children}</BidsContext.Provider>
+  useAsyncInterval(
+    () => queryNewBids(devcon, blockNumber, lastFetchedBlock, setLastFetchedBlock, dispatch),
+    POLLING_INTERVAL
+  )
+
+  return <BidsContext.Provider value={{ bidsState }}>{children}</BidsContext.Provider>
 }
 
-const compareBidEvent = (a: BidEventDetails, b: BidEventDetails) =>
-  compareBigNumber(b.bidAmount, a.bidAmount) || compareBigNumber(a.bidderID, b.bidderID)
+function initBids(contractBids: Bid[], dispatch: Dispatch<BidChanged>) {
+  contractBids.forEach((bid) => dispatch(bid))
+}
 
-function compareBigNumber(a: BigNumber, b: BigNumber) {
-  if (a.lt(b)) {
-    return -1
+async function queryNewBids(
+  devcon: Devcon6,
+  currentBlock: number | undefined,
+  lastFetchedBlock: number | undefined,
+  setLastFetchedBlock: (value: number | undefined) => void,
+  dispatch: Dispatch<BidChanged>
+) {
+  if (currentBlock === undefined || lastFetchedBlock === undefined) {
+    return
   }
-  return a.gt(b) ? 1 : 0
+
+  if (currentBlock <= lastFetchedBlock) {
+    return
+  }
+
+  const eventFilter = devcon.filters.NewBid(null, null, null)
+  const events = await devcon.queryFilter(eventFilter, lastFetchedBlock + 1, currentBlock)
+  events.forEach((event) => {
+    dispatch({
+      bidderID: event.args.bidderID,
+      bidderAddress: event.args.bidder,
+      amount: event.args.bidAmount,
+    })
+  })
+  setLastFetchedBlock(currentBlock)
 }

@@ -17,7 +17,7 @@
     "const-name-snakecase": "off",
     "avoid-tx-origin": "off",
     "use-forbidden-name": "off",
-    "ordering": "warn",
+    "ordering": "error",
     "func-visibility": [
       "warn",
       {

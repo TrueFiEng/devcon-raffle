@@ -1,20 +1,21 @@
 import { Arbitrum } from '@usedapp/core'
-import { ARBITRUM_NODE_URL } from 'src/constants/nodeUrls'
+import { providerWithInterval } from 'src/constants/nodeUrls'
+import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
 
 import { ADDRESSES } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
 import { getStringEnv } from './getEnv'
 
-export function getProdConfig(): Config {
-  const backendUrl = getStringEnv('BACKEND_URL') || ''
+export function getMainnetProdConfig(): Config {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
       readOnlyChainId: Arbitrum.chainId,
-      readOnlyUrls: ARBITRUM_NODE_URL,
+      readOnlyUrls: providerWithInterval(Arbitrum.chainId, POLLING_INTERVAL),
       networks: [Arbitrum],
+      pollingInterval: POLLING_INTERVAL,
     },
     addresses: ADDRESSES,
-    backendUrl,
+    backendUrl: getStringEnv('BACKEND_URL') || '',
   }
 }
