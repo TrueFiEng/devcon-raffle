@@ -32,8 +32,8 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <RuleText>
-              The total number of {totalCount} tickets will be divided between the auction and the raffle pools.
-              All winners will receive a voucher code that is redeemable for a free Devcon ticket.
+              The total number of {totalCount} tickets will be divided between the auction and the raffle pools. All
+              winners will receive a voucher code that is redeemable for a free Devcon ticket.
             </RuleText>
             <Rule
               heading={`Auction pool: ${auctionWinnersCount}`}
@@ -69,9 +69,9 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
           <StyledContent>
-            After the raffle is settled, you will be able to claim a voucher code for the ticket.
-            In order to do so, you will be asked to sign a message using your wallet to authenticate as the owner of the winning account.
-            The voucher code will be presented to you on this page.
+            After the raffle is settled, you will be able to claim a voucher code for the ticket. In order to do so, you
+            will be asked to sign a message using your wallet to authenticate as the owner of the winning account. The
+            voucher code will be presented to you on this page.
           </StyledContent>
         </Accordion.Item>
 
