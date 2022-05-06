@@ -1,9 +1,3 @@
-methods {
-
-}
-
-// Constants
-
 // RULES
 
 rule test() {

@@ -70,25 +70,22 @@ main() {
     RE_VIOLATED_SANITY='.*Violated.*_sanity.*'
 
     RE="(${RE_VERIFIED_NOT_SANITY})|(${RE_VIOLATED_SANITY})"
-
     set -o pipefail
     confs=$(find spec -path '*.conf')
+    PACKAGES_PATH=$(dirname "$(dirname $PWD)")/node_modules
+
     for conf in $confs; do
-        ( certoraRun $conf $SANITY | perl -ne "print if not /${RE}/" ) &
+        ( certoraRun $conf $SANITY --packages_path $PACKAGES_PATH | perl -ne "print if not /${RE}/" ) &
         pids="$pids $!"
         sleep 15
     done
 
     for pid in $pids; do
-        wait -n || let "RESULT=1"
-
-        if [ $FAIL_ON_FIRST == true ] && [ "$RESULT" == "1" ]; then
-            exit 1
-        fi
+        wait $pid || let "RESULT=1"
     done
 
     if [ "$RESULT" == "1" ]; then
-        exit 1
+       exit 1
     fi
 }
 
