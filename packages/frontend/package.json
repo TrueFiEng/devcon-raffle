@@ -21,6 +21,7 @@
     "@ethersproject/providers": "~5.6.4",
     "@ethersproject/units": "^5.6.0",
     "@radix-ui/react-accordion": "^0.1.6",
+    "@radix-ui/react-dialog": "^0.1.7",
     "@radix-ui/react-separator": "^0.1.4",
     "@radix-ui/react-toast": "^0.1.1",
     "@radix-ui/react-tooltip": "^0.1.7",
