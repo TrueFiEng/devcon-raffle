@@ -20,6 +20,7 @@
     "@ethersproject/hash": "^5.6.0",
     "@ethersproject/providers": "~5.6.4",
     "@ethersproject/units": "^5.6.0",
+    "@portis/web3": "^4.0.7",
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-separator": "^0.1.4",
     "@radix-ui/react-toast": "^0.1.1",
