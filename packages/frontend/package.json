@@ -26,6 +26,7 @@
     "@radix-ui/react-tooltip": "^0.1.7",
     "@types/styled-components": "^5.1.24",
     "@usedapp/core": "^1.0.2",
+    "@walletconnect/web3-provider": "^1.7.8",
     "copy-to-clipboard": "^3.3.1",
     "immutable": "^4.0.0",
     "moment": "^2.29.1",
