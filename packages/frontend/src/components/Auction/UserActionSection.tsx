@@ -41,5 +41,5 @@ const Wrapper = styled.div`
   height: 450px;
   background-color: ${Colors.Blue};
   position: relative;
-  z-index: 100;
+  z-index: 1;
 `
