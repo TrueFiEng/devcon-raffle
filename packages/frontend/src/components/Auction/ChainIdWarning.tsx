@@ -2,15 +2,16 @@ import { Button } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { useContractState } from 'src/hooks/useContractState'
 import { useSwitchChain } from 'src/hooks/useSwitchChain'
+import { useWhichWallet } from 'src/hooks/useWhichWallet'
 import { Colors } from 'src/styles/colors'
-import { detectMetaMask } from 'src/utils/detectMetamask'
 import styled from 'styled-components'
+
 
 import { getWarningText } from './getWarningText'
 
 export const ChainIdWarning = () => {
+  const { isMetaMask, isWalletConnect, isPortis } = useWhichWallet()
   const switchChain = useSwitchChain()
-  const isProviderMetamask = detectMetaMask()
   const { state } = useContractState()
   const text = getWarningText(state)
 
@@ -21,7 +22,9 @@ export const ChainIdWarning = () => {
         <span>You are connected to the wrong network.</span>
       </FormRow>
       <FormRow>
-        <span>To {text.action} connect your wallet to the <b>Arbitrum network.</b></span>
+        <span>
+          To {text.action} connect your wallet to the <b>Arbitrum network.</b>
+        </span>
       </FormRow>
       <FormRow>
         <span>
@@ -34,7 +37,7 @@ export const ChainIdWarning = () => {
           »
         </span>
       </FormRow>
-      {isProviderMetamask && <Button onClick={switchChain}>Change network</Button>}
+      {isMetaMask && !isWalletConnect && !isPortis && <Button onClick={switchChain}>Change network</Button>}
     </FormWrapper>
   )
 }
