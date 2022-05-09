@@ -21,7 +21,7 @@ export const ChainIdWarning = () => {
         <span>You are connected to the wrong network.</span>
       </FormRow>
       <FormRow>
-        <span>To {text.action} connect your wallet to the Arbitrum network.</span>
+        <span>To {text.action} connect your wallet to the <b>Arbitrum network.</b></span>
       </FormRow>
       <FormRow>
         <span>
