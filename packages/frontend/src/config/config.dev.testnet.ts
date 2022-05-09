@@ -3,9 +3,10 @@ import { providerWithInterval } from 'src/constants/nodeUrls'
 import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
 
 import { getAddresses } from './addresses'
-import { commonUseDAppConfig } from './config'
+import { commonUseDAppConfig, Config } from './config'
+import { getStringEnv } from './getEnv'
 
-export function getTestnetDevConfig() {
+export function getTestnetDevConfig(): Config {
   return {
     useDAppConfig: {
       ...commonUseDAppConfig,
@@ -16,5 +17,6 @@ export function getTestnetDevConfig() {
     },
     addresses: getAddresses(),
     backendUrl: 'http://localhost:3001',
+    portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
   }
 }

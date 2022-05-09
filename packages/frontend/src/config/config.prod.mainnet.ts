@@ -17,5 +17,6 @@ export function getMainnetProdConfig(): Config {
     },
     addresses: ADDRESSES,
     backendUrl: getStringEnv('BACKEND_URL') || '',
+    portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
   }
 }
