@@ -3,12 +3,21 @@ import styled from 'styled-components'
 
 import { Button } from './Button'
 import { ConnectWalletButton } from './ConnectWalletButton'
+import { useCallback } from "react";
 
 export const AccountButton = () => {
-  const { account } = useEthers()
+  const { account, deactivate } = useEthers()
+
+  const disconnect = useCallback(async () => {
+    localStorage.removeItem("walletconnect");
+    deactivate()
+  }, [deactivate]);
 
   return account ? (
-    <ConnectedButton view="secondary">{shortenAddress(account)}</ConnectedButton>
+    <>
+      <ConnectedButton view="secondary" onClick={disconnect}>Disconnect</ConnectedButton>
+      <ConnectedButton view="secondary">{shortenAddress(account)}</ConnectedButton>
+    </>
   ) : (
     <ConnectWalletButton view="secondary" />
   )
