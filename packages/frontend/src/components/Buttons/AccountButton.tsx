@@ -4,12 +4,14 @@ import styled from 'styled-components'
 
 import { Button } from './Button'
 import { ConnectWalletButton } from './ConnectWalletButton'
+import { removeWalletLinkStorage } from "src/utils/removeWalletLinkStorage";
 
 export const AccountButton = () => {
   const { account, deactivate } = useEthers()
 
   const disconnect = useCallback(async () => {
     localStorage.removeItem('walletconnect')
+    removeWalletLinkStorage()
     deactivate()
   }, [deactivate])
 
