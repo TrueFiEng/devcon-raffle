@@ -13,6 +13,7 @@ export interface Config {
   addresses: Record<string, Record<SupportedChainId, string>>
   backendUrl: string
   portisDAppID: string
+  dappName: string
 }
 
 function getConfig(mode: string): Config {
