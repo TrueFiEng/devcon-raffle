@@ -14,7 +14,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
 
   const metamaskOptions = {
     display: {
-      name: 'MetaMask',
+      name: (window.ethereum as any).isBraveWallet ? 'BraveWallet' : 'MetaMask',
       description: 'Connect with the provider in your Browser',
     },
     package: null,
