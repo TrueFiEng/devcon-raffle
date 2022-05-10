@@ -1,3 +1,4 @@
+import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk'
 import Portis from '@portis/web3'
 import { useEthers } from '@usedapp/core'
 import WalletConnectProvider from '@walletconnect/web3-provider'
@@ -5,7 +6,6 @@ import { CONFIG } from 'src/config/config'
 import Web3Modal from 'web3modal'
 
 import { Button, ButtonProps } from './Button'
-import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
@@ -39,7 +39,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
     appName: CONFIG.dappName,
     rpc: CONFIG.useDAppConfig.networks?.[0].rpcUrl,
     chainId: CONFIG.useDAppConfig.readOnlyChainId,
-    darkMode: false
+    darkMode: false,
   }
 
   const activateProvider = async () => {
@@ -55,7 +55,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
       },
       coinbasewallet: {
         package: CoinbaseWalletSDK,
-        options: coinbaseWalletOptions
+        options: coinbaseWalletOptions,
       },
     }
 

@@ -6,7 +6,6 @@ import { useWhichWallet } from 'src/hooks/useWhichWallet'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-
 import { getWarningText } from './getWarningText'
 
 export const ChainIdWarning = () => {

@@ -1,10 +1,10 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
+import { removeWalletLinkStorage } from 'src/utils/removeWalletLinkStorage'
 import styled from 'styled-components'
 
 import { Button } from './Button'
 import { ConnectWalletButton } from './ConnectWalletButton'
-import { removeWalletLinkStorage } from "src/utils/removeWalletLinkStorage";
 
 export const AccountButton = () => {
   const { account, deactivate } = useEthers()
