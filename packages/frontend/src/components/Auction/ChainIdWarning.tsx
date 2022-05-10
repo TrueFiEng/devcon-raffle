@@ -32,7 +32,7 @@ export const ChainIdWarning = () => {
             target="_blank"
             href="https://consensys.net/blog/metamask/how-to-bridge-your-assets-to-arbitrum-using-metamask/"
           >
-            Click here to read the tutorial
+            Click here to read the tutorial for MetaMask
           </TutorialLink>{' '}
           »
         </span>
