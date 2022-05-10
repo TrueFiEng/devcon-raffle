@@ -12,6 +12,9 @@ type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const { activate } = useEthers()
 
+  const chainID = CONFIG.useDAppConfig.readOnlyChainId ?? 1
+  const rpcUrl = CONFIG.useDAppConfig.networks?.[0].rpcUrl ?? ''
+
   const metamaskOptions = {
     display: {
       name: (window.ethereum as any).isBraveWallet ? 'BraveWallet' : 'MetaMask',
@@ -23,22 +26,22 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const walletConnectOptions = {
     bridge: 'https://bridge.walletconnect.org',
     rpc: {
-      [CONFIG.useDAppConfig.readOnlyChainId ?? 1]: CONFIG.useDAppConfig.networks?.[0].rpcUrl,
+      [chainID]: rpcUrl,
     },
   }
 
   const portisOptions = {
     network: {
-      nodeUrl: CONFIG.useDAppConfig.networks?.[0].rpcUrl,
-      chainId: CONFIG.useDAppConfig.readOnlyChainId,
+      nodeUrl: rpcUrl,
+      chainId: chainID,
     },
     id: CONFIG.portisDAppID,
   }
 
   const coinbaseWalletOptions = {
     appName: CONFIG.dappName,
-    rpc: CONFIG.useDAppConfig.networks?.[0].rpcUrl,
-    chainId: CONFIG.useDAppConfig.readOnlyChainId,
+    rpc: rpcUrl,
+    chainId: chainID,
     darkMode: false,
   }
 
