@@ -5,6 +5,7 @@ import { CONFIG } from 'src/config/config'
 import Web3Modal from 'web3modal'
 
 import { Button, ButtonProps } from './Button'
+import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
@@ -13,7 +14,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
 
   const metamaskOptions = {
     display: {
-      name: 'Metamask',
+      name: 'MetaMask',
       description: 'Connect with the provider in your Browser',
     },
     package: null,
@@ -34,6 +35,13 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
     id: CONFIG.portisDAppID,
   }
 
+  const coinbaseWalletOptions = {
+    appName: CONFIG.dappName,
+    rpc: CONFIG.useDAppConfig.networks?.[0].rpcUrl,
+    chainId: CONFIG.useDAppConfig.readOnlyChainId,
+    darkMode: false
+  }
+
   const activateProvider = async () => {
     const providerOptions = {
       injected: metamaskOptions,
@@ -44,6 +52,10 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
       portis: {
         package: Portis,
         options: portisOptions,
+      },
+      coinbasewallet: {
+        package: CoinbaseWalletSDK,
+        options: coinbaseWalletOptions
       },
     }
 
