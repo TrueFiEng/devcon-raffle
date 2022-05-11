@@ -18,6 +18,6 @@ export function getTestnetDevConfig(): Config {
     addresses: getAddresses(),
     backendUrl: 'http://localhost:3001',
     portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
-    dappName: 'Devcon Raffle (TESTNET DEV)',
+    dappName: getStringEnv('DAPP_NAME') || 'Devcon Raffle (TESTNET DEV)',
   }
 }
