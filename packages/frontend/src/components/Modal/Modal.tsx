@@ -4,16 +4,15 @@ import { hexOpacity, Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { CloseButton } from '../Buttons/CloseButton'
-import { HeaderBar } from '../common/Header'
-import { Logo } from '../Icons/Logo'
 
 export interface ModalProps {
   isShown: boolean | undefined
   onRequestClose: () => void
   children: ReactNode
+  title?: string
 }
 
-export const Modal = ({ isShown, onRequestClose, children }: ModalProps) => {
+export const Modal = ({ isShown, onRequestClose, children, title }: ModalProps) => {
   const closeModal = useCallback(() => isShown && onRequestClose(), [isShown, onRequestClose])
 
   return (
@@ -22,10 +21,8 @@ export const Modal = ({ isShown, onRequestClose, children }: ModalProps) => {
         <Overlay>
           <Content>
             <Header>
-              <Logo />
-              <Close>
-                <CloseButton size={24} color={Colors.White} onClick={closeModal} />
-              </Close>
+              <Dialog.Title>{title}</Dialog.Title>
+              <CloseButton size={24} color={Colors.White} onClick={closeModal} />
             </Header>
             {children}
           </Content>
@@ -51,17 +48,11 @@ const Content = styled(Dialog.Content)`
   width: 383px;
   background-color: ${Colors.White};
 `
-const Header = styled(HeaderBar)`
-  justify-content: center;
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 75px;
+  height: 68px;
+  padding: 16px 24px;
   overflow: hidden;
-`
-
-const Close = styled.div`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 8px;
-  margin-left: auto;
 `
