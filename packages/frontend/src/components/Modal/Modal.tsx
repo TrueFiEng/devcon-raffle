@@ -8,21 +8,21 @@ import { CloseButton } from '../Buttons/CloseButton'
 export interface ModalProps {
   isShown: boolean | undefined
   onRequestClose: () => void
-  children: ReactNode
   title?: string
+  children: ReactNode
 }
 
-export const Modal = ({ isShown, onRequestClose, children, title }: ModalProps) => {
+export const Modal = ({ isShown, onRequestClose, title, children }: ModalProps) => {
   const closeModal = useCallback(() => isShown && onRequestClose(), [isShown, onRequestClose])
 
   return (
     <Dialog.Root open={isShown}>
       <Dialog.Portal>
-        <Overlay>
+        <Overlay onClick={closeModal}>
           <Content>
             <Header>
-              <Dialog.Title>{title}</Dialog.Title>
-              <CloseButton size={24} color={Colors.White} onClick={closeModal} />
+              <Title>{title}</Title>
+              <CloseButton size={24} color={Colors.Black} onClick={closeModal} />
             </Header>
             {children}
           </Content>
@@ -41,18 +41,37 @@ const Overlay = styled(Dialog.Overlay)`
   bottom: 0;
   display: grid;
   place-items: center;
-  overflow-y: hidden;
+  z-index: 100;
 `
 
 const Content = styled(Dialog.Content)`
-  width: 383px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 24px;
+  width: 408px;
+  padding: 24px;
   background-color: ${Colors.White};
+`
+
+export const ContentRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 16px;
 `
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 68px;
-  padding: 16px 24px;
+  width: 100%;
   overflow: hidden;
+`
+
+const Title = styled(Dialog.Title)`
+  font-family: 'Space Mono', 'Roboto Mono', monospace;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  color: ${Colors.Black};
 `
