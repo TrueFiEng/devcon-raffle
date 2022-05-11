@@ -23,7 +23,6 @@ export const AccountButton = () => {
 }
 
 const ConnectedButton = styled(Button)`
-  cursor: default;
   &:hover {
     background-color: unset;
   }
