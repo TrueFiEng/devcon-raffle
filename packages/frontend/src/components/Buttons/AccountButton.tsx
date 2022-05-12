@@ -1,8 +1,7 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
+import { Button } from 'src/components/Buttons/Button'
+import { ConnectWalletButton } from 'src/components/Buttons/ConnectWalletButton'
 import styled from 'styled-components'
-
-import { Button } from './Button'
-import { ConnectWalletButton } from './ConnectWalletButton'
 
 export const AccountButton = () => {
   const { account } = useEthers()

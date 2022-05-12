@@ -1,4 +1,4 @@
-import { CheckIcon } from 'src/components/Icons/CheckIcon'
+import { CheckIcon } from 'src/components/Icons'
 import { Transactions } from 'src/components/Transaction/TransactionEnum'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
