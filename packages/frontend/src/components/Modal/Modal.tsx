@@ -1,9 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { ReactNode, useCallback } from 'react'
+import { CloseButton } from 'src/components/Buttons/CloseButton'
 import { hexOpacity, Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { CloseButton } from '../Buttons/CloseButton'
 
 export interface ModalProps {
   isShown: boolean | undefined

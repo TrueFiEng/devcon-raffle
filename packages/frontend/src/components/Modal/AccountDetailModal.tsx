@@ -2,24 +2,21 @@ import Jazzicon from '@metamask/jazzicon'
 import { shortenAddress, useEthers } from '@usedapp/core'
 import copyToClipboard from 'copy-to-clipboard'
 import { useEffect, useRef } from 'react'
+import { CopyIcon, RedirectIcon } from 'src/components//Icons'
+import { Button } from 'src/components/Buttons/Button'
+import { ContentRow, Modal } from 'src/components/Modal/Modal'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
 import styled, { css } from 'styled-components'
 
-import { Button } from '../Buttons'
-import { CopyIcon } from '../Icons/CopyIcon'
-import { RedirectIcon } from '../Icons/RedirectIcon'
-
-import { ContentRow, Modal } from './Modal'
-
-export interface AccountDetailModalProps {
+export interface ModalProps {
   isShown: boolean | undefined
   onRequestClose: () => void
   wallet?: string
 }
 
-export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask' }: AccountDetailModalProps) => {
+export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask' }: ModalProps) => {
   const { account, deactivate } = useEthers()
   const accountIconRef = useRef<any>(null)
   const chainId = useChainId()

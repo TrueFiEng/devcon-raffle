@@ -1,7 +1,8 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
-import { Button, ConnectWalletButton } from 'src/components/Buttons'
-import { AccountDetailModal } from 'src/components/Modal'
-import { useModal } from 'src/hooks'
+import { Button } from 'src/components/Buttons/Button'
+import { ConnectWalletButton } from 'src/components/Buttons/ConnectWalletButton'
+import { AccountDetailModal } from 'src/components/Modal/AccountDetailModal'
+import { useModal } from 'src/hooks/useModal'
 import styled from 'styled-components'
 
 export const AccountButton = () => {

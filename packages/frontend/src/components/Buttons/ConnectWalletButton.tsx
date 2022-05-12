@@ -1,6 +1,5 @@
 import { useEthers } from '@usedapp/core'
-
-import { Button, ButtonProps } from './Button'
+import { Button, ButtonProps } from 'src/components/Buttons/Button'
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
