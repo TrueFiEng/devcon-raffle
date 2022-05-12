@@ -1,14 +1,13 @@
 import Jazzicon from '@metamask/jazzicon'
 import { shortenAddress, useEthers } from '@usedapp/core'
-import copyToClipboard from 'copy-to-clipboard'
 import { useEffect, useRef } from 'react'
-import { CopyIcon, RedirectIcon } from 'src/components//Icons'
+import { CopyButton, RedirectButton } from 'src/components/Buttons'
 import { Button } from 'src/components/Buttons/Button'
 import { ContentRow, Modal } from 'src/components/Modal/Modal'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 export interface ModalProps {
   isShown: boolean | undefined
@@ -40,19 +39,14 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
         </ContentRow>
         {account && (
           <ContentRow>
-            <AccountLink
-              href={account && getExplorerAddressLink(chainId, account)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <RedirectIcon size={24} color={Colors.Blue} />
-              View in block explorer
-            </AccountLink>
+            <RedirectButton
+              link={account && getExplorerAddressLink(chainId, account)}
+              tooltip="View on Arbiscan"
+              color={Colors.Blue}
+              label=" View in block explorer"
+            />
 
-            <CopyAccount onClick={() => copyToClipboard(account)}>
-              <CopyIcon size={24} color={Colors.Blue} />
-              Copy address
-            </CopyAccount>
+            <CopyButton value={account} text="Copy account address" color={Colors.Blue} label="Copy address" />
           </ContentRow>
         )}
       </ContentWrapper>
@@ -79,23 +73,7 @@ const AccountAddress = styled.p`
   line-height: 24px;
   color: ${Colors.Black};
 `
-const accountDetailsStyle = css`
-  display: flex;
-  column-gap: 8px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 32px;
-  color: ${Colors.Blue};
-  cursor: pointer;
-`
 
-const AccountLink = styled.a`
-  ${accountDetailsStyle}
-  text-decoration: none;
-`
-const CopyAccount = styled.div`
-  ${accountDetailsStyle}
-`
 const ConnectedWallet = styled.p`
   font-weight: 400;
   font-size: 14px;
