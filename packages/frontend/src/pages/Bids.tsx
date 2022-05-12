@@ -1,5 +1,4 @@
-import { AllBids } from 'src/components/AllBids/AllBids'
-import { Header } from 'src/components/AllBids/Header'
+import { AllBids, Header } from 'src/components/AllBids'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 

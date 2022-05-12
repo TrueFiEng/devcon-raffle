@@ -1,5 +1,5 @@
 import { parseEther } from '@ethersproject/units'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { formatEtherAmount } from 'src/utils/formatters'
 
 describe('formatEtherAmount', () => {
   it('Truncates and rounds', () => {
