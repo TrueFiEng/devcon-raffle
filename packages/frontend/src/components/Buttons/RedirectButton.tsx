@@ -15,7 +15,7 @@ interface RedirectTooltipProps {
 export const RedirectButton = ({ link, tooltip, side, size, color, label }: RedirectTooltipProps) => {
   return (
     <Tooltip side={side} tooltip={tooltip}>
-      <TooltipLink href={link}>
+      <TooltipLink href={link} label={label}>
         <RedirectIcon size={size} color={color} />
         {label && <RedirectButtonLabel color={color}>{label}</RedirectButtonLabel>}
       </TooltipLink>

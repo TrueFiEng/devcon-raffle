@@ -22,7 +22,7 @@ export const CopyButton = ({ value, text, side, size, color, label }: CopyButton
 
   return (
     <Tooltip side={side} tooltip={tooltipText} onOpenChange={(value) => !value && setTooltipText(text)}>
-      <TooltipButton color={color} onClick={copy}>
+      <TooltipButton color={color} label={label} onClick={copy}>
         <CopyIcon size={size} color={color} />
         {label && (
           <CopyButtonLabel color={color} onClick={copy}>
