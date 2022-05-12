@@ -93,7 +93,7 @@ export const GlobalStyles = createGlobalStyle`
 
   body::-webkit-scrollbar {
     width: 6px;
-    height: 6px; 
+    height: 6px;
   }
 
   body::-webkit-scrollbar-thumb {
@@ -121,6 +121,7 @@ export const GlobalStyles = createGlobalStyle`
 
     .web3modal-provider-name{
       font-family: 'Space Mono', 'Roboto Mono', monospace;
+      padding-bottom: 10px;
     }
   }
 `
