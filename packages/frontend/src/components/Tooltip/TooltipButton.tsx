@@ -21,10 +21,9 @@ export const TooltipButton = ({ color = Colors.Grey, children, ...props }: Toolt
 const TooltipButtonComponent = styled(Button)<Pick<TooltipButtonProps, 'color'>>`
   color: ${({ color }) => color};
   background-color: ${Colors.White};
+  width: max-content;
+  padding: 4px 12px 4px 4px;
   transition: all 0.25s ease;
-  width: 32px;
-  height: 32px;
-  padding: 0;
 
   &:hover,
   &:focus-visible {
