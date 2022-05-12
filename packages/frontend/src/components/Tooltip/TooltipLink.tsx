@@ -17,14 +17,16 @@ export const TooltipLink = ({ color = Colors.Grey, href, children }: TooltipLink
 }
 
 const TooltipLinkComponent = styled.a<Pick<TooltipLinkProps, 'color'>>`
-  color: ${({ color }) => color};
-  transition: all 0.25s ease;
-  width: 32px;
-  height: 32px;
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  width: max-content;
+  padding: 4px 12px 4px 4px;
   background-color: transparent;
+  color: ${({ color }) => color};
   outline: none;
   user-select: none;
+  text-decoration: none;
+  transition: all 0.25s ease;
 
   &:hover,
   &:focus-visible {
