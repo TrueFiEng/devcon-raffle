@@ -7,15 +7,14 @@ import { useWhichWallet } from 'src/hooks/useWhichWallet'
 import Web3Modal from 'web3modal'
 
 import { Button, ButtonProps } from './Button'
+import { useDefaultNetwork } from "src/hooks/chain/useDefaultNetwork";
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
 export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const { activate } = useEthers()
   const { isBraveWallet } = useWhichWallet()
-
-  const chainID = CONFIG.useDAppConfig.readOnlyChainId ?? 1
-  const rpcUrl = CONFIG.useDAppConfig.networks?.[0].rpcUrl ?? ''
+  const { chainName, chainId, rpcUrl } = useDefaultNetwork()
 
   const metamaskOptions = {
     display: {
@@ -28,14 +27,14 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const walletConnectOptions = {
     bridge: 'https://bridge.walletconnect.org',
     rpc: {
-      [chainID]: rpcUrl,
+      [chainId]: rpcUrl,
     },
   }
 
   const portisOptions = {
     network: {
       nodeUrl: rpcUrl,
-      chainId: chainID,
+      chainId: chainId,
     },
     id: CONFIG.portisDAppID,
   }
@@ -43,7 +42,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const coinbaseWalletOptions = {
     appName: CONFIG.dappName,
     rpc: rpcUrl,
-    chainId: chainID,
+    chainId: chainId,
     darkMode: false,
   }
 
@@ -65,7 +64,7 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
     }
 
     const web3Modal = new Web3Modal({
-      network: CONFIG.useDAppConfig.networks?.[0].chainName === 'Arbitrum' ? 'arbitrum' : 'arbitrum-rinkeby',
+      network: chainName === 'Arbitrum' ? 'arbitrum' : 'arbitrum-rinkeby',
       providerOptions,
     })
 
