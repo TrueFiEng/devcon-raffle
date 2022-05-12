@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 
-import { Colors } from './colors'
+import { Colors, hexOpacity } from './colors'
 import { fonts } from './fonts'
 
 export const GlobalStyles = createGlobalStyle`
@@ -103,5 +103,24 @@ export const GlobalStyles = createGlobalStyle`
 
   body::-webkit-scrollbar-track {
     background: ${Colors.Transparent};
+  }
+
+  #WEB3_CONNECT_MODAL_ID {
+    .web3modal-modal-hitbox {
+      background-color: ${hexOpacity(Colors.Blue, 0.8)};
+    }
+
+    .web3modal-modal-card{
+      border-radius: unset;
+    }
+
+    .web3modal-provider-container{
+      font-family: 'Roboto', Helvetica, Arial, sans-serif;
+      border-radius: unset;
+    }
+
+    .web3modal-provider-name{
+      font-family: 'Space Mono', 'Roboto Mono', monospace;
+    }
   }
 `
