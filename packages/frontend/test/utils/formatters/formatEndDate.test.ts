@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatEndDate } from 'src/utils/formatters/formatEndDate'
+import { formatEndDate } from 'src/utils/formatters'
 
 describe('formatEndDate', () => {
   it('Returns hyphen for undefined timestamp', () => {

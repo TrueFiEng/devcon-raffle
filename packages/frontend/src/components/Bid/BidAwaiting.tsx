@@ -1,6 +1,6 @@
 import { FormSectionWrapper } from 'src/components/Form/Form'
-import { useAuctionTime } from 'src/hooks/useAuctionTime'
-import { formatEndDateText } from 'src/utils/formatters/formatEndDateText'
+import { useAuctionTime } from 'src/hooks'
+import { formatEndDateText } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 export const BidAwaiting = () => {

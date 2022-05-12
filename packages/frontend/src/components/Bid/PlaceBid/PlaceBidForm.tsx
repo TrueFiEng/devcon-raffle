@@ -2,11 +2,11 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
-import { Button } from 'src/components/Buttons/Button'
+import { Button } from 'src/components/Buttons'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { ImmutableBids } from 'src/providers/Bids/types'
-import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
+import { getPositionAfterBid } from 'src/utils'
 
 interface PlaceBidFormProps {
   bid: string

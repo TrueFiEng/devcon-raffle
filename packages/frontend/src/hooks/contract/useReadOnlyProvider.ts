@@ -1,7 +1,6 @@
 import { BaseProvider } from '@ethersproject/providers'
 import { useReadonlyNetworks } from '@usedapp/core/internal'
-
-import { useReadOnlyChainId } from '../chainId/useReadOnlyChainId'
+import { useReadOnlyChainId } from 'src/hooks/chainId/useReadOnlyChainId'
 
 export function useReadOnlyProvider(): BaseProvider {
   const providers = useReadonlyNetworks()

@@ -1,6 +1,6 @@
 import copyToClipboard from 'copy-to-clipboard'
 import { ReactNode, useState } from 'react'
-import { CopyIcon } from 'src/components/Icons/CopyIcon'
+import { CopyIcon } from 'src/components/Icons'
 import { Tooltip, TooltipButton } from 'src/components/Tooltip'
 
 interface CopyButtonProps {

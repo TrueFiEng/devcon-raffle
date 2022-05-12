@@ -1,12 +1,9 @@
+import { getWarningText } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
-import { useContractState } from 'src/hooks/useContractState'
-import { useSwitchChain } from 'src/hooks/useSwitchChain'
-import { useWhichWallet } from 'src/hooks/useWhichWallet'
+import { useContractState, useSwitchChain, useWhichWallet } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { getWarningText } from './getWarningText'
 
 export const ChainIdWarning = () => {
   const { isMetaMask, isWalletConnect, isPortis } = useWhichWallet()

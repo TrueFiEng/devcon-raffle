@@ -1,5 +1,5 @@
-import { ContractState, useContractState } from './useContractState'
-import { useDevconParam } from './useDevconParam'
+import { ContractState, useContractState } from 'src/hooks/useContractState'
+import { useDevconParam } from 'src/hooks/useDevconParam'
 
 export function useAuctionTime() {
   const { state } = useContractState()

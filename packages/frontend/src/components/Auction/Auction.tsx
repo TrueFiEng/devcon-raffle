@@ -1,5 +1,5 @@
-import { UserActionSection } from 'src/components/Auction/UserActionSection'
-import { BidsListSection } from 'src/components/BidsList/BidsListSection'
+import { UserActionSection } from 'src/components/Auction'
+import { BidsListSection } from 'src/components/BidsList'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
