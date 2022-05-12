@@ -3,6 +3,7 @@ import Portis from '@portis/web3'
 import { useEthers } from '@usedapp/core'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { CONFIG } from 'src/config/config'
+import { useWhichWallet } from 'src/hooks/useWhichWallet'
 import Web3Modal from 'web3modal'
 
 import { Button, ButtonProps } from './Button'
@@ -11,13 +12,14 @@ type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
 export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   const { activate } = useEthers()
+  const { isBraveWallet } = useWhichWallet()
 
   const chainID = CONFIG.useDAppConfig.readOnlyChainId ?? 1
   const rpcUrl = CONFIG.useDAppConfig.networks?.[0].rpcUrl ?? ''
 
   const metamaskOptions = {
     display: {
-      name: (window.ethereum as any).isBraveWallet ? 'BraveWallet' : 'MetaMask',
+      name: isBraveWallet ? 'BraveWallet' : 'MetaMask',
       description: 'Connect with the provider in your Browser',
     },
     package: null,
