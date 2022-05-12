@@ -15,9 +15,9 @@ export const Modal = ({ isShown, onRequestClose, title, children }: ModalProps) 
   const closeModal = useCallback(() => isShown && onRequestClose(), [isShown, onRequestClose])
 
   return (
-    <Dialog.Root open={isShown}>
+    <Dialog.Root open={isShown} onOpenChange={closeModal}>
       <Dialog.Portal>
-        <Overlay onClick={closeModal}>
+        <Overlay>
           <Content>
             <Header>
               <Title>{title}</Title>
