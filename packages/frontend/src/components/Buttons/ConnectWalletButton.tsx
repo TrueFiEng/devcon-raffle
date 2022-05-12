@@ -3,7 +3,7 @@ import Portis from '@portis/web3'
 import { useEthers } from '@usedapp/core'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { CONFIG } from 'src/config/config'
-import { WALLET_CONNECT_BRIDGE_URL } from "src/constants/walletConnectBridgeUrl";
+import { WALLET_CONNECT_BRIDGE_URL } from 'src/constants/walletConnectBridgeUrl'
 import { useDefaultNetwork } from 'src/hooks/chain/useDefaultNetwork'
 import { useWhichWallet } from 'src/hooks/useWhichWallet'
 import Web3Modal from 'web3modal'
