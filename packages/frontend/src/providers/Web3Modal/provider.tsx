@@ -1,11 +1,13 @@
 import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk'
 import Portis from '@portis/web3'
+import { useEthers } from '@usedapp/core'
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { ReactNode } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { CONFIG } from 'src/config/config'
 import { WALLET_CONNECT_BRIDGE_URL } from 'src/constants/walletConnectBridgeUrl'
 import { useDefaultNetwork } from 'src/hooks/chain/useDefaultNetwork'
 import { useWhichWallet } from 'src/hooks/useWhichWallet'
+import useAsyncEffect from 'use-async-effect'
 import Web3Modal from 'web3modal'
 
 import { Web3ModalContext } from './context'
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export const Web3ModalProvider = ({ children }: Props) => {
+  const { activate } = useEthers()
   const { isBraveWallet } = useWhichWallet()
   const { chainName, chainId, rpcUrl } = useDefaultNetwork()
 
@@ -64,10 +67,22 @@ export const Web3ModalProvider = ({ children }: Props) => {
     },
   }
 
-  const web3Modal = new Web3Modal({
-    network: chainName === 'Arbitrum' ? 'arbitrum' : 'arbitrum-rinkeby',
-    providerOptions,
-  })
+  const web3Modal = useMemo(
+    () =>
+      new Web3Modal({
+        network: chainName === 'Arbitrum' ? 'arbitrum' : 'arbitrum-rinkeby',
+        cacheProvider: true,
+        providerOptions,
+      }),
+    []
+  )
+
+  useAsyncEffect(async () => {
+    if (web3Modal.cachedProvider) {
+      const cachedProvider = await web3Modal.connect()
+      await activate(cachedProvider)
+    }
+  }, [web3Modal])
 
   return <Web3ModalContext.Provider value={{ web3Modal }}>{children}</Web3ModalContext.Provider>
 }

@@ -1,5 +1,6 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
+import { useWeb3Modal } from 'src/hooks/useWeb3Modal'
 import { removeWalletLinkStorage } from 'src/utils/removeWalletLinkStorage'
 import styled from 'styled-components'
 
@@ -8,12 +9,14 @@ import { ConnectWalletButton } from './ConnectWalletButton'
 
 export const AccountButton = () => {
   const { account, deactivate } = useEthers()
+  const web3Modal = useWeb3Modal()
 
   const disconnect = useCallback(async () => {
     localStorage.removeItem('walletconnect')
     removeWalletLinkStorage()
+    web3Modal.clearCachedProvider()
     deactivate()
-  }, [deactivate])
+  }, [deactivate, web3Modal])
 
   return account ? (
     <>
