@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeftIcon } from 'src/components/Icons/ArrowLeftIcon'
+import { ArrowLeftIcon } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 

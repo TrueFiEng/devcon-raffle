@@ -1,11 +1,9 @@
 import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
 import { useMemo } from 'react'
-
-import { SupportedChainId } from '../../constants/chainIDs'
-import { useChainId } from '../chainId/useChainId'
-import { useAddresses } from '../useAddresses'
-
-import { useProvider } from './useProvider'
+import { SupportedChainId } from 'src/constants/chainIDs'
+import { useAddresses } from 'src/hooks'
+import { useChainId } from 'src/hooks/chainId/useChainId'
+import { useProvider } from 'src/hooks/contract'
 
 interface UseDevconContractResult {
   devcon: Devcon6

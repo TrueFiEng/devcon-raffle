@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { LoadingIcon } from 'src/components/Icons/LoadingIcon'
+import { LoadingIcon } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled, { css } from 'styled-components'
 

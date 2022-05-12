@@ -1,4 +1,4 @@
-import { shortenEthAddress } from 'src/utils/formatters/shortenEthAddress'
+import { shortenEthAddress } from 'src/utils/formatters'
 
 describe('shortenEthAddress', () => {
   it('Shortens an address', () => {

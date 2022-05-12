@@ -1,13 +1,7 @@
 import { useState } from 'react'
-import { AllBidsList } from 'src/components/AllBids/AllBidsList'
-import { LoadingBids } from 'src/components/AllBids/LoadingBids'
-import { NothingFound } from 'src/components/AllBids/NothingFound'
-import { SettledBidsList } from 'src/components/AllBids/SettledBidsList'
-import { SearchInput } from 'src/components/Form/SearchInput'
-import { useAuctionState } from 'src/hooks/useAuctionState'
-import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
-import { useBids } from 'src/hooks/useBids'
-import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'
+import { AllBidsList, LoadingBids, NothingFound, SettledBidsList } from 'src/components/AllBids'
+import { SearchInput } from 'src/components/Form'
+import { useAuctionState, useAuctionWinnersCount, useBids, useRaffleWinnersCount } from 'src/hooks'
 import styled from 'styled-components'
 
 export const AllBids = () => {

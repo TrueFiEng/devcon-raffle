@@ -1,8 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
-
-import { useDevconContract } from './contract'
-import { useCachedCall } from './useCachedCall'
+import { useDevconContract } from 'src/hooks/contract'
+import { useCachedCall } from 'src/hooks/useCachedCall'
 
 export function useAuctionWinners() {
   const { devcon, chainId } = useDevconContract()

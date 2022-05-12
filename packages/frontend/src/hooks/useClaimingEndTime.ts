@@ -1,7 +1,6 @@
 import moment from 'moment'
 import { useMemo } from 'react'
-
-import { useDevconParam } from './useDevconParam'
+import { useDevconParam } from 'src/hooks/useDevconParam'
 
 export function useClaimingEndTime() {
   const { devconValue, error } = useDevconParam('claimingEndTime')
