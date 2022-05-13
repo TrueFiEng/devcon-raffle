@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef } from 'react'
 import { CopyButton, RedirectButton } from 'src/components/Buttons'
 import { Button } from 'src/components/Buttons/Button'
 import { ContentRow, Modal } from 'src/components/Modal/Modal'
+import { useWeb3Modal } from 'src/hooks'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
+import { removeWalletLinkStorage } from 'src/utils/removeWalletLinkStorage'
 import styled from 'styled-components'
 
 export interface ModalProps {
@@ -17,6 +19,7 @@ export interface ModalProps {
 
 export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask' }: ModalProps) => {
   const { account, deactivate } = useEthers()
+  const web3Modal = useWeb3Modal()
   const accountIconRef = useRef<any>(null)
   const chainId = useChainId()
 
@@ -29,8 +32,11 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
 
   const onDisconnect = useCallback(() => {
     onRequestClose()
+    localStorage.removeItem('walletconnect')
+    removeWalletLinkStorage()
+    web3Modal.clearCachedProvider()
     deactivate()
-  }, [onRequestClose, deactivate])
+  }, [onRequestClose, deactivate, web3Modal])
 
   return (
     <Modal isShown={isShown} onRequestClose={onRequestClose} title="Your account">
