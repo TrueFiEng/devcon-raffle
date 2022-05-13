@@ -38,10 +38,11 @@ export const FormWrapper = styled.div`
 `
 
 export const FormSectionWrapper = styled(FormWrapper)`
-  padding: 0 0 0 115px;
+  padding: 0 0 0 170px;
   justify-content: center;
 `
 
 export const FormText = styled.p`
+  max-width: 440px;
   color: ${Colors.White};
 `
