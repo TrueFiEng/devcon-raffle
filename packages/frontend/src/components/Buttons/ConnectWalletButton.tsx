@@ -1,7 +1,7 @@
 import { useEthers } from '@usedapp/core'
+import { Button, ButtonProps } from 'src/components/Buttons/Button'
 import { useWeb3Modal } from 'src/hooks/useWeb3Modal'
 
-import { Button, ButtonProps } from 'src/components/Buttons/Button'
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
