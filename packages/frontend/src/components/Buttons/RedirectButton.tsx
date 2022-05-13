@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { RedirectIcon } from 'src/components/Icons/RedirectIcon'
+import { RedirectIcon } from 'src/components/Icons'
 import { Tooltip, TooltipLink } from 'src/components/Tooltip'
 
 interface RedirectTooltipProps {

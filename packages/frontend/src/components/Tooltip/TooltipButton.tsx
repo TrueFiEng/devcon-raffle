@@ -1,5 +1,5 @@
 import { ReactNode, MouseEvent } from 'react'
-import { Button } from 'src/components/Buttons/Button'
+import { Button } from 'src/components/Buttons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
