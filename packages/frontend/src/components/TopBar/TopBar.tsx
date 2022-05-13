@@ -23,7 +23,7 @@ const TopBarContainer = styled.div`
   background-color: ${Colors.White};
   position: sticky;
   top: 0;
-  z-index: 2000;
+  z-index: 99;
 `
 const HomeLink = styled.a`
   line-height: 1;

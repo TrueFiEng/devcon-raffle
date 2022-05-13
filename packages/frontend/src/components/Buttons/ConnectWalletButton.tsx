@@ -1,7 +1,7 @@
 import { useEthers } from '@usedapp/core'
 import { useWeb3Modal } from 'src/hooks/useWeb3Modal'
 
-import { Button, ButtonProps } from './Button'
+import { Button, ButtonProps } from 'src/components/Buttons/Button'
 
 type ConnectWalletButtonProps = Omit<ButtonProps, 'onClick' | 'children'>
 
@@ -19,8 +19,10 @@ export const ConnectWalletButton = (props: ConnectWalletButtonProps) => {
   }
 
   return (
-    <Button {...props} onClick={activateProvider}>
-      Connect Wallet
-    </Button>
+    <>
+      <Button {...props} onClick={activateProvider}>
+        Connect Wallet
+      </Button>
+    </>
   )
 }

@@ -1,37 +1,23 @@
 import { shortenAddress, useEthers } from '@usedapp/core'
-import { useCallback } from 'react'
 import { Button } from 'src/components/Buttons/Button'
 import { ConnectWalletButton } from 'src/components/Buttons/ConnectWalletButton'
-import { useWeb3Modal } from 'src/hooks/useWeb3Modal'
-import { removeWalletLinkStorage } from 'src/utils/removeWalletLinkStorage'
-import styled from 'styled-components'
+import { AccountDetailModal } from 'src/components/Modal/AccountDetailModal'
+import { useModal } from 'src/hooks/useModal'
 
 export const AccountButton = () => {
-  const { account, deactivate } = useEthers()
-  const web3Modal = useWeb3Modal()
+  const { account } = useEthers()
+  const { isShown, toggle } = useModal()
 
-  const disconnect = useCallback(async () => {
-    localStorage.removeItem('walletconnect')
-    removeWalletLinkStorage()
-    web3Modal.clearCachedProvider()
-    deactivate()
-  }, [deactivate, web3Modal])
-
-  return account ? (
+  return (
     <>
-      <ConnectedButton view="secondary" onClick={disconnect}>
-        Disconnect
-      </ConnectedButton>
-      <ConnectedButton view="secondary">{shortenAddress(account)}</ConnectedButton>
+      {account ? (
+        <Button view="secondary" onClick={toggle}>
+          {shortenAddress(account)}
+        </Button>
+      ) : (
+        <ConnectWalletButton view="secondary" />
+      )}
+      {account && isShown && <AccountDetailModal isShown={isShown} onRequestClose={toggle} />}
     </>
-  ) : (
-    <ConnectWalletButton view="secondary" />
   )
 }
-
-const ConnectedButton = styled(Button)`
-  cursor: default;
-  &:hover {
-    background-color: unset;
-  }
-`
