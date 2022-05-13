@@ -1,13 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useEffect } from 'react'
+import { TxFlowSteps } from 'src/components/Auction'
 import { heading } from 'src/components/Auction/AuctionTransaction'
-import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
-import { Button } from 'src/components/Buttons/Button'
+import { Button } from 'src/components/Buttons'
 import { FormRow, FormNarrow } from 'src/components/Form/Form'
-import { TransactionAction } from 'src/components/Transaction/TransactionAction'
-import { Transactions } from 'src/components/Transaction/TransactionEnum'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { TransactionAction, Transactions } from 'src/components/Transaction'
+import { formatEtherAmount } from 'src/utils/formatters'
 import { isTxPending } from 'src/utils/transactions/isTxPending'
 
 const amountLabel = {

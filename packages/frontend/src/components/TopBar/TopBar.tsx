@@ -1,5 +1,5 @@
-import { AccountButton } from 'src/components/Buttons/AccountButton'
-import { Logo } from 'src/components/Icons/Logo'
+import { AccountButton } from 'src/components/Buttons'
+import { Logo } from 'src/components/Icons'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -23,7 +23,7 @@ const TopBarContainer = styled.div`
   background-color: ${Colors.White};
   position: sticky;
   top: 0;
-  z-index: 2000;
+  z-index: 99;
 `
 const HomeLink = styled.a`
   line-height: 1;

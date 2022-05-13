@@ -3,9 +3,8 @@ import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
 import { CONFIG } from 'src/config/config'
 import { SupportedChainId } from 'src/constants/chainIDs'
-
-import { useChainId } from '../chainId/useChainId'
-import { useAddresses } from '../useAddresses'
+import { useAddresses } from 'src/hooks'
+import { useChainId } from 'src/hooks/chainId/useChainId'
 
 export function useClaimVoucher() {
   const { account, library } = useEthers()

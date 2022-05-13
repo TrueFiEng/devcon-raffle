@@ -1,5 +1,9 @@
 // RULES
 
-rule test() {
-    assert 1 == 1;
+methods {
+    owner() returns address envfree
+}
+
+rule test(){
+    assert true;
 }

@@ -1,16 +1,11 @@
 import { ReactElement } from 'react'
+import { ChainIdWarning, ConnectWalletWarning } from 'src/components/Auction'
+import { BidAwaiting } from 'src/components/Bid/BidAwaiting'
+import { BidFlow } from 'src/components/Bid/BidFlow'
+import { ClaimFlow, ClaimingClosed, ResultsAwaiting } from 'src/components/Claim'
 import { AuctionState, useAuctionState } from 'src/hooks/useAuctionState'
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
-
-import { Colors } from '../../styles/colors'
-import { BidAwaiting } from '../Bid/BidAwaiting'
-import { BidFlow } from '../Bid/BidFlow'
-import { ClaimFlow } from '../Claim/ClaimFlow'
-import { ClaimingClosed } from '../Claim/ClaimingClosed'
-import { ResultsAwaiting } from '../Claim/ResultsAwaiting'
-
-import { ChainIdWarning } from './ChainIdWarning'
-import { ConnectWalletWarning } from './ConnectWalletWarning'
 
 const UserActions: Record<AuctionState, () => ReactElement> = {
   AwaitingBidding: BidAwaiting,
@@ -41,5 +36,5 @@ const Wrapper = styled.div`
   height: 450px;
   background-color: ${Colors.Blue};
   position: relative;
-  z-index: 100;
+  z-index: 1;
 `

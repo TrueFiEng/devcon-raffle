@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEthers, useSendTransaction } from '@usedapp/core'
-
-import { useDevconContract } from '../contract'
+import { useDevconContract } from 'src/hooks/contract'
 
 export function useClaimFunds() {
   const { devcon } = useDevconContract()
