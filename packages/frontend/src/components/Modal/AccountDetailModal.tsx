@@ -31,7 +31,7 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
     <Modal isShown={isShown} onRequestClose={onRequestClose} title="Your account">
       <ContentWrapper>
         <ContentRow>
-          <ConnectedWallet style={{ margin: 0 }}>Connected with {wallet}</ConnectedWallet>
+          <ConnectedWallet>Connected with {wallet}</ConnectedWallet>
         </ContentRow>
         <ContentRow>
           <AccountIcon ref={accountIconRef} />
