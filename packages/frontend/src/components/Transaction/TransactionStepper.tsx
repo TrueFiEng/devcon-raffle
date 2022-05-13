@@ -13,8 +13,8 @@ const header = {
 
 const description = {
   [Transactions.Place]: 'Initiate and confirm bid transaction in your wallet.',
-  [Transactions.Bump]: 'Bump bid and confirm transaction in your wallet.',
-  [Transactions.Withdraw]: 'Initiate and confirm withdrawn transaction in your wallet.',
+  [Transactions.Bump]: 'Initiate and confirm bump transaction in your wallet.',
+  [Transactions.Withdraw]: 'Initiate and confirm withdraw transaction in your wallet.',
 }
 
 const transactionSteps = (action: Transactions) => {
@@ -28,11 +28,11 @@ const transactionSteps = (action: Transactions) => {
     {
       default: {
         name: 'Finalized',
-        description: 'The process was successfully completed.',
+        description: 'The transaction has been confirmed on the blockchain.',
       },
       failed: {
         name: 'Failed',
-        description: 'The process is uncompleted.',
+        description: 'Transaction failed.',
       },
     },
   ]
@@ -106,7 +106,7 @@ const StepperContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 313px;
-  padding: 82px 0;
+  padding: 82px 20px 82px 0;
   background-color: ${Colors.BlueDark};
 `
 const StepperHeader = styled.h3`
