@@ -1,9 +1,10 @@
-import { FormSectionWrapper } from 'src/components/Form/Form'
+import { FormHeading, FormSectionWrapper, FormText } from 'src/components/Form/Form'
 
 export const ResultsAwaiting = () => {
   return (
     <FormSectionWrapper>
-      <h2>Wait for results ⏳</h2>
+      <FormHeading>Wait for results ⏳</FormHeading>
+      <FormText>The bidding window has closed. Waiting for the organizers to settle the contest.</FormText>
     </FormSectionWrapper>
   )
 }
