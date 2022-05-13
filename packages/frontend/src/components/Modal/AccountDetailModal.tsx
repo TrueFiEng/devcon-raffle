@@ -1,6 +1,6 @@
 import Jazzicon from '@metamask/jazzicon'
 import { shortenAddress, useEthers } from '@usedapp/core'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { CopyButton, RedirectButton } from 'src/components/Buttons'
 import { Button } from 'src/components/Buttons/Button'
 import { ContentRow, Modal } from 'src/components/Modal/Modal'
@@ -27,6 +27,11 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
     }
   }, [account])
 
+  const onDisconnect = useCallback(() => {
+    onRequestClose()
+    deactivate()
+  }, [onRequestClose, deactivate])
+
   return (
     <Modal isShown={isShown} onRequestClose={onRequestClose} title="Your account">
       <ContentWrapper>
@@ -51,7 +56,7 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
           </ContentRow>
         )}
       </ContentWrapper>
-      <Button view="secondary" onClick={deactivate}>
+      <Button view="secondary" onClick={onDisconnect}>
         Disconnect
       </Button>
     </Modal>
