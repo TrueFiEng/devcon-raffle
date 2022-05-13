@@ -27,7 +27,8 @@ export const GlobalStyles = createGlobalStyle`
     line-height: 24px;
     color: ${Colors.Black};
     height: 100%;
-    margin: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     text-size-adjust: 100%;
   }
 
