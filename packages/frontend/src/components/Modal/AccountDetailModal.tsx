@@ -1,29 +1,32 @@
 import Jazzicon from '@metamask/jazzicon'
 import { shortenAddress, useEthers } from '@usedapp/core'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { CopyButton, RedirectButton } from 'src/components/Buttons'
 import { Button } from 'src/components/Buttons/Button'
 import { ContentRow, Modal } from 'src/components/Modal/Modal'
-import { useWeb3Modal } from 'src/hooks'
+import { useWeb3Modal, useWhichWallet } from 'src/hooks'
 import { useChainId } from 'src/hooks/chainId/useChainId'
 import { Colors } from 'src/styles/colors'
 import { getExplorerAddressLink } from 'src/utils/getExplorerLink'
+import { getWalletName } from 'src/utils/getWalletName'
 import { removeWalletLinkStorage } from 'src/utils/removeWalletLinkStorage'
 import styled from 'styled-components'
 
 export interface ModalProps {
   isShown: boolean | undefined
   onRequestClose: () => void
-  wallet?: string
 }
 
-export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask' }: ModalProps) => {
+export const AccountDetailModal = ({ isShown, onRequestClose }: ModalProps) => {
   const { account, deactivate } = useEthers()
   const web3Modal = useWeb3Modal()
   const accountIconRef = useRef<any>(null)
   const chainId = useChainId()
+  const [wallet, setWallet] = useState('-')
+  const { isBraveWallet } = useWhichWallet()
 
   useEffect(() => {
+    setWallet(getWalletName(web3Modal.cachedProvider, isBraveWallet))
     if (account && accountIconRef.current) {
       accountIconRef.current.innerHTML = ''
       accountIconRef.current.appendChild(Jazzicon(40, parseInt(account.slice(2, 10), 16)))
