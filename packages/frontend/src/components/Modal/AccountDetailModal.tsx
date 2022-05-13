@@ -44,9 +44,10 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
               tooltip="View on Arbiscan"
               color={Colors.Blue}
               label=" View in block explorer"
+              side="top"
             />
 
-            <CopyButton value={account} text="Copy account address" color={Colors.Blue} label="Copy address" />
+            <CopyButton value={account} text="Copy account address" color={Colors.Blue} label="Copy address" side="top"/>
           </ContentRow>
         )}
       </ContentWrapper>
