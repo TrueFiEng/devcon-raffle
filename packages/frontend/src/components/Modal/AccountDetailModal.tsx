@@ -52,7 +52,13 @@ export const AccountDetailModal = ({ isShown, onRequestClose, wallet = 'Metamask
               side="top"
             />
 
-            <CopyButton value={account} text="Copy account address" color={Colors.Blue} label="Copy address" side="top"/>
+            <CopyButton
+              value={account}
+              text="Copy account address"
+              color={Colors.Blue}
+              label="Copy address"
+              side="top"
+            />
           </ContentRow>
         )}
       </ContentWrapper>

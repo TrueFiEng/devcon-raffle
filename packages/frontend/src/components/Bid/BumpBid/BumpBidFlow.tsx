@@ -33,7 +33,7 @@ export const BumpBidFlow = ({ setTransactionViewLock }: FlowProps) => {
     if (state.status == 'Success') {
       setBumpAmount(formatEther(minimumIncrement))
     }
-  }, [state.status])
+  }, [state.status, minimumIncrement])
 
   const bumpAction: TransactionAction = {
     type: Transactions.Bump,
