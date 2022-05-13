@@ -29,7 +29,7 @@ export const PlaceBidFlow = ({ setTransactionViewLock }: FlowProps) => {
     if (state.status == 'Success') {
       setBid(formatEther(minimumBid))
     }
-  }, [state.status])
+  }, [state.status, minimumBid])
 
   const parsedBid = useMemo(() => parseEther(prepareAmountForParsing(bid || '0')), [bid])
   const bidAction: TransactionAction = {
