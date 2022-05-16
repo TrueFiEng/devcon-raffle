@@ -6,5 +6,5 @@ export interface Web3ModalContext {
 }
 
 export const Web3ModalContext = createContext<Web3ModalContext>({
-  web3Modal: new Web3Modal(), // TODO redo
+  web3Modal: new Web3Modal(),
 })
