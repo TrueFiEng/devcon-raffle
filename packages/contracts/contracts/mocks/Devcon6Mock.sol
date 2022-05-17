@@ -35,6 +35,10 @@ contract Devcon6Mock is Devcon6 {
         return _minKeyIndex;
     }
 
+    function getWinType(address bidderAddress) external view returns (WinType) {
+        return _bids[bidderAddress].winType;
+    }
+
     function getMinKeyValue() external view returns (uint256) {
         return _minKeyValue;
     }
