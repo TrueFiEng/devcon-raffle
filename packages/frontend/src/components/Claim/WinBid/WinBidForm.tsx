@@ -1,13 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
-import { Button } from 'src/components/Buttons/Button'
-import { ClaimVoucherSection } from 'src/components/Claim/WinBid/ClaimVoucherSection'
-import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
+import { TxFlowSteps } from 'src/components/Auction'
+import { Button } from 'src/components/Buttons'
+import { ClaimVoucherSection, WinType } from 'src/components/Claim'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
-import { useClaimingEndTime } from 'src/hooks/useClaimingEndTime'
+import { useClaimingEndTime } from 'src/hooks'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
+import { formatEtherAmount } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 type WithdrawType = Exclude<WinType, WinType.Auction>

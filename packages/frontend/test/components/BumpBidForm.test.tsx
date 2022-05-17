@@ -7,6 +7,7 @@ import { generateMockBidsState } from 'test/mocks/generateMockBids'
 const mockBalance = parseEther('100')
 
 jest.mock('@usedapp/core', () => ({
+  ...jest.requireActual('@usedapp/core'),
   useEthers: () => ({
     account: '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
   }),

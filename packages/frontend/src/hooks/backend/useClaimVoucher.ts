@@ -3,9 +3,8 @@ import { ChainId, useEthers } from '@usedapp/core'
 import { useCallback } from 'react'
 import { CONFIG } from 'src/config/config'
 import { SupportedChainId } from 'src/constants/chainIDs'
-
-import { useChainId } from '../chainId/useChainId'
-import { useAddresses } from '../useAddresses'
+import { useAddresses } from 'src/hooks'
+import { useChainId } from 'src/hooks/chainId/useChainId'
 
 export function useClaimVoucher() {
   const { account, library } = useEthers()
@@ -40,11 +39,14 @@ async function signClaimVoucher({
   chainId,
   nonce,
 }: SignClaimVoucherArgs): Promise<string | undefined> {
-  const data = getMessage(account, nonce, devcon, chainId)
+  const domain = getDomain(chainId)
+  const types = getTypes()
+  const data = getMessage(account, nonce, devcon)
   try {
-    return await library.send('eth_signTypedData', [data, account])
-  } catch {
-    return undefined // error already logged by MetaMask
+    return await library.getSigner()._signTypedData(domain, types, data)
+  } catch (e) {
+    console.error(e)
+    return undefined
   }
 }
 
@@ -67,25 +69,21 @@ async function fetchVoucherCode(userAddress: string, nonce: string, signature: s
 
 type VoucherCodeResponse = { voucherCode: string } | { error: string }
 
-const getMessage = (signer: string, nonce: string, devcon6Address: string, chainId: ChainId) => [
-  {
-    name: 'Message',
-    type: 'string',
-    value: `Claim voucher code for address ${signer}.`,
-  },
-  {
-    name: 'Devcon6 contract',
-    type: 'address',
-    value: devcon6Address,
-  },
-  {
-    name: 'Chain ID',
-    type: 'uint256',
-    value: chainId,
-  },
-  {
-    name: 'Signature nonce',
-    type: 'string',
-    value: nonce,
-  },
-]
+const getDomain = (chainId: ChainId) => ({
+  name: 'Backend for AuctionRaffle contract',
+  chainId,
+})
+
+const getTypes = () => ({
+  Message: [
+    { name: 'contents', type: 'string' },
+    { name: 'contractAddress', type: 'string' },
+    { name: 'signatureNonce', type: 'string' },
+  ],
+})
+
+const getMessage = (signer: string, signatureNonce: string, contractAddress: string) => ({
+  contents: `Claim voucher code for address ${signer}.`,
+  contractAddress,
+  signatureNonce,
+})

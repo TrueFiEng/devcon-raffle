@@ -1,4 +1,4 @@
-import { ContractState } from '../../hooks/useContractState'
+import { ContractState } from 'src/hooks/useContractState'
 
 export function getWarningText(state: ContractState) {
   if (state === ContractState.RAFFLE_SETTLED) {

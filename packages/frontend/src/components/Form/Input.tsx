@@ -1,12 +1,10 @@
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { useEffect, useState } from 'react'
-import { CloseCircleIcon } from 'src/components/Icons/CloseCircleIcon'
-import { EtherIcon } from 'src/components/Icons/EtherIcon'
+import { CloseCircleIcon, EtherIcon } from 'src/components/Icons'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
-import { formatEtherAmount } from 'src/utils/formatters/formatEtherAmount'
-import { formatInputAmount } from 'src/utils/formatters/formatInputAmount'
+import { formatEtherAmount, formatInputAmount } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 interface InputProps {

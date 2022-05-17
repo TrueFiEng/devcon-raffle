@@ -1,16 +1,10 @@
-import { FormWrapper, FormHeading, FormText } from 'src/components/Form/Form'
-import styled from 'styled-components'
+import { FormSectionWrapper, FormHeading, FormText } from 'src/components/Form/Form'
 
 export const NoBidding = () => {
   return (
-    <Wrapper>
+    <FormSectionWrapper>
       <FormHeading>Bidding time is over ⌛️</FormHeading>
       <FormText>Try your luck next year!</FormText>
-    </Wrapper>
+    </FormSectionWrapper>
   )
 }
-
-const Wrapper = styled(FormWrapper)`
-  padding: 0 0 0 115px;
-  justify-content: center;
-`

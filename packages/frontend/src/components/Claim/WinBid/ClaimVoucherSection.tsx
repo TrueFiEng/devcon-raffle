@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react'
 import { Button } from 'src/components/Buttons'
+import { WinOption } from 'src/components/Claim/WinBid/WinBidForm'
 import { ErrorNotifications } from 'src/components/Notifications/ErrorNotifications'
 import { useClaimVoucher } from 'src/hooks/backend/useClaimVoucher'
 import { useGetVoucher } from 'src/hooks/backend/useGetVoucher'
 import { useNonce } from 'src/hooks/backend/useNonce'
-
-import { WinOption } from './WinBidForm'
 
 interface ClaimVoucherSectionProps {
   setVoucher: (val: string) => void

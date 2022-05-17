@@ -4,11 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { AuctionTransaction } from 'src/components/Auction/AuctionTransaction'
 import { TxFlowSteps } from 'src/components/Auction/TxFlowSteps'
 import { PlaceBidForm } from 'src/components/Bid/PlaceBid/PlaceBidForm'
-import { TransactionAction } from 'src/components/Transaction/TransactionAction'
-import { Transactions } from 'src/components/Transaction/TransactionEnum'
-import { useBid } from 'src/hooks/transactions/useBid'
-import { useBids } from 'src/hooks/useBids'
-import { useMinimumBid } from 'src/hooks/useMinimumBid'
+import { TransactionAction, Transactions } from 'src/components/Transaction'
+import { useBids, useMinimumBid } from 'src/hooks'
+import { useBid } from 'src/hooks/transactions'
 import { prepareAmountForParsing } from 'src/utils/prepareAmountForParsing'
 
 import { FlowProps } from '../BidFlow'
@@ -31,7 +29,7 @@ export const PlaceBidFlow = ({ setTransactionViewLock }: FlowProps) => {
     if (state.status == 'Success') {
       setBid(formatEther(minimumBid))
     }
-  }, [state.status])
+  }, [state.status, minimumBid])
 
   const parsedBid = useMemo(() => parseEther(prepareAmountForParsing(bid || '0')), [bid])
   const bidAction: TransactionAction = {

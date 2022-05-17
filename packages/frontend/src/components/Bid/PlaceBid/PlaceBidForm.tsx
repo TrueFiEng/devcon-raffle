@@ -6,7 +6,7 @@ import { Button } from 'src/components/Buttons/Button'
 import { Form, FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
 import { Input } from 'src/components/Form/Input'
 import { ImmutableBids } from 'src/providers/Bids/types'
-import { getPositionAfterBid } from 'src/utils/getPositionAfterBid'
+import { getPositionAfterBid } from 'src/utils'
 
 interface PlaceBidFormProps {
   bid: string

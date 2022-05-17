@@ -1,5 +1,5 @@
 import { TransactionStatus } from '@usedapp/core'
-import { Transactions } from 'src/components/Transaction/TransactionEnum'
+import { Transactions } from 'src/components/Transaction'
 
 export interface TransactionAction {
   type: Transactions
