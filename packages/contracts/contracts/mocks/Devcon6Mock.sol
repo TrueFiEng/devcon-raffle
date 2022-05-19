@@ -31,6 +31,34 @@ contract Devcon6Mock is Devcon6 {
         return _heap;
     }
 
+    function getHeapMax() external view returns (uint256) {
+        return _heap[0];
+    }
+
+    function getBidAmount(address bidder) external view returns (uint256) {
+        return _bids[bidder].amount;
+    }
+
+    function getNumberOfBids() external view returns (uint256) {
+        return _heap.length;
+    }
+
+    function getNumberOfRaffleParticipants() external view returns (uint256) {
+        return _raffleParticipants.length;
+    }
+
+    function getNumberOfAuctionParticipants() external view returns (uint256) {
+        return _raffleParticipants.length;
+    }
+
+    function getRaffleWinnersCount() external view returns (uint256) {
+        return _raffleWinnersCount;
+    }
+
+    function getAuctionWinnersCount() external view returns (uint256) {
+        return _auctionWinnersCount;
+    }
+
     function getMinKeyIndex() external view returns (uint256) {
         return _minKeyIndex;
     }
