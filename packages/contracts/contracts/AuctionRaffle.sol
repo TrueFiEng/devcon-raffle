@@ -11,7 +11,7 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./libs/MaxHeap.sol";
 
-contract Devcon6 is Ownable, Config, BidModel, StateModel {
+contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
 
