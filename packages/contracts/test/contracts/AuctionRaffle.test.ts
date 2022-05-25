@@ -10,6 +10,7 @@ import {
 import { AuctionRaffleMock, ExampleToken } from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
+import { Zero } from '@ethersproject/constants'
 import { HOUR, MINUTE } from 'scripts/utils/consts'
 import { network } from 'hardhat'
 import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
@@ -20,7 +21,6 @@ import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
 import { parseEther } from 'ethers/lib/utils'
 import { randomBigNumbers } from 'scripts/utils/random'
-import { ZERO } from '@devcon-raffle/frontend/src/constants/bigNumber'
 import { heapKey } from 'utils/heapKey'
 
 describe('AuctionRaffle', function () {
@@ -913,7 +913,7 @@ describe('AuctionRaffle', function () {
         await bidAndSettleRaffle(0)
 
         const bids = await getAllBidsByWinType(16, WinType.loss)
-        let claimAmount = ZERO
+        let claimAmount = Zero
         bids.forEach((bid) => {
           claimAmount = claimAmount.add(calculateFee(bid.amount))
         })
