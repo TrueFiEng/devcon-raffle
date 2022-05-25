@@ -17,7 +17,7 @@ interface Bid {
   wallet: Wallet,
 }
 
-describe('Devcon6 - E2E', function () {
+describe('AuctionRaffle - E2E', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
@@ -133,8 +133,8 @@ describe('Devcon6 - E2E', function () {
     return wallets[1]
   }
 
-  async function endBidding(devcon: AuctionRaffleMock) {
-    const endTime = await devcon.biddingEndTime()
+  async function endBidding(auctionRaffle: AuctionRaffleMock) {
+    const endTime = await auctionRaffle.biddingEndTime()
     await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     await network.provider.send('evm_mine')
   }
