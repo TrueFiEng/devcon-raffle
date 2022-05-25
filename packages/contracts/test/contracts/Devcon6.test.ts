@@ -23,7 +23,7 @@ import { randomBigNumbers } from 'scripts/utils/random'
 import { ZERO } from '@devcon-raffle/frontend/src/constants/bigNumber'
 import { heapKey } from 'utils/heapKey'
 
-describe('Devcon6', function () {
+describe('AuctionRaffle', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
@@ -43,20 +43,20 @@ describe('Devcon6', function () {
       const currentTime = await getLatestBlockTimestamp(provider);
       ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ biddingStartTime: currentTime + MINUTE })))
 
-      await expect(auctionRaffle.bid()).to.be.revertedWith('Devcon6: is in invalid state')
+      await expect(auctionRaffle.bid()).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bidding is already closed', async function () {
       const endTime = await auctionRaffle.biddingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
-      await expect(auctionRaffle.bid()).to.be.revertedWith('Devcon6: is in invalid state')
+      await expect(auctionRaffle.bid()).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bid increase is too low', async function () {
       await auctionRaffle.bid({ value: reservePrice })
       await expect(auctionRaffle.bid({ value: minBidIncrement.sub(100) }))
-        .to.be.revertedWith('Devcon6: bid increment too low')
+        .to.be.revertedWith('AuctionRaffle: bid increment too low')
     })
 
     it('increases bid amount', async function () {
@@ -69,7 +69,7 @@ describe('Devcon6', function () {
 
     it('reverts if bid amount is below reserve price', async function () {
       await expect(auctionRaffle.bid({ value: reservePrice.sub(100) }))
-        .to.be.revertedWith('Devcon6: bid amount is below reserve price')
+        .to.be.revertedWith('AuctionRaffle: bid amount is below reserve price')
     })
 
     it('saves bid', async function () {
@@ -308,14 +308,14 @@ describe('Devcon6', function () {
 
     it('reverts if bidding is in progress', async function () {
       await expect(settleAuction())
-        .to.be.revertedWith('Devcon6: is in invalid state')
+        .to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
       await expect(settleAuction())
-        .to.be.revertedWith('Devcon6: is in invalid state')
+        .to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('changes state if number of bidders is less than raffleWinnersCount', async function () {
@@ -406,7 +406,7 @@ describe('Devcon6', function () {
 
     it('reverts if raffle is not settled', async function () {
       await expect(auctionRaffleAsOwner.settleRaffle([1]))
-        .to.be.revertedWith('Devcon6: is in invalid state')
+        .to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if called with zero random numbers', async function () {
@@ -414,7 +414,7 @@ describe('Devcon6', function () {
       await settleAuction()
 
       await expect(auctionRaffleAsOwner.settleRaffle([]))
-        .to.be.revertedWith('Devcon6: there must be at least one random number passed')
+        .to.be.revertedWith('AuctionRaffle: there must be at least one random number passed')
     })
 
     it('reverts if called with incorrect amount of random numbers', async function () {
@@ -427,7 +427,7 @@ describe('Devcon6', function () {
 
       // Reverts because it expects 2 random numbers
       await expect(auctionRaffleAsOwner.settleRaffle(randomBigNumbers(3)))
-        .to.be.revertedWith('Devcon6: passed incorrect number of random numbers')
+        .to.be.revertedWith('AuctionRaffle: passed incorrect number of random numbers')
     })
 
     describe('when bidders count is less than raffleWinnersCount', function () {
@@ -584,14 +584,14 @@ describe('Devcon6', function () {
       await settleAuction()
 
       await expect(auctionRaffle.claim(4))
-        .to.be.revertedWith('Devcon6: is in invalid state')
+        .to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bidder does not exist', async function () {
       await bidAndSettleRaffle(2)
 
       await expect(auctionRaffle.claim(20))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts if funds have been already claimed', async function () {
@@ -599,14 +599,14 @@ describe('Devcon6', function () {
 
       await auctionRaffle.claim(4)
       await expect(auctionRaffle.claim(4))
-        .to.be.revertedWith('Devcon6: funds have already been claimed')
+        .to.be.revertedWith('AuctionRaffle: funds have already been claimed')
     })
 
     it('reverts if auction winner wants to claim funds', async function () {
       await bidAndSettleRaffle(9)
 
       await expect(auctionRaffle.claim(1))
-        .to.be.revertedWith('Devcon6: auction winners cannot claim funds')
+        .to.be.revertedWith('AuctionRaffle: auction winners cannot claim funds')
     })
 
     it('sets bid as claimed', async function () {
@@ -676,7 +676,7 @@ describe('Devcon6', function () {
         await auctionRaffleAsOwner.claimProceeds()
 
         await expect(auctionRaffleAsOwner.claimProceeds())
-          .to.be.revertedWith('Devcon6: proceeds have already been claimed')
+          .to.be.revertedWith('AuctionRaffle: proceeds have already been claimed')
       })
     })
 
@@ -768,7 +768,7 @@ describe('Devcon6', function () {
       await bidAndSettleRaffle(2)
 
       await expect(auctionRaffleAsOwner.withdrawUnclaimedFunds())
-        .to.be.revertedWith('Devcon6: is in invalid state')
+        .to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('transfers unclaimed funds', async function () {
@@ -822,7 +822,7 @@ describe('Devcon6', function () {
     describe('when balance for given token equals zero', function () {
       it('reverts', async function () {
         await expect(auctionRaffleAsOwner.rescueTokens(exampleToken.address))
-          .to.be.revertedWith('Devcon6: no tokens for given address')
+          .to.be.revertedWith('AuctionRaffle: no tokens for given address')
       })
     })
 
@@ -839,7 +839,7 @@ describe('Devcon6', function () {
     describe('when transfers ether without calldata', function () {
       it('reverts', async function () {
         await expect(owner().sendTransaction({ to: auctionRaffle.address, value: parseEther('1') }))
-          .to.be.revertedWith('Devcon6: contract accepts ether transfers only by bid method')
+          .to.be.revertedWith('AuctionRaffle: contract accepts ether transfers only by bid method')
       })
     })
 
@@ -851,7 +851,7 @@ describe('Devcon6', function () {
           data: '0x7D86687F980A56b832e9378952B738b614A99dc6',
         }
         await expect(owner().sendTransaction(params))
-          .to.be.revertedWith('Devcon6: contract accepts ether transfers only by bid method')
+          .to.be.revertedWith('AuctionRaffle: contract accepts ether transfers only by bid method')
       })
     })
   })
@@ -868,7 +868,7 @@ describe('Devcon6', function () {
       it('reverts', async function () {
         await bid(2)
         await expect(auctionRaffleAsOwner.claimFees(2))
-          .to.be.revertedWith('Devcon6: is in invalid state')
+          .to.be.revertedWith('AuctionRaffle: is in invalid state')
       })
     })
 
@@ -878,7 +878,7 @@ describe('Devcon6', function () {
         await auctionRaffleAsOwner.claimFees(1)
 
         await expect(auctionRaffleAsOwner.claimFees(1))
-          .to.be.revertedWith('Devcon6: fees have already been claimed')
+          .to.be.revertedWith('AuctionRaffle: fees have already been claimed')
       })
     })
 
@@ -887,7 +887,7 @@ describe('Devcon6', function () {
         await bidAndSettleRaffle(6)
 
         await expect(auctionRaffleAsOwner.claimFees(6))
-          .to.be.revertedWith('Devcon6: there are no fees to claim')
+          .to.be.revertedWith('AuctionRaffle: there are no fees to claim')
       })
     })
 
@@ -981,7 +981,7 @@ describe('Devcon6', function () {
   describe('getBid', function () {
     it('reverts for unknown bidder address', async function () {
       await expect(auctionRaffle.getBid(randomAddress()))
-        .to.be.revertedWith('Devcon6: no bid by given address')
+        .to.be.revertedWith('AuctionRaffle: no bid by given address')
     })
 
     it('returns bid details', async function () {
@@ -997,13 +997,13 @@ describe('Devcon6', function () {
   describe('getBidByID', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(auctionRaffle.getBidByID(0))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
       await expect(auctionRaffle.getBidByID(2))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('returns bidder address', async function () {
@@ -1019,13 +1019,13 @@ describe('Devcon6', function () {
   describe('getBidWithAddress', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(auctionRaffle.getBidWithAddress(0))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
       await expect(auctionRaffle.getBidWithAddress(2))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('returns correct bid with bidder address', async function () {
@@ -1051,13 +1051,13 @@ describe('Devcon6', function () {
   describe('getBidderAddress', function () {
     it('reverts for zero bidder ID', async function () {
       await expect(auctionRaffle.getBidderAddress(0))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
       await expect(auctionRaffle.getBidderAddress(2))
-        .to.be.revertedWith('Devcon6: bidder with given ID does not exist')
+        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('returns bidder address', async function () {
