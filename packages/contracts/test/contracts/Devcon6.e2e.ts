@@ -1,6 +1,6 @@
 import { setupFixtureLoader } from '../setup'
-import { devcon6E2EFixture, minBidIncrement, reservePrice } from 'fixtures/devcon6Fixture'
-import { Devcon6Mock } from 'contracts'
+import { auctionRaffleE2EFixture, minBidIncrement, reservePrice } from 'fixtures/auctionRaffleFixture'
+import { AuctionRaffleMock } from 'contracts'
 import { Provider } from '@ethersproject/providers'
 import { BigNumber, constants, Wallet } from 'ethers'
 import { randomBigNumbers } from 'scripts/utils/random'
@@ -21,8 +21,8 @@ describe('Devcon6 - E2E', function () {
   const loadFixture = setupFixtureLoader()
 
   let provider: Provider
-  let devcon: Devcon6Mock
-  let devconAsOwner: Devcon6Mock
+  let auctionRaffle: AuctionRaffleMock
+  let auctionRaffleAsOwner: AuctionRaffleMock
   let wallets: Wallet[]
 
   let bids: Bid[]
@@ -32,8 +32,8 @@ describe('Devcon6 - E2E', function () {
   this.timeout(60_000)
 
   before('prepare contracts', async function () {
-    ({ provider, devcon, wallets } = await loadFixture(devcon6E2EFixture))
-    devconAsOwner = devcon.connect(owner())
+    ({ provider, auctionRaffle, wallets } = await loadFixture(auctionRaffleE2EFixture))
+    auctionRaffleAsOwner = auctionRaffle.connect(owner())
   })
 
   before('prepare bids', function () {
@@ -55,19 +55,19 @@ describe('Devcon6 - E2E', function () {
 
   it('lets 120 participants place bids', async function () {
     for (const { wallet, amount } of bids) {
-      await devcon.connect(wallet).bid({ value: amount })
+      await auctionRaffle.connect(wallet).bid({ value: amount })
     }
 
-    expect(await devcon.getRaffleParticipants()).to.have.lengthOf(120)
-    expect(await devcon.getHeap()).to.have.lengthOf(20)
+    expect(await auctionRaffle.getRaffleParticipants()).to.have.lengthOf(120)
+    expect(await auctionRaffle.getHeap()).to.have.lengthOf(20)
     const lastAuctionBid = sortedBids[19]
-    expect(await devcon.getMinKeyValue()).to.eq(heapKey(lastAuctionBid.bidderID, lastAuctionBid.amount))
+    expect(await auctionRaffle.getMinKeyValue()).to.eq(heapKey(lastAuctionBid.bidderID, lastAuctionBid.amount))
   })
 
   it('lets some participants bump bids', async function () {
     for (const { wallet, bumpAmount } of bids) {
       if (!bumpAmount.isZero()) {
-        await devcon.connect(wallet).bid({ value: bumpAmount })
+        await auctionRaffle.connect(wallet).bid({ value: bumpAmount })
       }
     }
 
@@ -75,50 +75,50 @@ describe('Devcon6 - E2E', function () {
   })
 
   it('lets the owner settle the auction', async function () {
-    await endBidding(devconAsOwner)
-    await devconAsOwner.settleAuction()
+    await endBidding(auctionRaffleAsOwner)
+    await auctionRaffleAsOwner.settleAuction()
 
-    expect(await devcon.getHeap()).to.be.empty
+    expect(await auctionRaffle.getHeap()).to.be.empty
 
     const expectedAuctionWinners = sortedBids.slice(0, 20).map(bid => BigNumber.from(bid.bidderID))
-    expect(await devcon.getAuctionWinners()).to.deep.eq(expectedAuctionWinners)
-    expect(await devcon.getRaffleParticipants()).to.have.lengthOf(100)
+    expect(await auctionRaffle.getAuctionWinners()).to.deep.eq(expectedAuctionWinners)
+    expect(await auctionRaffle.getRaffleParticipants()).to.have.lengthOf(100)
   })
 
   it('lets the owner settle the raffle', async function () {
-    await devconAsOwner.settleRaffle(randomBigNumbers(10))
+    await auctionRaffleAsOwner.settleRaffle(randomBigNumbers(10))
 
-    expect(await devcon.getRaffleWinners()).to.have.lengthOf(80)
-    expect(await devcon.getRaffleParticipants()).to.have.lengthOf(20)
+    expect(await auctionRaffle.getRaffleWinners()).to.have.lengthOf(80)
+    expect(await auctionRaffle.getRaffleParticipants()).to.have.lengthOf(20)
   })
 
   it('lets everyone claim their funds', async function () {
     const nonAuctionBids = sortedBids.slice(20)
 
     for (const { wallet, bidderID } of nonAuctionBids.slice(0, 50)) {
-      await devcon.connect(wallet).claim(bidderID)
+      await auctionRaffle.connect(wallet).claim(bidderID)
     }
 
-    await devconAsOwner.claimProceeds()
-    await devconAsOwner.claimFees(20)
+    await auctionRaffleAsOwner.claimProceeds()
+    await auctionRaffleAsOwner.claimFees(20)
 
     for (const { wallet, bidderID } of nonAuctionBids.slice(50, 100)) {
-      await devcon.connect(wallet).claim(bidderID)
+      await auctionRaffle.connect(wallet).claim(bidderID)
     }
 
-    expect(await provider.getBalance(devcon.address)).to.eq(0)
+    expect(await provider.getBalance(auctionRaffle.address)).to.eq(0)
   })
 
   it('divides bidders into 3 disjoint sets', async function () {
     const bidders = [
-      ...await devcon.getAuctionWinners(),
-      ...await devcon.getRaffleWinners(),
-      ...await devcon.getRaffleParticipants(),
+      ...await auctionRaffle.getAuctionWinners(),
+      ...await auctionRaffle.getRaffleWinners(),
+      ...await auctionRaffle.getRaffleParticipants(),
     ]
 
     let bids = []
     for (const bidder of bidders) {
-      bids.push(await devcon.getBidByID(bidder))
+      bids.push(await auctionRaffle.getBidByID(bidder))
     }
     bids = bids.sort(compareBids).map(bid => ({
       bidderID: bid.bidderID.toNumber(),
@@ -133,7 +133,7 @@ describe('Devcon6 - E2E', function () {
     return wallets[1]
   }
 
-  async function endBidding(devcon: Devcon6Mock) {
+  async function endBidding(devcon: AuctionRaffleMock) {
     const endTime = await devcon.biddingEndTime()
     await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
     await network.provider.send('evm_mine')
