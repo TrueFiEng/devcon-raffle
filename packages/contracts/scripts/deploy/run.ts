@@ -19,18 +19,18 @@ async function run() {
   await hre.network.provider.send('evm_setNextBlockTimestamp', [now])
 
   const deployer = signers[0]
-  const devcon = await deploy(now, deployer, hre)
+  const auctionRaffle = await deploy(now, deployer, hre)
   console.log('Contracts deployed\n')
 
-  await bid(devcon, signers.slice(0, 20))
+  await bid(auctionRaffle, signers.slice(0, 20))
 
   await nodeProcess
 }
 
-async function bid(devcon: Contract, signers: SignerWithAddress[]) {
+async function bid(auctionRaffle: Contract, signers: SignerWithAddress[]) {
   const initialBidAmount = parseEther('0.20')
   for (let i = 0; i < signers.length; i++) {
-    await bidAsSigner(devcon, signers[i], initialBidAmount.add(minBidIncrement.mul(i)))
+    await bidAsSigner(auctionRaffle, signers[i], initialBidAmount.add(minBidIncrement.mul(i)))
   }
 }
 

@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { connectToDevcon, devconAddress, heapAddress } from 'scripts/utils/devcon'
+import { connectToAuctionRaffle, auctionRaffleAddress, heapAddress } from 'scripts/utils/auctionRaffle'
 import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -18,11 +18,11 @@ task('bid', 'Places bid for given account with provided amount')
     hre,
   ) => {
     const signer = await hre.ethers.getSigner(account)
-    const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
-    const devconAsSigner = devcon.connect(signer)
+    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
+    const auctionRaffleAsSigner = auctionRaffle.connect(signer)
 
     const ethAmount = parseEther(amount)
-    await devconAsSigner.bid({ value: ethAmount })
+    await auctionRaffleAsSigner.bid({ value: ethAmount })
     logBid(account, ethAmount)
   })
 
@@ -34,7 +34,7 @@ task('bid-random', 'Bids X times using randomly generated accounts')
     hre,
   ) => {
     const signers = await hre.ethers.getSigners()
-    const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
+    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
 
     console.log('Generating accounts...')
     const randomAccounts = generateRandomAccounts(amount, hre.ethers.provider)
@@ -45,26 +45,26 @@ task('bid-random', 'Bids X times using randomly generated accounts')
     console.log('Starting bidding...')
     for (let i = 0; i < randomAccounts.length; i++) {
       console.log(`Bidding with random account #${i + 1} out of ${randomAccounts.length}`)
-      await bidAsSigner(devcon, randomAccounts[i], reservePrice.add(minBidIncrement.mul(i)))
+      await bidAsSigner(auctionRaffle, randomAccounts[i], reservePrice.add(minBidIncrement.mul(i)))
     }
   })
 
 task('settle-auction', 'Settles auction')
   .setAction(async (taskArgs, hre) => {
-    const devcon = await devconAsOwner(hre)
+    const auctionRaffle = await auctionRaffleAsOwner(hre)
 
-    await devcon.settleAuction()
+    await auctionRaffle.settleAuction()
     console.log('Auction settled!')
   })
 
 task('settle-raffle', 'Settles raffle')
   .setAction(async (taskArgs, hre) => {
-    const devcon = await devconAsOwner(hre)
+    const auctionRaffle = await auctionRaffleAsOwner(hre)
 
-    const raffleWinnersCount = await devcon.raffleWinnersCount()
+    const raffleWinnersCount = await auctionRaffle.raffleWinnersCount()
     const randomNumbersCount = BigNumber.from(raffleWinnersCount).div(8).toNumber()
 
-    await devcon.settleRaffle(randomBigNumbers(randomNumbersCount))
+    await auctionRaffle.settleRaffle(randomBigNumbers(randomNumbersCount))
     console.log('Raffle settled!')
   })
 
@@ -76,13 +76,13 @@ function formatEther(amount: BigNumberish): string {
   return `${utils.formatEther(amount).toString()}${constants.EtherSymbol}`
 }
 
-async function devconAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
-  const owner = await getDevconOwner(hre)
-  const devcon = await connectToDevcon(hre, devconAddress, heapAddress)
-  return devcon.connect(owner)
+async function auctionRaffleAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
+  const owner = await getAuctionRaffleOwner(hre)
+  const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
+  return auctionRaffle.connect(owner)
 }
 
-async function getDevconOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress> {
+async function getAuctionRaffleOwner(hre: HardhatRuntimeEnvironment): Promise<SignerWithAddress> {
   const signers = await hre.ethers.getSigners()
   return signers[0]
 }
