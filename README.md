@@ -1,4 +1,4 @@
-# Devcon 6 Ticket Sale System
+# Devcon Ticket Sale System
 
 ## Running Hardhat node
 Change directory to `packages/contracts` and execute:
@@ -14,7 +14,7 @@ A number of custom Hardhat tasks were defined to aid testing.
 - `yarn node:increase-time [--value <INT>]` - increase block time by *value* seconds, defaults to one hour
 - `yarn node:accounts` - print a list of available accounts
 
-### Interacting with Devcon6 contract
+### Interacting with AuctionRaffle contract
 
 #### Hardhat
 - `yarn hardhat:bid --account <STRING> --amount <STRING>` - using *account* place bid of *amount* ETH
@@ -26,5 +26,5 @@ A number of custom Hardhat tasks were defined to aid testing.
 #### Arbitrum Rinkeby
 - `yarn rinkeby:generate-dotenv [--path <STRING>] [--count <INT>]` - generate .env file needed for other tasks, *path* - output path, *count* - number of private keys to generate
 - `yarn rinkeby:transfer-ether` - transfer ether from `DEPLOYER` to `PRIVATE_KEYS` accounts
-- `yarn rinkeby:deploy [--delay <INT>]` - deploy Devcon6 contract, *delay* in seconds can be set to push back bidding start time
+- `yarn rinkeby:deploy [--delay <INT>]` - deploy AuctionRaffle contract, *delay* in seconds can be set to push back bidding start time
 - `yarn rinkeby:init-bids` - place initial bids using `PRIVATE_KEYS` accounts
