@@ -38,4 +38,8 @@ contract AuctionRaffleMock is AuctionRaffle {
     function getMinKeyValue() external view returns (uint256) {
         return _minKeyValue;
     }
+
+    function getBalance(address addr) external view returns (uint256) {
+        return addr.balance;
+    }
 }
