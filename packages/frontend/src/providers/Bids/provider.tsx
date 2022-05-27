@@ -1,4 +1,4 @@
-import { Devcon6 } from '@devcon-raffle/contracts'
+import { AuctionRaffle } from '@devcon-raffle/contracts'
 import { useBlockNumbers } from '@usedapp/core/internal'
 import { Dispatch, ReactNode, useEffect, useReducer, useState } from 'react'
 import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
@@ -54,7 +54,7 @@ function initBids(contractBids: Bid[], dispatch: Dispatch<BidChanged>) {
 }
 
 async function queryNewBids(
-  devcon: Devcon6,
+  devcon: AuctionRaffle,
   currentBlock: number | undefined,
   lastFetchedBlock: number | undefined,
   setLastFetchedBlock: (value: number | undefined) => void,

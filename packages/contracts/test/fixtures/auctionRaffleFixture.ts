@@ -1,4 +1,4 @@
-import { Devcon6Mock__factory, ExampleToken__factory } from 'contracts'
+import { AuctionRaffleMock__factory, ExampleToken__factory } from 'contracts'
 import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
@@ -10,7 +10,7 @@ export const raffleWinnersCount = 8
 export const reservePrice = utils.parseEther('0.5')
 export const minBidIncrement = utils.parseEther('0.005')
 
-export type devcon6Params = {
+export type auctionRaffleParams = {
   initialOwner?: string,
   biddingStartTime?: number,
   biddingEndTime?: number,
@@ -21,32 +21,32 @@ export type devcon6Params = {
   minBidIncrement?: BigNumberish,
 }
 
-export function devcon6Fixture(wallets: Wallet[], provider: MockProvider) {
-  return configuredDevcon6Fixture({})(wallets, provider)
+export function auctionRaffleFixture(wallets: Wallet[], provider: MockProvider) {
+  return configuredAuctionRaffleFixture({})(wallets, provider)
 }
 
-export async function devcon6FixtureWithToken(wallets: Wallet[], provider: MockProvider) {
-  // deploy devcon6 and exampleToken contracts, because loadFixture creates new provider on each call
-  const { devcon } = await configuredDevcon6Fixture({})(wallets, provider)
+export async function auctionRaffleFixtureWithToken(wallets: Wallet[], provider: MockProvider) {
+  // deploy auctionRaffle and exampleToken contracts, because loadFixture creates new provider on each call
+  const { auctionRaffle } = await configuredAuctionRaffleFixture({})(wallets, provider)
   const exampleToken = await new ExampleToken__factory(wallets[1]).deploy(1000)
 
-  return { provider, devcon, exampleToken }
+  return { provider, auctionRaffle, exampleToken }
 }
 
-export async function devcon6E2EFixture(wallets: Wallet[], provider: MockProvider) {
-  return configuredDevcon6Fixture({
+export async function auctionRaffleE2EFixture(wallets: Wallet[], provider: MockProvider) {
+  return configuredAuctionRaffleFixture({
     auctionWinnersCount: 20,
     raffleWinnersCount: 80,
   })(wallets, provider)
 }
 
-export function configuredDevcon6Fixture(params: devcon6Params) {
+export function configuredAuctionRaffleFixture(params: auctionRaffleParams) {
   return async ([deployer, owner]: Wallet[], provider: MockProvider) => {
     const currentBlockTimestamp = await getLatestBlockTimestamp(provider)
-    params = setDevcon6ParamsDefaults(owner, currentBlockTimestamp, params)
+    params = setAuctionRaffleParamsDefaults(owner, currentBlockTimestamp, params)
 
     const libraryLink = await deployMaxHeap(deployer)
-    const devcon = await new Devcon6Mock__factory(libraryLink, deployer).deploy(
+    const auctionRaffle = await new AuctionRaffleMock__factory(libraryLink, deployer).deploy(
       params.initialOwner,
       params.biddingStartTime,
       params.biddingEndTime,
@@ -57,15 +57,15 @@ export function configuredDevcon6Fixture(params: devcon6Params) {
       params.minBidIncrement,
     )
 
-    return { provider, devcon }
+    return { provider, auctionRaffle }
   }
 }
 
-export function setDevcon6ParamsDefaults(owner: Wallet, blockTimestamp: number, params: devcon6Params): devcon6Params {
-  return { ...defaultDevcon6Params(owner, blockTimestamp), ...params }
+export function setAuctionRaffleParamsDefaults(owner: Wallet, blockTimestamp: number, params: auctionRaffleParams): auctionRaffleParams {
+  return { ...defaultAuctionRaffleParams(owner, blockTimestamp), ...params }
 }
 
-function defaultDevcon6Params(owner: Wallet, biddingStartTime: number): devcon6Params {
+function defaultAuctionRaffleParams(owner: Wallet, biddingStartTime: number): auctionRaffleParams {
   return {
     initialOwner: owner.address,
     biddingStartTime: biddingStartTime,

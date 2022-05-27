@@ -1,4 +1,4 @@
-import { Devcon6, Devcon6__factory } from '@devcon-raffle/contracts'
+import { AuctionRaffle, AuctionRaffle__factory } from '@devcon-raffle/contracts'
 import { useMemo } from 'react'
 import { SupportedChainId } from 'src/constants/chainIDs'
 import { useAddresses } from 'src/hooks'
@@ -6,7 +6,7 @@ import { useChainId } from 'src/hooks/chainId/useChainId'
 import { useProvider } from 'src/hooks/contract'
 
 interface UseDevconContractResult {
-  devcon: Devcon6
+  devcon: AuctionRaffle
   chainId: SupportedChainId
 }
 
@@ -23,7 +23,7 @@ export function useDevconContract(): UseDevconContractResult {
   const { devcon } = useAddresses('devcon')
   const provider = useProvider()
 
-  const devconContract = useMemo(() => Devcon6__factory.connect(devcon, provider), [devcon, provider])
+  const devconContract = useMemo(() => AuctionRaffle__factory.connect(devcon, provider), [devcon, provider])
   return {
     chainId,
     devcon: devconContract,

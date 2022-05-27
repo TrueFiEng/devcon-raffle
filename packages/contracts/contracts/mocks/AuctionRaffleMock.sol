@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.10;
 
-import "../Devcon6.sol";
+import "../AuctionRaffle.sol";
 
-contract Devcon6Mock is Devcon6 {
+contract AuctionRaffleMock is AuctionRaffle {
     constructor(
         address initialOwner,
         uint256 biddingStartTime,
@@ -15,7 +15,7 @@ contract Devcon6Mock is Devcon6 {
         uint256 reservePrice,
         uint256 minBidIncrement
     )
-        Devcon6(
+        AuctionRaffle(
             initialOwner,
             biddingStartTime,
             biddingEndTime,

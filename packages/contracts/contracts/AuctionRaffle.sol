@@ -11,7 +11,7 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./libs/MaxHeap.sol";
 
-contract Devcon6 is Ownable, Config, BidModel, StateModel {
+contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
 
@@ -40,12 +40,12 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     event NewGoldenTicketWinner(uint256 bidderID);
 
     modifier onlyInState(State requiredState) {
-        require(getState() == requiredState, "Devcon6: is in invalid state");
+        require(getState() == requiredState, "AuctionRaffle: is in invalid state");
         _;
     }
 
     modifier onlyExternalTransactions() {
-        require(msg.sender == tx.origin, "Devcon6: internal transactions are forbidden");
+        require(msg.sender == tx.origin, "AuctionRaffle: internal transactions are forbidden");
         _;
     }
 
@@ -76,17 +76,17 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     receive() external payable {
-        revert("Devcon6: contract accepts ether transfers only by bid method");
+        revert("AuctionRaffle: contract accepts ether transfers only by bid method");
     }
 
     fallback() external payable {
-        revert("Devcon6: contract accepts ether transfers only by bid method");
+        revert("AuctionRaffle: contract accepts ether transfers only by bid method");
     }
 
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount == 0) {
-            require(msg.value >= _reservePrice, "Devcon6: bid amount is below reserve price");
+            require(msg.value >= _reservePrice, "AuctionRaffle: bid amount is below reserve price");
             bidder.amount = msg.value;
             bidder.bidderID = _nextBidderID++;
             _bidders[bidder.bidderID] = payable(msg.sender);
@@ -94,7 +94,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
             addBidToHeap(bidder.bidderID, bidder.amount);
         } else {
-            require(msg.value >= _minBidIncrement, "Devcon6: bid increment too low");
+            require(msg.value >= _minBidIncrement, "AuctionRaffle: bid increment too low");
             uint256 oldAmount = bidder.amount;
             bidder.amount += msg.value;
 
@@ -135,7 +135,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
-        require(randomNumbers.length > 0, "Devcon6: there must be at least one random number passed");
+        require(randomNumbers.length > 0, "AuctionRaffle: there must be at least one random number passed");
 
         _settleState = SettleState.RAFFLE_SETTLED;
 
@@ -154,7 +154,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
         require(
             randomNumbers.length == raffleWinnersCount / _winnersPerRandom,
-            "Devcon6: passed incorrect number of random numbers"
+            "AuctionRaffle: passed incorrect number of random numbers"
         );
 
         selectRaffleWinners(participantsLength, randomNumbers);
@@ -163,8 +163,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function claim(uint256 bidderID) external onlyInState(State.RAFFLE_SETTLED) {
         address payable bidderAddress = getBidderAddress(bidderID);
         Bid storage bidder = _bids[bidderAddress];
-        require(!bidder.claimed, "Devcon6: funds have already been claimed");
-        require(bidder.winType != WinType.AUCTION, "Devcon6: auction winners cannot claim funds");
+        require(!bidder.claimed, "AuctionRaffle: funds have already been claimed");
+        require(bidder.winType != WinType.AUCTION, "AuctionRaffle: auction winners cannot claim funds");
 
         bidder.claimed = true;
         uint256 claimAmount;
@@ -182,7 +182,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     }
 
     function claimProceeds() external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
-        require(!_proceedsClaimed, "Devcon6: proceeds have already been claimed");
+        require(!_proceedsClaimed, "AuctionRaffle: proceeds have already been claimed");
         _proceedsClaimed = true;
 
         uint256 biddersCount = getBiddersCount();
@@ -210,8 +210,8 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
     function claimFees(uint256 bidsCount) external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
         uint256 claimedFeesIndex = _claimedFeesIndex;
         uint256 feesCount = _raffleParticipants.length;
-        require(feesCount > 0, "Devcon6: there are no fees to claim");
-        require(claimedFeesIndex < feesCount, "Devcon6: fees have already been claimed");
+        require(feesCount > 0, "AuctionRaffle: there are no fees to claim");
+        require(claimedFeesIndex < feesCount, "AuctionRaffle: fees have already been claimed");
 
         uint256 endIndex = claimedFeesIndex + bidsCount;
         if (endIndex > feesCount) {
@@ -238,7 +238,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
         IERC20 token = IERC20(tokenAddress);
         uint256 balance = token.balanceOf(address(this));
 
-        require(balance > 0, "Devcon6: no tokens for given address");
+        require(balance > 0, "AuctionRaffle: no tokens for given address");
         token.safeTransfer(owner(), balance);
     }
 
@@ -256,7 +256,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getBid(address bidder) external view returns (Bid memory) {
         Bid storage bid_ = _bids[bidder];
-        require(bid_.bidderID != 0, "Devcon6: no bid by given address");
+        require(bid_.bidderID != 0, "AuctionRaffle: no bid by given address");
         return bid_;
     }
 
@@ -289,7 +289,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function getBidderAddress(uint256 bidderID) public view returns (address payable) {
         address payable bidderAddress = _bidders[bidderID];
-        require(bidderAddress != address(0), "Devcon6: bidder with given ID does not exist");
+        require(bidderAddress != address(0), "AuctionRaffle: bidder with given ID does not exist");
         return bidderAddress;
     }
 
@@ -437,7 +437,7 @@ contract Devcon6 is Ownable, Config, BidModel, StateModel {
 
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
-        require(index < participantsLength, "Devcon6: invalid raffle participant index");
+        require(index < participantsLength, "AuctionRaffle: invalid raffle participant index");
         _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
         _raffleParticipants.pop();
     }

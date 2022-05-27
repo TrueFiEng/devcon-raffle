@@ -1,5 +1,5 @@
 import { setupFixtureLoader } from '../setup'
-import { configuredDevcon6Fixture } from 'fixtures/devcon6Fixture'
+import { configuredAuctionRaffleFixture } from 'fixtures/auctionRaffleFixture'
 import { expect } from 'chai'
 
 describe('Config', function () {
@@ -7,23 +7,23 @@ describe('Config', function () {
 
   describe('constructor', function () {
     it('reverts for zero auction winners count', async function () {
-      await expect(loadFixture(configuredDevcon6Fixture({ auctionWinnersCount: 0 })))
+      await expect(loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 0 })))
         .to.be.revertedWith('Config: auction winners count must be greater than 0')
     })
 
     it('reverts for zero raffle winners count', async function () {
-      await expect(loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 0 })))
+      await expect(loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 0 })))
         .to.be.revertedWith('Config: raffle winners count must be greater than 0')
     })
 
     it('reverts for raffle winners count non-divisible by 8', async function () {
-      await expect(loadFixture(configuredDevcon6Fixture({ raffleWinnersCount: 7 })))
+      await expect(loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 7 })))
         .to.be.revertedWith('Config: invalid raffle winners count')
     })
 
     it('reverts for bidding start time after bidding end time', async function () {
       await expect(loadFixture(
-        configuredDevcon6Fixture({
+        configuredAuctionRaffleFixture({
           biddingStartTime: 200,
           biddingEndTime: 100,
           claimingEndTime: 300,
@@ -33,7 +33,7 @@ describe('Config', function () {
 
     it('reverts for bidding start time after bidding end time', async function () {
       await expect(loadFixture(
-        configuredDevcon6Fixture({
+        configuredAuctionRaffleFixture({
           biddingStartTime: 100,
           biddingEndTime: 300,
           claimingEndTime: 200,
@@ -42,12 +42,12 @@ describe('Config', function () {
     })
 
     it('reverts for zero reserve price', async function () {
-      await expect(loadFixture(configuredDevcon6Fixture({ reservePrice: 0 })))
+      await expect(loadFixture(configuredAuctionRaffleFixture({ reservePrice: 0 })))
         .to.be.revertedWith('Config: reserve price must be greater than 0')
     })
 
     it('reverts for zero min bid increment', async function () {
-      await expect(loadFixture(configuredDevcon6Fixture({ minBidIncrement: 0 })))
+      await expect(loadFixture(configuredAuctionRaffleFixture({ minBidIncrement: 0 })))
         .to.be.revertedWith('Config: min bid increment must be greater than 0')
     })
   })
