@@ -34,7 +34,7 @@ const TimeBox = styled.div`
   row-gap: 4px;
   font-family: 'Space Mono', 'Roboto Mono', monospace;
 
-  @media screen and (min-width: 1600px) {
+  @media screen and (min-width: 1800px) {
     flex-direction: row;
     align-items: center;
     column-gap: 40px;
