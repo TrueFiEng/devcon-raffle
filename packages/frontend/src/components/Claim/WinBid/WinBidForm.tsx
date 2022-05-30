@@ -19,7 +19,7 @@ const winText = {
 }
 
 const withdrawText = {
-  [WinType.Loss]: `You can withdraw your bid amount minus 2% fee until`,
+  [WinType.Loss]: `You can withdraw your bid amount minus the 2% fee until`,
   [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds until',
   [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price until',
 }
