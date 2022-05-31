@@ -15,11 +15,11 @@ const winText = {
   [WinType.Loss]: 'We are sorry, but you did not win in auction or raffle.',
   [WinType.GoldenTicket]: 'You won the Golden Ticket!',
   [WinType.Auction]: 'Your bid was in the top 20, so you win a ticket to Devcon 6!',
-  [WinType.Raffle]: 'You were chosen in the raffle!',
+  [WinType.Raffle]: 'You were chosen in the raffle and have successfully purchased a ticket!',
 }
 
 const withdrawText = {
-  [WinType.Loss]: `You can withdraw your bid amount minus 2% fee until`,
+  [WinType.Loss]: `You can withdraw your bid amount minus the 2% fee until`,
   [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds until',
   [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price until',
 }

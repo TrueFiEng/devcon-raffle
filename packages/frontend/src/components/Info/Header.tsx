@@ -13,7 +13,7 @@ export const Header = () => {
         <Wrapper>
           <TitleWrapper>
             <Title>Devcon 6</Title>
-            <SubTitle>Ticket Sale</SubTitle>
+            <SubTitle>Auction+Raffle Ticket Sale</SubTitle>
           </TitleWrapper>
           <TimeLeft />
         </Wrapper>
@@ -47,7 +47,7 @@ const Wrapper = styled.div`
   width: 100%;
   color: ${Colors.White};
 
-  @media screen and (min-width: 1600px) {
+  @media screen and (min-width: 1800px) {
     justify-content: flex-start;
     row-gap: 40px;
   }
@@ -57,7 +57,7 @@ const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
 
-  @media screen and (min-width: 1600px) {
+  @media screen and (min-width: 1800px) {
     flex-direction: row;
     align-items: flex-end;
     column-gap: 20px;
@@ -66,7 +66,7 @@ const TitleWrapper = styled.div`
 `
 
 const Title = styled.h1`
-  @media screen and (min-width: 1600px) {
+  @media screen and (min-width: 1800px) {
     line-height: 1;
   }
 `
