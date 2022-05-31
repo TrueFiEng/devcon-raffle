@@ -2,7 +2,6 @@ import { TruefiLogoIcon } from 'src/components/Icons'
 import { Colors, hexOpacity } from 'src/styles/colors'
 import styled from 'styled-components'
 
-
 export const Footer = () => {
   return (
     <FooterContainer>
