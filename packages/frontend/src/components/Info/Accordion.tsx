@@ -21,13 +21,15 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="What is this?" />
           </StyledHeader>
           <StyledContent>
-            In an effort to make our ticket distribution more efficient and fair, we are selling a portion of this
-            year’s tickets via an on-chain auction+raffle. Typically we sell tickets in waves: attendees need to wait
-            for a specific release time and refresh the ticket shop rapidly in order to hope to claim & checkout with a
-            ticket. Not to mention the need for a speedy internet connection and crossing your fingers that you’re close
-            enough to our ticketing servers to be one of the first to secure a ticket. This year, we wanted to try
-            something different, so we are experimenting with an on-chain Raffle+Auction to sell a portion of Devcon
-            tickets.
+            In an effort to make our ticket distribution more efficient and fair, we are selling
+            a <Italic>portion</Italic> of this year’s tickets via an on-chain auction+raffle. Typically we sell tickets
+            in waves: attendees need to wait for a specific release time and refresh the ticket shop rapidly in order
+            to <Italic>hope</Italic> to claim & checkout with a ticket. Not to mention the need for a speedy internet
+            connection and crossing your fingers that you’re close enough to our ticketing servers to be one of the
+            first to secure a ticket.
+            <br /><br />
+            This year, we wanted to try something different, so we are experimenting with an on-chain Raffle+Auction to
+            sell a <Italic>portion</Italic> of Devcon tickets.
           </StyledContent>
         </Accordion.Item>
 
@@ -189,6 +191,11 @@ const StyledContent = styled(Accordion.AccordionContent)`
   &[data-state='open'] {
     margin-bottom: 32px;
   }
+`
+
+const Italic = styled.span`
+  font-style: italic;
+  display: contents;
 `
 
 const AccordionArrow = styled(ArrowDownIcon)`
