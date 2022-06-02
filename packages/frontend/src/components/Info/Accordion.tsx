@@ -113,7 +113,10 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Okay, I got a voucher code. What do I do now?" />
           </StyledHeader>
           <StyledContent>
-            You can go to LINK_HERE to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
+            <ContentRow>
+              You can go to <Link href="/" target="_blank" rel="noreferrer noopener">Pretix</Link> to redeem your
+              voucher code for a Devcon 6 ticket. See you at the conference!
+            </ContentRow>
           </StyledContent>
         </Accordion.Item>
 
@@ -123,12 +126,8 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <ContentRow>
-              For more details, read our{' '}
-              <Link href="/" target="_blank" rel="noreferrer noopener">
-                blog post
-              </Link>{' '}
-              or contact
-              <Link href="mailto:support@devcon.org">support@devcon.org</Link>
+              For more details, read our <Link href="/" target="_blank" rel="noreferrer noopener">blog post</Link> or
+              contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
             </ContentRow>
           </StyledContent>
         </Accordion.Item>
