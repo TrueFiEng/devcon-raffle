@@ -1,6 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { Footer } from './components/Footer/Footer'
 import { TopBar } from './components/TopBar/TopBar'
 import { Bids, Home } from './pages'
 
@@ -14,6 +15,7 @@ export function Root() {
           <Route path="/bids" element={<Bids />} />
         </Routes>
       </HashRouter>
+      <Footer />
     </RootContainer>
   )
 }
