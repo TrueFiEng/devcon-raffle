@@ -121,7 +121,11 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <ContentRow>
-              <span>See blog post… or contact </span>
+              For more details, read our{' '}
+              <Link href="/" target="_blank" rel="noreferrer noopener">
+                blog post
+              </Link>{' '}
+              or contact
               <Link href="mailto:support@devcon.org">support@devcon.org</Link>
             </ContentRow>
           </StyledContent>
