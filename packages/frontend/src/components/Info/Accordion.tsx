@@ -35,7 +35,7 @@ export const InfoAccordion = () => {
 
         <Accordion.Item value="item-2">
           <StyledHeader>
-            <AccordionStyledTrigger heading="How to participate in the Auction-Raffle?" />
+            <AccordionStyledTrigger heading="How to participate in the Auction+Raffle?" />
           </StyledHeader>
           <StyledContent>
             Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
