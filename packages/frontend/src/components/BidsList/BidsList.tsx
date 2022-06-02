@@ -47,7 +47,7 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
           </>
         )}
       </BidList>
-      {view === 'short' && !isLoadingParams && (
+      {view === 'short' && userBid && !isLoadingParams && (
         <BidListText>You’re taking part in the {userRaffleBid ? 'raffle' : 'auction'}!</BidListText>
       )}
     </>
