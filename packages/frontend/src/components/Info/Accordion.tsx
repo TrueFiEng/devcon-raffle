@@ -39,7 +39,7 @@ export const InfoAccordion = () => {
             Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
             ticket. Bid high to compete for the 20 tickets distributed in the auction, or be entered into the raffle for
             a chance to buy a ticket at the reserve price. You need to bid at least the reserve price, which is set to
-            the price of an early-bird Devcon ticket: x ETH.
+            the price of an early-bird Devcon ticket: {reservePrice} ETH.
           </StyledContent>
         </Accordion.Item>
 
