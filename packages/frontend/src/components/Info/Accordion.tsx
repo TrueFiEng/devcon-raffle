@@ -21,13 +21,14 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="What is this?" />
           </StyledHeader>
           <StyledContent>
-            In an effort to make our ticket distribution more efficient and fair, we are selling
-            a <Italic>portion</Italic> of this year’s tickets via an on-chain auction+raffle. Typically we sell tickets
-            in waves: attendees need to wait for a specific release time and refresh the ticket shop rapidly in order
-            to <Italic>hope</Italic> to claim & checkout with a ticket. Not to mention the need for a speedy internet
+            In an effort to make our ticket distribution more efficient and fair, we are selling a{' '}
+            <Italic>portion</Italic> of this year’s tickets via an on-chain auction+raffle. Typically we sell tickets in
+            waves: attendees need to wait for a specific release time and refresh the ticket shop rapidly in order to{' '}
+            <Italic>hope</Italic> to claim & checkout with a ticket. Not to mention the need for a speedy internet
             connection and crossing your fingers that you’re close enough to our ticketing servers to be one of the
             first to secure a ticket.
-            <br /><br />
+            <br />
+            <br />
             This year, we wanted to try something different, so we are experimenting with an on-chain Raffle+Auction to
             sell a <Italic>portion</Italic> of Devcon tickets.
           </StyledContent>
@@ -114,8 +115,11 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <ContentRow>
-              You can go to <Link href="/" target="_blank" rel="noreferrer noopener">Pretix</Link> to redeem your
-              voucher code for a Devcon 6 ticket. See you at the conference!
+              You can go to{' '}
+              <Link href="/" target="_blank" rel="noreferrer noopener">
+                Pretix
+              </Link>{' '}
+              to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
             </ContentRow>
           </StyledContent>
         </Accordion.Item>
@@ -126,8 +130,11 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             <ContentRow>
-              For more details, read our <Link href="/" target="_blank" rel="noreferrer noopener">blog post</Link> or
-              contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
+              For more details, read our{' '}
+              <Link href="/" target="_blank" rel="noreferrer noopener">
+                blog post
+              </Link>{' '}
+              or contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
             </ContentRow>
           </StyledContent>
         </Accordion.Item>
