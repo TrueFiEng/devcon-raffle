@@ -37,6 +37,11 @@ jest.mock('src/hooks/useContractBids', () => ({
   useContractBids: () => [],
 }))
 
+jest.mock('src/hooks', () => ({
+  useRaffleWinnersCount: () => 16,
+  useBids: () => ({ bids: [] }),
+}))
+
 describe('UI: BidsListSection', () => {
   afterEach(() => {
     mockUserBid = undefined
