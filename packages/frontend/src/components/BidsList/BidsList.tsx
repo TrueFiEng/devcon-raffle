@@ -1,8 +1,8 @@
 import { addressEqual } from '@usedapp/core'
 import { useMemo } from 'react'
-import { BidListEntry, EmptyBidListEntry } from 'src/components/BidsList/BidListEntry'
+import { BidListEntry } from 'src/components/BidsList/BidListEntry'
+import { EmptyBidsList } from 'src/components/BidsList/EmptyBidsList'
 import { Separator } from 'src/components/common/Separator'
-import { emptyBids } from 'src/constants/emptyBids'
 import { useBids, useRaffleWinnersCount } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useUserBid } from 'src/hooks/useUserBid'
@@ -31,31 +31,29 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
     return isAuctionParticipant(userBid, auctionWinnersCount, raffleWinnersCount, allBids.size)
   }, [auctionWinnersCount, allBids.size, raffleWinnersCount, userBid])
 
+  if (isLoadingParams) {
+    return <EmptyBidsList />
+  }
+
   return (
     <>
       <BidList>
-        {isLoadingParams ? (
-          emptyBids.map((emptyBid) => <EmptyBidListEntry key={emptyBid} place={emptyBid} />)
-        ) : (
+        {bids.map((bid) => (
+          <BidListEntry
+            key={bid.bidderAddress}
+            bid={bid}
+            isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
+            view={view}
+          />
+        ))}
+        {userRaffleBid && view === 'short' && (
           <>
-            {bids.map((bid) => (
-              <BidListEntry
-                key={bid.bidderAddress}
-                bid={bid}
-                isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
-                view={view}
-              />
-            ))}
-            {userRaffleBid && view === 'short' && (
-              <>
-                <Separator color={Colors.Grey} />
-                <BidListEntry bid={userRaffleBid} isUser view={view} />
-              </>
-            )}
+            <Separator color={Colors.Grey} />
+            <BidListEntry bid={userRaffleBid} isUser view={view} />
           </>
         )}
       </BidList>
-      {view === 'short' && userBid && !isLoadingParams && (
+      {view === 'short' && userBid && (
         <BidListText>You’re taking part in the {isAuctionWinner ? 'auction' : 'raffle'}!</BidListText>
       )}
     </>
@@ -75,7 +73,7 @@ function isAuctionParticipant(
   return userBid.place < firstRaffleBidIndex
 }
 
-const BidList = styled.div`
+export const BidList = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 32px;
