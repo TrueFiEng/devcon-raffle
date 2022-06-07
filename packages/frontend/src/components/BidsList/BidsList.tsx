@@ -3,9 +3,10 @@ import { useMemo } from 'react'
 import { BidListEntry, EmptyBidListEntry } from 'src/components/BidsList/BidListEntry'
 import { Separator } from 'src/components/common/Separator'
 import { emptyBids } from 'src/constants/emptyBids'
+import { useBids, useRaffleWinnersCount } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useUserBid } from 'src/hooks/useUserBid'
-import { Bid } from 'src/models/Bid'
+import { Bid, UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -18,10 +19,16 @@ interface Props {
 export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
+  const raffleWinnersCount = useRaffleWinnersCount()
+  const { bids: allBids } = useBids()
 
   const userRaffleBid = useMemo(() => {
     return auctionWinnersCount && userBid && userBid.place > auctionWinnersCount ? userBid : undefined
   }, [userBid, auctionWinnersCount])
+
+  const isAuctionWinner = useMemo(() => {
+    return isAuctionParticipant(userBid, auctionWinnersCount, raffleWinnersCount, allBids.size)
+  }, [auctionWinnersCount, allBids.size, raffleWinnersCount, userBid])
 
   return (
     <>
@@ -48,10 +55,24 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
         )}
       </BidList>
       {view === 'short' && userBid && !isLoadingParams && (
-        <BidListText>You’re taking part in the {userRaffleBid ? 'raffle' : 'auction'}!</BidListText>
+        <BidListText>You’re taking part in the {isAuctionWinner ? 'auction' : 'raffle'}!</BidListText>
       )}
     </>
   )
+}
+
+function isAuctionParticipant(
+  userBid: UserBid | undefined,
+  auctionWinnersCount: number | undefined,
+  raffleWinnersCount: number | undefined,
+  bidsLength: number
+) {
+  if (!userBid || !raffleWinnersCount || !auctionWinnersCount) {
+    return false
+  }
+  const raffleBidsOffset = Math.max(0, bidsLength - raffleWinnersCount)
+  const firstRaffleBidIndex = raffleBidsOffset >= auctionWinnersCount ? auctionWinnersCount : raffleBidsOffset
+  return userBid.place < firstRaffleBidIndex
 }
 
 const BidList = styled.div`
