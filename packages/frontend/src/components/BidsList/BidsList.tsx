@@ -8,6 +8,7 @@ import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { Bid, UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
+import { getFirstRaffleBidIndex } from 'src/utils'
 import styled from 'styled-components'
 
 interface Props {
@@ -70,8 +71,7 @@ function isAuctionParticipant(
   if (!userBid || !raffleWinnersCount || !auctionWinnersCount) {
     return false
   }
-  const raffleBidsOffset = Math.max(0, bidsLength - raffleWinnersCount)
-  const firstRaffleBidIndex = raffleBidsOffset >= auctionWinnersCount ? auctionWinnersCount : raffleBidsOffset
+  const firstRaffleBidIndex = getFirstRaffleBidIndex(bidsLength, raffleWinnersCount, auctionWinnersCount)
   return userBid.place < firstRaffleBidIndex
 }
 
