@@ -69,8 +69,8 @@ function isAuctionParticipant(
   if (!userBid || !raffleWinnersCount || !auctionWinnersCount) {
     return false
   }
-  const firstRaffleBidIndex = getFirstRaffleBidIndex(bidsLength, raffleWinnersCount, auctionWinnersCount)
-  return userBid.place < firstRaffleBidIndex
+  const firstRaffleBidIndex = getFirstRaffleBidIndex(bidsLength, auctionWinnersCount, raffleWinnersCount)
+  return userBid.place <= firstRaffleBidIndex
 }
 
 export const BidList = styled.div`
