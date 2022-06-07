@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { NothingFound, useMatchBid } from 'src/components/AllBids'
 import { BidsListHeaders, BidsSubList } from 'src/components/BidsList'
 import { useBids } from 'src/hooks'
+import { getFirstRaffleBidIndex } from 'src/utils'
 
 interface AllBidsListProps {
   search: string
@@ -14,8 +15,7 @@ export const AllBidsList = ({ search, auctionWinnersCount, raffleWinnersCount }:
   const bids = useMemo(() => immutableBids.toArray().map((bid) => bid.toObject()), [immutableBids])
   const matchesSearch = useMatchBid(search)
 
-  const raffleBidsOffset = Math.max(0, bids.length - raffleWinnersCount)
-  const firstRaffleBidIndex = raffleBidsOffset >= auctionWinnersCount ? auctionWinnersCount : raffleBidsOffset
+  const firstRaffleBidIndex = getFirstRaffleBidIndex(bids.length, auctionWinnersCount, raffleWinnersCount)
 
   const auctionBids = useMemo(() => {
     const sectionBids = bids.slice(0, firstRaffleBidIndex)
