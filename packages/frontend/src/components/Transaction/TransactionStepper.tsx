@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 const header = {
   [Transactions.Place]: 'Bid',
-  [Transactions.Bump]: 'Bid',
+  [Transactions.Bump]: 'Bid Bump',
   [Transactions.Withdraw]: 'Withdraw',
 }
 

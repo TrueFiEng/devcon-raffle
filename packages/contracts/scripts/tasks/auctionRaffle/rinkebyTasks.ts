@@ -1,11 +1,11 @@
 import { task, types } from 'hardhat/config'
-import { deployTestnetDevcon } from 'scripts/deploy/deploy'
+import { deployTestnetAuctionRaffle } from 'scripts/deploy/deploy'
 import { BigNumberish, constants, Contract, Signer, utils, Wallet } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import { connectToDevcon } from 'scripts/utils/devcon'
+import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import writeFileAtomic from 'write-file-atomic'
 
-const testnetDevconAddress = '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F'
+const testnetAuctionRaffleAddress = '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F'
 const testnetHeapAddress = '0xc1D8b72838Cb3F1c52651d76ea186Df457817aD6'
 
 task('generate-dotenv', 'Generate .env file needed for other tasks')
@@ -37,7 +37,7 @@ task('transfer-ether', 'Transfers ether from DEPLOYER account to PRIVATE_KEYS ac
     }
   })
 
-task('deploy', 'Deploys Devcon6 contract')
+task('deploy', 'Deploys AuctionRaffle contract')
   .addParam('delay', 'Time in seconds to push forward bidding start time', 0, types.int, true)
   .setAction(async ({ delay }: { delay: number }, hre) => {
     const [deployer] = await hre.ethers.getSigners()
@@ -45,8 +45,8 @@ task('deploy', 'Deploys Devcon6 contract')
     console.log('Deploying contracts...')
     const now = Math.floor(Date.now() / 1000)
     const biddingStartTime = now + delay
-    const devcon = await deployTestnetDevcon(biddingStartTime, testnetHeapAddress, deployer, hre)
-    console.log('Devcon6 address: ', devcon.address)
+    const auctionRaffle = await deployTestnetAuctionRaffle(biddingStartTime, testnetHeapAddress, deployer, hre)
+    console.log('AuctionRaffle address: ', auctionRaffle.address)
     console.log('Contracts deployed\n')
   })
 
@@ -56,18 +56,18 @@ task('init-bids', 'Places initial bids using PRIVATE_KEYS accounts')
     const initialBidAmount = utils.parseUnits('0.20', 9)
     const bidIncrement = utils.parseUnits('0.02', 9)
 
-    const devcon = await connectToDevcon(hre, getTestnetDevconAddress(), testnetHeapAddress)
+    const auctionRaffle = await connectToAuctionRaffle(hre, getTestnetAuctionRaffleAddress(), testnetHeapAddress)
 
     const privateKeys: string[] = JSON.parse(process.env.PRIVATE_KEYS)
     for (let i = 0; i < privateKeys.length; i++) {
       const wallet = new Wallet(privateKeys[i], hre.ethers.provider)
-      await bidAs(devcon, wallet, initialBidAmount.add(bidIncrement.mul(i)))
+      await bidAs(auctionRaffle, wallet, initialBidAmount.add(bidIncrement.mul(i)))
     }
   })
 
-export async function bidAs(devcon: Contract, signer: Signer, value: BigNumberish) {
-  const devconAsSigner = devcon.connect(signer)
-  const tx = await devconAsSigner.bid({ value })
+export async function bidAs(auctionRaffle: Contract, signer: Signer, value: BigNumberish) {
+  const auctionRaffleAsSigner = auctionRaffle.connect(signer)
+  const tx = await auctionRaffleAsSigner.bid({ value })
   const { gasUsed } = await tx.wait()
   console.log(`Bid ${value.toString()} wei as ${await signer.getAddress()}, gasUsed: ${gasUsed.toString()}`)
 }
@@ -78,10 +78,10 @@ PRIVATE_KEYS='[
 ${keys.map(key => `  "${key}"`).join(',\n')}
 ]'
 VITE_NETWORK=ArbitrumRinkeby
-VITE_TESTNET_DEVCON=${testnetDevconAddress}
+VITE_TESTNET_DEVCON=${testnetAuctionRaffleAddress}
 `
 }
 
-function getTestnetDevconAddress() {
-  return process.env.VITE_TESTNET_DEVCON || testnetDevconAddress
+function getTestnetAuctionRaffleAddress() {
+  return process.env.VITE_TESTNET_DEVCON || testnetAuctionRaffleAddress
 }

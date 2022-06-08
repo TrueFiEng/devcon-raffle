@@ -18,15 +18,49 @@ export const InfoAccordion = () => {
       <Accordion.Root type="single" defaultValue="item-1" collapsible>
         <Accordion.Item value="item-1">
           <StyledHeader>
-            <AccordionStyledTrigger heading="How to buy a ticket for Devcon 6?" />
+            <AccordionStyledTrigger heading="What is this?" />
           </StyledHeader>
           <StyledContent>
-            Join the contest by submitting your bid. Bid high to win in the auction, or take your chance in the raffle.
-            You need to bid at least the price of a Devcon ticket.
+            In an effort to make our ticket distribution more efficient and fair, we are selling a{' '}
+            <Italic>portion</Italic> of this year’s tickets via an on-chain auction+raffle. Typically we sell tickets in
+            waves: attendees need to wait for a specific release time and refresh the ticket shop rapidly in order to{' '}
+            <Italic>hope</Italic> to claim & checkout with a ticket. Not to mention the need for a speedy internet
+            connection and crossing your fingers that you’re close enough to our ticketing servers to be one of the
+            first to secure a ticket.
+            <br />
+            <br />
+            This year, we wanted to try something different, so we are experimenting with an on-chain Raffle+Auction to
+            sell a <Italic>portion</Italic> of Devcon tickets.
           </StyledContent>
         </Accordion.Item>
 
         <Accordion.Item value="item-2">
+          <StyledHeader>
+            <AccordionStyledTrigger heading="How to participate in the Auction+Raffle?" />
+          </StyledHeader>
+          <StyledContent>
+            Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
+            ticket. Bid high to compete for the 20 tickets distributed in the auction, or be entered into the raffle for
+            a chance to buy a ticket at the reserve price. You need to bid at least the reserve price, which is set to
+            the price of an early-bird Devcon ticket: {reservePrice} ETH.
+          </StyledContent>
+        </Accordion.Item>
+
+        <Accordion.Item value="item-3">
+          <StyledHeader>
+            <AccordionStyledTrigger heading="ELI5 plz?" />
+          </StyledHeader>
+          <StyledContent>
+            Place a bid in ETH to win a Devcon ticket. If your bid is in the top {auctionWinnersCount}, you will win a
+            Devcon ticket in exchange for the amount you paid in your bid. At any point, you can top up your bid if you
+            want. If your bid is not in the top {auctionWinnersCount}, you will be entered into a raffle and may be
+            randomly chosen to win a Devcon ticket at the reserve price — if you bid more than the reserve price, you
+            can withdraw the difference. If you do not win, you can withdraw your entire bid, minus a 2% fee which will
+            be donated to funding Ethereum public goods.
+          </StyledContent>
+        </Accordion.Item>
+
+        <Accordion.Item value="item-4">
           <StyledHeader>
             <AccordionStyledTrigger heading="Contest rules" />
           </StyledHeader>
@@ -64,7 +98,7 @@ export const InfoAccordion = () => {
           </StyledContent>
         </Accordion.Item>
 
-        <Accordion.Item value="item-3">
+        <Accordion.Item value="item-5">
           <StyledHeader>
             <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
@@ -75,12 +109,33 @@ export const InfoAccordion = () => {
           </StyledContent>
         </Accordion.Item>
 
-        <Accordion.Item value="item-4">
+        <Accordion.Item value="item-6">
           <StyledHeader>
             <AccordionStyledTrigger heading="Okay, I got a voucher code. What do I do now?" />
           </StyledHeader>
           <StyledContent>
-            You can go to LINK_HERE to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
+            <ContentRow>
+              You can go to{' '}
+              <Link href="/" target="_blank" rel="noreferrer noopener">
+                Pretix
+              </Link>{' '}
+              to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
+            </ContentRow>
+          </StyledContent>
+        </Accordion.Item>
+
+        <Accordion.Item value="item-7">
+          <StyledHeader>
+            <AccordionStyledTrigger heading="Other FAQ" />
+          </StyledHeader>
+          <StyledContent>
+            <ContentRow>
+              For more details, read our{' '}
+              <Link href="/" target="_blank" rel="noreferrer noopener">
+                blog post
+              </Link>{' '}
+              or contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
+            </ContentRow>
           </StyledContent>
         </Accordion.Item>
       </Accordion.Root>
@@ -144,7 +199,23 @@ const StyledContent = styled(Accordion.AccordionContent)`
   }
 `
 
+const Italic = styled.span`
+  font-style: italic;
+  display: contents;
+`
+
 const AccordionArrow = styled(ArrowDownIcon)`
   transform: rotate(0);
   transform-origin: top;
+`
+
+const ContentRow = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+`
+
+const Link = styled.a`
+  color: ${Colors.Blue};
+  text-decoration: underline;
 `
