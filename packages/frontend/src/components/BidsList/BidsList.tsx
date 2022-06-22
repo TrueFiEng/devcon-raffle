@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { BidListEntry } from 'src/components/BidsList/BidListEntry'
 import { EmptyBidsList } from 'src/components/BidsList/EmptyBidsList'
 import { Separator } from 'src/components/common/Separator'
-import { useBids, useRaffleWinnersCount } from 'src/hooks'
+import { ContractState, useBids, useContractState, useRaffleWinnersCount } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { Bid, UserBid } from 'src/models/Bid'
@@ -22,6 +22,7 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
   const auctionWinnersCount = useAuctionWinnersCount()
   const raffleWinnersCount = useRaffleWinnersCount()
   const { bids: allBids } = useBids()
+  const { state } = useContractState()
 
   const userRaffleBid = useMemo(() => {
     return auctionWinnersCount && userBid && userBid.place > auctionWinnersCount ? userBid : undefined
@@ -53,7 +54,7 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
           </>
         )}
       </BidList>
-      {view === 'short' && userBid && (
+      {view === 'short' && userBid && !isAuctionSettled(state) && (
         <BidListText>You’re taking part in the {isAuctionWinner ? 'auction' : 'raffle'}!</BidListText>
       )}
     </>
@@ -71,6 +72,14 @@ function isAuctionParticipant(
   }
   const firstRaffleBidIndex = getFirstRaffleBidIndex(bidsLength, auctionWinnersCount, raffleWinnersCount)
   return userBid.place <= firstRaffleBidIndex
+}
+
+function isAuctionSettled(state: ContractState) {
+  return (
+    state === ContractState.AUCTION_SETTLED ||
+    state === ContractState.RAFFLE_SETTLED ||
+    state === ContractState.CLAIMING_CLOSED
+  )
 }
 
 export const BidList = styled.div`
