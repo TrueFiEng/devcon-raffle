@@ -50,7 +50,11 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 }
 
-function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
+function divideBids(
+  bids: ImmutableBids,
+  auctionWinners: BigNumber[] | undefined,
+  raffleWinners: BigNumber[] | undefined
+): Bids {
   const settledBids: Bids = {
     auction: [],
     raffle: [],
