@@ -39,8 +39,8 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
         <NothingFound search={search} />
       ) : (
         <>
-          <BidsListHeaders />
           {filteredBids.goldenTicket && <GoldenTicketWinner bidderAddress={filteredBids.goldenTicket.bidderAddress} />}
+          <BidsListHeaders />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
