@@ -69,7 +69,7 @@ function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWin
     }
     if (bidderID.eq(raffleWinners[0])) {
       settledBids.goldenTicket = bid.toObject()
-      return false
+      return
     }
     if (includesBigNumber(raffleWinners, bidderID)) {
       settledBids.raffle.push(bid.toObject())
