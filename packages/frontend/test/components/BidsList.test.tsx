@@ -38,6 +38,12 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 jest.mock('src/hooks', () => ({
+  useContractState: () => ({ state: 1 }),
+  ContractState: {
+    AUCTION_SETTLED: 3,
+    RAFFLE_SETTLED: 4,
+    CLAIMING_CLOSED: 5,
+  },
   useRaffleWinnersCount: () => 16,
   useBids: () => ({ bids: [] }),
 }))
