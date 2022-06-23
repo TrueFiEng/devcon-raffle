@@ -17,6 +17,7 @@ const arbitrumRinkebyChainId = 421611
 let mockUserBid: UserBid | undefined
 
 jest.mock('@usedapp/core', () => ({
+  ...jest.requireActual('@usedapp/core'),
   useEthers: () => ({ account: mockUserAddress }),
   addressEqual: jest.requireActual('@usedapp/core').addressEqual,
 }))
