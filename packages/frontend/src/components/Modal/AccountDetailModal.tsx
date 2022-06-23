@@ -31,6 +31,7 @@ export const AccountDetailModal = ({ isShown, onRequestClose }: ModalProps) => {
       accountIconRef.current.innerHTML = ''
       accountIconRef.current.appendChild(Jazzicon(40, parseInt(account.slice(2, 10), 16)))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account])
 
   const onDisconnect = useCallback(() => {

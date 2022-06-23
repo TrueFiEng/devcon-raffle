@@ -89,6 +89,7 @@ export const Web3ModalProvider = ({ children }: Props) => {
         cacheProvider: true,
         providerOptions,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
