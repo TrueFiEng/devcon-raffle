@@ -36,6 +36,14 @@ abstract contract Config {
         require(biddingEndTime_ < claimingEndTime_, "Config: bidding end time must be before claiming end time");
         require(reservePrice_ > 0, "Config: reserve price must be greater than 0");
         require(minBidIncrement_ > 0, "Config: min bid increment must be greater than 0");
+        require(
+            biddingEndTime_ - biddingStartTime_ >= 6 hours,
+            "Config: bidding start time and bidding end time must be at least 6h apart"
+        );
+        require(
+            claimingEndTime_ - biddingEndTime_ >= 6 hours,
+            "Config: bidding end time and claiming end time must be at least 6h apart"
+        );
 
         _biddingStartTime = biddingStartTime_;
         _biddingEndTime = biddingEndTime_;
