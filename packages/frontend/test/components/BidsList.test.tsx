@@ -17,6 +17,7 @@ const arbitrumRinkebyChainId = 421611
 let mockUserBid: UserBid | undefined
 
 jest.mock('@usedapp/core', () => ({
+  ...jest.requireActual('@usedapp/core'),
   useEthers: () => ({ account: mockUserAddress }),
   addressEqual: jest.requireActual('@usedapp/core').addressEqual,
 }))
@@ -38,6 +39,12 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 jest.mock('src/hooks', () => ({
+  useContractState: () => ({ state: 1 }),
+  ContractState: {
+    AUCTION_SETTLED: 3,
+    RAFFLE_SETTLED: 4,
+    CLAIMING_CLOSED: 5,
+  },
   useRaffleWinnersCount: () => 16,
   useBids: () => ({ bids: [] }),
 }))
@@ -133,7 +140,7 @@ describe('UI: BidsListSection', () => {
     const place = screen.getByText(bid.get('place') + '.')
     // eslint-disable-next-line testing-library/no-node-access
     expect(place.parentElement).toHaveTextContent(
-      `${bid.get('place')}.${formatEtherAmount(bid.get('amount'))} ETH ${shortenEthAddress(bid.get('bidderAddress'))}`
+      `${bid.get('place')}.${formatEtherAmount(bid.get('amount'))} ETH${shortenEthAddress(bid.get('bidderAddress'))}`
     )
   }
   const testHiddenBid = (bid: ImmutableBid) => {

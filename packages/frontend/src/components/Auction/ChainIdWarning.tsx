@@ -1,14 +1,13 @@
 import { getWarningText } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
 import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
-import { useContractState, useSwitchChain } from 'src/hooks'
+import { useContractState, useSwitchChain, useWhichWallet } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
-import { detectMetaMask } from 'src/utils'
 import styled from 'styled-components'
 
 export const ChainIdWarning = () => {
+  const { isMetaMask, isWalletConnect, isPortis } = useWhichWallet()
   const switchChain = useSwitchChain()
-  const isProviderMetamask = detectMetaMask()
   const { state } = useContractState()
   const text = getWarningText(state)
 
@@ -19,7 +18,9 @@ export const ChainIdWarning = () => {
         <span>You are connected to the wrong network.</span>
       </FormRow>
       <FormRow>
-        <span>To {text.action} connect your wallet to the Arbitrum network.</span>
+        <span>
+          To {text.action} connect your wallet to the <b>Arbitrum network.</b>
+        </span>
       </FormRow>
       <FormRow>
         <span>
@@ -27,12 +28,12 @@ export const ChainIdWarning = () => {
             target="_blank"
             href="https://consensys.net/blog/metamask/how-to-bridge-your-assets-to-arbitrum-using-metamask/"
           >
-            Click here to read the tutorial
+            Click here to read the tutorial for MetaMask
           </TutorialLink>{' '}
           »
         </span>
       </FormRow>
-      {isProviderMetamask && <Button onClick={switchChain}>Change network</Button>}
+      {isMetaMask && !isWalletConnect && !isPortis && <Button onClick={switchChain}>Change network</Button>}
     </FormWrapper>
   )
 }

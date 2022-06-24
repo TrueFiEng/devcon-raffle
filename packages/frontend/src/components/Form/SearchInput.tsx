@@ -18,7 +18,7 @@ export const SearchInput = ({ setSearch }: Props) => {
     <SearchInputWrapper>
       <SearchIcon />
       <StyledInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Search" />
-      {!!inputValue && <CloseButton onClick={() => setInputValue('')} />}
+      {!!inputValue && <CloseButton size={15} onClick={() => setInputValue('')} />}
     </SearchInputWrapper>
   )
 }

@@ -50,7 +50,11 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
   )
 }
 
-function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWinners?: BigNumber[]): Bids {
+function divideBids(
+  bids: ImmutableBids,
+  auctionWinners: BigNumber[] | undefined,
+  raffleWinners: BigNumber[] | undefined
+): Bids {
   const settledBids: Bids = {
     auction: [],
     raffle: [],
@@ -69,7 +73,7 @@ function divideBids(bids: ImmutableBids, auctionWinners?: BigNumber[], raffleWin
     }
     if (bidderID.eq(raffleWinners[0])) {
       settledBids.goldenTicket = bid.toObject()
-      return false
+      return
     }
     if (includesBigNumber(raffleWinners, bidderID)) {
       settledBids.raffle.push(bid.toObject())
