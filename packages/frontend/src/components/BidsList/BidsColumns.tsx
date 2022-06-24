@@ -1,3 +1,4 @@
+import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 export const BidsColumns = styled.div`
@@ -12,8 +13,12 @@ export const PlaceColumn = styled.span`
   grid-area: place;
 `
 
-export const BidColumn = styled.span`
+export const BidColumn = styled.div`
   grid-area: bid;
+
+  & > span {
+    color: ${Colors.GreyDark};
+  }
 `
 
 export const AddressColumn = styled.span`

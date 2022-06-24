@@ -18,7 +18,9 @@ export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
   return (
     <BidsEntryRow isUser={isUser}>
       <PlaceColumn>{bid.place}.</PlaceColumn>
-      <BidColumn>{formatEtherAmount(bid.amount) + ' ETH'} </BidColumn>
+      <BidColumn>
+        {formatEtherAmount(bid.amount)} <span>ETH</span>
+      </BidColumn>
       <AddressColumn>
         <AddressLink
           href={getExplorerAddressLink(chainId, bid.bidderAddress)}

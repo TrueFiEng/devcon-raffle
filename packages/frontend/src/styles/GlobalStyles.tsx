@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import { Colors } from './colors'
 import { fonts } from './fonts'
+import { web3Modal, web3ModalInstallMetaMaskFlexOrder } from './web3modal'
 
 export const GlobalStyles = createGlobalStyle`
   ${fonts}
@@ -94,7 +95,7 @@ export const GlobalStyles = createGlobalStyle`
 
   body::-webkit-scrollbar {
     width: 6px;
-    height: 6px; 
+    height: 6px;
   }
 
   body::-webkit-scrollbar-thumb {
@@ -105,4 +106,8 @@ export const GlobalStyles = createGlobalStyle`
   body::-webkit-scrollbar-track {
     background: ${Colors.Transparent};
   }
+
+  ${web3Modal}
+
+  ${window.ethereum === undefined ? web3ModalInstallMetaMaskFlexOrder : ''}
 `
