@@ -50,7 +50,8 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   )
 }
 
-const WinnerForm = styled(Form)`
+export const WinnerForm = styled(Form)`
+  row-gap: 20px;
   text-align: center;
 `
 

@@ -58,5 +58,5 @@ export const ClaimVoucherSection = ({ setVoucher }: ClaimVoucherSectionProps) =>
 }
 
 const VoucherOption = styled(WinOption)`
-  row-gap: 16px;
+  row-gap: 20px;
 `

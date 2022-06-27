@@ -1,11 +1,12 @@
 import { Button, CopyButton } from 'src/components/Buttons'
-import { Form, FormHeading } from 'src/components/Form/Form'
+import { FormHeading } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
 import { useAuctionState } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { VoucherTimeLeft } from './VoucherTimeLeft'
+import { WinnerForm } from './WinBidForm'
 
 interface Props {
   voucher: string
@@ -17,7 +18,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
   const isVoucherExpired = state === 'ClaimingClosed'
 
   return (
-    <Form>
+    <WinnerForm>
       <VoucherFormHeading voucher={voucher} withdrawnBid={withdrawnBid}>
         Here is your voucher code
       </VoucherFormHeading>
@@ -40,7 +41,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
         Go to sales system
       </Button>
       {!isVoucherExpired && <VoucherTimeLeft />}
-    </Form>
+    </WinnerForm>
   )
 }
 
