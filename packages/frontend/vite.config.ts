@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import nodePolyfills from 'rollup-plugin-polyfill-node';
+import nodeGlobals from 'rollup-plugin-node-globals'
 import * as path from 'path'
 import 'node:buffer'
 
@@ -18,7 +19,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       plugins: [
-        nodePolyfills()
+        nodeGlobals()
       ]
     },
     commonjsOptions: {
