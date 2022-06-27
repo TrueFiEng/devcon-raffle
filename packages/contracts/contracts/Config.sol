@@ -12,13 +12,13 @@ abstract contract Config {
     uint256 constant _bidderMask = _randomMask;
     uint256 constant _bidderMaskLength = _randomMaskLength;
 
-    uint256 public immutable _biddingStartTime;
-    uint256 public immutable _biddingEndTime;
-    uint256 public immutable _claimingEndTime;
-    uint256 public immutable _auctionWinnersCount;
-    uint256 public immutable _raffleWinnersCount;
-    uint256 public immutable _reservePrice;
-    uint256 public immutable _minBidIncrement;
+    uint256 immutable _biddingStartTime;
+    uint256 immutable _biddingEndTime;
+    uint256 immutable _claimingEndTime;
+    uint256 immutable _auctionWinnersCount;
+    uint256 immutable _raffleWinnersCount;
+    uint256 immutable _reservePrice;
+    uint256 immutable _minBidIncrement;
 
     constructor(
         uint256 biddingStartTime_,
