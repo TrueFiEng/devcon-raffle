@@ -4,6 +4,7 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 import * as path from 'path'
 
 const production = process.env.NODE_ENV === 'production';
+Buffer.from()
 
 // https://vitejs.dev/config/
 export default defineConfig({
