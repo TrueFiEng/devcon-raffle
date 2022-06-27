@@ -6,7 +6,7 @@ import { auctionRaffleArtifactName, getAuctionRaffleLibraries, multicallArtifact
 
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
-const minStateDuration = 6 * HOUR
+export const minStateDuration = 6 * HOUR
 
 export async function deploy(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const auctionRaffle = await deployAuctionRaffle(biddingStartTime, deployer, hre)
