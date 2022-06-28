@@ -110,8 +110,8 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     /**
      * @notice Selects auction winners and changes state to AUCTION_SETTLED
      * @dev Removes highest bids from heap, adds them to _auctionWinners array and sets bidders WinType to AUCTION
-     * Temporary adds auction winners bidderIDs to separate heap, sorts them and then removes winners in descending order from raffle participants
-     * (should I write why in descending order?)
+     * Temporarily adds auction winner bidderIDs to a separate heap and sorts them in descending order to
+     * efficiently remove auction winners from _raffleParticipants as they no longer take part in a raffle
      */
     function settleAuction() external onlyOwner onlyInState(State.BIDDING_CLOSED) {
         _settleState = SettleState.AUCTION_SETTLED;
@@ -146,7 +146,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
 
     /**
      * @notice Selects raffle winners and changes state to RAFFLE_SETTLED
-     * The first selected winner WinType is set to GOLDEN_TICKET, for the rest it is set to RAFFLE
+     * The first selected winner WinType is set to GOLDEN_TICKET, for the rest WinType is set to RAFFLE
      */
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
         require(randomNumbers.length > 0, "AuctionRaffle: there must be at least one random number passed");
@@ -175,7 +175,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     }
 
     /**
-     * @notice Allows bidder to claim funds when raffle is settled
+     * @notice Allows a bidder to claim funds when the raffle is settled
      * Golden ticket winner can withdraw bid amount
      * Raffle winner can withdraw bid amount minus `_reservePrice`
      * Non-winning bidder can withdraw bid amount minus 2% fee
@@ -434,7 +434,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
      * @notice Selects one golden ticket winner from random number
      * Saves the winner at the beginning of _raffleWinners array and sets bidder WinType to GOLDEN_TICKET
      * @param participantsLength The length of current participants array
-     * @param randomNumber The random number to select raffle winners from
+     * @param randomNumber The random number to select raffle winner from
      * @return participantsLength New participants array length
      * @return randomNumber Shifted random number by `_randomMaskLength` bits to the right
      */
@@ -476,7 +476,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
      * Saves the winners in _raffleWinners array and sets bidder WinType to RAFFLE
      * @dev Divides passed randomNumber into `_randomMaskLength` bits numbers and then selects one raffle winner from each small number
      * @param participantsLength The length of current participants array
-     * @param randomNumber The random number to select raffle winners from
+     * @param randomNumber The random number to select raffle winner from
      * @param winnersCount The number of raffle winners to select from single random number
      * @return New participants length
      */
@@ -536,7 +536,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
      * @notice Calculates winner index
      * @dev Calculates modulo of `_randomMaskLength` lower bits of randomNumber and participantsLength
      * @param participantsLength The length of current participants array
-     * @param randomNumber The random number to select raffle winners from
+     * @param randomNumber The random number to select raffle winner from
      * @return Winner index
      */
     function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
