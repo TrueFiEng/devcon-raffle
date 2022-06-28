@@ -77,6 +77,7 @@ export const BumpBidForm = ({
           onClick={() => {
             setView(TxFlowSteps.Review)
           }}
+          wide
         >
           Bump your bid
         </Button>
