@@ -42,8 +42,6 @@ const TimeRow = styled.div<TimeProps>`
   flex-wrap: wrap;
   margin: 0 auto;
   max-width: 1112px;
-  margin: 0 auto;
-
   font-family: 'Space Mono', 'Roboto Mono', monospace;
   color: ${({ isPeriodExpired }) => (isPeriodExpired ? Colors.RedDark : Colors.White)};
 `
