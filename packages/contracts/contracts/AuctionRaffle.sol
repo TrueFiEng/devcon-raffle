@@ -203,6 +203,9 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
 
     /**
      * @notice Allows owner to claim income from ticket sale after raffle is settled
+     * @dev Proceeds contains:
+     * sum of auction winner bid amounts
+     * sum of `_reservePrice` multiplied by raffle winners count (without golden ticket winner)
      */
     function claimProceeds() external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
         require(!_proceedsClaimed, "AuctionRaffle: proceeds have already been claimed");
