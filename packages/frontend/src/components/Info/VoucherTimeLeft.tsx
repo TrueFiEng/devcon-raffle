@@ -11,7 +11,7 @@ const REDEEM_PERIOD = 48
 
 export const VoucherTimeLeft = () => {
   const state = useAuctionState()
-  const isPeriodExpired = state === 'ClaimingFlow'
+  const isPeriodExpired = state === 'ClaimingClosed'
   const timestamp = useAuctionTime()
   const redeemTimestamp = timestamp && BigNumber.from(moment.unix(timestamp?.toNumber()).add(REDEEM_PERIOD, 'h').unix())
 
