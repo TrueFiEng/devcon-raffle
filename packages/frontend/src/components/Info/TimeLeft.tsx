@@ -46,6 +46,6 @@ const TimeRow = styled.div`
   column-gap: 8px;
 `
 
-const RemainingTime = styled.span`
+export const RemainingTime = styled.span`
   font-weight: 700;
 `
