@@ -84,7 +84,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     }
 
     /***
-     * @notice Makes bid or bumps existing bid
+     * @notice Places a new bid or bumps the existing bid
      * @dev Assigns unique bidderID to sender's address
      */
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
