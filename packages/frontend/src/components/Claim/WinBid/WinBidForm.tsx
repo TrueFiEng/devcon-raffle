@@ -11,13 +11,6 @@ import styled from 'styled-components'
 
 type WithdrawType = Exclude<WinType, WinType.Auction>
 
-const winText = {
-  [WinType.Loss]: 'We are sorry, but you did not win in auction or raffle.',
-  [WinType.GoldenTicket]: 'You won the Golden Ticket!',
-  [WinType.Auction]: 'Your bid was in the top 20, so you win a ticket to Devcon 6!',
-  [WinType.Raffle]: 'You were chosen in the raffle and have successfully purchased a ticket!',
-}
-
 const withdrawText = {
   [WinType.Loss]: `You can withdraw your bid amount minus the 2% fee until`,
   [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds until',
@@ -39,7 +32,7 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
   return (
     <Form>
       <WinFormHeading voucher={voucher}>{isWinningBid ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
-      <FormText>{winText[userBid.winType]}</FormText>
+      <FormText>{getWinText(userBid.winType)}</FormText>
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
           <span>{getWithdrawText(userBid.winType, claimingEndTime)}</span>
@@ -56,6 +49,31 @@ export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVou
 
 function getWithdrawText(winType: WithdrawType, deadline: string) {
   return `${withdrawText[winType]} ${deadline}.`
+}
+
+function getWinText(winType: WinType) {
+  switch (winType) {
+    case WinType.Loss:
+      return <span>We are sorry, but you did not win in auction or raffle.</span>
+    case WinType.GoldenTicket:
+      return (
+        <span>
+          You won the <b>Golden Ticket!</b>
+        </span>
+      )
+    case WinType.Auction:
+      return (
+        <span>
+          Your bid was in the top 20, so you <b>win a ticket</b> to Devcon 6!
+        </span>
+      )
+    case WinType.Raffle:
+      return (
+        <span>
+          You were chosen <b>in the raffle</b> and have successfully purchased a ticket!
+        </span>
+      )
+  }
 }
 
 export const WinOption = styled.div`
