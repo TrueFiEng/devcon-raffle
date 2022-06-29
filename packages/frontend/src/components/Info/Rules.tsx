@@ -14,7 +14,7 @@ export const Rule = ({ heading, rule, example }: RuleProps) => {
       <RuleHeading>{heading}</RuleHeading>
       <RuleText>
         {rule}
-        {example && <RuleExample>Example: {example}</RuleExample>}
+        {example && <RuleExample><Bold>Example:</Bold> {example}</RuleExample>}
       </RuleText>
     </RuleWrapper>
   )
@@ -26,6 +26,11 @@ const RuleWrapper = styled.div`
 
 const RuleHeading = styled.h4`
   margin: 0;
+`
+
+const Bold = styled.span`
+  font-weight: 600;
+  display: contents;
 `
 
 export const RuleText = styled.div`
