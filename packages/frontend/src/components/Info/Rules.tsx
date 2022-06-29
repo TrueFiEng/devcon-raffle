@@ -1,10 +1,11 @@
+import { ReactNode } from 'react'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 interface RuleProps {
   heading: string
-  rule: string
-  example?: string
+  rule: string | ReactNode
+  example?: string | ReactNode
 }
 
 export const Rule = ({ heading, rule, example }: RuleProps) => {
