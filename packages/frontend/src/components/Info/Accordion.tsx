@@ -132,10 +132,9 @@ export const InfoAccordion = () => {
                 <>
                   Bidder A places their first bid of {exampleBid} ETH which puts them in the 1st place. Later Bidder B
                   places their first bid of the same amount which puts them in 2nd place. Next, Bidder B bumps their bid
-                  to {exampleBid + 0.1} ETH which puts them in 1st place. Bidder A notices that they lost
-                  the first place and decides to bump their bid as well. Bidder A bumps their bid to{' '}
-                  {exampleBid + 0.1} ETH which <Bold>puts them in the 1st place</Bold>, because they placed
-                  their first bid before Bidder B.
+                  to {exampleBid + 0.1} ETH which puts them in 1st place. Bidder A notices that they lost the first
+                  place and decides to bump their bid as well. Bidder A bumps their bid to {exampleBid + 0.1} ETH which{' '}
+                  <Bold>puts them in the 1st place</Bold>, because they placed their first bid before Bidder B.
                 </>
               }
             />

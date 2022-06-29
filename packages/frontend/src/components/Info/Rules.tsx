@@ -14,7 +14,11 @@ export const Rule = ({ heading, rule, example }: RuleProps) => {
       <RuleHeading>{heading}</RuleHeading>
       <RuleText>
         {rule}
-        {example && <RuleExample><Bold>Example:</Bold> {example}</RuleExample>}
+        {example && (
+          <RuleExample>
+            <Bold>Example:</Bold> {example}
+          </RuleExample>
+        )}
       </RuleText>
     </RuleWrapper>
   )
