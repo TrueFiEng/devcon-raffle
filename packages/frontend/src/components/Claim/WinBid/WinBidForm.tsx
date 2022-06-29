@@ -3,13 +3,10 @@ import { TxFlowSteps } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
 import { ClaimVoucherSection, WinType } from 'src/components/Claim'
 import { Form, FormHeading, FormText } from 'src/components/Form/Form'
-import { useClaimingEndTime } from 'src/hooks'
 import { UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
 import { formatEtherAmount } from 'src/utils/formatters'
 import styled from 'styled-components'
-
-type WithdrawType = Exclude<WinType, WinType.Auction>
 
 const winText = {
   [WinType.Loss]: 'We are sorry, but you did not win in auction or raffle.',
@@ -19,9 +16,9 @@ const winText = {
 }
 
 const withdrawText = {
-  [WinType.Loss]: `You can withdraw your bid amount minus the 2% fee until`,
-  [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds until',
-  [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price until',
+  [WinType.Loss]: `You can withdraw your bid amount minus the 2% fee.`,
+  [WinType.GoldenTicket]: 'This means your ticket is free, so you can withdraw all your funds.',
+  [WinType.Raffle]: 'This means that you can withdraw all funds you bid over the reserve price.',
 }
 
 interface WinBidFormProps {
@@ -34,29 +31,29 @@ interface WinBidFormProps {
 
 export const WinBidForm = ({ userBid, withdrawalAmount, setView, voucher, setVoucher }: WinBidFormProps) => {
   const isWinningBid = userBid.winType !== WinType.Loss
-  const { claimingEndTime } = useClaimingEndTime()
 
   return (
-    <Form>
+    <WinnerForm>
       <WinFormHeading voucher={voucher}>{isWinningBid ? 'Congratulations 🎉 ' : 'No luck 😔'}</WinFormHeading>
       <FormText>{winText[userBid.winType]}</FormText>
       {!userBid.claimed && userBid.winType !== WinType.Auction && (
         <WinOption>
-          <span>{getWithdrawText(userBid.winType, claimingEndTime)}</span>
-          <Button view="primary" onClick={() => setView(TxFlowSteps.Review)}>
+          <span>{withdrawText[userBid.winType]}</span>
+          <Button view="primary" onClick={() => setView(TxFlowSteps.Review)} wide>
             <span>Withdraw {formatEtherAmount(withdrawalAmount)} ETH</span>
           </Button>
         </WinOption>
       )}
 
       {!voucher && isWinningBid && <ClaimVoucherSection setVoucher={setVoucher} />}
-    </Form>
+    </WinnerForm>
   )
 }
 
-function getWithdrawText(winType: WithdrawType, deadline: string) {
-  return `${withdrawText[winType]} ${deadline}.`
-}
+export const WinnerForm = styled(Form)`
+  row-gap: 20px;
+  text-align: center;
+`
 
 export const WinOption = styled.div`
   display: flex;
@@ -65,6 +62,7 @@ export const WinOption = styled.div`
   width: 100%;
   color: ${Colors.White};
 `
+
 const WinFormHeading = styled(FormHeading)<{ voucher?: string }>`
   font-size: ${({ voucher }) => (voucher ? '24px' : '40px')};
 `

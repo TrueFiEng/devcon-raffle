@@ -1,9 +1,9 @@
-import { FormSectionWrapper } from 'src/components/Form/Form'
+import { FormWideWrapper } from 'src/components/Form/Form'
 
 export const ClaimingClosed = () => {
   return (
-    <FormSectionWrapper>
+    <FormWideWrapper>
       <h2>Claiming is closed ⌛️</h2>
-    </FormSectionWrapper>
+    </FormWideWrapper>
   )
 }

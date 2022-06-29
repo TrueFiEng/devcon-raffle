@@ -38,8 +38,13 @@ export const FormWrapper = styled.div`
 `
 
 export const FormSectionWrapper = styled(FormWrapper)`
-  padding: 0 0 0 170px;
   justify-content: center;
+  text-align: center;
+  align-items: center;
+`
+
+export const FormWideWrapper = styled(FormSectionWrapper)`
+  padding: 0;
 `
 
 export const FormText = styled.p`
