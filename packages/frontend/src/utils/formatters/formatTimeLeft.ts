@@ -16,5 +16,5 @@ export function formatTimeLeft(timestamp?: BigNumber, now = Date.now()) {
   const hours = padZeroes(duration.hours())
   const minutes = padZeroes(duration.minutes())
 
-  return `${days}d ${hours}h ${minutes}m`
+  return `${days}d:${hours}h:${minutes}m`
 }
