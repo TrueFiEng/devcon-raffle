@@ -97,23 +97,31 @@ export const InfoAccordion = () => {
               rule={
                 <>
                   In the event there are:
-                  <ul>
+                  <BulletList>
                     <li>
-                      <Bold>1-80 participants:</Bold> All bidders win in the raffle.
+                      <ListText>
+                        <Bold>1-80 participants:</Bold> All bidders win in the raffle.
+                      </ListText>
                     </li>
                     <li>
-                      <Bold>81 participants:</Bold> Top 1 bidder wins in the auction. 80 remaining bidders win in the
-                      raffle.
+                      <ListText>
+                        <Bold>81 participants:</Bold> Top 1 bidder wins in the auction. 80 remaining bidders win in the
+                        raffle.
+                      </ListText>
                     </li>
                     <li>
-                      <Bold>101 participants:</Bold> Top 20 bidders win in the auction. Out of 81 remaining bidders, 80
-                      are randomly chosen to win in the raffle.
+                      <ListText>
+                        <Bold>101 participants:</Bold> Top 20 bidders win in the auction. Out of 81 remaining bidders,
+                        80 are randomly chosen to win in the raffle.
+                      </ListText>
                     </li>
                     <li>
-                      <Bold>120 participants:</Bold> Top 20 bidders win in the auction. Out of 100 remaining bidders, 80
-                      are randomly chosen to win in the raffle.
+                      <ListText>
+                        <Bold>120 participants:</Bold> Top 20 bidders win in the auction. Out of 100 remaining bidders,
+                        80 are randomly chosen to win in the raffle.
+                      </ListText>
                     </li>
-                  </ul>
+                  </BulletList>
                 </>
               }
             />
@@ -254,4 +262,13 @@ const AccordionArrow = styled(ArrowDownIcon)`
 const Link = styled.a`
   color: ${Colors.Blue};
   text-decoration: underline;
+`
+
+const BulletList = styled.ul`
+  color: ${Colors.Blue};
+  margin: 0;
+`
+
+const ListText = styled.span`
+  color: ${Colors.Black};
 `
