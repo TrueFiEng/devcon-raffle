@@ -35,5 +35,6 @@ export const RuleText = styled.div`
 `
 
 const RuleExample = styled.p`
+  color: ${Colors.BlueDark};
   margin: 0;
 `
