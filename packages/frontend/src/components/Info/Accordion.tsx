@@ -36,7 +36,7 @@ export const InfoAccordion = () => {
 
         <Accordion.Item value="item-2">
           <StyledHeader>
-            <AccordionStyledTrigger heading="How to participate in the Auction+Raffle?" />
+            <AccordionStyledTrigger heading="How to participate in the Auction & Raffle?" />
           </StyledHeader>
           <StyledContent>
             Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
@@ -122,7 +122,7 @@ export const InfoAccordion = () => {
               rule="In case there’s a draw between two bids, the earlier bidder takes precedence."
               example={
                 <>
-                  Bidder A places their first bid of ${exampleBid} ETH which puts them in the 1st place. Later Bidder B
+                  Bidder A places their first bid of {exampleBid} ETH which puts them in the 1st place. Later Bidder B
                   places their first bid of the same amount which puts them in 2nd place. Next, Bidder B bumps their bid
                   to {(exampleBid + 0.1).toFixed(2)} ETH which puts them in 1st place. Bidder A notices that they lost
                   the first place and decides to bump their bid as well. Bidder A bumps their bid to{' '}
@@ -139,9 +139,9 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
           <StyledContent>
-            After the raffle is settled, you will be able to claim a voucher code for the ticket. In order to do so, you
-            will be asked to sign a message using your wallet to authenticate as the owner of the winning account. The
-            voucher code will be presented to you on this page.
+            After the raffle is settled, you will have 48 hours (<Bold>until July 16 at 08:00 UTC</Bold>) to claim your
+            voucher code for the ticket. In order to do so, you will be asked to sign a message using your wallet to
+            authenticate as the owner of the winning account. The voucher code will be presented to you on this page.
           </StyledContent>
         </Accordion.Item>
 
@@ -150,13 +150,13 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Okay, I got a voucher code. What do I do now?" />
           </StyledHeader>
           <StyledContent>
-            <ContentRow>
-              You can go to{' '}
-              <Link href="/" target="_blank" rel="noreferrer noopener">
-                Pretix
-              </Link>{' '}
-              to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
-            </ContentRow>
+            <span>
+              Your Voucher Code will be available to you for 48 hours after the closing of the Auction & Raffle (
+              <Bold>until July 16 at 08:00 UTC</Bold>). Once you have input your voucher code into our ticket portal,
+              you will go through the standard ticket checkout flow. You can go to{' '}
+              <Link href="http://tickets.devcon.org/">our ticket shop here</Link> to redeem your voucher code for a
+              Devcon 6 ticket. See you at the conference!
+            </span>
           </StyledContent>
         </Accordion.Item>
 
@@ -165,13 +165,14 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Other FAQ" />
           </StyledHeader>
           <StyledContent>
-            <ContentRow>
-              For more details, read our{' '}
-              <Link href="/" target="_blank" rel="noreferrer noopener">
-                blog post
+            <span>
+              Please read our Terms & Conditions{' '}
+              <Link href="https://docs.google.com/document/d/1pVU-G8mpPD33EwOwE96MTB_4AZrYa2TNWXLSfkOPCJQ/edit?usp=sharing">
+                here
               </Link>{' '}
-              or contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
-            </ContentRow>
+              as well as our full Auction & Raffle FAQ on our website{' '}
+              <Link href="https://devcon.org/en/raffle-auction/">here</Link>.
+            </span>
           </StyledContent>
         </Accordion.Item>
       </Accordion.Root>
@@ -248,12 +249,6 @@ const Bold = styled.span`
 const AccordionArrow = styled(ArrowDownIcon)`
   transform: rotate(0);
   transform-origin: top;
-`
-
-const ContentRow = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 4px;
 `
 
 const Link = styled.a`
