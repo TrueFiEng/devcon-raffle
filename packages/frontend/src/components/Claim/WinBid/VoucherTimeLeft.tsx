@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useClaimingEndTime } from 'src/hooks'
+import { useVoucherRedeemDeadline } from 'src/hooks/useVoucherRedeemDeadline'
 import { Colors } from 'src/styles/colors'
 import { setIntervalImmediately } from 'src/utils'
 import { formatTimeLeft } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 export const VoucherTimeLeft = () => {
-  const { claimingEndTime } = useClaimingEndTime()
-  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(claimingEndTime))
+  const redeemDeadline = useVoucherRedeemDeadline()
+  const [timeLeft, setTimeLeft] = useState(formatTimeLeft(redeemDeadline))
 
   useEffect(() => {
-    const interval = setIntervalImmediately(() => setTimeLeft(formatTimeLeft(claimingEndTime)), 1_000)
+    const interval = setIntervalImmediately(() => setTimeLeft(formatTimeLeft(redeemDeadline)), 1_000)
     return () => clearInterval(interval)
-  }, [claimingEndTime])
+  }, [redeemDeadline])
 
   return (
     <TimeRow>
