@@ -39,9 +39,16 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
 
     uint256[] _tempWinners; // temp array for sorting auction winners used by settleAuction method
 
+    /// @dev A new bid has been placed or an existing bid has been bumped
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
+
+    /// @dev A bidder has been drawn as auction winner
     event NewAuctionWinner(uint256 bidderID);
+
+    /// @dev A bidder has been drawn as raffle winner
     event NewRaffleWinner(uint256 bidderID);
+
+    /// @dev A bidder has been drawn as the golden ticket winner
     event NewGoldenTicketWinner(uint256 bidderID);
 
     modifier onlyInState(State requiredState) {
@@ -89,7 +96,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     }
 
     /***
-     * @notice Places a new bid or bumps the existing bid
+     * @notice Places a new bid or bumps an existing bid
      * @dev Assigns unique bidderID to sender's address
      */
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
