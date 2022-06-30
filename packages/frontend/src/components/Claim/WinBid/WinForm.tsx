@@ -40,9 +40,9 @@ export const WinForm = ({ userBid, withdrawalAmount, setView }: WinFormProps) =>
   return (
     <>
       {isBidWithdrawn ? (
-        <VoucherWrapper>
+        <Wrapper>
           <VoucherForm voucher={voucher} withdrawnBid={isBidWithdrawn} />
-        </VoucherWrapper>
+        </Wrapper>
       ) : (
         <WrapperRow>
           <WinFormWrapper>
@@ -67,17 +67,13 @@ const Wrapper = styled(FormWrapper)`
   justify-content: center;
 `
 
-const VoucherWrapper = styled(Wrapper)`
-  padding: 0 200px;
-`
-
 const WrapperRow = styled.div`
   display: flex;
   width: 100%;
 `
 const WinFormWrapper = styled(FormWrapper)`
-  justify-content: flex-end;
-  padding: 0 35px 127px;
+  justify-content: flex-start;
+  padding: 72px 35px 0;
 `
 
 const VoucherFormWrapper = styled(WinFormWrapper)`

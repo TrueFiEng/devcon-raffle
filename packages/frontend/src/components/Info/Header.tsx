@@ -1,29 +1,45 @@
 import { KeyIcon } from 'src/components/Icons'
+import { AuctionState, useAuctionState } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
 import { HeaderBar } from '../common/Header'
 
 import { TimeLeft } from './TimeLeft'
+import { VoucherTimeLeft } from './VoucherTimeLeft'
 
 export const Header = () => {
+  const state = useAuctionState()
+
   return (
-    <StyledHeader>
-      <HeaderWrapper>
-        <Wrapper>
-          <TitleWrapper>
-            <Title>Devcon 6</Title>
-            <SubTitle>Auction+Raffle Ticket Sale</SubTitle>
-          </TitleWrapper>
-          <TimeLeft />
-        </Wrapper>
-        <Key>
-          <KeyIcon />
-        </Key>
-      </HeaderWrapper>
-    </StyledHeader>
+    <Wrapper>
+      <StyledHeader>
+        <HeaderWrapper>
+          <InfoWrapper>
+            <TitleWrapper>
+              <Title>Devcon 6</Title>
+              <SubTitle>Auction & Raffle Ticket Sale</SubTitle>
+            </TitleWrapper>
+            <TimeLeft />
+          </InfoWrapper>
+          <Key>
+            <KeyIcon />
+          </Key>
+        </HeaderWrapper>
+      </StyledHeader>
+      {isClaimingFlow(state) && <VoucherTimeLeft />}
+    </Wrapper>
   )
 }
+
+function isClaimingFlow(state: AuctionState) {
+  return state === 'ClaimingFlow' || state === 'ClaimingClosed'
+}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const StyledHeader = styled(HeaderBar)`
   height: 225px;
@@ -39,7 +55,7 @@ const HeaderWrapper = styled.div`
   position: relative;
 `
 
-const Wrapper = styled.div`
+const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -69,6 +85,10 @@ const Title = styled.h1`
   @media screen and (min-width: 1800px) {
     line-height: 1;
   }
+
+  @media screen and (max-width: 1260px) {
+    font-size: 40px;
+  }
 `
 
 const SubTitle = styled.h3`
@@ -79,4 +99,13 @@ const Key = styled.div`
   top: -16px;
   right: 0;
   height: 225px;
+  opacity: 0.5;
+
+  @media screen and (max-width: 1240px) {
+    opacity: 0.2;
+  }
+
+  @media screen and (min-width: 1400px) {
+    opacity: 1;
+  }
 `

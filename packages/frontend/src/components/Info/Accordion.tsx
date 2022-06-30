@@ -10,8 +10,8 @@ export const InfoAccordion = () => {
   const auctionWinnersCount = useAuctionWinnersCount()
   const raffleWinnersCount = useRaffleWinnersCount()
   const totalCount = auctionWinnersCount && raffleWinnersCount && auctionWinnersCount + raffleWinnersCount
-  const reservePrice = 0.15
-  const exampleBid = 0.2
+  const reservePrice = 0.25
+  const exampleBid = 0.5
 
   return (
     <Wrapper>
@@ -22,27 +22,29 @@ export const InfoAccordion = () => {
           </StyledHeader>
           <StyledContent>
             In an effort to make our ticket distribution more efficient and fair, we are selling a{' '}
-            <Italic>portion</Italic> of this year’s tickets via an on-chain auction+raffle. Typically we sell tickets in
-            waves: attendees need to wait for a specific release time and refresh the ticket shop rapidly in order to{' '}
+            <Italic>portion</Italic> of this year’s tickets via an on-chain Auction & Raffle. Typically we sell tickets
+            in waves; attendees need to wait for a specific release time and refresh the ticket shop rapidly in order to{' '}
             <Italic>hope</Italic> to claim & checkout with a ticket. Not to mention the need for a speedy internet
             connection and crossing your fingers that you’re close enough to our ticketing servers to be one of the
             first to secure a ticket.
             <br />
             <br />
-            This year, we wanted to try something different, so we are experimenting with an on-chain Raffle+Auction to
-            sell a <Italic>portion</Italic> of Devcon tickets.
+            This year, we wanted to try something different, so we are experimenting with an on-chain Auction & Raffle
+            to sell a <Italic>portion</Italic> of Devcon tickets.
           </StyledContent>
         </Accordion.Item>
 
         <Accordion.Item value="item-2">
           <StyledHeader>
-            <AccordionStyledTrigger heading="How to participate in the Auction+Raffle?" />
+            <AccordionStyledTrigger heading="How to participate in the Auction & Raffle?" />
           </StyledHeader>
           <StyledContent>
             Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
             ticket. Bid high to compete for the 20 tickets distributed in the auction, or be entered into the raffle for
             a chance to buy a ticket at the reserve price. You need to bid at least the reserve price, which is set to
-            the price of an early-bird Devcon ticket: {reservePrice} ETH.
+            the price of a standard Devcon ticket at time of publication: {reservePrice} ETH. Please note there is a
+            one-person-one-bid rule in place. You will need to submit your name at check-out, and we will check IDs at
+            Devcon to verify that the participant is the ticket holder.
           </StyledContent>
         </Accordion.Item>
 
@@ -51,12 +53,12 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="ELI5 plz?" />
           </StyledHeader>
           <StyledContent>
-            Place a bid in ETH to win a Devcon ticket. If your bid is in the top {auctionWinnersCount}, you will win a
-            Devcon ticket in exchange for the amount you paid in your bid. At any point, you can top up your bid if you
-            want. If your bid is not in the top {auctionWinnersCount}, you will be entered into a raffle and may be
-            randomly chosen to win a Devcon ticket at the reserve price — if you bid more than the reserve price, you
-            can withdraw the difference. If you do not win, you can withdraw your entire bid, minus a 2% fee which will
-            be donated to funding Ethereum public goods.
+            Place a bid of at least {reservePrice} ETH for a chance to win a Devcon ticket. If your bid is in the top{' '}
+            {auctionWinnersCount}, you will win a Devcon ticket in exchange for the amount you paid in your bid. At any
+            point, you can top up your bid if you want. If your bid is not in the top {auctionWinnersCount}, you will be
+            entered into a raffle and may be randomly chosen to win a Devcon ticket — if you were randomly selected in
+            the Raffle & bid more than the reserve price, you can withdraw the difference. If you do not win, you can
+            withdraw your entire bid, minus a 2% sybil-resistance fee.
           </StyledContent>
         </Accordion.Item>
 
@@ -67,33 +69,74 @@ export const InfoAccordion = () => {
           <StyledContent>
             <RuleText>
               The total number of {totalCount} tickets will be divided between the auction and the raffle pools. All
-              winners will receive a voucher code that is redeemable for a free Devcon ticket.
+              winners will receive a voucher code that must be redeemed for a Devcon ticket.
             </RuleText>
             <Rule
-              heading={`Auction pool: ${auctionWinnersCount}`}
-              rule="Tickets from the auction pool will be distributed to the highest bidding participants.
-              The price paid by a winner in that pool is equal to the amount of their bid.
-              All proceeds will go towards X-Public-Good."
-              example={`You bid ${exampleBid * 2.5} ETH and end up in top ${auctionWinnersCount} of bidders.
-              You receive a ticket for ${exampleBid * 2.5} ETH.`}
+              heading={`Auction pool: ${auctionWinnersCount} tickets`}
+              rule="Tickets from the auction pool will be distributed to the highest bidding participants. The price paid by a winner in that pool is equal to the amount of their bid. All proceeds will go towards Public Goods."
+              example={`You bid ${exampleBid} ETH and end up in the top ${auctionWinnersCount} of the bidders. You receive a ticket for ${exampleBid} ETH.`}
             />
             <Rule
-              heading={`Raffle pool: ${raffleWinnersCount}`}
-              rule={`From participants who bid below the last bid in the auction pool, ${raffleWinnersCount} will be chosen at random.
-              A winner in that pool will receive a ticket for ${reservePrice} ETH. All funds that they bid over that price will be claimable after the raffle is stettled.`}
-              example={`You bid ${exampleBid} ETH and end up below top ${auctionWinnersCount}. If you are selected in the raffle, you pay ${reservePrice}
-              ETH for the ticket and get ${(exampleBid - reservePrice).toFixed(2)} ETH back.`}
+              heading={`Raffle pool: ${raffleWinnersCount} tickets`}
+              rule={`From participants who bid below the last bid in the auction pool, ${raffleWinnersCount} will be chosen at random. A winner in that pool will receive a ticket for ${reservePrice} ETH. All funds that they bid over that price will be claimable after the raffle is settled.`}
+              example={`You bid ${exampleBid} ETH and end up below the top ${auctionWinnersCount}. If you are selected in the raffle, you pay ${reservePrice} ETH for the ticket and get ${(
+                exampleBid - reservePrice
+              ).toFixed(2)} ETH back.`}
             />
             <Rule
-              heading="Golden Ticket: 1"
-              rule="One lucky bidder from the raffle pool will receive a ticket for Devcon 6 totally for free!
-              The Golden Ticket winner will be able to claim the whole amount of their bid after the raffle is settled."
+              heading="Golden Ticket: 1 ticket"
+              rule="One lucky bidder from the raffle pool will receive a ticket for Devcon 6 totally for free! The Golden Ticket winner will be able to claim the whole amount of their bid after the raffle is settled."
             />
             <Rule
               heading="No luck?"
-              rule="In case you don't win, your bid (-2% fee) will be claimable after the raffle is settled."
-              example={`You bid ${exampleBid} ETH and end up not winning a ticket.
-              You can get ${(exampleBid * 98) / 100} ETH back.`}
+              rule="In case you don't win, your entire bid will be claimable after the raffle is settled."
+              example={`You bid ${exampleBid} ETH and end up not winning a ticket. You can get your ${exampleBid} ETH back, minus a 2% sybil resistance fee.`}
+            />
+            <Rule
+              heading="What if there’s less than 100 participants?"
+              rule={
+                <>
+                  In the event there are:
+                  <BulletList>
+                    <li>
+                      <ListText>
+                        <Bold>1-80 participants:</Bold> All bidders win in the raffle.
+                      </ListText>
+                    </li>
+                    <li>
+                      <ListText>
+                        <Bold>81 participants:</Bold> Top 1 bidder wins in the auction. 80 remaining bidders win in the
+                        raffle.
+                      </ListText>
+                    </li>
+                    <li>
+                      <ListText>
+                        <Bold>101 participants:</Bold> Top 20 bidders win in the auction. Out of 81 remaining bidders,
+                        80 are randomly chosen to win in the raffle.
+                      </ListText>
+                    </li>
+                    <li>
+                      <ListText>
+                        <Bold>120 participants:</Bold> Top 20 bidders win in the auction. Out of 100 remaining bidders,
+                        80 are randomly chosen to win in the raffle.
+                      </ListText>
+                    </li>
+                  </BulletList>
+                </>
+              }
+            />
+            <Rule
+              heading="What happens when there's a draw?"
+              rule="In case there’s a draw between two bids, the earlier bidder takes precedence."
+              example={
+                <>
+                  Bidder A places their first bid of {exampleBid} ETH which puts them in the 1st place. Later Bidder B
+                  places their first bid of the same amount which puts them in 2nd place. Next, Bidder B bumps their bid
+                  to {exampleBid + 0.1} ETH which puts them in 1st place. Bidder A notices that they lost the first
+                  place and decides to bump their bid as well. Bidder A bumps their bid to {exampleBid + 0.1} ETH which{' '}
+                  <Bold>puts them in the 1st place</Bold>, because they placed their first bid before Bidder B.
+                </>
+              }
             />
           </StyledContent>
         </Accordion.Item>
@@ -103,9 +146,9 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
           <StyledContent>
-            After the raffle is settled, you will be able to claim a voucher code for the ticket. In order to do so, you
-            will be asked to sign a message using your wallet to authenticate as the owner of the winning account. The
-            voucher code will be presented to you on this page.
+            After the raffle is settled, you will have 48 hours (<Bold>until July 16 at 08:00 UTC</Bold>) to claim your
+            voucher code for the ticket. In order to do so, you will be asked to sign a message using your wallet to
+            authenticate as the owner of the winning account. The voucher code will be presented to you on this page.
           </StyledContent>
         </Accordion.Item>
 
@@ -114,13 +157,13 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Okay, I got a voucher code. What do I do now?" />
           </StyledHeader>
           <StyledContent>
-            <ContentRow>
-              You can go to{' '}
-              <Link href="/" target="_blank" rel="noreferrer noopener">
-                Pretix
-              </Link>{' '}
-              to redeem your voucher code for a Devcon 6 ticket. See you at the conference!
-            </ContentRow>
+            <span>
+              Your Voucher Code will be available to you for 48 hours after the closing of the Auction & Raffle (
+              <Bold>until July 16 at 08:00 UTC</Bold>). Once you have input your voucher code into our ticket portal,
+              you will go through the standard ticket checkout flow. You can go to{' '}
+              <Link href="http://tickets.devcon.org/">our ticket shop here</Link> to redeem your voucher code for a
+              Devcon 6 ticket. See you at the conference!
+            </span>
           </StyledContent>
         </Accordion.Item>
 
@@ -129,13 +172,14 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="Other FAQ" />
           </StyledHeader>
           <StyledContent>
-            <ContentRow>
-              For more details, read our{' '}
-              <Link href="/" target="_blank" rel="noreferrer noopener">
-                blog post
+            <span>
+              Please read our Terms & Conditions{' '}
+              <Link href="https://docs.google.com/document/d/1pVU-G8mpPD33EwOwE96MTB_4AZrYa2TNWXLSfkOPCJQ/edit?usp=sharing">
+                here
               </Link>{' '}
-              or contact <Link href="mailto:support@devcon.org">support@devcon.org</Link>.
-            </ContentRow>
+              as well as our full Auction & Raffle FAQ on our website{' '}
+              <Link href="https://devcon.org/en/raffle-auction/">here</Link>.
+            </span>
           </StyledContent>
         </Accordion.Item>
       </Accordion.Root>
@@ -204,18 +248,26 @@ const Italic = styled.span`
   display: contents;
 `
 
+const Bold = styled.span`
+  font-weight: 600;
+  display: contents;
+`
+
 const AccordionArrow = styled(ArrowDownIcon)`
   transform: rotate(0);
   transform-origin: top;
 `
 
-const ContentRow = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: 4px;
-`
-
 const Link = styled.a`
   color: ${Colors.Blue};
   text-decoration: underline;
+`
+
+const BulletList = styled.ul`
+  color: ${Colors.Blue};
+  margin: 0;
+`
+
+const ListText = styled.span`
+  color: ${Colors.Black};
 `

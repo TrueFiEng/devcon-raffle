@@ -1,8 +1,8 @@
 import { task, types } from 'hardhat/config'
-import { HOUR } from 'scripts/utils/consts'
+import { minStateDuration } from 'scripts/deploy/deploy'
 
 task('increase-time', 'Increases block time')
-  .addParam('value', 'Time in seconds to increase', HOUR, types.int, true)
+  .addParam('value', 'Time in seconds to increase', minStateDuration, types.int, true)
   .setAction(async ({ value }: { value: number }, hre) => {
     const provider = hre.network.provider
 
