@@ -14,6 +14,7 @@ export interface Config {
   backendUrl: string
   portisDAppID: string
   dappName: string
+  voucherRedeemDeadline?: Date
 }
 
 function getConfig(mode: string): Config {

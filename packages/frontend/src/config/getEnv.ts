@@ -5,3 +5,10 @@ export function getStringEnv(key: string): string | undefined {
   }
   return undefined
 }
+
+export function getDateEnv(key: string): Date | undefined {
+  const dateString = getStringEnv(key)
+  if (dateString !== undefined) {
+    return new Date(dateString)
+  }
+}
