@@ -1,3 +1,5 @@
+import { BigNumber } from '@ethersproject/bignumber'
+
 export function getStringEnv(key: string): string | undefined {
   const env = import.meta.env[key]
   if (typeof env === 'string' && env !== '') {
@@ -6,9 +8,9 @@ export function getStringEnv(key: string): string | undefined {
   return undefined
 }
 
-export function getDateEnv(key: string): Date | undefined {
+export function getDateEnv(key: string): BigNumber | undefined {
   const dateString = getStringEnv(key)
   if (dateString !== undefined) {
-    return new Date(dateString)
+    return BigNumber.from(new Date(dateString).getTime()).div(1000)
   }
 }
