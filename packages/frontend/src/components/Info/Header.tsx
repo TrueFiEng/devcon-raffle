@@ -18,7 +18,7 @@ export const Header = () => {
           <InfoWrapper>
             <TitleWrapper>
               <Title>Devcon 6</Title>
-              <SubTitle>Auction+Raffle Ticket Sale</SubTitle>
+              <SubTitle>Auction & Raffle Ticket Sale</SubTitle>
             </TitleWrapper>
             <TimeLeft />
           </InfoWrapper>
