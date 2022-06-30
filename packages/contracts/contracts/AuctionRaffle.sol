@@ -11,6 +11,11 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./libs/MaxHeap.sol";
 
+/***
+ * @title Auction & Raffle
+ * @notice Draws winners using a mixed auction & raffle scheme.
+ * @author TrueFi Engineering team
+ */
 contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];

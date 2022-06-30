@@ -2,6 +2,10 @@
 
 pragma solidity 0.8.10;
 
+/***
+ * @dev Holds config values used by AuctionRaffle contract.
+ * @author TrueFi Engineering team
+ */
 abstract contract Config {
     // The use of _randomMask and _bidderMask introduces an assumption on max number of participants: 2^32.
     // The use of _bidderMask also introduces an assumption on max bid amount: 2^224 wei.
