@@ -18,6 +18,6 @@ export function getLocalDevConfig(): Config {
     addresses: ADDRESSES,
     backendUrl: 'http://localhost:3001',
     portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
-    dappName: 'Devcon 6 Auction+Raffle (LOCAL DEV)',
+    dappName: 'Devcon 6 Auction & Raffle (LOCAL DEV)',
   }
 }
