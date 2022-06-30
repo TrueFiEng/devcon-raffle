@@ -55,7 +55,7 @@ function getWinText(winType: WinType) {
     case WinType.GoldenTicket:
       return (
         <span>
-          You won the <b>Golden Ticket!</b>
+          You won <b>the Golden Ticket!</b>
         </span>
       )
     case WinType.Auction:
