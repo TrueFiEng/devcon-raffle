@@ -18,7 +18,7 @@ export function getMainnetProdConfig(): Config {
     addresses: ADDRESSES,
     backendUrl: getStringEnv('BACKEND_URL') || '',
     portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
-    dappName: 'Devcon 6 Auction+Raffle',
+    dappName: 'Devcon 6 Auction & Raffle',
     voucherRedeemDeadline: getDateEnv('VOUCHER_REDEEM_DEADLINE'),
   }
 }

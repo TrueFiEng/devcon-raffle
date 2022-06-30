@@ -1,7 +1,13 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.10;
 
+/***
+ * @title Max Heap library
+ * @notice Data structure used by the AuctionRaffle contract to store top bids.
+ * It allows retrieving them in descending order on auction settlement.
+ * @author TrueFi Engineering team
+ */
 library MaxHeap {
     function insert(uint256[] storage heap, uint256 key) public {
         uint256 index = heap.length;

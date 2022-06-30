@@ -1,7 +1,11 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.10;
 
+/***
+ * @dev Defines bid related data types used by AuctionRaffle contract.
+ * @author TrueFi Engineering team
+ */
 abstract contract BidModel {
     struct Bid {
         uint256 bidderID;

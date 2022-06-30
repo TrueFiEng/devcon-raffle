@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.10;
 
@@ -11,6 +11,11 @@ import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./libs/MaxHeap.sol";
 
+/***
+ * @title Auction & Raffle
+ * @notice Draws winners using a mixed auction & raffle scheme.
+ * @author TrueFi Engineering team
+ */
 contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
@@ -34,9 +39,16 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
 
     uint256[] _tempWinners; // temp array for sorting auction winners used by settleAuction method
 
+    /// @dev A new bid has been placed or an existing bid has been bumped
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
+
+    /// @dev A bidder has been drawn as auction winner
     event NewAuctionWinner(uint256 bidderID);
+
+    /// @dev A bidder has been drawn as raffle winner
     event NewRaffleWinner(uint256 bidderID);
+
+    /// @dev A bidder has been drawn as the golden ticket winner
     event NewGoldenTicketWinner(uint256 bidderID);
 
     modifier onlyInState(State requiredState) {
@@ -83,6 +95,10 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         revert("AuctionRaffle: contract accepts ether transfers only by bid method");
     }
 
+    /***
+     * @notice Places a new bid or bumps an existing bid.
+     * @dev Assigns a unique bidderID to the sender address.
+     */
     function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
         Bid storage bidder = _bids[msg.sender];
         if (bidder.amount == 0) {
@@ -103,6 +119,13 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
+    /**
+     * @notice Draws auction winners and changes contract state to AUCTION_SETTLED.
+     * @dev Removes highest bids from the heap, sets their WinType to AUCTION and adds them to _auctionWinners array.
+     * Temporarily adds auction winner bidderIDs to a separate heap and then retrieves them in descending order.
+     * This is done to efficiently remove auction winners from _raffleParticipants array as they no longer take part
+     * in the raffle.
+     */
     function settleAuction() external onlyOwner onlyInState(State.BIDDING_CLOSED) {
         _settleState = SettleState.AUCTION_SETTLED;
         uint256 biddersCount = getBiddersCount();
@@ -134,6 +157,14 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    /**
+     * @notice Draws raffle winners and changes contract state to RAFFLE_SETTLED. The first selected raffle winner
+     * becomes the Golden Ticket winner.
+     * @dev Sets WinType of the first selected bid to GOLDEN_TICKET. Sets WinType to RAFFLE for the remaining selected
+     * bids.
+     * @param randomNumbers The source of randomness for the function. Each random number is used to draw at most
+     * `_winnersPerRandom` raffle winners.
+     */
     function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
         require(randomNumbers.length > 0, "AuctionRaffle: there must be at least one random number passed");
 
@@ -160,6 +191,13 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         selectRaffleWinners(participantsLength, randomNumbers);
     }
 
+    /**
+     * @notice Allows a bidder to claim their funds after the raffle is settled.
+     * Golden Ticket winner can withdraw the full bid amount.
+     * Raffle winner can withdraw the bid amount minus `_reservePrice`.
+     * Non-winning bidder can withdraw the bid amount minus 2% fee.
+     * Auction winner pays the full bid amount and is not entitled to any withdrawal.
+     */
     function claim(uint256 bidderID) external onlyInState(State.RAFFLE_SETTLED) {
         address payable bidderAddress = getBidderAddress(bidderID);
         Bid storage bidder = _bids[bidderAddress];
@@ -181,6 +219,12 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    /**
+     * @notice Allows the owner to claim proceeds from the ticket sale after the raffle is settled.
+     * Proceeds include:
+     * sum of auction winner bid amounts,
+     * `_reservePrice` paid by each raffle winner (except the Golden Ticket winner).
+     */
     function claimProceeds() external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
         require(!_proceedsClaimed, "AuctionRaffle: proceeds have already been claimed");
         _proceedsClaimed = true;
@@ -207,6 +251,12 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(totalAmount);
     }
 
+    /**
+     * @notice Allows the owner to claim the 2% fees from non-winning bids after the raffle is settled.
+     * @dev This function is designed to be called multiple times, to split iteration though all non-winning bids across
+     * multiple transactions.
+     * @param bidsCount The number of bids to be processed at once.
+     */
     function claimFees(uint256 bidsCount) external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
         uint256 claimedFeesIndex = _claimedFeesIndex;
         uint256 feesCount = _raffleParticipants.length;
@@ -229,11 +279,19 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         payable(owner()).transfer(fee);
     }
 
+    /**
+     * @notice Allows the owner to withdraw all funds left in the contract by the participants.
+     * Callable only after the claiming window is closed.
+     */
     function withdrawUnclaimedFunds() external onlyOwner onlyInState(State.CLAIMING_CLOSED) {
         uint256 unclaimedFunds = address(this).balance;
         payable(owner()).transfer(unclaimedFunds);
     }
 
+    /**
+     * @notice Allows the owner to retrieve any ERC-20 tokens that were sent to the contract by accident.
+     * @param tokenAddress The address of an ERC-20 token contract.
+     */
     function rescueTokens(address tokenAddress) external onlyOwner {
         IERC20 token = IERC20(tokenAddress);
         uint256 balance = token.balanceOf(address(this));
@@ -246,10 +304,12 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         return _raffleParticipants;
     }
 
+    /// @return A list of auction winner bidder IDs.
     function getAuctionWinners() external view returns (uint256[] memory) {
         return _auctionWinners;
     }
 
+    /// @return A list of raffle winner bidder IDs.
     function getRaffleWinners() external view returns (uint256[] memory) {
         return _raffleWinners;
     }
@@ -287,6 +347,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         return bidWithAddress;
     }
 
+    /// @return Address of bidder account for given bidder ID.
     function getBidderAddress(uint256 bidderID) public view returns (address payable) {
         address payable bidderAddress = _bidders[bidderID];
         require(bidderAddress != address(0), "AuctionRaffle: bidder with given ID does not exist");
@@ -316,6 +377,12 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         return State.AWAITING_BIDDING;
     }
 
+    /**
+     * @notice Adds a bid to the heap if it isn't full or the heap key is greater than `_minKeyValue`.
+     * @dev Updates _minKeyIndex and _minKeyValue if needed.
+     * @param bidderID Unique bidder ID
+     * @param amount The bid amount
+     */
     function addBidToHeap(uint256 bidderID, uint256 amount) private {
         bool isHeapFull = getBiddersCount() > _auctionWinnersCount; // bid() already incremented _nextBidderID
         uint256 key = getKey(bidderID, amount);
@@ -338,6 +405,13 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    /**
+     * @notice Updates an existing bid or replaces an existing bid with a new one in the heap.
+     * @dev Updates _minKeyIndex and _minKeyValue if needed.
+     * @param bidderID Unique bidder ID
+     * @param oldAmount Previous bid amount
+     * @param newAmount New bid amount
+     */
     function updateHeapBid(
         uint256 bidderID,
         uint256 oldAmount,
@@ -388,6 +462,14 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         _bids[bidderAddress].winType = winType;
     }
 
+    /**
+     * @dev Selects one Golden Ticket winner from a random number.
+     * Saves the winner at the beginning of _raffleWinners array and sets bidder WinType to GOLDEN_TICKET.
+     * @param participantsLength The length of current participants array
+     * @param randomNumber The random number to select raffle winner from
+     * @return participantsLength New participants array length
+     * @return randomNumber Shifted random number by `_randomMaskLength` bits to the right
+     */
     function selectGoldenTicketWinner(uint256 participantsLength, uint256 randomNumber)
         private
         returns (uint256, uint256)
@@ -409,6 +491,13 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         delete _raffleParticipants;
     }
 
+    /**
+     * @dev Selects `_winnersPerRandom` - 1 raffle winners for the first random number -- it assumes that one bidder
+     * was selected before as the Golden Ticket winner. Then it selects `_winnersPerRandom` winners for each remaining
+     * random number.
+     * @param participantsLength The length of current participants array
+     * @param randomNumbers The array of random numbers to select raffle winners from
+     */
     function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
         participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], _winnersPerRandom - 1);
         for (uint256 i = 1; i < randomNumbers.length; ++i) {
@@ -416,6 +505,16 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         }
     }
 
+    /**
+     * @notice Selects a number of raffle winners from _raffleParticipants array. Saves the winners in _raffleWinners
+     * array and sets their WinType to RAFFLE.
+     * @dev Divides passed randomNumber into `_randomMaskLength` bit numbers and then selects one raffle winner using
+     * each small number.
+     * @param participantsLength The length of current participants array
+     * @param randomNumber The random number used to select raffle winners
+     * @param winnersCount The number of raffle winners to select from a single random number
+     * @return New participants length
+     */
     function selectRandomRaffleWinners(
         uint256 participantsLength,
         uint256 randomNumber,
@@ -435,6 +534,11 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         return participantsLength;
     }
 
+    /**
+     * @notice Removes a participant from _raffleParticipants array.
+     * @dev Swaps _raffleParticipants[index] with the last one, then removes the last one.
+     * @param index The index of raffle participant to remove
+     */
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
         require(index < participantsLength, "AuctionRaffle: invalid raffle participant index");
@@ -442,14 +546,35 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         _raffleParticipants.pop();
     }
 
+    /**
+     * @notice Calculates unique heap key based on bidder ID and bid amount. The key is designed so that higher bids
+     * are assigned a higher key value. In case of a draw in bid amount, lower bidder ID gives a higher key value.
+     * @dev The difference between `_bidderMask` and bidderID is stored in lower bits of the returned key.
+     * Bid amount is stored in higher bits of the returned key.
+     * @param bidderID Unique bidder ID
+     * @param amount The bid amount
+     * @return Unique heap key
+     */
     function getKey(uint256 bidderID, uint256 amount) private pure returns (uint256) {
         return (amount << _bidderMaskLength) | (_bidderMask - bidderID);
     }
 
+    /**
+     * @notice Extracts bidder ID from a heap key
+     * @param key Heap key
+     * @return Extracted bidder ID
+     */
     function extractBidderID(uint256 key) private pure returns (uint256) {
         return _bidderMask - (key & _bidderMask);
     }
 
+    /**
+     * @notice Calculates winner index
+     * @dev Calculates modulo of `_randomMaskLength` lower bits of randomNumber and participantsLength
+     * @param participantsLength The length of current participants array
+     * @param randomNumber The random number to select raffle winner from
+     * @return Winner index
+     */
     function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
         private
         pure
