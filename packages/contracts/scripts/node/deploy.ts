@@ -1,7 +1,7 @@
 import { Contract, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { HOUR, YEAR } from 'scripts/utils/consts'
+import { HOUR } from 'scripts/utils/consts'
 import { auctionRaffleArtifactName, multicallArtifactName } from 'scripts/utils/auctionRaffle'
 
 export const reservePrice = utils.parseEther('0.15')

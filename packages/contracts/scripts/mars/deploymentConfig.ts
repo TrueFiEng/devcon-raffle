@@ -2,14 +2,14 @@ import { AddressLike, NumberLike } from 'ethereum-mars'
 import { constants, utils } from 'ethers'
 
 interface DeploymentConfig {
-  initialOwner: AddressLike
-  biddingStartTime: NumberLike
-  biddingEndTime: NumberLike
-  claimingEndTime: NumberLike
-  auctionWinnersCount: NumberLike
-  raffleWinnersCount: NumberLike
-  reservePrice: NumberLike
-  minBidIncrement: NumberLike
+  initialOwner: AddressLike,
+  biddingStartTime: NumberLike,
+  biddingEndTime: NumberLike,
+  claimingEndTime: NumberLike,
+  auctionWinnersCount: NumberLike,
+  raffleWinnersCount: NumberLike,
+  reservePrice: NumberLike,
+  minBidIncrement: NumberLike,
 }
 
 export const config: DeploymentConfig = {
