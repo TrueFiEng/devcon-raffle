@@ -24,7 +24,7 @@
     "verify": "bash spec/verify.sh -f",
     "verify:sanity": "bash spec/verify.sh -sf",
 
-    "node:run": "hardhat run scripts/deploy/run.ts",
+    "node:run": "hardhat run scripts/node/run.ts",
     "node:increase-time": "hardhat --network localhost increase-time",
     "node:accounts": "hardhat --network localhost accounts",
 
@@ -36,8 +36,9 @@
 
     "rinkeby:generate-dotenv": "hardhat generate-dotenv",
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
-    "rinkeby:deploy": "hardhat --network rinkeby deploy",
-    "rinkeby:init-bids": "hardhat --network rinkeby init-bids"
+    "rinkeby:init-bids": "hardhat --network rinkeby init-bids",
+
+    "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum_rinkeby"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
@@ -54,6 +55,7 @@
     "dotenv": "^16.0.0",
     "eslint": "^7.11.0",
     "eslint-plugin-no-only-tests": "^2.6.0",
+    "ethereum-mars": "^0.2.5",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.6.2",
     "hardhat": "^2.2.0",

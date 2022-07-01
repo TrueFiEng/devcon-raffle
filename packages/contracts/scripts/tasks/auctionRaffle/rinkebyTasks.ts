@@ -1,11 +1,10 @@
 import { task, types } from 'hardhat/config'
-import { deployTestnetAuctionRaffle } from 'scripts/deploy/deploy'
 import { BigNumberish, constants, Contract, Signer, utils, Wallet } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import writeFileAtomic from 'write-file-atomic'
 
-const testnetAuctionRaffleAddress = '0x17c9FE0c1B4d6dCC61f71064095e60b7A87514cF'
+const testnetAuctionRaffleAddress = '0x2d7435A78010bB613E1f22E0A8018733dd0C1Cfe'
 
 task('generate-dotenv', 'Generate .env file needed for other tasks')
   .addParam('path', 'location of the file', '../../.env', types.string)
@@ -34,19 +33,6 @@ task('transfer-ether', 'Transfers ether from DEPLOYER account to PRIVATE_KEYS ac
       await tx.wait()
       console.log(`Sent ${formatEther(amountToSend)}${constants.EtherSymbol} to ${wallet.address}`)
     }
-  })
-
-task('deploy', 'Deploys AuctionRaffle contract')
-  .addParam('delay', 'Time in seconds to push forward bidding start time', 0, types.int, true)
-  .setAction(async ({ delay }: { delay: number }, hre) => {
-    const [deployer] = await hre.ethers.getSigners()
-
-    console.log('Deploying contracts...')
-    const now = Math.floor(Date.now() / 1000)
-    const biddingStartTime = now + delay
-    const auctionRaffle = await deployTestnetAuctionRaffle(biddingStartTime, deployer, hre)
-    console.log('AuctionRaffle address: ', auctionRaffle.address)
-    console.log('Contracts deployed\n')
   })
 
 task('init-bids', 'Places initial bids using PRIVATE_KEYS accounts')

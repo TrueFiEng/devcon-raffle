@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { minStateDuration } from 'scripts/deploy/deploy'
+import { minStateDuration } from 'scripts/node/deploy'
 
 task('increase-time', 'Increases block time')
   .addParam('value', 'Time in seconds to increase', minStateDuration, types.int, true)

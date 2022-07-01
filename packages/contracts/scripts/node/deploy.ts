@@ -1,7 +1,7 @@
 import { Contract, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { HOUR, YEAR } from 'scripts/utils/consts'
+import { HOUR } from 'scripts/utils/consts'
 import { auctionRaffleArtifactName, multicallArtifactName } from 'scripts/utils/auctionRaffle'
 
 export const reservePrice = utils.parseEther('0.15')
@@ -34,22 +34,5 @@ export async function deployAuctionRaffle(biddingStartTime: number, deployer: Si
     80,
     reservePrice,
     minBidIncrement,
-  )
-}
-
-export async function deployTestnetAuctionRaffle(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
-  const biddingEndTime = biddingStartTime + YEAR
-  const claimingEndTime = biddingEndTime + minStateDuration
-
-  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName)
-  return auctionRaffleFactory.connect(deployer).deploy(
-    deployer.address,
-    biddingStartTime,
-    biddingEndTime,
-    claimingEndTime,
-    10,
-    8,
-    utils.parseUnits('0.15', 9),
-    utils.parseUnits('0.01', 9),
   )
 }

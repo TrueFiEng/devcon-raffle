@@ -8,7 +8,7 @@ import { randomBigNumbers } from 'scripts/utils/random'
 import { generateRandomAccounts } from 'scripts/utils/generateRandomAccounts'
 import { fundAccounts } from 'scripts/utils/fundAccounts'
 import { bidAsSigner } from 'scripts/utils/bid'
-import { minBidIncrement, reservePrice } from 'scripts/deploy/deploy'
+import { minBidIncrement, reservePrice } from 'scripts/node/deploy'
 
 task('bid', 'Places bid for given account with provided amount')
   .addParam('account', 'Hardhat account to use')
