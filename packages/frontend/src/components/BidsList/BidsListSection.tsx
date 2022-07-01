@@ -30,7 +30,7 @@ export const BidsListSection = () => {
     <BidsListContainer>
       {!isLoadingParams && immutableBids.size === 0 ? (
         <EmptyList>
-          <ColoredText>No bidders yet. Be the first one!</ColoredText>
+          <ColoredText>Bids will show up here</ColoredText>
         </EmptyList>
       ) : (
         <>
