@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { auctionRaffleAddress, connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
+import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -9,6 +9,8 @@ import { generateRandomAccounts } from 'scripts/utils/generateRandomAccounts'
 import { fundAccounts } from 'scripts/utils/fundAccounts'
 import { bidAsSigner } from 'scripts/utils/bid'
 import { minBidIncrement, reservePrice } from 'scripts/node/deploy'
+
+const auctionRaffleAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
 task('bid', 'Places bid for given account with provided amount')
   .addParam('account', 'Hardhat account to use')
