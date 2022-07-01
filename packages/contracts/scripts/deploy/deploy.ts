@@ -1,8 +1,8 @@
-import { Contract, Signer, utils } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HOUR, YEAR } from 'scripts/utils/consts'
-import { auctionRaffleArtifactName, getAuctionRaffleLibraries, multicallArtifactName } from 'scripts/utils/auctionRaffle'
+import { auctionRaffleArtifactName, multicallArtifactName } from 'scripts/utils/auctionRaffle'
 
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
