@@ -5,7 +5,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import writeFileAtomic from 'write-file-atomic'
 
-const testnetAuctionRaffleAddress = '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F'
+const testnetAuctionRaffleAddress = '0x17c9FE0c1B4d6dCC61f71064095e60b7A87514cF'
 
 task('generate-dotenv', 'Generate .env file needed for other tasks')
   .addParam('path', 'location of the file', '../../.env', types.string)
