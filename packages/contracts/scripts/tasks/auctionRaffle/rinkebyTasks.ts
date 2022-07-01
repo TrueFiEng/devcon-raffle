@@ -5,8 +5,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import writeFileAtomic from 'write-file-atomic'
 
-const testnetAuctionRaffleAddress = '0xe4fbda3E853F6DBBFc42D6D66eB030F2Be203d7F'
-const testnetHeapAddress = '0xc1D8b72838Cb3F1c52651d76ea186Df457817aD6'
+const testnetAuctionRaffleAddress = '0x17c9FE0c1B4d6dCC61f71064095e60b7A87514cF'
 
 task('generate-dotenv', 'Generate .env file needed for other tasks')
   .addParam('path', 'location of the file', '../../.env', types.string)
@@ -45,7 +44,7 @@ task('deploy', 'Deploys AuctionRaffle contract')
     console.log('Deploying contracts...')
     const now = Math.floor(Date.now() / 1000)
     const biddingStartTime = now + delay
-    const auctionRaffle = await deployTestnetAuctionRaffle(biddingStartTime, testnetHeapAddress, deployer, hre)
+    const auctionRaffle = await deployTestnetAuctionRaffle(biddingStartTime, deployer, hre)
     console.log('AuctionRaffle address: ', auctionRaffle.address)
     console.log('Contracts deployed\n')
   })
@@ -56,7 +55,7 @@ task('init-bids', 'Places initial bids using PRIVATE_KEYS accounts')
     const initialBidAmount = utils.parseUnits('0.20', 9)
     const bidIncrement = utils.parseUnits('0.02', 9)
 
-    const auctionRaffle = await connectToAuctionRaffle(hre, getTestnetAuctionRaffleAddress(), testnetHeapAddress)
+    const auctionRaffle = await connectToAuctionRaffle(hre, getTestnetAuctionRaffleAddress())
 
     const privateKeys: string[] = JSON.parse(process.env.PRIVATE_KEYS)
     for (let i = 0; i < privateKeys.length; i++) {

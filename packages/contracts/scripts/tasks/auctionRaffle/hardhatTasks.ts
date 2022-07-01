@@ -1,5 +1,5 @@
 import { task, types } from 'hardhat/config'
-import { connectToAuctionRaffle, auctionRaffleAddress, heapAddress } from 'scripts/utils/auctionRaffle'
+import { auctionRaffleAddress, connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
 import { BigNumber, BigNumberish, constants, Contract, utils } from 'ethers'
 import { parseEther } from 'ethers/lib/utils'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -18,7 +18,7 @@ task('bid', 'Places bid for given account with provided amount')
     hre,
   ) => {
     const signer = await hre.ethers.getSigner(account)
-    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
+    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress)
     const auctionRaffleAsSigner = auctionRaffle.connect(signer)
 
     const ethAmount = parseEther(amount)
@@ -34,7 +34,7 @@ task('bid-random', 'Bids X times using randomly generated accounts')
     hre,
   ) => {
     const signers = await hre.ethers.getSigners()
-    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
+    const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress)
 
     console.log('Generating accounts...')
     const randomAccounts = generateRandomAccounts(amount, hre.ethers.provider)
@@ -78,7 +78,7 @@ function formatEther(amount: BigNumberish): string {
 
 async function auctionRaffleAsOwner(hre: HardhatRuntimeEnvironment): Promise<Contract> {
   const owner = await getAuctionRaffleOwner(hre)
-  const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress, heapAddress)
+  const auctionRaffle = await connectToAuctionRaffle(hre, auctionRaffleAddress)
   return auctionRaffle.connect(owner)
 }
 

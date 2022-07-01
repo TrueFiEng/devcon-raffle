@@ -1,8 +1,8 @@
-import { Contract, Signer, utils } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HOUR, YEAR } from 'scripts/utils/consts'
-import { auctionRaffleArtifactName, getAuctionRaffleLibraries, multicallArtifactName } from 'scripts/utils/auctionRaffle'
+import { auctionRaffleArtifactName, multicallArtifactName } from 'scripts/utils/auctionRaffle'
 
 export const reservePrice = utils.parseEther('0.15')
 export const minBidIncrement = utils.parseEther('0.01')
@@ -24,8 +24,7 @@ export async function deployAuctionRaffle(biddingStartTime: number, deployer: Si
   const biddingEndTime = biddingStartTime + minStateDuration
   const claimingEndTime = biddingEndTime + minStateDuration
 
-  const libraryLink = await deployMaxHeap(deployer, hre)
-  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName, { libraries: libraryLink })
+  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName)
   return auctionRaffleFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
@@ -38,11 +37,11 @@ export async function deployAuctionRaffle(biddingStartTime: number, deployer: Si
   )
 }
 
-export async function deployTestnetAuctionRaffle(biddingStartTime: number, heapLibraryAddress: string, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
+export async function deployTestnetAuctionRaffle(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
   const biddingEndTime = biddingStartTime + YEAR
   const claimingEndTime = biddingEndTime + minStateDuration
 
-  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName, { libraries: getAuctionRaffleLibraries(heapLibraryAddress) })
+  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName)
   return auctionRaffleFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
@@ -53,12 +52,4 @@ export async function deployTestnetAuctionRaffle(biddingStartTime: number, heapL
     utils.parseUnits('0.15', 9),
     utils.parseUnits('0.01', 9),
   )
-}
-
-export async function deployMaxHeap(deployer: Signer, hre: HardhatRuntimeEnvironment) {
-  const heapLibraryFactory = await hre.ethers.getContractFactory('MaxHeap')
-  const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
-  console.log('\nMaxHeap address: ', heapLibrary.address)
-
-  return getAuctionRaffleLibraries(heapLibrary.address)
 }
