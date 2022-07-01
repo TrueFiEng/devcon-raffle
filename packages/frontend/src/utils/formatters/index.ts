@@ -1,5 +1,4 @@
 export * from './formatEndDate'
-export * from './formatEndDateText'
 export * from './formatEtherAmount'
 export * from './formatInputAmount'
 export * from './formatTimeLeft'
