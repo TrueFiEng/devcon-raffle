@@ -24,8 +24,7 @@ export async function deployAuctionRaffle(biddingStartTime: number, deployer: Si
   const biddingEndTime = biddingStartTime + minStateDuration
   const claimingEndTime = biddingEndTime + minStateDuration
 
-  const libraryLink = await deployMaxHeap(deployer, hre)
-  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName, { libraries: libraryLink })
+  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName)
   return auctionRaffleFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
@@ -42,7 +41,7 @@ export async function deployTestnetAuctionRaffle(biddingStartTime: number, heapL
   const biddingEndTime = biddingStartTime + YEAR
   const claimingEndTime = biddingEndTime + minStateDuration
 
-  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName, { libraries: getAuctionRaffleLibraries(heapLibraryAddress) })
+  const auctionRaffleFactory = await hre.ethers.getContractFactory(auctionRaffleArtifactName)
   return auctionRaffleFactory.connect(deployer).deploy(
     deployer.address,
     biddingStartTime,
@@ -53,12 +52,4 @@ export async function deployTestnetAuctionRaffle(biddingStartTime: number, heapL
     utils.parseUnits('0.15', 9),
     utils.parseUnits('0.01', 9),
   )
-}
-
-export async function deployMaxHeap(deployer: Signer, hre: HardhatRuntimeEnvironment) {
-  const heapLibraryFactory = await hre.ethers.getContractFactory('MaxHeap')
-  const heapLibrary = await heapLibraryFactory.connect(deployer).deploy()
-  console.log('\nMaxHeap address: ', heapLibrary.address)
-
-  return getAuctionRaffleLibraries(heapLibrary.address)
 }
