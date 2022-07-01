@@ -3,12 +3,15 @@ import { ArrowDownIcon } from 'src/components/Icons'
 import { Rule, RuleText } from 'src/components/Info/Rules'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useRaffleWinnersCount } from 'src/hooks/useRaffleWinnersCount'
+import { useVoucherRedeemDeadline } from 'src/hooks/useVoucherRedeemDeadline'
 import { Colors } from 'src/styles/colors'
+import { formatEndDate } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 export const InfoAccordion = () => {
   const auctionWinnersCount = useAuctionWinnersCount()
   const raffleWinnersCount = useRaffleWinnersCount()
+  const redeemTimestamp = useVoucherRedeemDeadline()
   const totalCount = auctionWinnersCount && raffleWinnersCount && auctionWinnersCount + raffleWinnersCount
   const reservePrice = 0.25
   const exampleBid = 0.5
@@ -146,9 +149,10 @@ export const InfoAccordion = () => {
             <AccordionStyledTrigger heading="In what form will I get the ticket?" />
           </StyledHeader>
           <StyledContent>
-            After the raffle is settled, you will have 48 hours (<Bold>until July 16 at 08:00 UTC</Bold>) to claim your
-            voucher code for the ticket. In order to do so, you will be asked to sign a message using your wallet to
-            authenticate as the owner of the winning account. The voucher code will be presented to you on this page.
+            After the raffle is settled, you will have 48 hours (<Bold>until {formatEndDate(redeemTimestamp)}</Bold>) to
+            claim your voucher code for the ticket. In order to do so, you will be asked to sign a message using your
+            wallet to authenticate as the owner of the winning account. The voucher code will be presented to you on
+            this page.
           </StyledContent>
         </Accordion.Item>
 
