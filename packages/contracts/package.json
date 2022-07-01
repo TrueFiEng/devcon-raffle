@@ -24,7 +24,7 @@
     "verify": "bash spec/verify.sh -f",
     "verify:sanity": "bash spec/verify.sh -sf",
 
-    "node:run": "hardhat run scripts/deploy/run.ts",
+    "node:run": "hardhat run scripts/node/run.ts",
     "node:increase-time": "hardhat --network localhost increase-time",
     "node:accounts": "hardhat --network localhost accounts",
 
