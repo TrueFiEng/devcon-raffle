@@ -9,7 +9,7 @@ pragma solidity 0.8.10;
  * @author TrueFi Engineering team
  */
 library MaxHeap {
-    function insert(uint256[] storage heap, uint256 key) public {
+    function insert(uint256[] storage heap, uint256 key) internal {
         uint256 index = heap.length;
         heap.push(key);
         bubbleUp(heap, index, key);
@@ -19,7 +19,7 @@ library MaxHeap {
         uint256[] storage heap,
         uint256 oldValue,
         uint256 newValue
-    ) public {
+    ) internal {
         uint256 index = findKey(heap, oldValue);
         increaseKeyAt(heap, index, newValue);
     }
@@ -28,13 +28,13 @@ library MaxHeap {
         uint256[] storage heap,
         uint256 index,
         uint256 newValue
-    ) public {
+    ) internal {
         require(newValue > heap[index], "MaxHeap: new value must be bigger than old value");
         heap[index] = newValue;
         bubbleUp(heap, index, newValue);
     }
 
-    function removeMax(uint256[] storage heap) public returns (uint256 max) {
+    function removeMax(uint256[] storage heap) internal returns (uint256 max) {
         require(heap.length > 0, "MaxHeap: cannot remove max element from empty heap");
         max = heap[0];
         heap[0] = heap[heap.length - 1];
@@ -61,7 +61,7 @@ library MaxHeap {
         return max;
     }
 
-    function findKey(uint256[] storage heap, uint256 value) public view returns (uint256) {
+    function findKey(uint256[] storage heap, uint256 value) internal view returns (uint256) {
         for (uint256 i = 0; i < heap.length; ++i) {
             if (heap[i] == value) {
                 return i;
@@ -70,7 +70,7 @@ library MaxHeap {
         revert("MaxHeap: key with given value not found");
     }
 
-    function findMin(uint256[] storage heap) public view returns (uint256 index, uint256 min) {
+    function findMin(uint256[] storage heap) internal view returns (uint256 index, uint256 min) {
         uint256 heapLength = heap.length;
         require(heapLength > 0, "MaxHeap: cannot find minimum element on empty heap");
 
