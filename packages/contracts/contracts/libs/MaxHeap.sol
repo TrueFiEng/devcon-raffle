@@ -61,6 +61,17 @@ library MaxHeap {
         return max;
     }
 
+    function bubbleUp(
+        uint256[] storage heap,
+        uint256 index,
+        uint256 key
+    ) internal {
+        while (index > 0 && heap[parent(index)] < heap[index]) {
+            (heap[parent(index)], heap[index]) = (key, heap[parent(index)]);
+            index = parent(index);
+        }
+    }
+
     function findKey(uint256[] storage heap, uint256 value) internal view returns (uint256) {
         for (uint256 i = 0; i < heap.length; ++i) {
             if (heap[i] == value) {
@@ -84,17 +95,6 @@ library MaxHeap {
                 min = element;
                 index = i;
             }
-        }
-    }
-
-    function bubbleUp(
-        uint256[] storage heap,
-        uint256 index,
-        uint256 key
-    ) internal {
-        while (index > 0 && heap[parent(index)] < heap[index]) {
-            (heap[parent(index)], heap[index]) = (key, heap[parent(index)]);
-            index = parent(index);
         }
     }
 
