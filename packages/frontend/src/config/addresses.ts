@@ -12,8 +12,8 @@ export const ADDRESSES: Record<string, Record<SupportedChainId, string>> = {
   },
   devcon: {
     [ChainId.Arbitrum]: '',
-    [ChainId.ArbitrumRinkeby]: '0x17c9FE0c1B4d6dCC61f71064095e60b7A87514cF',
-    [ChainId.Hardhat]: '0x2d7435A78010bB613E1f22E0A8018733dd0C1Cfe',
+    [ChainId.ArbitrumRinkeby]: '0x2d7435A78010bB613E1f22E0A8018733dd0C1Cfe',
+    [ChainId.Hardhat]: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
   },
 }
 
