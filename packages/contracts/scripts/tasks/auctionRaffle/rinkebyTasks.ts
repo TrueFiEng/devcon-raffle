@@ -1,5 +1,4 @@
 import { task, types } from 'hardhat/config'
-import { deployTestnetAuctionRaffle } from 'scripts/deploy/deploy'
 import { BigNumberish, constants, Contract, Signer, utils, Wallet } from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { connectToAuctionRaffle } from 'scripts/utils/auctionRaffle'
@@ -34,19 +33,6 @@ task('transfer-ether', 'Transfers ether from DEPLOYER account to PRIVATE_KEYS ac
       await tx.wait()
       console.log(`Sent ${formatEther(amountToSend)}${constants.EtherSymbol} to ${wallet.address}`)
     }
-  })
-
-task('deploy', 'Deploys AuctionRaffle contract')
-  .addParam('delay', 'Time in seconds to push forward bidding start time', 0, types.int, true)
-  .setAction(async ({ delay }: { delay: number }, hre) => {
-    const [deployer] = await hre.ethers.getSigners()
-
-    console.log('Deploying contracts...')
-    const now = Math.floor(Date.now() / 1000)
-    const biddingStartTime = now + delay
-    const auctionRaffle = await deployTestnetAuctionRaffle(biddingStartTime, deployer, hre)
-    console.log('AuctionRaffle address: ', auctionRaffle.address)
-    console.log('Contracts deployed\n')
   })
 
 task('init-bids', 'Places initial bids using PRIVATE_KEYS accounts')

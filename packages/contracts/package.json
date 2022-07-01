@@ -36,7 +36,6 @@
 
     "rinkeby:generate-dotenv": "hardhat generate-dotenv",
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
-    "rinkeby:deploy": "hardhat --network rinkeby deploy",
     "rinkeby:init-bids": "hardhat --network rinkeby init-bids",
 
     "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum_rinkeby"
