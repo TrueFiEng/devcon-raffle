@@ -37,7 +37,7 @@ export async function deployAuctionRaffle(biddingStartTime: number, deployer: Si
   )
 }
 
-export async function deployTestnetAuctionRaffle(biddingStartTime: number, heapLibraryAddress: string, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
+export async function deployTestnetAuctionRaffle(biddingStartTime: number, deployer: SignerWithAddress, hre: HardhatRuntimeEnvironment) {
   const biddingEndTime = biddingStartTime + YEAR
   const claimingEndTime = biddingEndTime + minStateDuration
 
