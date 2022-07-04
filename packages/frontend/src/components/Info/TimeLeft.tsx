@@ -22,7 +22,8 @@ export const TimeLeft = () => {
         <RemainingTime>{timeLeft}</RemainingTime>
       </TimeRow>
       <TimeRow>
-        Ends on <RemainingTime>{formatEndDate(timestamp)}</RemainingTime>
+        {state === 'AwaitingBidding' ? 'Starts on' : ' Ends on'}{' '}
+        <RemainingTime>{formatEndDate(timestamp)}</RemainingTime>
       </TimeRow>
     </TimeBox>
   )
