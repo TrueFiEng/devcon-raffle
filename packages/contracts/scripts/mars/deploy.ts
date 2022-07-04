@@ -4,9 +4,9 @@ import { config } from './deploymentConfig'
 
 deploy({ verify: true }, deployAuctionRaffle)
 
-function deployAuctionRaffle(deployer: string) {
+function deployAuctionRaffle() {
   contract(AuctionRaffle, [
-    deployer, // TODO change to config.initialOwner after we know the address
+    config.initialOwner,
     config.biddingStartTime,
     config.biddingEndTime,
     config.claimingEndTime,
