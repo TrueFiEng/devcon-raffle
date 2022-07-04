@@ -89,7 +89,7 @@ export const InfoAccordion = () => {
             />
             <Rule
               heading="No luck?"
-              rule="In case you don't win, you will be able to withdraw your bid amount minus a 2% sybil resistance fee."
+              rule="In case you don't win, you will be able to withdraw your bid amount minus a 2% sybil-resistance fee."
               example={`You bid ${exampleBid} ETH and end up not winning a ticket. You can get ${
                 exampleBid * 0.98
               } ETH back.`}
