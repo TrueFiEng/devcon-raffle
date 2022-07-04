@@ -38,7 +38,7 @@
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
     "rinkeby:init-bids": "hardhat --network rinkeby init-bids",
 
-    "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum_rinkeby"
+    "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum"
   },
   "devDependencies": {
     "@ethereum-waffle/chai": "^3.4.3",
