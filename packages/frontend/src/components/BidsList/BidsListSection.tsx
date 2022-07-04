@@ -70,12 +70,12 @@ function selectBids(
   const lastAuctionBidIndex = bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1
   const lastAuctionBid = bids[lastAuctionBidIndex]
 
-  return userBid && checkIfUserBidIsNotLastOne(userBid, lastAuctionBid, auctionWinnersCount)
+  return userBid && shouldUserBidBeDisplayed(userBid, lastAuctionBid, auctionWinnersCount)
     ? topAuctionBids.concat([userBid, lastAuctionBid])
     : topAuctionBids.concat([lastAuctionBid])
 }
 
-const checkIfUserBidIsNotLastOne = (userBid: UserBid, lastAuctionBid: Bid, auctionWinnersCount: number) => {
+const shouldUserBidBeDisplayed = (userBid: UserBid, lastAuctionBid: Bid, auctionWinnersCount: number) => {
   return !userBid.bidderID.eq(lastAuctionBid.bidderID) && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
 }
 
