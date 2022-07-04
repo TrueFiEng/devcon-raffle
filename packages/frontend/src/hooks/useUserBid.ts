@@ -1,9 +1,17 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { useCall, useEthers } from '@usedapp/core'
 import { useMemo } from 'react'
 import { WinType } from 'src/components/Claim/WinBid/WinFlowEnum'
 import { useBids, useDevconParam } from 'src/hooks'
 import { useDevconContract } from 'src/hooks/contract'
 import { UserBid } from 'src/models/Bid'
+
+interface ContractBid {
+  bidderID: BigNumber
+  amount: BigNumber
+  winType: number
+  claimed: boolean
+}
 
 export function useUserBid(): UserBid | undefined {
   const { devcon, chainId } = useDevconContract()
@@ -43,13 +51,22 @@ export function useUserBid(): UserBid | undefined {
       }
     }
 
-    const shouldUserBeAbleToWithdraw =
-      reservePrice && bid.winType == WinType.Raffle && bid.claimed === false ? bid.amount.eq(reservePrice) : bid.claimed
-
     return {
       ...bidWithPlace,
       ...bid,
-      claimed: shouldUserBeAbleToWithdraw,
+      claimed: isClaimed(reservePrice, bid),
     }
-  }, [account, bid, bidders, bids])
+  }, [account, bid, bidders, bids, reservePrice])
+}
+
+function isClaimed(reservePrice: BigNumber | undefined, bid: ContractBid): boolean {
+  if (bid.winType != WinType.Raffle || bid.claimed) {
+    return bid.claimed
+  }
+
+  if (!reservePrice) {
+    return false
+  }
+
+  return bid.amount.eq(reservePrice)
 }
