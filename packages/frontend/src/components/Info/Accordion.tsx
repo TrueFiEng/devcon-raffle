@@ -42,9 +42,9 @@ export const InfoAccordion = () => {
             Join the contest by submitting a bid for the ticket based on the amount you would value having a Devcon
             ticket. Bid high to compete for the 20 tickets distributed in the auction, or be entered into the raffle for
             a chance to buy a ticket at the reserve price. You need to bid at least the reserve price, which is set to
-            the price of a standard Devcon ticket at time of publication: {reservePrice} ETH. Please note there is a
-            one-person-one-bid rule in place. You will need to submit your name at check-out, and we will check IDs at
-            Devcon to verify that the participant is the ticket holder.
+            the price of a standard Devcon ticket at time of publication: <Bold>{reservePrice} ETH.</Bold> Please note
+            there is a one-person-one-bid rule in place. You will need to submit your name at check-out, and we will
+            check IDs at Devcon to verify that the participant is the ticket holder.
           </StyledContent>
         </Accordion.Item>
 
@@ -89,8 +89,10 @@ export const InfoAccordion = () => {
             />
             <Rule
               heading="No luck?"
-              rule="In case you don't win, your entire bid will be claimable after the raffle is settled."
-              example={`You bid ${exampleBid} ETH and end up not winning a ticket. You can get your ${exampleBid} ETH back, minus a 2% sybil resistance fee.`}
+              rule="In case you don't win, you will be able to withdraw your bid amount minus a 2% sybil-resistance fee."
+              example={`You bid ${exampleBid} ETH and end up not winning a ticket. You can get ${
+                exampleBid * 0.98
+              } ETH back.`}
             />
             <Rule
               heading="What if there’s less than 100 participants?"
