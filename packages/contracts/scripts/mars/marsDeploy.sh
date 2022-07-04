@@ -2,7 +2,7 @@
 set -eu
 
 # Setting Infura or Alchemy key to use for convenience here
-export ALCHEMY_KEY="Mr3XmGeD3I9I1QHex48yfZQhooTILV4T"
+export ALCHEMY_KEY="j_dccrP25UjZv5uYxh1mcjEl5o8nWZaf"
 
 # Setting Etherscan key to use for convenience here
 export ETHERSCAN_KEY="FJG9XKWZC5ECE6T86IGM8XI35DME5KYU1E"
@@ -12,7 +12,7 @@ export ETHERSCAN_KEY="FJG9XKWZC5ECE6T86IGM8XI35DME5KYU1E"
 DEPLOY_SCRIPT="$1"
 shift 1
 
-network='arbitrum_rinkeby'
+network='arbitrum'
 args="$@"
 
 while [[ "$@" ]]; do
