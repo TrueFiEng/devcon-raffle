@@ -4,7 +4,7 @@ import { config } from './deploymentConfig'
 
 deploy({ verify: true }, deployAuctionRaffle)
 
-function deployAuctionRaffle(deployer: string) {
+function deployAuctionRaffle() {
   contract(AuctionRaffle, [
     config.initialOwner,
     config.biddingStartTime,
