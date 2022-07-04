@@ -9,7 +9,7 @@ import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { UserBid } from '../../models/Bid'
+import { Bid, UserBid } from '../../models/Bid'
 import { ImmutableBids } from '../../providers/Bids/types'
 
 const topAuctionBidsCount = 3
@@ -74,9 +74,13 @@ function selectBids(
   const lastAuctionBidIndex = bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1
   const lastAuctionBid = bids[lastAuctionBidIndex]
 
-  return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
+  return userBid && shouldUserBidBeDisplayed(userBid, lastAuctionBid, auctionWinnersCount)
     ? topAuctionBids.concat([userBid, lastAuctionBid])
     : topAuctionBids.concat([lastAuctionBid])
+}
+
+const shouldUserBidBeDisplayed = (userBid: UserBid, lastAuctionBid: Bid, auctionWinnersCount: number) => {
+  return !userBid.bidderID.eq(lastAuctionBid.bidderID) && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
 }
 
 const within = (...[lower, higher, value]: number[]) => value >= lower && value <= higher
