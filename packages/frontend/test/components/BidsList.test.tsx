@@ -45,6 +45,7 @@ jest.mock('src/hooks', () => ({
     RAFFLE_SETTLED: 4,
     CLAIMING_CLOSED: 5,
   },
+  useAuctionState: () => 'BiddingFlow',
   useRaffleWinnersCount: () => 16,
   useBids: () => ({ bids: [] }),
 }))
