@@ -9,7 +9,7 @@ import { RemainingTime } from './TimeLeft'
 export const VoucherTimeLeft = () => {
   const { devconValue: timestamp } = useDevconParam('biddingEndTime')
   const redeemTimestamp = useVoucherRedeemDeadline()
-  const isPeriodExpired = !redeemTimestamp?.mul(1000).gt(Date.now())
+  const isPeriodExpired = redeemTimestamp?.mul(1000).lt(Date.now()) ?? false
 
   return (
     <VoucherTimeBox isPeriodExpired={isPeriodExpired}>
