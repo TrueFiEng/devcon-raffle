@@ -6,7 +6,7 @@ deploy({ verify: true }, deployAuctionRaffle)
 
 function deployAuctionRaffle(deployer: string) {
   contract(AuctionRaffle, [
-    deployer, // TODO change to config.initialOwner after we know the address
+    config.initialOwner,
     config.biddingStartTime,
     config.biddingEndTime,
     config.claimingEndTime,
