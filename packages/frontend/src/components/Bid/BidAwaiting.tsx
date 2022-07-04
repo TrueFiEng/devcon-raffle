@@ -1,19 +1,14 @@
 import { FormWideWrapper } from 'src/components/Form/Form'
-import { useAuctionTime } from 'src/hooks'
-import { formatEndDateText } from 'src/utils/formatters'
+import styled from 'styled-components'
 
 export const BidAwaiting = () => {
-  const timestamp = useAuctionTime()
-  if (!timestamp) {
-    return <></>
-  }
-
-  const { dateText, timeText } = formatEndDateText(timestamp)
   return (
-    <FormWideWrapper>
-      <h2>
-        Bidding will start on {dateText} at {timeText}
-      </h2>
-    </FormWideWrapper>
+    <BidAwaitingWrapper>
+      <h2>Bidding has not started yet ⏳</h2>
+    </BidAwaitingWrapper>
   )
 }
+
+const BidAwaitingWrapper = styled(FormWideWrapper)`
+  padding: 0 54px;
+`

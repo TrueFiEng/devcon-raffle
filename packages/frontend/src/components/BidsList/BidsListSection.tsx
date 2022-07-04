@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BidsList, BidsListHeaders } from 'src/components/BidsList'
 import { Button } from 'src/components/Buttons'
+import { useAuctionState } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
 import { useUserBid } from 'src/hooks/useUserBid'
@@ -15,6 +16,7 @@ const topAuctionBidsCount = 3
 const bidsMaxCount = topAuctionBidsCount + 1
 
 export const BidsListSection = () => {
+  const state = useAuctionState()
   const { bids: immutableBids } = useBids()
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
@@ -30,7 +32,9 @@ export const BidsListSection = () => {
     <BidsListContainer>
       {!isLoadingParams && immutableBids.size === 0 ? (
         <EmptyList>
-          <ColoredText>No bidders yet. Be the first one!</ColoredText>
+          <ColoredText>
+            {state === 'AwaitingBidding' ? 'Bids will show up here' : `No bidders yet. Be the first one!`}
+          </ColoredText>
         </EmptyList>
       ) : (
         <>
@@ -101,5 +105,6 @@ const EmptyList = styled.div`
   margin: 48px 0;
 `
 const ColoredText = styled.h3`
+  width: max-content;
   color: ${Colors.Blue};
 `
