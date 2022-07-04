@@ -18,6 +18,6 @@ export function getTestnetProdConfig(): Config {
     addresses: getAddresses(),
     backendUrl: getStringEnv('BACKEND_URL') || '',
     portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
-    dappName: 'Devcon 6 Auction+Raffle (TESTNET)',
+    dappName: 'Devcon 6 Auction & Raffle (TESTNET)',
   }
 }

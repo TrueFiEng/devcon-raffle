@@ -3,7 +3,6 @@ import { BigNumberish, utils, Wallet } from 'ethers'
 import { MockProvider } from 'ethereum-waffle'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { WEEK } from 'scripts/utils/consts'
-import { deployMaxHeap } from 'fixtures/maxHeapMockFixture'
 
 export const auctionWinnersCount = 1
 export const raffleWinnersCount = 8
@@ -45,8 +44,7 @@ export function configuredAuctionRaffleFixture(params: auctionRaffleParams) {
     const currentBlockTimestamp = await getLatestBlockTimestamp(provider)
     params = setAuctionRaffleParamsDefaults(owner, currentBlockTimestamp, params)
 
-    const libraryLink = await deployMaxHeap(deployer)
-    const auctionRaffle = await new AuctionRaffleMock__factory(libraryLink, deployer).deploy(
+    const auctionRaffle = await new AuctionRaffleMock__factory(deployer).deploy(
       params.initialOwner,
       params.biddingStartTime,
       params.biddingEndTime,
