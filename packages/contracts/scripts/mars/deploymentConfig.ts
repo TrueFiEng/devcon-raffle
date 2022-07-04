@@ -1,5 +1,5 @@
 import { AddressLike, NumberLike } from 'ethereum-mars'
-import { constants, utils } from 'ethers'
+import { utils } from 'ethers'
 
 interface DeploymentConfig {
   initialOwner: AddressLike,
