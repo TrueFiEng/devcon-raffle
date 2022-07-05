@@ -7,7 +7,9 @@ export const Footer = () => {
     <FooterContainer>
       <FooterRow>
         <p>Built with 💙 by</p>
-        <TruefiLogoIcon />
+        <a href="https://truefi.io/" target="_blank" rel="noopener noreferrer">
+          <TruefiLogoIcon />
+        </a>
       </FooterRow>
     </FooterContainer>
   )
