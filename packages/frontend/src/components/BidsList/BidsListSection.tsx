@@ -2,19 +2,21 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BidsList, BidsListHeaders } from 'src/components/BidsList'
 import { Button } from 'src/components/Buttons'
+import { useAuctionState } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useBids } from 'src/hooks/useBids'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
-import { UserBid } from '../../models/Bid'
+import { Bid, UserBid } from '../../models/Bid'
 import { ImmutableBids } from '../../providers/Bids/types'
 
 const topAuctionBidsCount = 3
 const bidsMaxCount = topAuctionBidsCount + 1
 
 export const BidsListSection = () => {
+  const state = useAuctionState()
   const { bids: immutableBids } = useBids()
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
@@ -30,7 +32,9 @@ export const BidsListSection = () => {
     <BidsListContainer>
       {!isLoadingParams && immutableBids.size === 0 ? (
         <EmptyList>
-          <ColoredText>No bidders yet. Be the first one!</ColoredText>
+          <ColoredText>
+            {state === 'AwaitingBidding' ? 'Bids will show up here' : `No bidders yet. Be the first one!`}
+          </ColoredText>
         </EmptyList>
       ) : (
         <>
@@ -70,9 +74,13 @@ function selectBids(
   const lastAuctionBidIndex = bids.length > auctionWinnersCount ? auctionWinnersCount - 1 : bids.length - 1
   const lastAuctionBid = bids[lastAuctionBidIndex]
 
-  return userBid && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
+  return userBid && shouldUserBidBeDisplayed(userBid, lastAuctionBid, auctionWinnersCount)
     ? topAuctionBids.concat([userBid, lastAuctionBid])
     : topAuctionBids.concat([lastAuctionBid])
+}
+
+const shouldUserBidBeDisplayed = (userBid: UserBid, lastAuctionBid: Bid, auctionWinnersCount: number) => {
+  return !userBid.bidderID.eq(lastAuctionBid.bidderID) && within(bidsMaxCount, auctionWinnersCount - 1, userBid.place)
 }
 
 const within = (...[lower, higher, value]: number[]) => value >= lower && value <= higher
@@ -97,5 +105,6 @@ const EmptyList = styled.div`
   margin: 48px 0;
 `
 const ColoredText = styled.h3`
+  width: max-content;
   color: ${Colors.Blue};
 `

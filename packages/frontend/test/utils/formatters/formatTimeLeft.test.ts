@@ -27,6 +27,12 @@ describe('formatTimeLeft', () => {
     expect(formatTimeLeft(date, now)).toBe('01d:01h:30m')
   })
 
+  it('Formats days correctly', () => {
+    const date = BigNumber.from(1657008000)
+    const now = 1656951089081
+    expect(formatTimeLeft(date, now)).toBe('00d:15h:48m')
+  })
+
   it('Past date displays as zeroes', () => {
     const date = BigNumber.from(minutesToSeconds(60))
     const now = minutesToMillis(230)

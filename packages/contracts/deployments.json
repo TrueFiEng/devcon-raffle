@@ -1,0 +1,16 @@
+{
+  "arbitrum_rinkeby": {
+    "auctionRaffle": {
+      "txHash": "0xcf8d36d310dab30aae2d8502d9a29c4239015138986a54b92c82b29dc58b41e6",
+      "address": "0x2d7435A78010bB613E1f22E0A8018733dd0C1Cfe",
+      "multisig": false
+    }
+  },
+  "arbitrum": {
+    "auctionRaffle": {
+      "txHash": "0x0c0d784575a9bd91d256ae2c51b44190be27bf8da3a6c8f8fc2c74c5151022a9",
+      "address": "0xF53d383525117d1f51BF234966E39bD1508a5948",
+      "multisig": false
+    }
+  }
+}
