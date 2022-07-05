@@ -4,6 +4,7 @@ import { BidAwaiting } from 'src/components/Bid/BidAwaiting'
 import { BidFlow } from 'src/components/Bid/BidFlow'
 import { ClaimFlow, ClaimingClosed, ResultsAwaiting } from 'src/components/Claim'
 import { FormSubHeading, FormWideWrapper } from 'src/components/Form'
+import { LoadingIcon } from 'src/components/Icons'
 import { useContractState } from 'src/hooks'
 import { AuctionState, useAuctionState } from 'src/hooks/useAuctionState'
 import { Colors } from 'src/styles/colors'
@@ -38,6 +39,7 @@ const StateLoading = () => {
   return (
     <Wrapper>
       <FormWideWrapper>
+        <LoadingIcon color={'white'} size={64} />
         <FormSubHeading>Loading...</FormSubHeading>
       </FormWideWrapper>
     </Wrapper>
