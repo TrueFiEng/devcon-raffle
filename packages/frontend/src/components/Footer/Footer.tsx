@@ -7,9 +7,9 @@ export const Footer = () => {
     <FooterContainer>
       <FooterRow>
         <p>Built with 💙 by</p>
-        <a href="https://truefi.io/" target="_blank" rel="noopener noreferrer">
+        <LogoLink href="https://truefi.io/" target="_blank" rel="noopener noreferrer">
           <TruefiLogoIcon />
-        </a>
+        </LogoLink>
       </FooterRow>
     </FooterContainer>
   )
@@ -29,4 +29,9 @@ const FooterRow = styled.div`
   align-items: center;
   column-gap: 16px;
   padding: 16px 0;
+`
+
+const LogoLink = styled.a`
+  display: flex;
+  align-items: center;
 `
