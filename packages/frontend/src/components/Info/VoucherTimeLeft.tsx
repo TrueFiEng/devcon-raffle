@@ -1,19 +1,15 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import moment from 'moment'
-import { useAuctionState, useAuctionTime } from 'src/hooks'
+import { useDevconParam } from 'src/hooks'
+import { useVoucherRedeemDeadline } from 'src/hooks/useVoucherRedeemDeadline'
 import { Colors } from 'src/styles/colors'
 import { formatEndDate } from 'src/utils/formatters'
 import styled from 'styled-components'
 
 import { RemainingTime } from './TimeLeft'
 
-const REDEEM_PERIOD = 48
-
 export const VoucherTimeLeft = () => {
-  const state = useAuctionState()
-  const isPeriodExpired = state === 'ClaimingClosed'
-  const timestamp = useAuctionTime()
-  const redeemTimestamp = timestamp && BigNumber.from(moment.unix(timestamp?.toNumber()).add(REDEEM_PERIOD, 'h').unix())
+  const { devconValue: timestamp } = useDevconParam('biddingEndTime')
+  const redeemTimestamp = useVoucherRedeemDeadline()
+  const isPeriodExpired = redeemTimestamp?.mul(1000).lt(Date.now()) ?? false
 
   return (
     <VoucherTimeBox isPeriodExpired={isPeriodExpired}>

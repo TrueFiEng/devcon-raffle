@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { Config as UseDAppConfig } from '@usedapp/core'
 import { ADDRESSES } from 'src/config/addresses'
 import { SupportedChainId } from 'src/constants/chainIDs'
@@ -14,6 +15,7 @@ export interface Config {
   backendUrl: string
   portisDAppID: string
   dappName: string
+  voucherRedeemDeadline?: BigNumber
 }
 
 function getConfig(mode: string): Config {

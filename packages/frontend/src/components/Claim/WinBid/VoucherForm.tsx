@@ -1,7 +1,7 @@
 import { Button, CopyButton } from 'src/components/Buttons'
 import { FormHeading } from 'src/components/Form/Form'
 import { InputLabel } from 'src/components/Form/Input'
-import { useAuctionState } from 'src/hooks'
+import { useVoucherRedeemDeadline } from 'src/hooks/useVoucherRedeemDeadline'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
 
@@ -14,8 +14,8 @@ interface Props {
 }
 
 export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
-  const state = useAuctionState()
-  const isVoucherExpired = state === 'ClaimingClosed'
+  const redeemTimestamp = useVoucherRedeemDeadline()
+  const isVoucherExpired = !redeemTimestamp?.mul(1000).gt(Date.now())
 
   return (
     <WinnerForm>
