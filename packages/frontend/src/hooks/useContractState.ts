@@ -22,5 +22,5 @@ export function useContractState() {
       { chainId }
     ) ?? {}
   const state = value ? value[0] : ContractState.AWAITING_BIDDING
-  return { state, error }
+  return { state, error, isLoading: value === undefined }
 }
