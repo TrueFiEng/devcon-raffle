@@ -30,7 +30,9 @@ export const UserActionSection = () => {
   const Content = UserActions[state]
   return (
     <Wrapper>
-      <Content />
+      <div>
+        <Content />
+      </div>
     </Wrapper>
   )
 }
@@ -49,10 +51,9 @@ const StateLoading = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-shrink: 0;
-  margin-left: -170px;
-  width: 724px;
-  height: 450px;
   background-color: ${Colors.Blue};
-  position: relative;
-  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  padding: 68px 24px
+
 `

@@ -19,11 +19,16 @@ const TopBarContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 68px;
   background-color: ${Colors.White};
   position: sticky;
   top: 0;
   z-index: 99;
+  padding: 8px 34px;
+  gap: 8px;
+  
+  @media (max-width: 640px) {
+    padding: 8px 24px;
+  }
 `
 const HomeLink = styled.a`
   line-height: 1;

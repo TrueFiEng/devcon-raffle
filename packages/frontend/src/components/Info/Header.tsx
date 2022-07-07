@@ -42,8 +42,12 @@ const Wrapper = styled.div`
 `
 
 const StyledHeader = styled(HeaderBar)`
-  height: 225px;
-  padding: 16px 125px 24px 68px;
+  height: 325px;
+  padding: 16px 125px 24px 34px;
+
+  @media (max-width: 1024px) {
+    padding: 24px;
+  }
 `
 
 const HeaderWrapper = styled.div`
@@ -97,15 +101,7 @@ const SubTitle = styled.h3`
 const Key = styled.div`
   position: absolute;
   top: -16px;
-  right: 0;
-  height: 225px;
-  opacity: 0.5;
-
-  @media screen and (max-width: 1240px) {
-    opacity: 0.2;
-  }
-
-  @media screen and (min-width: 1400px) {
-    opacity: 1;
-  }
+  right: -68px;
+  height: 325px;
+  opacity: 0.4;
 `

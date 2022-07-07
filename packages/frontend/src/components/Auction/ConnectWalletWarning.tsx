@@ -14,6 +14,7 @@ export const ConnectWalletWarning = () => {
       <FormRow>
         <span>To {text.action} connect your wallet</span>
       </FormRow>
+      <br />
       <ConnectWalletButton />
     </ConnectFormWrapper>
   )
@@ -21,5 +22,5 @@ export const ConnectWalletWarning = () => {
 
 const ConnectFormWrapper = styled(FormWrapper)`
   justify-content: center;
-  padding: 0 218px;
+  padding: 0;
 `

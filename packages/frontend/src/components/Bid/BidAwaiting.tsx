@@ -10,5 +10,5 @@ export const BidAwaiting = () => {
 }
 
 const BidAwaitingWrapper = styled(FormWideWrapper)`
-  padding: 0 54px;
+  padding: 0;
 `

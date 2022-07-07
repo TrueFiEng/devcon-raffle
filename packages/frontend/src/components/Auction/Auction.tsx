@@ -15,7 +15,6 @@ export const Auction = () => {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 670px;
-  padding: 0 115px;
+  flex: 1;
   background: ${Colors.GreyLight};
 `

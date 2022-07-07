@@ -1,6 +1,6 @@
 import { getWarningText } from 'src/components/Auction'
 import { Button } from 'src/components/Buttons'
-import { FormHeading, FormRow, FormWrapper } from 'src/components/Form/Form'
+import { FormHeading, FormRow } from 'src/components/Form/Form'
 import { useContractState, useSwitchChain, useWhichWallet } from 'src/hooks'
 import { Colors } from 'src/styles/colors'
 import styled from 'styled-components'
@@ -37,6 +37,13 @@ export const ChainIdWarning = () => {
     </FormWrapper>
   )
 }
+
+const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  width: 100%;
+`
 
 const TutorialLink = styled.a`
   color: ${Colors.GreenLight};

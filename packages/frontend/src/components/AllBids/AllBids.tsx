@@ -10,7 +10,9 @@ export const AllBids = () => {
   return (
     <PageContainer>
       <SearchInput setSearch={setSearch} />
-      <AllBidsContent search={search} />
+      <BidsContainer>
+        <AllBidsContent search={search} />
+      </BidsContainer>
     </PageContainer>
   )
 }
@@ -51,5 +53,11 @@ const PageContainer = styled.div`
   row-gap: 20px;
   width: 100%;
   max-width: 780px;
-  padding: 28px 0 56px;
+  padding: 28px 8px 56px 8px;
+`
+
+const BidsContainer = styled.div`
+  overflow-y: scroll;
+  width: 100%;
+  position: relative;
 `

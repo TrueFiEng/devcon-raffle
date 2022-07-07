@@ -16,7 +16,7 @@ export const Header = () => {
       <BackButton url="/" />
       <Wrapper>
         <Title>
-          <h2>Number of participants:</h2>
+          <NumberOfParticipants>Number of participants:</NumberOfParticipants>
           <Number>{isLoadingParams ? 0 : bids.size}</Number>
         </Title>
       </Wrapper>
@@ -31,21 +31,36 @@ const StyledHeader = styled(HeaderBar)`
   height: 160px;
   padding: 28px 68px;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    padding: 14px 34px;
+  }
+  @media (max-width: 640px) {
+    padding: 8px 24px;
+  }
 `
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
   color: ${Colors.White};
 `
 
 const Title = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  row-gap: 8px;
+  gap: 14px;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+  }
+`
+
+const NumberOfParticipants = styled.h2`
+  font-size: 2rem;
+
+  @media (max-width: 640px) {
+    font-size: 1.25rem;
+  }
 `
 
 const Key = styled.div`
@@ -53,8 +68,13 @@ const Key = styled.div`
   bottom: -5px;
   right: 68px;
   height: 225px;
+  opacity: 0.5;
 `
 
 const Number = styled.h2`
   color: ${Colors.BlueDark};
+
+  @media (max-width: 640px) {
+    font-size: 2rem;
+  }
 `

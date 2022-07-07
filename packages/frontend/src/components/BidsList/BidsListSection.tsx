@@ -91,7 +91,7 @@ const BidsListContainer = styled.div`
   align-items: center;
   row-gap: 32px;
   width: 100%;
-  padding: 46px 0;
+  padding: 34px;
 `
 
 const ListHeader = styled.div`

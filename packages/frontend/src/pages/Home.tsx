@@ -15,4 +15,8 @@ const PageContainer = styled.div`
   display: flex;
   flex: 1;
   width: 100%;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
 `
