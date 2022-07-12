@@ -2,12 +2,6 @@ import { task, types } from 'hardhat/config'
 import { BigNumber, utils } from 'ethers'
 import { EthereumProvider } from 'hardhat/types'
 
-interface Block {
-  hash: string,
-}
-
-type GetBlockNumberResponse = Block | undefined | null
-
 task('generate-random-numbers', 'Generates random numbers')
   .addParam('blocks', 'Array of block numbers', undefined, types.json)
   .addParam('secret', 'Secret number', undefined, types.int)
@@ -29,6 +23,10 @@ task('generate-random-numbers', 'Generates random numbers')
 
 async function getBlockHash(provider: EthereumProvider, blockNumber: number) {
   const hexBlockNumber = BigNumber.from(blockNumber).toHexString()
-  const block: GetBlockNumberResponse = await provider.send('eth_getBlockByNumber', [hexBlockNumber, true])
-  return block.hash
+  const response = await provider.send('eth_getBlockByNumber', [hexBlockNumber, true])
+  if (('hash' in response)) {
+    return response.hash
+  }
+  console.log('RPC node response: ', response)
+  throw new Error('Missing hash in RPC node response')
 }
