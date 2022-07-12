@@ -37,6 +37,9 @@ module.exports = {
     rinkeby: {
       url: 'https://rinkeby.arbitrum.io/rpc',
       accounts: [process.env.DEPLOYER || zeroPrivateKey]
+    },
+    ethereum: {
+      url: 'https://eth-mainnet.alchemyapi.io/v2/j_dccrP25UjZv5uYxh1mcjEl5o8nWZaf'
     }
   },
   typechain: {
