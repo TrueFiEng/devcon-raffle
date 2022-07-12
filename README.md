@@ -27,3 +27,7 @@ A number of custom Hardhat tasks were defined to aid testing.
 - `yarn rinkeby:generate-dotenv [--path <STRING>] [--count <INT>]` - generate .env file needed for other tasks, *path* - output path, *count* - number of private keys to generate
 - `yarn rinkeby:transfer-ether` - transfer ether from `DEPLOYER` to `PRIVATE_KEYS` accounts
 - `yarn rinkeby:init-bids` - place initial bids using `PRIVATE_KEYS` accounts
+
+#### Ethereum Mainnet
+- `yarn ethereum:generate-random-numbers --blocks <ARRAY> --secret <INT>` - generate random numbers for raffle settlement, *blocks* - array of block numbers from which extract block hash (e.g. "[1234, 5678]"), *secret* - secret number that will be used to generate numbers
+
