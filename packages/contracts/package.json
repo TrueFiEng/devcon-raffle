@@ -38,6 +38,8 @@
     "rinkeby:transfer-ether": "hardhat --network rinkeby transfer-ether",
     "rinkeby:init-bids": "hardhat --network rinkeby init-bids",
 
+    "ethereum:generate-random-numbers": "hardhat --network ethereum generate-random-numbers",
+
     "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum"
   },
   "devDependencies": {
