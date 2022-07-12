@@ -2,22 +2,30 @@ import { task, types } from 'hardhat/config'
 import { BigNumber, utils } from 'ethers'
 import { EthereumProvider } from 'hardhat/types'
 
+interface Result {
+  blockHash: string,
+  randomNumber: BigNumber,
+}
+
 task('generate-random-numbers', 'Generates random numbers')
   .addParam('blocks', 'Array of block numbers', undefined, types.json)
   .addParam('secret', 'Secret number', undefined, types.int)
   .setAction(async ({ blocks, secret }: { blocks: number[], secret: number }, hre) => {
     const provider = hre.network.provider
     const hexSecret = BigNumber.from(secret).toHexString().substring(2)
-    const randomNumbers: BigNumber[] = []
+    const results: Result[] = []
 
     for (const block of blocks) {
       const blockHash = await getBlockHash(provider, block)
       const randomNumberHash = utils.keccak256(blockHash.concat(hexSecret))
-      randomNumbers.push(BigNumber.from(randomNumberHash))
+      results.push({
+        blockHash,
+        randomNumber: BigNumber.from(randomNumberHash),
+      })
     }
 
-    randomNumbers.forEach((randomNumber, index) => {
-      console.log(`Random number for block #${blocks[index]}: ${randomNumber}`)
+    results.forEach((result, index) => {
+      console.log(`Random number for block #${blocks[index]} with hash ${result.blockHash}: ${result.randomNumber}`)
     })
   })
 
