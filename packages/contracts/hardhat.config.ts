@@ -4,6 +4,7 @@ import './abi-exporter'
 import 'tsconfig-paths/register'
 import 'hardhat-gas-reporter'
 import 'scripts/tasks/nodeTasks'
+import 'scripts/tasks/auctionRaffle/ethereumTasks'
 import 'scripts/tasks/auctionRaffle/hardhatTasks'
 import 'scripts/tasks/auctionRaffle/rinkebyTasks'
 
