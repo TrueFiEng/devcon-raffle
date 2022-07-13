@@ -16,7 +16,7 @@ export function getMainnetProdConfig(): Config {
       pollingInterval: POLLING_INTERVAL,
     },
     addresses: ADDRESSES,
-    backendUrl: getStringEnv('BACKEND_URL') || '',
+    backendUrl: getStringEnv('VITE_BACKEND_URL') || '',
     portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
     dappName: 'Devcon 6 Auction & Raffle',
     voucherRedeemDeadline: getDateEnv('VOUCHER_REDEEM_DEADLINE'),
