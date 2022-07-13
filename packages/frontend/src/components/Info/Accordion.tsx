@@ -167,7 +167,7 @@ export const InfoAccordion = () => {
               Your Voucher Code will be available to you for 48 hours after the closing of the Auction & Raffle (
               <Bold>until July 16 at 08:00 UTC</Bold>). Once you have input your voucher code into our ticket portal,
               you will go through the standard ticket checkout flow. You can go to{' '}
-              <Link href="http://tickets.devcon.org/">our ticket shop here</Link> to redeem your voucher code for a
+              <Link href="https://tickets.devcon.org/">our ticket shop here</Link> to redeem your voucher code for a
               Devcon 6 ticket. See you at the conference!
             </span>
           </StyledContent>

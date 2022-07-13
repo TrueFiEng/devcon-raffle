@@ -34,7 +34,7 @@ export const VoucherForm = ({ voucher, withdrawnBid }: Props) => {
 
       <Button
         view="primary"
-        onClick={() => window.open('https://ticketh.xyz/devconnect/', '_blank')}
+        onClick={() => window.open('https://tickets.devcon.org/', '_blank')}
         wide
         disabled={isVoucherExpired}
       >
