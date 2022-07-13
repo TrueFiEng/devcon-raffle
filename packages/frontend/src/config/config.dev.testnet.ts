@@ -4,7 +4,7 @@ import { POLLING_INTERVAL } from 'src/constants/pollingInterval'
 
 import { getAddresses } from './addresses'
 import { commonUseDAppConfig, Config } from './config'
-import { getStringEnv } from './getEnv'
+import { getDateEnv, getStringEnv } from './getEnv'
 
 export function getTestnetDevConfig(): Config {
   return {
@@ -16,8 +16,9 @@ export function getTestnetDevConfig(): Config {
       pollingInterval: POLLING_INTERVAL,
     },
     addresses: getAddresses(),
-    backendUrl: 'http://localhost:3001',
-    portisDAppID: getStringEnv('PORTIS_DAPP_ID') || '',
+    backendUrl: getStringEnv('VITE_BACKEND_URL') || 'http://localhost:3001',
+    portisDAppID: getStringEnv('VITE_PORTIS_DAPP_ID') || '',
     dappName: 'Devcon 6 Auction & Raffle (TESTNET DEV)',
+    voucherRedeemDeadline: getDateEnv('VITE_VOUCHER_REDEEM_DEADLINE'),
   }
 }
