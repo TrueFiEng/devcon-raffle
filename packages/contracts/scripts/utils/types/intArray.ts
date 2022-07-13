@@ -1,6 +1,6 @@
 import { CLIArgumentType } from 'hardhat/src/types'
-import { HardhatError } from 'hardhat/src/internal/core/errors'
-import { ERRORS } from 'hardhat/src/internal/core/errors-list'
+import { HardhatError } from 'hardhat/internal/core/errors'
+import { ERRORS } from 'hardhat/internal/core/errors-list'
 
 export const intArray: CLIArgumentType<any> = {
   name: 'intArray',
@@ -12,7 +12,7 @@ export const intArray: CLIArgumentType<any> = {
         throw new HardhatError(
           ERRORS.ARGUMENTS.INVALID_VALUE_FOR_TYPE,
           {
-            strValue,
+            value: strValue,
             name: argName,
             type: intArray.name,
           },

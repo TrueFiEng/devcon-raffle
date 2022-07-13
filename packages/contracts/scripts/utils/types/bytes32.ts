@@ -1,6 +1,6 @@
 import { CLIArgumentType } from 'hardhat/src/types'
-import { HardhatError } from 'hardhat/src/internal/core/errors'
-import { ERRORS } from 'hardhat/src/internal/core/errors-list'
+import { HardhatError } from 'hardhat/internal/core/errors'
+import { ERRORS } from 'hardhat/internal/core/errors-list'
 import { utils } from 'ethers'
 
 export const bytes32: CLIArgumentType<Uint8Array> = {
@@ -13,7 +13,7 @@ export const bytes32: CLIArgumentType<Uint8Array> = {
         throw new HardhatError(
           ERRORS.ARGUMENTS.INVALID_VALUE_FOR_TYPE,
           {
-            strValue,
+            value: strValue,
             name: argName,
             type: bytes32.name,
           },
