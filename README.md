@@ -29,5 +29,5 @@ A number of custom Hardhat tasks were defined to aid testing.
 - `yarn rinkeby:init-bids` - place initial bids using `PRIVATE_KEYS` accounts
 
 #### Ethereum Mainnet
-- `yarn ethereum:generate-random-numbers --blocks <ARRAY> --secret <INT>` - generate random numbers for raffle settlement, *blocks* - array of block numbers from which extract block hash (e.g. "[1234, 5678]"), *secret* - secret number that will be used to generate numbers
+- `yarn ethereum:generate-random-numbers --blocks <ARRAY> --secret <STRING>` - generate random numbers for raffle settlement, *blocks* - array of block numbers from which extract block hash (e.g. "[1234, 5678]"), *secret* - secret number represented as 32 bytes hex string
 
