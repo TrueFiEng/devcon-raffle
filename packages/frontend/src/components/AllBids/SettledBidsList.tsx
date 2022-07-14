@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
 import { NothingFound, useMatchBid } from 'src/components/AllBids'
-import { BidsListHeaders, BidsSubList } from 'src/components/BidsList'
+import { BidsListHeaders, BidsSubList, NonAuctionBidsListHeaders } from 'src/components/BidsList'
 import { useAuctionWinners, useBids } from 'src/hooks'
 import { useRaffleWinners } from 'src/hooks/useRaffleWinners'
 import { Bid } from 'src/models/Bid'
@@ -42,7 +42,9 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
           {filteredBids.goldenTicket && <GoldenTicketWinner bidderAddress={filteredBids.goldenTicket.bidderAddress} />}
           <BidsListHeaders />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
+          <NonAuctionBidsListHeaders/>
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
+          <NonAuctionBidsListHeaders/>
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
         </>
       )}

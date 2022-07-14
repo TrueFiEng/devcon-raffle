@@ -9,3 +9,13 @@ export const BidsListHeaders = () => {
     </BidsColumns>
   )
 }
+
+export const NonAuctionBidsListHeaders = () => {
+  return (
+    <BidsColumns>
+      <PlaceColumn>Bidder ID</PlaceColumn>
+      <BidColumn>Bid</BidColumn>
+      <AddressColumn>Address</AddressColumn>
+    </BidsColumns>
+  )
+}
