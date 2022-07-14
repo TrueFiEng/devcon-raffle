@@ -20,6 +20,10 @@ jest.mock('src/hooks/useContractBids', () => ({
   useContractBids: () => [],
 }))
 
+jest.mock('src/hooks/useContractState', () => ({
+  useContractState: () => ({ state: 1 }),
+}))
+
 describe('UI: PlaceBidForm', () => {
   const mockBids = generateMockBidsState(5).get('bids')
 
