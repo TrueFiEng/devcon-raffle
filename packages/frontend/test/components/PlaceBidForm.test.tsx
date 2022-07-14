@@ -21,7 +21,7 @@ jest.mock('src/hooks/useContractBids', () => ({
 }))
 
 jest.mock('src/hooks/useContractState', () => ({
-  useContractState: () => ({state: 1}),
+  useContractState: () => ({ state: 1 }),
 }))
 
 describe('UI: PlaceBidForm', () => {
