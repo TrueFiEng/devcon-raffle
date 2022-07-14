@@ -43,9 +43,9 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
           <BidsListHeaders />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
           <NonAuctionBidsListHeaders />
-          {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
+          {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" showBidderID />}
           <NonAuctionBidsListHeaders />
-          {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
+          {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" showBidderID />}
         </>
       )}
     </>

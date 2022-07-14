@@ -10,14 +10,15 @@ interface Props {
   bid: Bid
   isUser?: boolean
   view?: 'short' | 'full'
+  showBidderID?: boolean
 }
 
-export const BidListEntry = ({ bid, isUser, view = 'full' }: Props) => {
+export const BidListEntry = ({ bid, isUser, view = 'full', showBidderID }: Props) => {
   const chainId = useChainId()
 
   return (
     <BidsEntryRow isUser={isUser}>
-      <PlaceColumn>{bid.place}.</PlaceColumn>
+      <PlaceColumn>{showBidderID ? bid.bidderID : bid.place}.</PlaceColumn>
       <BidColumn>
         {formatEtherAmount(bid.amount)} <span>ETH</span>
       </BidColumn>

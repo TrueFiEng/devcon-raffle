@@ -15,9 +15,10 @@ interface Props {
   bids: Bid[]
   view?: 'short' | 'full'
   isLoadingParams?: boolean
+  showBidderID?: boolean
 }
 
-export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
+export const BidsList = ({ bids, view = 'full', isLoadingParams, showBidderID }: Props) => {
   const userBid = useUserBid()
   const auctionWinnersCount = useAuctionWinnersCount()
   const raffleWinnersCount = useRaffleWinnersCount()
@@ -45,6 +46,7 @@ export const BidsList = ({ bids, view = 'full', isLoadingParams }: Props) => {
             bid={bid}
             isUser={userBid && addressEqual(userBid.bidderAddress, bid.bidderAddress)}
             view={view}
+            showBidderID={showBidderID}
           />
         ))}
         {userRaffleBid && view === 'short' && (

@@ -6,15 +6,16 @@ import styled from 'styled-components'
 interface Props {
   bids: Bid[]
   title: string
+  showBidderID?: boolean
 }
 
-export const BidsSubList = ({ bids, title }: Props) => {
+export const BidsSubList = ({ bids, title, showBidderID }: Props) => {
   return (
     <>
       <TitleBanner>
         <SubListHeader>{title}</SubListHeader>
       </TitleBanner>
-      <BidsList bids={bids} />
+      <BidsList bids={bids} showBidderID={showBidderID} />
     </>
   )
 }
