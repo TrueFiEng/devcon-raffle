@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { AllBidsList, LoadingBids, NothingFound, SettledBidsList } from 'src/components/AllBids'
 import { SearchInput } from 'src/components/Form'
-import { useAuctionState, useAuctionWinnersCount, useBids, useRaffleWinnersCount } from 'src/hooks'
+import { useAuctionWinnersCount, useBids, useContractState, useRaffleWinnersCount } from 'src/hooks'
+import { isAuctionSettled } from 'src/utils'
 import styled from 'styled-components'
 
 export const AllBids = () => {
@@ -18,7 +19,7 @@ export const AllBids = () => {
 const AllBidsContent = ({ search }: { search: string }) => {
   const auctionWinnersCount = useAuctionWinnersCount()
   const raffleWinnersCount = useRaffleWinnersCount()
-  const state = useAuctionState()
+  const { state } = useContractState()
   const { bids } = useBids()
 
   if (auctionWinnersCount === undefined || raffleWinnersCount === undefined) {
@@ -31,14 +32,14 @@ const AllBidsContent = ({ search }: { search: string }) => {
 
   return (
     <>
-      {state !== 'ClaimingFlow' ? (
+      {isAuctionSettled(state) ? (
+        <SettledBidsList search={search} />
+      ) : (
         <AllBidsList
           search={search}
           auctionWinnersCount={auctionWinnersCount}
           raffleWinnersCount={raffleWinnersCount}
         />
-      ) : (
-        <SettledBidsList search={search} />
       )}
     </>
   )

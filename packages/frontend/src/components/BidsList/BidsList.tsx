@@ -3,12 +3,12 @@ import { useMemo } from 'react'
 import { BidListEntry } from 'src/components/BidsList/BidListEntry'
 import { EmptyBidsList } from 'src/components/BidsList/EmptyBidsList'
 import { Separator } from 'src/components/common/Separator'
-import { ContractState, useBids, useContractState, useRaffleWinnersCount } from 'src/hooks'
+import { useBids, useContractState, useRaffleWinnersCount } from 'src/hooks'
 import { useAuctionWinnersCount } from 'src/hooks/useAuctionWinnersCount'
 import { useUserBid } from 'src/hooks/useUserBid'
 import { Bid, UserBid } from 'src/models/Bid'
 import { Colors } from 'src/styles/colors'
-import { getFirstRaffleBidIndex } from 'src/utils'
+import { getFirstRaffleBidIndex, isAuctionSettled } from 'src/utils'
 import styled from 'styled-components'
 
 interface Props {
@@ -72,14 +72,6 @@ function isAuctionParticipant(
   }
   const firstRaffleBidIndex = getFirstRaffleBidIndex(bidsLength, auctionWinnersCount, raffleWinnersCount)
   return userBid.place <= firstRaffleBidIndex
-}
-
-function isAuctionSettled(state: ContractState) {
-  return (
-    state === ContractState.AUCTION_SETTLED ||
-    state === ContractState.RAFFLE_SETTLED ||
-    state === ContractState.CLAIMING_CLOSED
-  )
 }
 
 export const BidList = styled.div`
