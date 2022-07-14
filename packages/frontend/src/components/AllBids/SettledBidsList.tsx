@@ -42,9 +42,9 @@ export const SettledBidsList = ({ search }: SettledBidsListProps) => {
           {filteredBids.goldenTicket && <GoldenTicketWinner bidderAddress={filteredBids.goldenTicket.bidderAddress} />}
           <BidsListHeaders />
           {filteredBids.auction.length !== 0 && <BidsSubList bids={filteredBids.auction} title="AUCTION" />}
-          <NonAuctionBidsListHeaders/>
+          <NonAuctionBidsListHeaders />
           {filteredBids.raffle.length !== 0 && <BidsSubList bids={filteredBids.raffle} title="RAFFLE" />}
-          <NonAuctionBidsListHeaders/>
+          <NonAuctionBidsListHeaders />
           {filteredBids.others.length !== 0 && <BidsSubList bids={filteredBids.others} title="OTHERS" />}
         </>
       )}
