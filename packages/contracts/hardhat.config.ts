@@ -7,6 +7,7 @@ import 'scripts/tasks/nodeTasks'
 import 'scripts/tasks/auctionRaffle/ethereumTasks'
 import 'scripts/tasks/auctionRaffle/hardhatTasks'
 import 'scripts/tasks/auctionRaffle/rinkebyTasks'
+import 'scripts/tasks/auctionRaffle/arbitrumTasks'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'
@@ -41,6 +42,10 @@ module.exports = {
     },
     ethereum: {
       url: 'https://eth-mainnet.alchemyapi.io/v2/j_dccrP25UjZv5uYxh1mcjEl5o8nWZaf'
+    },
+    arbitrum: {
+      url: `https://arb1.arbitrum.io/rpc`,
+      accounts: [process.env.DEPLOYER || zeroPrivateKey]
     }
   },
   typechain: {
