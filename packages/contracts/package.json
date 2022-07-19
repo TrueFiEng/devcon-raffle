@@ -40,6 +40,8 @@
 
     "ethereum:generate-random-numbers": "hardhat --network ethereum generate-random-numbers",
 
+    "arbitrum:withdrawals-stats": "hardhat --network arbitrum withdrawals-stats",
+
     "mars:deploy": "bash scripts/mars/marsDeploy.sh scripts/mars/deploy.ts -n arbitrum"
   },
   "devDependencies": {
