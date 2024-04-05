@@ -7,6 +7,17 @@ pragma solidity 0.8.10;
  * @author TrueFi Engineering team
  */
 abstract contract Config {
+    struct ConfigParams {
+        uint256 biddingStartTime;
+        uint256 biddingEndTime;
+        uint256 claimingEndTime;
+        uint256 auctionWinnersCount;
+        uint256 raffleWinnersCount;
+        uint256 reservePrice;
+        uint256 minBidIncrement;
+        address bidVerifier;
+    }
+
     // The use of _randomMask and _bidderMask introduces an assumption on max number of participants: 2^32.
     // The use of _bidderMask also introduces an assumption on max bid amount: 2^224 wei.
     // Both of these values are fine for our use case.
@@ -24,15 +35,18 @@ abstract contract Config {
     uint256 immutable _reservePrice;
     uint256 immutable _minBidIncrement;
 
-    constructor(
-        uint256 biddingStartTime_,
-        uint256 biddingEndTime_,
-        uint256 claimingEndTime_,
-        uint256 auctionWinnersCount_,
-        uint256 raffleWinnersCount_,
-        uint256 reservePrice_,
-        uint256 minBidIncrement_
-    ) {
+    address immutable bidVerifier;
+
+    constructor(ConfigParams memory params) {
+        uint256 biddingStartTime_ = params.biddingStartTime;
+        uint256 biddingEndTime_ = params.biddingEndTime;
+        uint256 claimingEndTime_ = params.claimingEndTime;
+        uint256 auctionWinnersCount_ = params.auctionWinnersCount;
+        uint256 raffleWinnersCount_ = params.raffleWinnersCount;
+        uint256 reservePrice_ = params.reservePrice;
+        uint256 minBidIncrement_ = params.minBidIncrement;
+        address bidVerifier_ = params.bidVerifier;
+
         require(auctionWinnersCount_ > 0, "Config: auction winners count must be greater than 0");
         require(raffleWinnersCount_ > 0, "Config: raffle winners count must be greater than 0");
         require(raffleWinnersCount_ % _winnersPerRandom == 0, "Config: invalid raffle winners count");
@@ -56,6 +70,9 @@ abstract contract Config {
         _raffleWinnersCount = raffleWinnersCount_;
         _reservePrice = reservePrice_;
         _minBidIncrement = minBidIncrement_;
+
+        require(bidVerifier_ != address(0), "Config: invalid verifier");
+        bidVerifier = bidVerifier_;
     }
 
     function biddingStartTime() external view returns (uint256) {

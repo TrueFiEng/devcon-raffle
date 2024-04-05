@@ -5,6 +5,15 @@
       "options": {
         "printWidth": 120
       }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "semi": false,
+        "singleQuote": true,
+        "printWidth": 120,
+        "bracketSpacing": true
+      }
     }
   ]
 }

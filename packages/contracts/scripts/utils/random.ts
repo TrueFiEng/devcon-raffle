@@ -8,6 +8,6 @@ export function randomBigNumbers(amount: number): BigNumber[] {
   return randomNumbers
 }
 
-function randomBN(): BigNumber {
+export function randomBN(): BigNumber {
   return BigNumber.from(utils.randomBytes(32))
 }

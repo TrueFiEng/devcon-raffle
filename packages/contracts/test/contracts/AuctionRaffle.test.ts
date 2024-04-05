@@ -7,21 +7,28 @@ import {
   minBidIncrement,
   reservePrice,
 } from 'fixtures/auctionRaffleFixture'
-import { AuctionRaffleMock, ExampleToken } from 'contracts'
+import {
+  AuctionRaffleMock,
+  ExampleToken,
+  ScoreAttestationVerifier,
+  VrfCoordinatorV2MockWithErc677,
+  VrfCoordinatorV2MockWithErc677__factory,
+} from 'contracts'
 import { getLatestBlockTimestamp } from 'utils/getLatestBlockTimestamp'
 import { Provider } from '@ethersproject/providers'
 import { Zero } from '@ethersproject/constants'
 import { HOUR, MINUTE } from 'scripts/utils/consts'
 import { network } from 'hardhat'
-import { BigNumber, BigNumberish, ContractTransaction, Wallet } from 'ethers'
+import { BigNumber, BigNumberish, ContractTransaction, VoidSigner, Wallet } from 'ethers'
 import { State } from './state'
 import { WinType } from './winType'
 import { bigNumberArrayFrom } from 'utils/bigNumber'
 import { randomAddress } from 'utils/randomAddress'
 import { Bid } from './bid'
 import { parseEther } from 'ethers/lib/utils'
-import { randomBigNumbers } from 'scripts/utils/random'
+import { randomBN } from 'scripts/utils/random'
 import { heapKey } from 'utils/heapKey'
+import { attestScore } from 'utils/attestScore'
 
 describe('AuctionRaffle', function () {
   const loadFixture = setupFixtureLoader()
@@ -29,75 +36,127 @@ describe('AuctionRaffle', function () {
   let provider: Provider
   let auctionRaffle: AuctionRaffleMock
   let auctionRaffleAsOwner: AuctionRaffleMock
+  let vrfCoordinator: VrfCoordinatorV2MockWithErc677
   let bidderAddress: string
   let wallets: Wallet[]
+  let attestor: Wallet
+  let scoreAttestationVerifier: ScoreAttestationVerifier
 
   beforeEach(async function () {
-    ({ provider, auctionRaffle, wallets } = await loadFixture(auctionRaffleFixture))
+    ;({
+      provider: provider as any,
+      auctionRaffle,
+      wallets,
+      attestor,
+      scoreAttestationVerifier,
+    } = await loadFixture(auctionRaffleFixture))
     auctionRaffleAsOwner = auctionRaffle.connect(owner())
+    vrfCoordinator = new VrfCoordinatorV2MockWithErc677__factory(owner()).attach(
+      await auctionRaffleAsOwner.vrfCoordinator()
+    )
     bidderAddress = await auctionRaffle.signer.getAddress()
   })
 
   describe('bid', function () {
-    it('reverts if bidding is not opened yet', async function () {
-      const currentTime = await getLatestBlockTimestamp(provider);
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ biddingStartTime: currentTime + MINUTE })))
+    it('reverts when bidding with invalid attestation', async function () {
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(auctionRaffleFixture))
+      const subject = await auctionRaffle.signer.getAddress()
+      const score = '2000000000' // 20.0
+      const wrongAttestor = Wallet.createRandom()
+      const { signature } = await attestScore(subject, score, wrongAttestor, scoreAttestationVerifier.address, {
+        chainId: '31337',
+        version: '1',
+      })
+      await expect(auctionRaffle.bid(score, signature)).to.be.revertedWith('Unauthorised attestor')
+    })
 
-      await expect(auctionRaffle.bid()).to.be.revertedWith('AuctionRaffle: is in invalid state')
+    it('reverts when attested score is too low', async function () {
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(auctionRaffleFixture))
+      const subject = await auctionRaffle.signer.getAddress()
+      const score = '1900000000' // 19.0
+      const { signature } = await attestScore(subject, score, attestor, scoreAttestationVerifier.address, {
+        chainId: '31337',
+        version: '1',
+      })
+      await expect(auctionRaffle.bid(score, signature)).to.be.revertedWith('Score too low')
+    })
+
+    it('reverts if bidding on an existing bid', async function () {
+      await bidWithAttestation(reservePrice)
+      await expect(bidWithAttestation(minBidIncrement)).to.be.revertedWith('AuctionRaffle: bid already exists')
+      // bump should succeed
+      await auctionRaffle.bump({ value: minBidIncrement })
+    })
+
+    it('reverts if bumping a nonexistend bid', async function () {
+      await expect(auctionRaffle.bump({ value: minBidIncrement })).to.be.revertedWith(
+        'AuctionRaffle: bump nonexistent bid'
+      )
+    })
+
+    it('reverts if bidding is not opened yet', async function () {
+      const currentTime = await getLatestBlockTimestamp(provider)
+      ;({ auctionRaffle, attestor } = await loadFixture(
+        configuredAuctionRaffleFixture({ biddingStartTime: currentTime + MINUTE })
+      ))
+
+      await expect(auctionRaffle.bid(10, '0x')).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bidding is already closed', async function () {
       const endTime = await auctionRaffle.biddingEndTime()
       await network.provider.send('evm_setNextBlockTimestamp', [endTime.add(HOUR).toNumber()])
 
-      await expect(auctionRaffle.bid()).to.be.revertedWith('AuctionRaffle: is in invalid state')
+      await expect(auctionRaffle.bid(10, '0x')).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bid increase is too low', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
-      await expect(auctionRaffle.bid({ value: minBidIncrement.sub(100) }))
-        .to.be.revertedWith('AuctionRaffle: bid increment too low')
+      await bidOrBumpWithAttestation(reservePrice)
+      await expect(auctionRaffle.bump({ value: minBidIncrement.sub(100) })).to.be.revertedWith(
+        'AuctionRaffle: bid increment too low'
+      )
     })
 
     it('increases bid amount', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
-      await expect(auctionRaffle.bid({ value: minBidIncrement })).to.be.not.reverted
+      await bidOrBumpWithAttestation(reservePrice)
+      await expect(auctionRaffle.bump({ value: minBidIncrement })).to.be.not.reverted
 
       const bid = await auctionRaffle.getBid(bidderAddress)
       expect(bid.amount).to.be.equal(reservePrice.add(minBidIncrement))
     })
 
     it('reverts if bid amount is below reserve price', async function () {
-      await expect(auctionRaffle.bid({ value: reservePrice.sub(100) }))
-        .to.be.revertedWith('AuctionRaffle: bid amount is below reserve price')
+      await expect(bidOrBumpWithAttestation(reservePrice.sub(100))).to.be.revertedWith(
+        'AuctionRaffle: bid amount is below reserve price'
+      )
     })
 
     it('saves bid', async function () {
-      await expect(auctionRaffle.bid({ value: reservePrice })).to.be.not.reverted
+      await expect(bidOrBumpWithAttestation(reservePrice)).to.be.not.reverted
 
       const bid = await auctionRaffle.getBid(bidderAddress)
 
       expect(bid.bidderID).to.be.equal(1)
       expect(bid.amount).to.be.equal(reservePrice)
-      expect(bid.winType).to.be.equal(WinType.loss)
+      expect(await auctionRaffle.getBidWinType(bid.bidderID)).to.be.equal(WinType.loss)
       expect(bid.claimed).to.be.false
     })
 
     it('saves bidder address', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
+      await bidOrBumpWithAttestation(reservePrice)
 
       const savedBidderAddress = await auctionRaffle.getBidderAddress(1)
       expect(savedBidderAddress).to.be.equal(bidderAddress)
     })
 
     it('saves bidder as raffle participant', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
+      await bidOrBumpWithAttestation(reservePrice)
 
       expect(await auctionRaffle.getRaffleParticipants()).to.deep.eq([BigNumber.from(1)])
     })
 
     it('increases bidders count', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
+      await bidOrBumpWithAttestation(reservePrice)
 
       expect(await auctionRaffle.getBiddersCount()).to.be.equal(1)
     })
@@ -105,11 +164,13 @@ describe('AuctionRaffle', function () {
     describe('when heap is full', function () {
       describe('when bid < min auction bid', function () {
         it('does not add bid to heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+          ))
 
-          await bidAsWallet(wallets[0], reservePrice.add(100))
-          await bidAsWallet(wallets[1], reservePrice.add(200))
-          await bidAsWallet(wallets[2], reservePrice.add(50))
+          await bidOrBumpWithAttestation(reservePrice.add(100), wallets[0])
+          await bidOrBumpWithAttestation(reservePrice.add(200), wallets[1])
+          await bidOrBumpWithAttestation(reservePrice.add(50), wallets[2])
 
           expect(await auctionRaffle.getHeap()).to.deep.equal([
             heapKey(2, reservePrice.add(200)),
@@ -122,14 +183,18 @@ describe('AuctionRaffle', function () {
 
       describe('when bid > min auction bid', function () {
         it('replaces minimum auction bid', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+          ))
 
           await bid(2)
-          await bidAsWallet(wallets[2], reservePrice.add(100))
-          await bidAsWallet(wallets[3], reservePrice.add(120))
+          await bidOrBumpWithAttestation(reservePrice.add(100), wallets[2])
+          await bidOrBumpWithAttestation(reservePrice.add(120), wallets[3])
 
-          expect(await auctionRaffle.getHeap())
-            .to.deep.equal([heapKey(4, reservePrice.add(120)), heapKey(3, reservePrice.add(100))])
+          expect(await auctionRaffle.getHeap()).to.deep.equal([
+            heapKey(4, reservePrice.add(120)),
+            heapKey(3, reservePrice.add(100)),
+          ])
           expect(await auctionRaffle.getMinKeyIndex()).to.eq(1)
           expect(await auctionRaffle.getMinKeyValue()).to.eq(heapKey(3, reservePrice.add(100)))
         })
@@ -137,13 +202,15 @@ describe('AuctionRaffle', function () {
 
       describe('when bumped bid < min auction bid', function () {
         it('does not add bid to heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+          ))
 
-          await bidAsWallet(wallets[0], reservePrice.add(minBidIncrement).add(100))
-          await bidAsWallet(wallets[1], reservePrice.add(minBidIncrement).add(200))
-          await bidAsWallet(wallets[2], reservePrice)
+          await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement).add(100), wallets[0])
+          await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement).add(200), wallets[1])
+          await bidOrBumpWithAttestation(reservePrice, wallets[2])
 
-          await bidAsWallet(wallets[2], minBidIncrement)
+          await auctionRaffle.connect(wallets[2]).bump({ value: minBidIncrement })
 
           expect(await auctionRaffle.getHeap()).to.deep.equal([
             heapKey(2, reservePrice.add(minBidIncrement).add(200)),
@@ -157,13 +224,15 @@ describe('AuctionRaffle', function () {
       describe('when bumped bid > min auction bid', function () {
         describe('when old bid < min auction bid', function () {
           it('adds bid to heap', async function () {
-            ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+            ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+              configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+            ))
 
-            await bidAsWallet(wallets[0], reservePrice)
-            await bidAsWallet(wallets[1], reservePrice.add(minBidIncrement).add(200))
-            await bidAsWallet(wallets[2], reservePrice.add(minBidIncrement))
+            await bidOrBumpWithAttestation(reservePrice, wallets[0])
+            await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement).add(200), wallets[1])
+            await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement), wallets[2])
 
-            await bidAsWallet(wallets[0], minBidIncrement.add(100))
+            await auctionRaffle.connect(wallets[0]).bump({ value: minBidIncrement.add(100) })
 
             expect(await auctionRaffle.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
@@ -176,12 +245,14 @@ describe('AuctionRaffle', function () {
 
         describe('when old bid == min auction bid', function () {
           it('updates bid in heap', async function () {
-            ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+            ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+              configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+            ))
 
-            await bidAsWallet(wallets[0], reservePrice)
-            await bidAsWallet(wallets[1], reservePrice.add(minBidIncrement).add(200))
+            await bidOrBumpWithAttestation(reservePrice, wallets[0])
+            await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement).add(200), wallets[1])
 
-            await bidAsWallet(wallets[0], minBidIncrement.add(100))
+            await auctionRaffle.connect(wallets[0]).bump({ value: minBidIncrement.add(100) })
 
             expect(await auctionRaffle.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
@@ -194,12 +265,14 @@ describe('AuctionRaffle', function () {
 
         describe('when old bid > min auction bid', function () {
           it('updates bid in heap', async function () {
-            ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+            ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+              configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+            ))
 
-            await bidAsWallet(wallets[0], reservePrice)
-            await bidAsWallet(wallets[1], reservePrice.add(200))
+            await bidOrBumpWithAttestation(reservePrice, wallets[0])
+            await bidOrBumpWithAttestation(reservePrice.add(200), wallets[1])
 
-            await bidAsWallet(wallets[1], minBidIncrement)
+            await auctionRaffle.connect(wallets[1]).bump({ value: minBidIncrement })
 
             expect(await auctionRaffle.getHeap()).to.deep.equal([
               heapKey(2, reservePrice.add(minBidIncrement).add(200)),
@@ -215,14 +288,15 @@ describe('AuctionRaffle', function () {
     describe('when heap is not full', function () {
       describe('when bid < min auction bid', function () {
         it('adds bid to heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+          ))
 
           const auctionWinnerBid = reservePrice.add(100)
-          await bidAsWallet(wallets[0], auctionWinnerBid)
-          await bidAsWallet(wallets[1], reservePrice)
+          await bidOrBumpWithAttestation(auctionWinnerBid, wallets[0])
+          await bidOrBumpWithAttestation(reservePrice, wallets[1])
 
-          expect(await auctionRaffle.getHeap())
-            .to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
+          expect(await auctionRaffle.getHeap()).to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
           expect(await auctionRaffle.getMinKeyIndex()).to.eq(1)
           expect(await auctionRaffle.getMinKeyValue()).to.eq(heapKey(2, reservePrice))
         })
@@ -230,14 +304,15 @@ describe('AuctionRaffle', function () {
 
       describe('when bid > min auction bid', function () {
         it('adds bid to heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+          ))
 
           const auctionWinnerBid = reservePrice.add(100)
-          await bidAsWallet(wallets[0], reservePrice)
-          await bidAsWallet(wallets[1], auctionWinnerBid)
+          await bidOrBumpWithAttestation(reservePrice, wallets[0])
+          await bidOrBumpWithAttestation(auctionWinnerBid, wallets[1])
 
-          expect(await auctionRaffle.getHeap())
-            .to.deep.equal([heapKey(2, auctionWinnerBid), heapKey(1, reservePrice)])
+          expect(await auctionRaffle.getHeap()).to.deep.equal([heapKey(2, auctionWinnerBid), heapKey(1, reservePrice)])
           expect(await auctionRaffle.getMinKeyIndex()).to.eq(1)
           expect(await auctionRaffle.getMinKeyValue()).to.eq(heapKey(1, reservePrice))
         })
@@ -245,13 +320,15 @@ describe('AuctionRaffle', function () {
 
       describe('when bumped bid == min auction bid', function () {
         it('updates old bid in heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 4 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 4 })
+          ))
 
-          await bidAsWallet(wallets[0], reservePrice.add(200))
-          await bidAsWallet(wallets[1], reservePrice.add(minBidIncrement))
-          await bidAsWallet(wallets[2], reservePrice.add(minBidIncrement).add(100))
+          await bidOrBumpWithAttestation(reservePrice.add(200), wallets[0])
+          await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement), wallets[1])
+          await bidOrBumpWithAttestation(reservePrice.add(minBidIncrement).add(100), wallets[2])
 
-          await bidAsWallet(wallets[0], minBidIncrement)
+          await auctionRaffle.connect(wallets[0]).bump({ value: minBidIncrement })
 
           expect(await auctionRaffle.getHeap()).to.deep.equal([
             heapKey(1, reservePrice.add(minBidIncrement).add(200)),
@@ -265,16 +342,17 @@ describe('AuctionRaffle', function () {
 
       describe('when bumped bid > min auction bid', function () {
         it('updates old bid in heap', async function () {
-          ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 3 })))
+          ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+            configuredAuctionRaffleFixture({ auctionWinnersCount: 3 })
+          ))
 
           let auctionWinnerBid = reservePrice.add(100)
-          await bidAsWallet(wallets[0], auctionWinnerBid)
-          await bidAsWallet(wallets[1], reservePrice)
-          await bidAsWallet(wallets[0], minBidIncrement)
+          await bidOrBumpWithAttestation(auctionWinnerBid, wallets[0])
+          await bidOrBumpWithAttestation(reservePrice, wallets[1])
+          await auctionRaffle.connect(wallets[0]).bump({ value: minBidIncrement })
           auctionWinnerBid = auctionWinnerBid.add(minBidIncrement)
 
-          expect(await auctionRaffle.getHeap())
-            .to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
+          expect(await auctionRaffle.getHeap()).to.deep.equal([heapKey(1, auctionWinnerBid), heapKey(2, reservePrice)])
           expect(await auctionRaffle.getMinKeyIndex()).to.eq(1)
           expect(await auctionRaffle.getMinKeyValue()).to.eq(heapKey(2, reservePrice))
         })
@@ -282,15 +360,15 @@ describe('AuctionRaffle', function () {
     })
 
     it('emits event on bid increase', async function () {
-      await auctionRaffle.bid({ value: reservePrice })
+      await bidOrBumpWithAttestation(reservePrice)
 
-      await expect(auctionRaffle.bid({ value: minBidIncrement }))
+      await expect(auctionRaffle.bump({ value: minBidIncrement }))
         .to.emit(auctionRaffle, 'NewBid')
         .withArgs(bidderAddress, 1, reservePrice.add(minBidIncrement))
     })
 
     it('emits event on bid', async function () {
-      await expect(auctionRaffle.bid({ value: reservePrice }))
+      await expect(bidOrBumpWithAttestation(reservePrice))
         .to.emit(auctionRaffle, 'NewBid')
         .withArgs(bidderAddress, 1, reservePrice)
     })
@@ -302,24 +380,21 @@ describe('AuctionRaffle', function () {
     })
 
     it('reverts if called not by owner', async function () {
-      await expect(auctionRaffle.settleAuction())
-        .to.be.revertedWith('Ownable: caller is not the owner')
+      await expect(auctionRaffle.settleAuction()).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if bidding is in progress', async function () {
-      await expect(settleAuction())
-        .to.be.revertedWith('AuctionRaffle: is in invalid state')
+      await expect(settleAuction()).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if called twice', async function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
-      await expect(settleAuction())
-        .to.be.revertedWith('AuctionRaffle: is in invalid state')
+      await expect(settleAuction()).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('changes state if number of bidders is less than raffleWinnersCount', async function () {
-      ({ auctionRaffle } = await loadFixture(auctionRaffleFixture))
+      ;({ auctionRaffle } = await loadFixture(auctionRaffleFixture))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(1)
@@ -331,7 +406,9 @@ describe('AuctionRaffle', function () {
     })
 
     it('chooses auction winners when there are not enough participants for entire auction', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 5 })))
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+        configuredAuctionRaffleFixture({ auctionWinnersCount: 5 })
+      ))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(9)
@@ -349,7 +426,7 @@ describe('AuctionRaffle', function () {
       await settleAuction()
 
       const bid = await getBidByID(1)
-      expect(bid.winType).to.deep.equal(WinType.auction)
+      expect(await auctionRaffle.getBidWinType(bid.bidderID)).to.deep.equal(WinType.auction)
     })
 
     it('saves auction winners', async function () {
@@ -360,7 +437,9 @@ describe('AuctionRaffle', function () {
     })
 
     it('deletes heap', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 5 })))
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+        configuredAuctionRaffleFixture({ auctionWinnersCount: 5 })
+      ))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(10)
@@ -371,7 +450,9 @@ describe('AuctionRaffle', function () {
     })
 
     it('removes winners from raffle participants', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+        configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+      ))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(10)
@@ -379,11 +460,13 @@ describe('AuctionRaffle', function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
 
-      expect(await auctionRaffle.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([9, 10, 3, 4, 5, 6, 7, 8]))
+      expect(await auctionRaffle.getRaffleParticipants()).to.deep.eq(bigNumberArrayFrom([10, 9, 3, 4, 5, 6, 7, 8]))
     })
 
     it('emits events', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })))
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+        configuredAuctionRaffleFixture({ auctionWinnersCount: 2 })
+      ))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(10)
@@ -400,39 +483,18 @@ describe('AuctionRaffle', function () {
     })
 
     it('reverts if called not by owner', async function () {
-      await expect(auctionRaffle.settleRaffle([1]))
-        .to.be.revertedWith('Ownable: caller is not the owner')
+      await expect(auctionRaffle.settleRaffle()).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if raffle is not settled', async function () {
-      await expect(auctionRaffleAsOwner.settleRaffle([1]))
-        .to.be.revertedWith('AuctionRaffle: is in invalid state')
-    })
-
-    it('reverts if called with zero random numbers', async function () {
-      await endBidding(auctionRaffleAsOwner)
-      await settleAuction()
-
-      await expect(auctionRaffleAsOwner.settleRaffle([]))
-        .to.be.revertedWith('AuctionRaffle: there must be at least one random number passed')
-    })
-
-    it('reverts if called with incorrect amount of random numbers', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })))
-      auctionRaffleAsOwner = auctionRaffle.connect(owner())
-
-      await bid(20)
-      await endBidding(auctionRaffleAsOwner)
-      await settleAuction()
-
-      // Reverts because it expects 2 random numbers
-      await expect(auctionRaffleAsOwner.settleRaffle(randomBigNumbers(3)))
-        .to.be.revertedWith('AuctionRaffle: passed incorrect number of random numbers')
+      await expect(auctionRaffleAsOwner.settleRaffle()).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     describe('when bidders count is less than raffleWinnersCount', function () {
       it('picks all participants as winners', async function () {
-        ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })))
+        ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+          configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })
+        ))
         auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
         await bid(4)
@@ -441,16 +503,19 @@ describe('AuctionRaffle', function () {
         await settleAuction()
 
         // Golden ticket winner participant index generated from this number: 2, bidderID: 3
-        const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
-        await auctionRaffleAsOwner.settleRaffle([randomNumber])
+        const randomNumber = BigNumber.from(
+          '65155287986987035700835155359065462427392489128550609102552042044410661181326'
+        )
+        await settleAndFulfillRaffle(randomNumber)
 
         for (let i = 1; i <= 4; i++) {
           const bid = await getBidByID(i)
 
-          if (bid.bidderID.eq(3)) {
-            expect(bid.winType).to.be.eq(WinType.goldenTicket)
+          const winType = await auctionRaffle.getBidWinType(bid.bidderID)
+          if (bid.bidderID.eq(4)) {
+            expect(winType).to.be.eq(WinType.goldenTicket)
           } else {
-            expect(bid.winType).to.be.eq(WinType.raffle)
+            expect(winType).to.be.eq(WinType.raffle)
           }
         }
       })
@@ -460,14 +525,15 @@ describe('AuctionRaffle', function () {
         await verifyRaffleWinners()
       })
 
-      it('removes raffle participants', async function () {
-        ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })))
-        auctionRaffleAsOwner = auctionRaffle.connect(wallets[1])
+      // NB: No longer necessary; raffle is settled atomically
+      // it('removes raffle participants', async function () {
+      //   ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })))
+      //   auctionRaffleAsOwner = auctionRaffle.connect(wallets[1])
 
-        await bidAndSettleRaffle(4)
-        const raffleParticipants = await auctionRaffleAsOwner.getRaffleParticipants()
-        expect(raffleParticipants.length).to.be.equal(0)
-      })
+      //   await bidAndSettleRaffle(4)
+      //   const raffleParticipants = await auctionRaffleAsOwner.getRaffleParticipants()
+      //   expect(raffleParticipants.length).to.be.equal(0)
+      // })
     })
 
     describe('when bidders count is greater than raffleWinnersCount', function () {
@@ -482,8 +548,10 @@ describe('AuctionRaffle', function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
 
-      const randomNumber = BigNumber.from('65155287986987035700835155359065462427392489128550609102552042044410661181326')
-      await auctionRaffleAsOwner.settleRaffle([randomNumber])
+      const randomNumber = BigNumber.from(
+        '65155287986987035700835155359065462427392489128550609102552042044410661181326'
+      )
+      await settleAndFulfillRaffle(randomNumber)
 
       const raffleWinners = await getAllBidsByWinType(10, WinType.raffle)
       const goldenWinners = await getAllBidsByWinType(10, WinType.goldenTicket)
@@ -493,7 +561,9 @@ describe('AuctionRaffle', function () {
     })
 
     it('selects random winners', async function () {
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })))
+      ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+        configuredAuctionRaffleFixture({ raffleWinnersCount: 16 })
+      ))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bid(20)
@@ -501,28 +571,26 @@ describe('AuctionRaffle', function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
 
-      // Participant indexes generated from this number:
-      // [[16, 16, 6, 7, 4, 9, 0, 1], [6, 3, 6, 7, 1, 3, 2, 2]]
-      const randomNumbers = [
-        BigNumber.from('112726022748934390014388827089462711312944969753614146584009694773482609536945'),
-        BigNumber.from('105047327762739474822912977776629330956455721538092382425528863739595553862604'),
-      ]
+      const randomNumber = BigNumber.from(
+        '112726022748934390014388827089462711312944969753614146584009694773482609536945'
+      )
 
-      await auctionRaffleAsOwner.settleRaffle(randomNumbers)
+      await settleAndFulfillRaffle(randomNumber)
 
-      const winnersBidderIDs = [17, 19, 7, 8, 5, 10, 20, 2, 18, 4, 14, 16, 12, 10, 3, 15]
+      const winnersBidderIDs = [20, 9, 16, 13, 2, 12, 15, 4, 19, 10, 8, 18, 11, 3, 7, 14]
       for (let i = 0; i < winnersBidderIDs.length; i++) {
         const winningBid = await getBidByID(winnersBidderIDs[i])
+        const winType = await auctionRaffle.getBidWinType(winningBid.bidderID)
         if (i === 0) {
-          expect(winningBid.winType).to.be.eq(WinType.goldenTicket)
+          expect(winType).to.be.eq(WinType.goldenTicket)
           continue
         }
-        expect(winningBid.winType).to.be.eq(WinType.raffle)
+        expect(winType).to.be.eq(WinType.raffle)
       }
     })
 
     it('works if there are no participants', async function () {
-      ({ auctionRaffle } = await loadFixture(auctionRaffleFixture))
+      ;({ auctionRaffle } = await loadFixture(auctionRaffleFixture))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
       await bidAndSettleRaffle(0)
@@ -533,33 +601,19 @@ describe('AuctionRaffle', function () {
 
       await settleAuction()
 
-      await auctionRaffleAsOwner.settleRaffle(randomBigNumbers(1))
+      await settleAndFulfillRaffle(randomBN())
 
       expect(await auctionRaffleAsOwner.getState()).to.be.eq(State.raffleSettled)
     })
 
-    describe('when golden ticket winner has been selected', function () {
-      it('emits event', async function () {
-        const tx = await bidAndSettleRaffle(0)
-
-        const goldenBid = await getBidByWinType(9, WinType.goldenTicket)
-        await emitsEvents(tx, 'NewGoldenTicketWinner', [goldenBid.bidderID])
-      })
-    })
-
-    describe('when raffle winners have been selected', function () {
+    describe('when raffle winners have been selected (including golden ticket winner)', function () {
       it('emits events', async function () {
         await endBidding(auctionRaffleAsOwner)
         await settleAuction() // auction winner bidderID: 1
 
         // Golden ticket winner participant index generated from this number: 7, bidderID: 8
-        const tx = await auctionRaffleAsOwner.settleRaffle([7])
-
-        const raffleWinners: number[][] = [[9]]
-        for (let i = 2; i < 8; i++) {
-          raffleWinners.push([i])
-        }
-        await emitsEvents(tx, 'NewRaffleWinner', ...raffleWinners)
+        const tx = await settleAndFulfillRaffle(7)
+        await expect(tx).to.emit(auctionRaffle, 'RaffleWinnersDrawn').withArgs(7)
       })
     })
 
@@ -568,12 +622,13 @@ describe('AuctionRaffle', function () {
 
       for (let i = 0; i < raffleWinners.length; i++) {
         const winnerBid = await getBidByID(raffleWinners[i].toNumber())
+        const winType = await auctionRaffle.getBidWinType(winnerBid.bidderID)
         if (i === 0) {
-          expect(winnerBid.winType).to.be.equal(WinType.goldenTicket)
+          expect(winType).to.be.equal(WinType.goldenTicket)
           continue
         }
 
-        expect(winnerBid.winType).to.be.equal(WinType.raffle)
+        expect(winType).to.be.equal(WinType.raffle)
       }
     }
   })
@@ -583,30 +638,26 @@ describe('AuctionRaffle', function () {
       await endBidding(auctionRaffleAsOwner)
       await settleAuction()
 
-      await expect(auctionRaffle.claim(4))
-        .to.be.revertedWith('AuctionRaffle: is in invalid state')
+      await expect(auctionRaffle.claim(4)).to.be.revertedWith('AuctionRaffle: is in invalid state')
     })
 
     it('reverts if bidder does not exist', async function () {
       await bidAndSettleRaffle(2)
 
-      await expect(auctionRaffle.claim(20))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.claim(20)).to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts if funds have been already claimed', async function () {
       await bidAndSettleRaffle(4)
 
       await auctionRaffle.claim(4)
-      await expect(auctionRaffle.claim(4))
-        .to.be.revertedWith('AuctionRaffle: funds have already been claimed')
+      await expect(auctionRaffle.claim(4)).to.be.revertedWith('AuctionRaffle: funds have already been claimed')
     })
 
     it('reverts if auction winner wants to claim funds', async function () {
       await bidAndSettleRaffle(9)
 
-      await expect(auctionRaffle.claim(1))
-        .to.be.revertedWith('AuctionRaffle: auction winners cannot claim funds')
+      await expect(auctionRaffle.claim(1)).to.be.revertedWith('AuctionRaffle: auction winners cannot claim funds')
     })
 
     it('sets bid as claimed', async function () {
@@ -620,7 +671,7 @@ describe('AuctionRaffle', function () {
 
     it('transfers remaining funds for raffle winner', async function () {
       await bid(9) // place 9 bids = reservePrice
-      await bidAsWallet(owner(), reservePrice) // bumps owner bid to become auction winner
+      await bidOrBumpWithAttestation(reservePrice, owner()) // bumps owner bid to become auction winner
       await bidAndSettleRaffle(9) // bumps all 9 bids
       const raffleBid = await getBidByWinType(9, WinType.raffle) // get any raffle winner
       const bidderAddress = await auctionRaffleAsOwner.getBidderAddress(raffleBid.bidderID)
@@ -632,7 +683,7 @@ describe('AuctionRaffle', function () {
     })
 
     it('transfers bid funds for golden ticket winner', async function () {
-      await bidAsWallet(owner(), reservePrice)
+      await bidOrBumpWithAttestation(reservePrice, owner())
       await bidAndSettleRaffle(10)
 
       const goldenBid = await getBidByWinType(10, WinType.goldenTicket)
@@ -647,14 +698,15 @@ describe('AuctionRaffle', function () {
     })
 
     it('transfers bid funds for non-winning bidder', async function () {
-      await bidAsWallet(owner(), reservePrice)
+      await bidOrBumpWithAttestation(reservePrice, owner())
       await bidAndSettleRaffle(10)
 
       const lostBid = await getBidByWinType(10, WinType.loss)
 
       const bidderAddress = await auctionRaffleAsOwner.getBidderAddress(lostBid.bidderID)
       const bidderBalance = await provider.getBalance(bidderAddress)
-      const expectedBidderBalance = bidderBalance.add(reservePrice.mul(98).div(100))
+      // NB: There is no longer a 2% non-winner fee retained
+      const expectedBidderBalance = bidderBalance.add(reservePrice)
 
       await auctionRaffleAsOwner.claim(lostBid.bidderID)
 
@@ -665,8 +717,7 @@ describe('AuctionRaffle', function () {
   describe('claimProceeds', function () {
     describe('when called not by owner', function () {
       it('reverts', async function () {
-        await expect(auctionRaffle.claimProceeds())
-          .to.be.revertedWith('Ownable: caller is not the owner')
+        await expect(auctionRaffle.claimProceeds()).to.be.revertedWith('Ownable: caller is not the owner')
       })
     })
 
@@ -675,15 +726,16 @@ describe('AuctionRaffle', function () {
         await bidAndSettleRaffle(2)
         await auctionRaffleAsOwner.claimProceeds()
 
-        await expect(auctionRaffleAsOwner.claimProceeds())
-          .to.be.revertedWith('AuctionRaffle: proceeds have already been claimed')
+        await expect(auctionRaffleAsOwner.claimProceeds()).to.be.revertedWith(
+          'AuctionRaffle: proceeds have already been claimed'
+        )
       })
     })
 
     describe('when biddersCount > (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
         const auctionBidAmount = reservePrice.add(100)
-        await bidAsWallet(wallets[10], auctionBidAmount)
+        await bidOrBumpWithAttestation(auctionBidAmount, wallets[10])
         await bidAndSettleRaffle(10)
 
         const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
@@ -693,12 +745,14 @@ describe('AuctionRaffle', function () {
 
     describe('when biddersCount == (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
-        ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
+        ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+          configuredAuctionRaffleFixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })
+        ))
         auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
         const auctionBidAmount = reservePrice.add(100)
-        await bidAsWallet(wallets[8], auctionBidAmount)
-        await bidAsWallet(wallets[9], auctionBidAmount)
+        await bidOrBumpWithAttestation(auctionBidAmount, wallets[8])
+        await bidOrBumpWithAttestation(auctionBidAmount, wallets[9])
         await bidAndSettleRaffle(8)
 
         const claimAmount = auctionBidAmount.mul(2).add(reservePrice.mul(7))
@@ -708,11 +762,13 @@ describe('AuctionRaffle', function () {
 
     describe('when raffleWinnersCount < biddersCount < (auctionWinnersCount + raffleWinnersCount)', function () {
       it('transfers correct amount', async function () {
-        ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })))
+        ;({ auctionRaffle, attestor, scoreAttestationVerifier } = await loadFixture(
+          configuredAuctionRaffleFixture({ auctionWinnersCount: 2, raffleWinnersCount: 8 })
+        ))
         auctionRaffleAsOwner = auctionRaffle.connect(owner())
 
         const auctionBidAmount = reservePrice.add(100)
-        await bidAsWallet(wallets[8], auctionBidAmount)
+        await bidOrBumpWithAttestation(auctionBidAmount, wallets[8])
         await bidAndSettleRaffle(8)
 
         const claimAmount = auctionBidAmount.add(reservePrice.mul(7))
@@ -760,15 +816,15 @@ describe('AuctionRaffle', function () {
 
   describe('withdrawUnclaimedFunds', function () {
     it('reverts if called not by owner', async function () {
-      await expect(auctionRaffle.withdrawUnclaimedFunds())
-        .to.be.revertedWith('Ownable: caller is not the owner')
+      await expect(auctionRaffle.withdrawUnclaimedFunds()).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('reverts if claiming has not been closed yet', async function () {
       await bidAndSettleRaffle(2)
 
-      await expect(auctionRaffleAsOwner.withdrawUnclaimedFunds())
-        .to.be.revertedWith('AuctionRaffle: is in invalid state')
+      await expect(auctionRaffleAsOwner.withdrawUnclaimedFunds()).to.be.revertedWith(
+        'AuctionRaffle: is in invalid state'
+      )
     })
 
     it('transfers unclaimed funds', async function () {
@@ -808,21 +864,23 @@ describe('AuctionRaffle', function () {
     let exampleToken: ExampleToken
 
     beforeEach(async function () {
-      ({ exampleToken, auctionRaffle, provider } = await loadFixture(auctionRaffleFixtureWithToken))
+      ;({ exampleToken, auctionRaffle, provider: provider as any } = await loadFixture(auctionRaffleFixtureWithToken))
       auctionRaffleAsOwner = auctionRaffle.connect(owner())
     })
 
     describe('when called not by owner', function () {
       it('reverts', async function () {
-        await expect(auctionRaffle.rescueTokens(exampleToken.address))
-          .to.be.revertedWith('Ownable: caller is not the owner')
+        await expect(auctionRaffle.rescueTokens(exampleToken.address)).to.be.revertedWith(
+          'Ownable: caller is not the owner'
+        )
       })
     })
 
     describe('when balance for given token equals zero', function () {
       it('reverts', async function () {
-        await expect(auctionRaffleAsOwner.rescueTokens(exampleToken.address))
-          .to.be.revertedWith('AuctionRaffle: no tokens for given address')
+        await expect(auctionRaffleAsOwner.rescueTokens(exampleToken.address)).to.be.revertedWith(
+          'AuctionRaffle: no tokens for given address'
+        )
       })
     })
 
@@ -838,8 +896,9 @@ describe('AuctionRaffle', function () {
   describe('fallback', function () {
     describe('when transfers ether without calldata', function () {
       it('reverts', async function () {
-        await expect(owner().sendTransaction({ to: auctionRaffle.address, value: parseEther('1') }))
-          .to.be.revertedWith('AuctionRaffle: contract accepts ether transfers only by bid method')
+        await expect(owner().sendTransaction({ to: auctionRaffle.address, value: parseEther('1') })).to.be.revertedWith(
+          'AuctionRaffle: contract accepts ether transfers only by bid method'
+        )
       })
     })
 
@@ -850,113 +909,28 @@ describe('AuctionRaffle', function () {
           value: parseEther('1'),
           data: '0x7D86687F980A56b832e9378952B738b614A99dc6',
         }
-        await expect(owner().sendTransaction(params))
-          .to.be.revertedWith('AuctionRaffle: contract accepts ether transfers only by bid method')
+        await expect(owner().sendTransaction(params)).to.be.revertedWith(
+          'AuctionRaffle: contract accepts ether transfers only by bid method'
+        )
       })
     })
-  })
-
-  describe('claimFees', function () {
-    describe('when called not by owner', function () {
-      it('reverts', async function () {
-        await expect(auctionRaffle.claimFees(10))
-          .to.be.revertedWith('Ownable: caller is not the owner')
-      })
-    })
-
-    describe('when raffle has not been settled yet', function () {
-      it('reverts', async function () {
-        await bid(2)
-        await expect(auctionRaffleAsOwner.claimFees(2))
-          .to.be.revertedWith('AuctionRaffle: is in invalid state')
-      })
-    })
-
-    describe('when fees have already been claimed', function () {
-      it('reverts', async function () {
-        await bidAndSettleRaffle(10)
-        await auctionRaffleAsOwner.claimFees(1)
-
-        await expect(auctionRaffleAsOwner.claimFees(1))
-          .to.be.revertedWith('AuctionRaffle: fees have already been claimed')
-      })
-    })
-
-    describe('when there are no non-winning bids', function () {
-      it('reverts', async function () {
-        await bidAndSettleRaffle(6)
-
-        await expect(auctionRaffleAsOwner.claimFees(6))
-          .to.be.revertedWith('AuctionRaffle: there are no fees to claim')
-      })
-    })
-
-    describe('when claiming using multiple transactions', function () {
-      it('transfers correct amount', async function () {
-        await bidAndSettleRaffle(15)
-        const singleBidFee = calculateFee(reservePrice)
-
-        let claimAmount = singleBidFee.mul(2)
-        expect(await claimFees(2)).to.be.equal(claimAmount)
-
-        claimAmount = singleBidFee.mul(4)
-        expect(await claimFees(4)).to.be.equal(claimAmount)
-      })
-    })
-
-    describe('when claiming using single transactions', function () {
-      it('transfers correct amount', async function () {
-        const additionalBidAmount = parseEther('0.1')
-        for (let i = 0; i < 16; i++) {
-          await bidAsWallet(wallets[i], reservePrice.add(additionalBidAmount.mul(i)))
-        }
-        await bidAndSettleRaffle(0)
-
-        const bids = await getAllBidsByWinType(16, WinType.loss)
-        let claimAmount = Zero
-        bids.forEach((bid) => {
-          claimAmount = claimAmount.add(calculateFee(bid.amount))
-        })
-
-        expect(await claimFees(bids.length)).to.be.equal(claimAmount)
-      })
-    })
-
-    describe('when bid amount is not divisible by 100', function () {
-      it('transfers correct amount with remainder', async function () {
-        const bidAmount = reservePrice.add(21)
-        await bid(8)
-        await bidAsWallet(wallets[9], bidAmount)
-        await bidAsWallet(wallets[10], reservePrice.mul(2))
-
-        // Non-winning bidderID from random number: 9
-        await bidAndSettleRaffle(0, [10])
-
-        expect(await claimFees(1)).to.be.equal(calculateFee(bidAmount))
-      })
-    })
-
-    // Returns amount transferred to owner by claimFees method
-    async function claimFees(bidsNumber: number): Promise<BigNumber> {
-      return calculateTransferredAmount(() => auctionRaffleAsOwner.claimFees(bidsNumber))
-    }
-
-    function calculateFee(bidAmount: BigNumber): BigNumber {
-      return bidAmount.sub(bidAmount.mul(98).div(100))
-    }
   })
 
   describe('getState', function () {
     it('waiting for bidding', async function () {
-      const currentTime = await getLatestBlockTimestamp(provider);
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ biddingStartTime: currentTime + MINUTE })))
+      const currentTime = await getLatestBlockTimestamp(provider)
+      ;({ auctionRaffle } = await loadFixture(
+        configuredAuctionRaffleFixture({ biddingStartTime: currentTime + MINUTE })
+      ))
 
       expect(await auctionRaffle.getState()).to.be.equal(State.awaitingBidding)
     })
 
     it('bidding open', async function () {
-      const currentTime = await getLatestBlockTimestamp(provider);
-      ({ auctionRaffle } = await loadFixture(configuredAuctionRaffleFixture({ biddingStartTime: currentTime - MINUTE })))
+      const currentTime = await getLatestBlockTimestamp(provider)
+      ;({ auctionRaffle } = await loadFixture(
+        configuredAuctionRaffleFixture({ biddingStartTime: currentTime - MINUTE })
+      ))
 
       expect(await auctionRaffle.getState()).to.be.equal(State.biddingOpen)
     })
@@ -980,58 +954,57 @@ describe('AuctionRaffle', function () {
 
   describe('getBid', function () {
     it('reverts for unknown bidder address', async function () {
-      await expect(auctionRaffle.getBid(randomAddress()))
-        .to.be.revertedWith('AuctionRaffle: no bid by given address')
+      await expect(auctionRaffle.getBid(randomAddress())).to.be.revertedWith('AuctionRaffle: no bid by given address')
     })
 
     it('returns bid details', async function () {
       await bid(1)
-      const { bidderID, amount, winType, claimed } = await auctionRaffle.getBid(wallets[0].address)
+      const { bidderID, amount, claimed } = await auctionRaffle.getBid(wallets[0].address)
       expect(bidderID).to.eq(1)
       expect(amount).to.eq(reservePrice)
-      expect(winType).to.eq(0)
+      expect(await auctionRaffle.getBidWinType(bidderID)).to.eq(0)
       expect(claimed).to.be.false
     })
   })
 
   describe('getBidByID', function () {
     it('reverts for zero bidder ID', async function () {
-      await expect(auctionRaffle.getBidByID(0))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidByID(0)).to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
-      await expect(auctionRaffle.getBidByID(2))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidByID(2)).to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
     })
 
     it('returns bidder address', async function () {
       await bid(1)
-      const { bidderID, amount, winType, claimed } = await auctionRaffle.getBidByID(1)
+      const { bidderID, amount, claimed } = await auctionRaffle.getBidByID(1)
       expect(bidderID).to.eq(1)
       expect(amount).to.eq(reservePrice)
-      expect(winType).to.eq(0)
+      expect(await auctionRaffle.getBidWinType(bidderID)).to.eq(0)
       expect(claimed).to.be.false
     })
   })
 
   describe('getBidWithAddress', function () {
     it('reverts for zero bidder ID', async function () {
-      await expect(auctionRaffle.getBidWithAddress(0))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidWithAddress(0)).to.be.revertedWith(
+        'AuctionRaffle: bidder with given ID does not exist'
+      )
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
-      await expect(auctionRaffle.getBidWithAddress(2))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidWithAddress(2)).to.be.revertedWith(
+        'AuctionRaffle: bidder with given ID does not exist'
+      )
     })
 
     it('returns correct bid with bidder address', async function () {
       await bid(1)
       const bidWithAddress = await auctionRaffle.getBidWithAddress(1)
-      validateBidsWithAddresses([bidWithAddress])
+      await validateBidsWithAddresses([bidWithAddress])
     })
   })
 
@@ -1044,20 +1017,22 @@ describe('AuctionRaffle', function () {
       await bid(3)
       const bids = await auctionRaffle.getBidsWithAddresses()
       expect(bids).to.be.of.length(3)
-      validateBidsWithAddresses(bids)
+      await validateBidsWithAddresses(bids)
     })
   })
 
   describe('getBidderAddress', function () {
     it('reverts for zero bidder ID', async function () {
-      await expect(auctionRaffle.getBidderAddress(0))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidderAddress(0)).to.be.revertedWith(
+        'AuctionRaffle: bidder with given ID does not exist'
+      )
     })
 
     it('reverts for invalid bidder ID', async function () {
       await bid(1)
-      await expect(auctionRaffle.getBidderAddress(2))
-        .to.be.revertedWith('AuctionRaffle: bidder with given ID does not exist')
+      await expect(auctionRaffle.getBidderAddress(2)).to.be.revertedWith(
+        'AuctionRaffle: bidder with given ID does not exist'
+      )
     })
 
     it('returns bidder address', async function () {
@@ -1070,23 +1045,35 @@ describe('AuctionRaffle', function () {
     return wallets[1]
   }
 
-  function validateBidsWithAddresses(bids) {
-    bids.forEach(({ bidder, bid: bid_ }, index) => {
-      expect(bidder).to.eq(wallets[index].address)
-      expect(bid_.bidderID).to.eq(index + 1)
+  async function validateBidsWithAddresses(bids: { bidder: string; bid: Bid }[]) {
+    for (let i = 0; i < bids.length; i++) {
+      const { bidder, bid: bid_ } = bids[i]
+      expect(bidder).to.eq(wallets[i].address)
+      expect(bid_.bidderID).to.eq(i + 1)
       expect(bid_.amount).to.eq(reservePrice)
-      expect(bid_.winType).to.eq(0)
+      expect(await auctionRaffle.getBidWinType(bid_.bidderID)).to.eq(0)
       expect(bid_.claimed).to.be.false
-    })
+    }
   }
 
-  async function bidAndSettleRaffle(bidCount: number, randomNumbers?: BigNumberish[]): Promise<ContractTransaction> {
+  async function bidAndSettleRaffle(bidCount: number, randomNumber?: BigNumberish): Promise<ContractTransaction> {
     await bid(bidCount)
     await endBidding(auctionRaffleAsOwner)
     await settleAuction()
 
-    const numbers = randomNumbers || randomBigNumbers(1)
-    return auctionRaffleAsOwner.settleRaffle(numbers)
+    const numbers = randomNumber || randomBN()
+    return settleAndFulfillRaffle(numbers)
+  }
+
+  async function settleAndFulfillRaffle(randomNumber: BigNumberish) {
+    await auctionRaffleAsOwner.settleRaffle().then((tx) => tx.wait(1))
+    const requestId = await auctionRaffleAsOwner.requestId()
+    expect(requestId).to.not.eq(0)
+    const tx = await vrfCoordinator.fulfillRandomWords(requestId, auctionRaffleAsOwner.address, [randomNumber], {
+      gasLimit: 2_500_000,
+    })
+    expect(await auctionRaffleAsOwner.getState()).to.eq(State.raffleSettled)
+    return tx
   }
 
   async function endBidding(auctionRaffle: AuctionRaffleMock) {
@@ -1101,12 +1088,46 @@ describe('AuctionRaffle', function () {
 
   async function bid(walletCount: number) {
     for (let i = 0; i < walletCount; i++) {
-      await bidAsWallet(wallets[i], reservePrice)
+      await bidOrBumpWithAttestation(reservePrice, wallets[i])
     }
   }
 
-  async function bidAsWallet(wallet: Wallet, value: BigNumberish) {
-    await auctionRaffle.connect(wallet).bid({ value })
+  /**
+   * Bid or bump as an eligible wallet
+   * @param value Amount to bid or bump
+   * @param wallet Optional wallet to bid with
+   */
+  async function bidOrBumpWithAttestation(value: BigNumberish, wallet?: Wallet) {
+    // Create attestation that this wallet is eligible
+    expect(await scoreAttestationVerifier.attestor()).to.eq(attestor.address, 'Unexpected attestor')
+    const score = 21 * 10 ** 8 // 21.0
+    const contract = wallet ? auctionRaffle.connect(wallet) : auctionRaffle
+    const subject = await contract.signer.getAddress()
+    const { signature } = await attestScore(subject, score, attestor, scoreAttestationVerifier.address)
+    try {
+      const { amount } = await contract.getBid(subject)
+      expect(amount.gt(0)).to.eq(true) // sanity
+      // existing bid -> bump
+      return contract.bump({ value })
+    } catch (err) {
+      // bid
+      return contract.bid(score, signature, { value })
+    }
+  }
+
+  /**
+   * Bid as eligible wallet (will not try to bump)
+   * @param value Amount to bid or bump
+   * @param wallet Optional wallet to bid with
+   */
+  async function bidWithAttestation(value: BigNumberish, wallet?: Wallet) {
+    // Create attestation that this wallet is eligible
+    expect(await scoreAttestationVerifier.attestor()).to.eq(attestor.address, 'Unexpected attestor')
+    const score = 21 * 10 ** 8 // 21.0
+    const contract = wallet ? auctionRaffle.connect(wallet) : auctionRaffle
+    const subject = await contract.signer.getAddress()
+    const { signature } = await attestScore(subject, score, attestor, scoreAttestationVerifier.address)
+    return contract.bid(score, signature, { value })
   }
 
   async function getBidByID(bidID: number): Promise<Bid> {
@@ -1117,7 +1138,8 @@ describe('AuctionRaffle', function () {
   async function getBidByWinType(bidCount: number, winType: WinType): Promise<Bid> {
     for (let i = 1; i <= bidCount; i++) {
       const bid = await getBidByID(i)
-      if (bid.winType === winType) {
+      const bidWinType = await auctionRaffle.getBidWinType(bid.bidderID)
+      if (bidWinType === winType) {
         return bid
       }
     }
@@ -1127,7 +1149,8 @@ describe('AuctionRaffle', function () {
     const bids = []
     for (let i = 1; i <= bidCount; i++) {
       const bid = await getBidByID(i)
-      if (bid.winType === winType) {
+      const bidWinType = await auctionRaffle.getBidWinType(bid.bidderID)
+      if (bidWinType === winType) {
         bids.push(bid)
       }
     }

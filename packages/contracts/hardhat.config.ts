@@ -8,6 +8,7 @@ import 'scripts/tasks/auctionRaffle/ethereumTasks'
 import 'scripts/tasks/auctionRaffle/hardhatTasks'
 import 'scripts/tasks/auctionRaffle/rinkebyTasks'
 import 'scripts/tasks/auctionRaffle/arbitrumTasks'
+import 'hardhat-tracer'
 
 import mocharc from './.mocharc.json'
 import compiler from './.compiler.json'

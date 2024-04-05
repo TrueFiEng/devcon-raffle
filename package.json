@@ -11,7 +11,8 @@
   },
   "workspaces": [
     "packages/contracts",
-    "packages/frontend"
+    "packages/frontend",
+    "packages/next-frontend"
   ],
   "devDependencies": {
     "wsrun": "^5.2.4"

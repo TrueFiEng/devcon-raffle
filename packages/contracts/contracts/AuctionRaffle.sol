@@ -10,13 +10,16 @@ import "./Config.sol";
 import "./models/BidModel.sol";
 import "./models/StateModel.sol";
 import "./libs/MaxHeap.sol";
+import "./libs/FeistelShuffleOptimised.sol";
+import "./libs/VRFRequester.sol";
+import "./verifier/IVerifier.sol";
 
 /***
  * @title Auction & Raffle
  * @notice Draws winners using a mixed auction & raffle scheme.
  * @author TrueFi Engineering team
  */
-contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
+contract AuctionRaffle is Ownable, Config, BidModel, StateModel, VRFRequester {
     using SafeERC20 for IERC20;
     using MaxHeap for uint256[];
 
@@ -35,9 +38,8 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     uint256[] _raffleWinners;
 
     bool _proceedsClaimed;
-    uint256 _claimedFeesIndex;
 
-    uint256[] _tempWinners; // temp array for sorting auction winners used by settleAuction method
+    uint256 public _randomSeed;
 
     /// @dev A new bid has been placed or an existing bid has been bumped
     event NewBid(address bidder, uint256 bidderID, uint256 bidAmount);
@@ -45,11 +47,8 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     /// @dev A bidder has been drawn as auction winner
     event NewAuctionWinner(uint256 bidderID);
 
-    /// @dev A bidder has been drawn as raffle winner
-    event NewRaffleWinner(uint256 bidderID);
-
-    /// @dev A bidder has been drawn as the golden ticket winner
-    event NewGoldenTicketWinner(uint256 bidderID);
+    /// @dev Raffle winners have been drawn
+    event RaffleWinnersDrawn(uint256 randomSeed);
 
     modifier onlyInState(State requiredState) {
         require(getState() == requiredState, "AuctionRaffle: is in invalid state");
@@ -63,25 +62,9 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
 
     constructor(
         address initialOwner,
-        uint256 biddingStartTime,
-        uint256 biddingEndTime,
-        uint256 claimingEndTime,
-        uint256 auctionWinnersCount,
-        uint256 raffleWinnersCount,
-        uint256 reservePrice,
-        uint256 minBidIncrement
-    )
-        Config(
-            biddingStartTime,
-            biddingEndTime,
-            claimingEndTime,
-            auctionWinnersCount,
-            raffleWinnersCount,
-            reservePrice,
-            minBidIncrement
-        )
-        Ownable()
-    {
+        ConfigParams memory configParams,
+        VRFRequesterParams memory vrfRequesterParams
+    ) Config(configParams) VRFRequester(vrfRequesterParams) Ownable() {
         if (initialOwner != msg.sender) {
             Ownable.transferOwnership(initialOwner);
         }
@@ -96,26 +79,40 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     }
 
     /***
-     * @notice Places a new bid or bumps an existing bid.
+     * @notice Places a new bid.
      * @dev Assigns a unique bidderID to the sender address.
+     * @param score The user's sybil resistance score
+     * @param proof Attestation signature of the score
      */
-    function bid() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
+    function bid(
+        uint256 score,
+        bytes calldata proof
+    ) external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
+        IVerifier(bidVerifier).verify(abi.encode(msg.sender, score), proof);
         Bid storage bidder = _bids[msg.sender];
-        if (bidder.amount == 0) {
-            require(msg.value >= _reservePrice, "AuctionRaffle: bid amount is below reserve price");
-            bidder.amount = msg.value;
-            bidder.bidderID = _nextBidderID++;
-            _bidders[bidder.bidderID] = payable(msg.sender);
-            _raffleParticipants.push(bidder.bidderID);
+        require(bidder.amount == 0, "AuctionRaffle: bid already exists");
+        require(msg.value >= _reservePrice, "AuctionRaffle: bid amount is below reserve price");
+        bidder.amount = msg.value;
+        bidder.bidderID = _nextBidderID++;
+        _bidders[bidder.bidderID] = payable(msg.sender);
+        bidder.raffleParticipantIndex = uint240(_raffleParticipants.length);
+        _raffleParticipants.push(bidder.bidderID);
 
-            addBidToHeap(bidder.bidderID, bidder.amount);
-        } else {
-            require(msg.value >= _minBidIncrement, "AuctionRaffle: bid increment too low");
-            uint256 oldAmount = bidder.amount;
-            bidder.amount += msg.value;
+        addBidToHeap(bidder.bidderID, bidder.amount);
+        emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
+    }
 
-            updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
-        }
+    /***
+     * @notice Bumps an existing bid.
+     */
+    function bump() external payable onlyExternalTransactions onlyInState(State.BIDDING_OPEN) {
+        Bid storage bidder = _bids[msg.sender];
+        require(bidder.amount != 0, "AuctionRaffle: bump nonexistent bid");
+        require(msg.value >= _minBidIncrement, "AuctionRaffle: bid increment too low");
+        uint256 oldAmount = bidder.amount;
+        bidder.amount += msg.value;
+
+        updateHeapBid(bidder.bidderID, oldAmount, bidder.amount);
         emit NewBid(msg.sender, bidder.bidderID, bidder.amount);
     }
 
@@ -144,51 +141,30 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
             uint256 key = _heap.removeMax();
             uint256 bidderID = extractBidderID(key);
             addAuctionWinner(bidderID);
-            _tempWinners.insert(bidderID);
         }
 
         delete _heap;
         delete _minKeyIndex;
         delete _minKeyValue;
+    }
 
-        for (uint256 i = 0; i < winnersLength; ++i) {
-            uint256 bidderID = _tempWinners.removeMax();
-            removeRaffleParticipant(bidderID - 1);
-        }
+    /**
+     * @notice Initiate raffle draw by requesting a random number from Chainlink VRF.
+     */
+    function settleRaffle() external onlyOwner onlyInState(State.AUCTION_SETTLED) returns (uint256 requestId) {
+        return _getRandomNumber();
     }
 
     /**
      * @notice Draws raffle winners and changes contract state to RAFFLE_SETTLED. The first selected raffle winner
      * becomes the Golden Ticket winner.
-     * @dev Sets WinType of the first selected bid to GOLDEN_TICKET. Sets WinType to RAFFLE for the remaining selected
-     * bids.
-     * @param randomNumbers The source of randomness for the function. Each random number is used to draw at most
-     * `_winnersPerRandom` raffle winners.
+     * @param randomSeed A single 256-bit random seed.
      */
-    function settleRaffle(uint256[] memory randomNumbers) external onlyOwner onlyInState(State.AUCTION_SETTLED) {
-        require(randomNumbers.length > 0, "AuctionRaffle: there must be at least one random number passed");
-
+    function _receiveRandomNumber(uint256 randomSeed) internal override onlyInState(State.AUCTION_SETTLED) {
         _settleState = SettleState.RAFFLE_SETTLED;
+        _randomSeed = randomSeed;
 
-        uint256 participantsLength = _raffleParticipants.length;
-        if (participantsLength == 0) {
-            return;
-        }
-
-        (participantsLength, randomNumbers[0]) = selectGoldenTicketWinner(participantsLength, randomNumbers[0]);
-
-        uint256 raffleWinnersCount = _raffleWinnersCount;
-        if (participantsLength < raffleWinnersCount) {
-            selectAllRaffleParticipantsAsWinners(participantsLength);
-            return;
-        }
-
-        require(
-            randomNumbers.length == raffleWinnersCount / _winnersPerRandom,
-            "AuctionRaffle: passed incorrect number of random numbers"
-        );
-
-        selectRaffleWinners(participantsLength, randomNumbers);
+        emit RaffleWinnersDrawn(randomSeed);
     }
 
     /**
@@ -202,16 +178,15 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         address payable bidderAddress = getBidderAddress(bidderID);
         Bid storage bidder = _bids[bidderAddress];
         require(!bidder.claimed, "AuctionRaffle: funds have already been claimed");
-        require(bidder.winType != WinType.AUCTION, "AuctionRaffle: auction winners cannot claim funds");
-
+        require(!bidder.isAuctionWinner, "AuctionRaffle: auction winners cannot claim funds");
         bidder.claimed = true;
+
+        WinType winType = getBidWinType(bidderID);
         uint256 claimAmount;
-        if (bidder.winType == WinType.RAFFLE) {
-            claimAmount = bidder.amount - _reservePrice;
-        } else if (bidder.winType == WinType.GOLDEN_TICKET) {
+        if (winType == WinType.GOLDEN_TICKET || winType == WinType.LOSS) {
             claimAmount = bidder.amount;
-        } else if (bidder.winType == WinType.LOSS) {
-            claimAmount = (bidder.amount * 98) / 100;
+        } else if (winType == WinType.RAFFLE) {
+            claimAmount = bidder.amount - _reservePrice;
         }
 
         if (claimAmount > 0) {
@@ -252,34 +227,6 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     }
 
     /**
-     * @notice Allows the owner to claim the 2% fees from non-winning bids after the raffle is settled.
-     * @dev This function is designed to be called multiple times, to split iteration though all non-winning bids across
-     * multiple transactions.
-     * @param bidsCount The number of bids to be processed at once.
-     */
-    function claimFees(uint256 bidsCount) external onlyOwner onlyInState(State.RAFFLE_SETTLED) {
-        uint256 claimedFeesIndex = _claimedFeesIndex;
-        uint256 feesCount = _raffleParticipants.length;
-        require(feesCount > 0, "AuctionRaffle: there are no fees to claim");
-        require(claimedFeesIndex < feesCount, "AuctionRaffle: fees have already been claimed");
-
-        uint256 endIndex = claimedFeesIndex + bidsCount;
-        if (endIndex > feesCount) {
-            endIndex = feesCount;
-        }
-
-        uint256 fee = 0;
-        for (uint256 i = claimedFeesIndex; i < endIndex; ++i) {
-            address bidderAddress = getBidderAddress(_raffleParticipants[i]);
-            uint256 bidAmount = _bids[bidderAddress].amount;
-            fee += bidAmount - (bidAmount * 98) / 100;
-        }
-
-        _claimedFeesIndex = endIndex;
-        payable(owner()).transfer(fee);
-    }
-
-    /**
      * @notice Allows the owner to withdraw all funds left in the contract by the participants.
      * Callable only after the claiming window is closed.
      */
@@ -300,6 +247,7 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         token.safeTransfer(owner(), balance);
     }
 
+    /// @return A list of raffle participants; including the winners (if settled)
     function getRaffleParticipants() external view returns (uint256[] memory) {
         return _raffleParticipants;
     }
@@ -309,9 +257,22 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         return _auctionWinners;
     }
 
-    /// @return A list of raffle winner bidder IDs.
-    function getRaffleWinners() external view returns (uint256[] memory) {
-        return _raffleWinners;
+    /// @return winners A list of raffle winner bidder IDs.
+    function getRaffleWinners() external view onlyInState(State.RAFFLE_SETTLED) returns (uint256[] memory winners) {
+        uint256 participantsCount = _raffleParticipants.length;
+        uint256 raffleWinnersCount = _raffleWinnersCount;
+        uint256 n = participantsCount < raffleWinnersCount ? participantsCount : raffleWinnersCount;
+        uint256 randomSeed = _randomSeed;
+
+        winners = new uint256[](n);
+        for (uint256 i; i < n; ++i) {
+            // Map inverse `i`th place winner -> original index
+            uint256 winnerIndex = FeistelShuffleOptimised.deshuffle(i, participantsCount, randomSeed, 4);
+            // Map original participant index -> bidder id
+            uint256 winningBidderId = _raffleParticipants[winnerIndex];
+            // Record winner in storage
+            winners[i] = winningBidderId;
+        }
     }
 
     function getBid(address bidder) external view returns (Bid memory) {
@@ -439,99 +400,47 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
         (_minKeyIndex, _minKeyValue) = _heap.findMin();
     }
 
+    /**
+     * Record auction winner, and additionally remove them from the raffle
+     * participants list.
+     * @param bidderID Unique bidder ID
+     */
     function addAuctionWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.AUCTION);
+        address bidderAddress = getBidderAddress(bidderID);
+        _bids[bidderAddress].isAuctionWinner = true;
         _auctionWinners.push(bidderID);
         emit NewAuctionWinner(bidderID);
+        removeRaffleParticipant(_bids[bidderAddress].raffleParticipantIndex);
     }
 
-    function addRaffleWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.RAFFLE);
-        _raffleWinners.push(bidderID);
-        emit NewRaffleWinner(bidderID);
-    }
+    /**
+     * Determine the WinType of a bid, i.e. whether a bid is an auction winner,
+     * a golden ticket winner, a raffle winner, or a loser.
+     * @param bidderID Monotonically-increasing unique bidder identifier
+     */
+    function getBidWinType(uint256 bidderID) public view returns (WinType) {
+        if (uint8(getState()) < uint8(State.AUCTION_SETTLED)) {
+            return WinType.LOSS;
+        }
 
-    function addGoldenTicketWinner(uint256 bidderID) private {
-        setBidWinType(bidderID, WinType.GOLDEN_TICKET);
-        _raffleWinners.push(bidderID);
-        emit NewGoldenTicketWinner(bidderID);
-    }
-
-    function setBidWinType(uint256 bidderID, WinType winType) private {
         address bidderAddress = getBidderAddress(bidderID);
-        _bids[bidderAddress].winType = winType;
-    }
-
-    /**
-     * @dev Selects one Golden Ticket winner from a random number.
-     * Saves the winner at the beginning of _raffleWinners array and sets bidder WinType to GOLDEN_TICKET.
-     * @param participantsLength The length of current participants array
-     * @param randomNumber The random number to select raffle winner from
-     * @return participantsLength New participants array length
-     * @return randomNumber Shifted random number by `_randomMaskLength` bits to the right
-     */
-    function selectGoldenTicketWinner(uint256 participantsLength, uint256 randomNumber)
-        private
-        returns (uint256, uint256)
-    {
-        uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
-
-        uint256 bidderID = _raffleParticipants[winnerIndex];
-        addGoldenTicketWinner(bidderID);
-
-        removeRaffleParticipant(winnerIndex);
-        return (participantsLength - 1, randomNumber >> _randomMaskLength);
-    }
-
-    function selectAllRaffleParticipantsAsWinners(uint256 participantsLength) private {
-        for (uint256 i = 0; i < participantsLength; ++i) {
-            uint256 bidderID = _raffleParticipants[i];
-            addRaffleWinner(bidderID);
-        }
-        delete _raffleParticipants;
-    }
-
-    /**
-     * @dev Selects `_winnersPerRandom` - 1 raffle winners for the first random number -- it assumes that one bidder
-     * was selected before as the Golden Ticket winner. Then it selects `_winnersPerRandom` winners for each remaining
-     * random number.
-     * @param participantsLength The length of current participants array
-     * @param randomNumbers The array of random numbers to select raffle winners from
-     */
-    function selectRaffleWinners(uint256 participantsLength, uint256[] memory randomNumbers) private {
-        participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[0], _winnersPerRandom - 1);
-        for (uint256 i = 1; i < randomNumbers.length; ++i) {
-            participantsLength = selectRandomRaffleWinners(participantsLength, randomNumbers[i], _winnersPerRandom);
-        }
-    }
-
-    /**
-     * @notice Selects a number of raffle winners from _raffleParticipants array. Saves the winners in _raffleWinners
-     * array and sets their WinType to RAFFLE.
-     * @dev Divides passed randomNumber into `_randomMaskLength` bit numbers and then selects one raffle winner using
-     * each small number.
-     * @param participantsLength The length of current participants array
-     * @param randomNumber The random number used to select raffle winners
-     * @param winnersCount The number of raffle winners to select from a single random number
-     * @return New participants length
-     */
-    function selectRandomRaffleWinners(
-        uint256 participantsLength,
-        uint256 randomNumber,
-        uint256 winnersCount
-    ) private returns (uint256) {
-        for (uint256 i = 0; i < winnersCount; ++i) {
-            uint256 winnerIndex = winnerIndexFromRandomNumber(participantsLength, randomNumber);
-
-            uint256 bidderID = _raffleParticipants[winnerIndex];
-            addRaffleWinner(bidderID);
-
-            removeRaffleParticipant(winnerIndex);
-            --participantsLength;
-            randomNumber = randomNumber >> _randomMaskLength;
+        Bid memory bid_ = _bids[bidderAddress];
+        if (bid_.isAuctionWinner) {
+            return WinType.AUCTION;
         }
 
-        return participantsLength;
+        uint256 participantsCount = _raffleParticipants.length;
+        uint256 raffleWinnersCount = _raffleWinnersCount;
+        uint256 n = participantsCount < raffleWinnersCount ? participantsCount : raffleWinnersCount;
+        // Map original index -> inverse `i`th place winner
+        uint256 place = FeistelShuffleOptimised.shuffle(bid_.raffleParticipantIndex, participantsCount, _randomSeed, 4);
+        if (place == 0) {
+            return WinType.GOLDEN_TICKET;
+        } else if (place < n) {
+            return WinType.RAFFLE;
+        } else {
+            return WinType.LOSS;
+        }
     }
 
     /**
@@ -542,7 +451,9 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
     function removeRaffleParticipant(uint256 index) private {
         uint256 participantsLength = _raffleParticipants.length;
         require(index < participantsLength, "AuctionRaffle: invalid raffle participant index");
-        _raffleParticipants[index] = _raffleParticipants[participantsLength - 1];
+        uint256 lastBidderID = _raffleParticipants[participantsLength - 1];
+        _raffleParticipants[index] = lastBidderID;
+        _bids[_bidders[lastBidderID]].raffleParticipantIndex = uint240(index);
         _raffleParticipants.pop();
     }
 
@@ -566,21 +477,5 @@ contract AuctionRaffle is Ownable, Config, BidModel, StateModel {
      */
     function extractBidderID(uint256 key) private pure returns (uint256) {
         return _bidderMask - (key & _bidderMask);
-    }
-
-    /**
-     * @notice Calculates winner index
-     * @dev Calculates modulo of `_randomMaskLength` lower bits of randomNumber and participantsLength
-     * @param participantsLength The length of current participants array
-     * @param randomNumber The random number to select raffle winner from
-     * @return Winner index
-     */
-    function winnerIndexFromRandomNumber(uint256 participantsLength, uint256 randomNumber)
-        private
-        pure
-        returns (uint256)
-    {
-        uint256 smallRandom = randomNumber & _randomMask;
-        return smallRandom % participantsLength;
     }
 }

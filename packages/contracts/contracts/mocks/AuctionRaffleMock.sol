@@ -7,25 +7,9 @@ import "../AuctionRaffle.sol";
 contract AuctionRaffleMock is AuctionRaffle {
     constructor(
         address initialOwner,
-        uint256 biddingStartTime,
-        uint256 biddingEndTime,
-        uint256 claimingEndTime,
-        uint256 auctionWinnersCount,
-        uint256 raffleWinnersCount,
-        uint256 reservePrice,
-        uint256 minBidIncrement
-    )
-        AuctionRaffle(
-            initialOwner,
-            biddingStartTime,
-            biddingEndTime,
-            claimingEndTime,
-            auctionWinnersCount,
-            raffleWinnersCount,
-            reservePrice,
-            minBidIncrement
-        )
-    {}
+        ConfigParams memory configParams,
+        VRFRequesterParams memory vrfRequesterParams
+    ) AuctionRaffle(initialOwner, configParams, vrfRequesterParams) {}
 
     function getHeap() external view returns (uint256[] memory) {
         return _heap;

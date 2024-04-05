@@ -7,6 +7,7 @@ pragma solidity 0.8.10;
  * @author TrueFi Engineering team
  */
 abstract contract StateModel {
+    // NB: This is ordered according to the expected sequence. Do not reorder!
     enum State {
         AWAITING_BIDDING,
         BIDDING_OPEN,

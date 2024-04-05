@@ -10,8 +10,9 @@ abstract contract BidModel {
     struct Bid {
         uint256 bidderID;
         uint256 amount;
-        WinType winType;
+        bool isAuctionWinner;
         bool claimed;
+        uint240 raffleParticipantIndex;
     }
 
     struct BidWithAddress {
