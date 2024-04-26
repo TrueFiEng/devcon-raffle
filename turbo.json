@@ -16,7 +16,8 @@
         "SCORE_ATTESTATION_VERIFIER_ADDRESS",
         "SCORE_ATTESTATION_VERIFIER_VERSION",
         "SCORE_ATTESTOR_PRIVATE_KEY",
-        "VOUCHER_CODES"
+        "VOUCHER_CODES",
+        "AUTH_SECRET"
       ],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "build/**", "cache"]

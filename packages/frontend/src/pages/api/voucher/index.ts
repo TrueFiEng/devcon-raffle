@@ -9,12 +9,15 @@ import { AUCTION_ABI } from '@/blockchain/abi/auction'
 import { WinType } from '@/blockchain/abi/WinType'
 import { ContractState } from '@/blockchain/abi/ContractState'
 import { environment } from '@/config/environment'
+import * as jose from 'jose'
+import log from '@/utils/log'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
-    // GET /api/voucher
-    // Get voucher code with signed JWT
+      // GET /api/voucher
+      // Get voucher code with signed JWT
+      return getVoucherWithJwt(req, res)
     case 'POST':
       // POST /api/voucher
       // Submit a signature (of signed nonce) in order to get a voucher code
@@ -38,6 +41,29 @@ export const GetVoucherResponseSchema = z.object({
 })
 
 export type GetVoucherResponse = z.infer<typeof GetVoucherResponseSchema>
+
+export async function getVoucherWithJwt(req: NextApiRequest, res: NextApiResponse) {
+  const voucherCodeJwt = req.cookies.voucherCodeJwt
+  if (!voucherCodeJwt) {
+    res.status(403).end() // TODO
+    return
+  }
+
+  const { payload } = await jose.jwtVerify(voucherCodeJwt, environment.authSecret, {
+    requiredClaims: ['chainId', 'address'],
+  })
+
+  const voucherCodeResult = await getVoucherCode(payload.chainId as number, payload.address as `0x${string}`)
+  if (!voucherCodeResult.isWinner) {
+    res.status(403).end() // TODO
+    return
+  }
+
+  const result: GetVoucherResponse = {
+    voucherCode: voucherCodeResult.voucherCode,
+  }
+  res.status(200).json(result)
+}
 
 export async function getVoucherWithSig(req: NextApiRequest, res: NextApiResponse) {
   const reqParseResult = GetVoucherWithSigRequestSchema.safeParse(JSON.parse(req.body))
@@ -65,6 +91,33 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
     return
   }
 
+  const isReady = await isContractSettled(chainId)
+  if (!isReady) {
+    res.status(403).end() // TODO
+    return
+  }
+
+  const voucherCodeResult = await getVoucherCode(chainId, userAddress)
+  if (!voucherCodeResult.isWinner) {
+    res.status(403).end() // TODO
+    return
+  }
+
+  // All good
+  const result: GetVoucherResponse = {
+    voucherCode: voucherCodeResult.voucherCode,
+  }
+  // Send back JWT for future requests
+  const jwt = await new jose.SignJWT({ chainId, address: userAddress })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .sign(environment.authSecret)
+  res.setHeader('Set-Cookie', `voucherCodeJwt=${jwt}; sameSite=none; httpOnly=true; secure=true;`)
+  res.status(200)
+  res.json(result)
+}
+
+async function isContractSettled(chainId: number): Promise<boolean> {
   const client = getPublicClient(chainId)
   // Check if auction & raffle are settled
   const state = await client.readContract({
@@ -72,10 +125,20 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
     abi: AUCTION_ABI,
     functionName: 'getState',
   })
-  if (state !== ContractState.RAFFLE_SETTLED) {
-    res.status(403).end() // TODO
-    return
-  }
+  return state === ContractState.RAFFLE_SETTLED
+}
+
+type GetVoucherCodeResult =
+  | {
+      isWinner: false
+    }
+  | {
+      isWinner: true
+      voucherCode: string
+    }
+
+async function getVoucherCode(chainId: number, userAddress: `0x${string}`): Promise<GetVoucherCodeResult> {
+  const client = getPublicClient(chainId)
 
   // Check if address was a winner
   const { bidderID } = await client.readContract({
@@ -91,8 +154,9 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
     args: [bidderID],
   })
   if (winType === WinType.LOSS) {
-    res.status(403).end() // TODO
-    return
+    return {
+      isWinner: false,
+    }
   }
 
   // Get voucher code for address
@@ -108,16 +172,14 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
   })
   const winnerIndex = auctionWinners.concat(raffleWinners).findIndex((id) => id === bidderID)
   if (winnerIndex === -1) {
-    // Invariant violation
-    res.status(500).end() // TODO
-    return
+    log.error(`Invariant violation: ${userAddress} is a winner but not present in winners list onchain`)
+    return {
+      isWinner: false,
+    }
   }
 
-  // All good
-  const result: GetVoucherResponse = {
+  return {
+    isWinner: true,
     voucherCode: environment.voucherCodes[winnerIndex],
   }
-  res.status(200)
-  res.setHeader('Set-Cookie', `jwt=${''}`)
-  res.status(200).json(result)
 }

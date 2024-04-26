@@ -21,7 +21,7 @@ export type GetVoucherNonceResponse = z.infer<typeof GetVoucherNonceResponseSche
 
 export async function getVoucherNonce(_req: NextApiRequest, res: NextApiResponse) {
   const nonce = randomUUID()
-  res.setHeader('Set-Cookie', `voucherNonce=${nonce}; sameSite=strict; httpOnly=true;`)
+  res.setHeader('Set-Cookie', `voucherNonce=${nonce}; sameSite=none; httpOnly=true; secure=true;`)
   const result: GetVoucherNonceResponse = {
     nonce,
   }

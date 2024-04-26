@@ -13,6 +13,7 @@ export const environment = {
   scoreAttestorPrivateKey:
     process.env.SCORE_ATTESTOR_PRIVATE_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000',
   voucherCodes: getVoucherCodes(),
+  authSecret: new TextEncoder().encode(process.env.AUTH_SECRET),
 }
 
 function getDateEnv(envValue: string | undefined): number | undefined {
