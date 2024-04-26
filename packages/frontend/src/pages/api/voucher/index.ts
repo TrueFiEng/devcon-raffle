@@ -11,6 +11,7 @@ import { ContractState } from '@/blockchain/abi/ContractState'
 import { environment } from '@/config/environment'
 import * as jose from 'jose'
 import log from '@/utils/log'
+import { buildVoucherClaimMessage } from '@/utils/buildVoucherClaimMessage'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -66,7 +67,7 @@ export async function getVoucherWithJwt(req: NextApiRequest, res: NextApiRespons
 }
 
 export async function getVoucherWithSig(req: NextApiRequest, res: NextApiResponse) {
-  const reqParseResult = GetVoucherWithSigRequestSchema.safeParse(JSON.parse(req.body))
+  const reqParseResult = GetVoucherWithSigRequestSchema.safeParse(req.body)
   if (!reqParseResult.success) {
     res.status(400).end()
     return
@@ -84,7 +85,7 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
   const isValid = await verifyMessage({
     address: userAddress,
     signature,
-    message: `Claim voucher code for address ${chainId}:${userAddress}. Nonce: ${nonce}`,
+    message: buildVoucherClaimMessage(chainId, userAddress, nonce),
   })
   if (!isValid) {
     res.status(403).end() // TODO

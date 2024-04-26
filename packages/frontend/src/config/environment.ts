@@ -21,6 +21,10 @@ function getDateEnv(envValue: string | undefined): number | undefined {
 }
 
 function getVoucherCodes() {
+  if (typeof window !== 'undefined') {
+    return []
+  }
+
   const voucherCodes = process.env.VOUCHER_CODES
   if (typeof voucherCodes === 'undefined') {
     throw new Error('VOUCHER_CODES not supplied!')

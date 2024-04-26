@@ -58,7 +58,7 @@ export type SubmitAddressForScoringRequest = z.infer<typeof SubmitAddressForScor
 export async function submitAddressForScoring(req: NextApiRequest, res: NextApiResponse) {
   let gtcResponse
   try {
-    const requestBody = SubmitAddressForScoringRequestSchema.parse(JSON.parse(req.body))
+    const requestBody = SubmitAddressForScoringRequestSchema.parse(req.body)
     gtcResponse = await fetch(new URL('/registry/v2/submit-passport', environment.gtcScorerApiBaseUri).href, {
       method: 'POST',
       headers: {
