@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import z from 'zod'
-import { randomUUID } from 'crypto'
 import { verifyMessage } from 'viem'
 import { HexStringSchema } from '@/types/HexString'
 import { EthereumAddressSchema } from '@/types/EthereumAddress'
@@ -9,35 +8,20 @@ import { AUCTION_ADDRESSES } from '@/blockchain/auctionAddresses'
 import { AUCTION_ABI } from '@/blockchain/abi/auction'
 import { WinType } from '@/blockchain/abi/WinType'
 import { ContractState } from '@/blockchain/abi/ContractState'
+import { environment } from '@/config/environment'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
-      // GET /api/voucher
-      // Get a nonce that a user must sign in order to get their voucher code
-      return getVoucherNonce(req, res)
+    // GET /api/voucher
+    // Get voucher code with signed JWT
     case 'POST':
-    // POST /api/voucher
-    // Submit a signature (of signed nonce) in order to get a voucher code
-    // return submitAddressForScoring(req, res)
+      // POST /api/voucher
+      // Submit a signature (of signed nonce) in order to get a voucher code
+      return getVoucherWithSig(req, res)
     default:
       res.status(405).end()
   }
-}
-
-export const GetVoucherNonceResponseSchema = z.object({
-  nonce: z.string(),
-})
-
-export type GetVoucherNonceResponse = z.infer<typeof GetVoucherNonceResponseSchema>
-
-export async function getVoucherNonce(_req: NextApiRequest, res: NextApiResponse) {
-  const nonce = randomUUID()
-  res.setHeader('Set-Cookie', `voucherNonce=${nonce}; sameSite=strict; httpOnly=true;`)
-  const result: GetVoucherNonceResponse = {
-    nonce,
-  }
-  res.status(200).json(result)
 }
 
 export const GetVoucherWithSigRequestSchema = z.object({
@@ -111,11 +95,27 @@ export async function getVoucherWithSig(req: NextApiRequest, res: NextApiRespons
     return
   }
 
-  // TODO: Load vouchers
+  // Get voucher code for address
+  const auctionWinners = await client.readContract({
+    address: AUCTION_ADDRESSES[chainId as keyof typeof AUCTION_ADDRESSES],
+    abi: AUCTION_ABI,
+    functionName: 'getAuctionWinners',
+  })
+  const raffleWinners = await client.readContract({
+    address: AUCTION_ADDRESSES[chainId as keyof typeof AUCTION_ADDRESSES],
+    abi: AUCTION_ABI,
+    functionName: 'getRaffleWinners',
+  })
+  const winnerIndex = auctionWinners.concat(raffleWinners).findIndex((id) => id === bidderID)
+  if (winnerIndex === -1) {
+    // Invariant violation
+    res.status(500).end() // TODO
+    return
+  }
 
   // All good
   const result: GetVoucherResponse = {
-    voucherCode: 'x',
+    voucherCode: environment.voucherCodes[winnerIndex],
   }
   res.status(200)
   res.setHeader('Set-Cookie', `jwt=${''}`)

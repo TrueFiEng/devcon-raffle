@@ -15,7 +15,8 @@
         "GTC_SCORER_ID",
         "SCORE_ATTESTATION_VERIFIER_ADDRESS",
         "SCORE_ATTESTATION_VERIFIER_VERSION",
-        "SCORE_ATTESTOR_PRIVATE_KEY"
+        "SCORE_ATTESTOR_PRIVATE_KEY",
+        "VOUCHER_CODES"
       ],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "build/**", "cache"]

@@ -9,12 +9,20 @@ export const environment = {
   gtcScorerId: process.env.GTC_SCORER_ID as string,
   scoreAttestationVerifierAddress:
     process.env.SCORE_ATTESTATION_VERIFIER_ADDRESS || '0x0000000000000000000000000000000000000000',
-
   scoreAttestationVerifierVersion: process.env.SCORE_ATTESTATION_VERIFIER_VERSION || '1',
   scoreAttestorPrivateKey:
     process.env.SCORE_ATTESTOR_PRIVATE_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000',
+  voucherCodes: getVoucherCodes(),
 }
 
 function getDateEnv(envValue: string | undefined): number | undefined {
   return envValue ? Math.floor(new Date(envValue).getTime() / 1000) : undefined
+}
+
+function getVoucherCodes() {
+  const voucherCodes = process.env.VOUCHER_CODES
+  if (typeof voucherCodes === 'undefined') {
+    throw new Error('VOUCHER_CODES not supplied!')
+  }
+  return voucherCodes.split(',')
 }
