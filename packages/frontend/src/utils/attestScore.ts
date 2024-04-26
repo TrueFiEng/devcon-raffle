@@ -2,7 +2,7 @@ import { hashTypedData } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 
 const scoreAttestationVerifierAddress = process.env.SCORE_ATTESTATION_VERIFIER_ADDRESS as `0x${string}`
-const attestor = privateKeyToAccount(process.env.SCORE_ATTESTOR_PRIVATE_KEY as string)
+const attestor = privateKeyToAccount(process.env.SCORE_ATTESTOR_PRIVATE_KEY as `0x${string}`)
 
 export async function attestScore(subject: string, score: bigint) {
   const typedData = {
