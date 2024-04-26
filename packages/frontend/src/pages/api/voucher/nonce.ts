@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import z from 'zod'
 import { randomUUID } from 'crypto'
+import { GetVoucherNonceResponse } from '@/types/api/voucher'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -12,12 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(405).end()
   }
 }
-
-export const GetVoucherNonceResponseSchema = z.object({
-  nonce: z.string(),
-})
-
-export type GetVoucherNonceResponse = z.infer<typeof GetVoucherNonceResponseSchema>
 
 export async function getVoucherNonce(_req: NextApiRequest, res: NextApiResponse) {
   const nonce = randomUUID()

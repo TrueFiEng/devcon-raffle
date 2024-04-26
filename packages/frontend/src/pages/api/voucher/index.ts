@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import z from 'zod'
 import { verifyMessage } from 'viem'
-import { HexStringSchema } from '@/types/HexString'
-import { EthereumAddressSchema } from '@/types/EthereumAddress'
 import { getPublicClient } from '@/blockchain/publicClient'
 import { AUCTION_ADDRESSES } from '@/blockchain/auctionAddresses'
 import { AUCTION_ABI } from '@/blockchain/abi/auction'
@@ -12,6 +9,7 @@ import { environment } from '@/config/environment'
 import * as jose from 'jose'
 import log from '@/utils/log'
 import { buildVoucherClaimMessage } from '@/utils/buildVoucherClaimMessage'
+import { GetVoucherResponse, GetVoucherWithSigRequestSchema } from '@/types/api/voucher'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -27,21 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(405).end()
   }
 }
-
-export const GetVoucherWithSigRequestSchema = z.object({
-  chainId: z.number(),
-  userAddress: EthereumAddressSchema,
-  signature: HexStringSchema,
-  nonce: z.string(),
-})
-
-export type GetVoucherWithSigRequest = z.infer<typeof GetVoucherWithSigRequestSchema>
-
-export const GetVoucherResponseSchema = z.object({
-  voucherCode: z.string(),
-})
-
-export type GetVoucherResponse = z.infer<typeof GetVoucherResponseSchema>
 
 export async function getVoucherWithJwt(req: NextApiRequest, res: NextApiResponse) {
   const voucherCodeJwt = req.cookies.voucherCodeJwt

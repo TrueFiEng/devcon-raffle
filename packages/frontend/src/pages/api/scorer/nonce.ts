@@ -1,7 +1,7 @@
 import { environment } from '@/config/environment'
 import log from '@/utils/log'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { z } from 'zod'
+import { GetPassportScorerNonce } from '@/types/api/scorer'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -13,13 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(405).end()
   }
 }
-
-const GetPassportScorerNonceSchema = z.object({
-  message: z.string(),
-  nonce: z.string(),
-})
-
-export type GetPassportScorerNonce = z.infer<typeof GetPassportScorerNonceSchema>
 
 export async function getPassportScorerNonce(_req: NextApiRequest, res: NextApiResponse) {
   let gtcResponse

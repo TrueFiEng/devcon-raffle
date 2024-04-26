@@ -1,7 +1,7 @@
 import { environment } from '@/config/environment'
 import log from '@/utils/log'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { z } from 'zod'
+import { SubmitAddressForScoringRequestSchema } from '@/types/api/scorer'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -13,14 +13,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(405).end()
   }
 }
-
-const SubmitAddressForScoringRequestSchema = z.object({
-  userAddress: z.string(),
-  signature: z.string().regex(/^0x([0-9a-fA-F]{2})*$/),
-  nonce: z.string(),
-})
-
-export type SubmitAddressForScoringRequest = z.infer<typeof SubmitAddressForScoringRequestSchema>
 
 export async function submitAddressForScoring(req: NextApiRequest, res: NextApiResponse) {
   let gtcResponse

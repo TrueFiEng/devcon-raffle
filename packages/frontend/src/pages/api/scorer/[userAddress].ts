@@ -3,33 +3,7 @@ import { attestScore } from '@/utils/attestScore'
 import log from '@/utils/log'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { environment } from '@/config/environment'
-import z from 'zod'
-import { HexStringSchema } from '@/types/HexString'
-
-const ErrorResponseSchema = z.object({
-  status: z.literal('error'),
-  error: z.string(),
-})
-
-const GetScoreResponseProcessingSchema = z.object({
-  status: z.literal('processing'),
-})
-
-const GetScoreResponseSuccessSchema = z.object({
-  status: z.literal('done'),
-  address: EthereumAddressSchema,
-  score: z.string().regex(/^[0-9]+$/) /** serialised bigint */,
-  digest: HexStringSchema /** EIP-712 digest */,
-  signature: HexStringSchema,
-})
-
-const GetResponseSchema = z.union([
-  ErrorResponseSchema,
-  GetScoreResponseProcessingSchema,
-  GetScoreResponseSuccessSchema,
-])
-
-export type GetScoreResponse = z.infer<typeof GetResponseSchema>
+import { GetScoreResponse } from '@/types/api/scorer'
 
 const gtcScorerId = environment.gtcScorerId
 const gtcScorerApiBaseUri = environment.gtcScorerApiBaseUri
