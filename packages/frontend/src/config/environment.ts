@@ -5,8 +5,8 @@ export const environment = {
   gitcoinRequiredScore: Number(process.env.NEXT_PUBLIC_GITCOIN_REQUIRED_SCORE),
   gtcScorerApiBaseUri: process.env.GTC_SCORER_API_BASE_URI || 'https://api.scorer.gitcoin.co',
   // Get your scorer API & ID from https://scorer.gitcoin.co
-  gtcScorerApiKey: process.env.GTC_SCORER_API_KEY,
-  gtcScorerId: process.env.GTC_SCORER_ID,
+  gtcScorerApiKey: process.env.GTC_SCORER_API_KEY as string,
+  gtcScorerId: process.env.GTC_SCORER_ID as string,
   scoreAttestationVerifierAddress:
     process.env.SCORE_ATTESTATION_VERIFIER_ADDRESS || '0x0000000000000000000000000000000000000000',
 

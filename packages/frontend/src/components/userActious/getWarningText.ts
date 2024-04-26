@@ -1,4 +1,4 @@
-import { ContractState } from '@/blockchain/hooks/useAuctionState'
+import { ContractState } from '@/blockchain/abi/ContractState'
 
 export function getWarningText(state: ContractState) {
   if (state === ContractState.RAFFLE_SETTLED) {
